@@ -1,36 +1,234 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ATLVS - Unified Operations Platform
+
+A comprehensive enterprise operations management platform for live events, production companies, and creative agencies. Built with Next.js 14, Supabase, and modern UI components.
+
+## Features
+
+### 9 Management Domains
+- **Project Management** - Tasks, milestones, dependencies, and team collaboration
+- **Events & Live Production** - Runsheets, cue sheets, show calls, and production notes
+- **Asset Management** - Equipment tracking, maintenance, reservations, and inventory
+- **Workforce Management** - Crew calls, scheduling, timesheets, and certifications
+- **Finance Management** - Budgets, invoices, expenses, and contracts
+- **CRM & Business** - Companies, contacts, deals, and proposals
+- **Venue Management** - Venue database, availability, and site surveys
+- **Content & Marketing** - Media library, campaigns, and social posts
+- **Talent Management** - Artist profiles, bookings, riders, and payments
+
+### Enterprise Features
+
+#### 12 View Components
+| View | Description |
+|------|-------------|
+| DataTable | Full-featured data table with sorting, filtering, pagination |
+| KanbanBoard | Drag-drop board with WIP limits and swimlanes |
+| CalendarView | Multi-view calendar (day/week/month/agenda) |
+| TimelineView | Horizontal timeline with zoom levels |
+| GanttView | Project Gantt chart with dependencies and critical path |
+| ListView | Grouped list with inline editing |
+| WorkloadView | Resource capacity visualization |
+| MapView | Interactive map with markers and clustering |
+| ActivityFeed | Chronological activity stream |
+| DashboardWidgets | Metric, progress, list, donut, sparkline widgets |
+| FormBuilder | Dynamic form builder with 16 field types |
+| Toolbar | Global actions (search, filter, sort, export, etc.) |
+
+#### Workflow Engine
+- 22+ pre-built workflow templates across 7 categories
+- Visual workflow builder with conditional logic
+- Automated triggers (time-based, event-based, webhook)
+- Step types: approval, notification, data update, integration, delay
+
+#### Integration Connectors (90+)
+- **ERP**: NetSuite, SAP, Dynamics 365, Sage Intacct, Oracle Fusion
+- **CRM**: Salesforce, HubSpot, Pipedrive, Zoho CRM
+- **HRIS**: Workday, BambooHR, ADP, Gusto, Rippling
+- **FinOps**: Stripe, Ramp, Brex, Bill.com, Expensify
+- **Communication**: Slack, Teams, Zoom, Twilio, SendGrid
+- **Calendar**: Google Calendar, Outlook, Calendly
+- **Storage**: Google Drive, Dropbox, OneDrive, Box, S3
+- **Ticketing**: Eventbrite, Ticketmaster, Universe
+- **Identity**: Okta, Auth0, Azure AD, OneLogin
+
+#### White-Label Theming
+- Customizable brand colors, typography, and logos
+- Light/dark mode support
+- Component style customization (border radius, button styles)
+- CSS variable-based theming
+- Theme presets and live preview
+
+#### Notification Service
+- Multi-channel: Email, Push, SMS, In-App, Slack, Webhook
+- 15+ notification templates
+- User preferences and quiet hours
+- Digest notifications
+- Rate limiting and retry logic
+
+#### Audit Logging
+- Comprehensive audit trail for compliance
+- 40+ action types tracked
+- Sensitive field redaction
+- 7-year retention for compliance (GDPR, HIPAA, SOC2)
+- Real-time alerts for high-severity events
+- Export to JSON/CSV
+
+## Tech Stack
+
+- **Frontend**: Next.js 14.2.x, React 18.3.x, TypeScript 5.4.x
+- **Styling**: Tailwind CSS 3.4.x, shadcn/ui, Radix UI primitives
+- **State Management**: Zustand, React Query (TanStack Query)
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
+- **Icons**: Lucide React
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18.x or higher
+- npm, yarn, or pnpm
+- Supabase account (for backend services)
 
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Copy the environment file and configure:
+```bash
+cp .env.local.example .env.local
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Add your Supabase credentials to `.env.local`:
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+5. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+6. Open [http://localhost:3000](http://localhost:3000)
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (app)/             # Authenticated app routes (42+ pages)
+│   │   ├── dashboard/     # Dashboard page
+│   │   ├── tasks/         # Task management
+│   │   ├── projects/      # Project management
+│   │   ├── calendar/      # Calendar view
+│   │   ├── assets/        # Asset management
+│   │   ├── people/        # Team management
+│   │   ├── events/        # Event management
+│   │   ├── venues/        # Venue management
+│   │   ├── talent/        # Talent management
+│   │   ├── documents/     # Document management
+│   │   ├── workflows/     # Workflow automation
+│   │   ├── finance/       # Finance management
+│   │   ├── crm/           # CRM module
+│   │   ├── reports/       # Reports & analytics
+│   │   ├── settings/      # Settings & branding
+│   │   └── account/       # Account management
+│   ├── (auth)/            # Authentication routes
+│   ├── globals.css        # Global styles
+│   └── layout.tsx         # Root layout
+├── components/
+│   ├── layout/            # Layout components
+│   ├── providers/         # Context providers
+│   ├── ui/                # UI components (shadcn/ui)
+│   └── views/             # Reusable view components
+│       ├── data-table.tsx
+│       ├── kanban-board.tsx
+│       ├── calendar-view.tsx
+│       ├── timeline-view.tsx
+│       ├── gantt-view.tsx
+│       ├── list-view.tsx
+│       ├── workload-view.tsx
+│       ├── map-view.tsx
+│       ├── activity-feed.tsx
+│       ├── dashboard-widgets.tsx
+│       ├── form-builder.tsx
+│       └── toolbar.tsx
+├── lib/
+│   ├── api/               # API utilities
+│   ├── audit/             # Audit logging service
+│   │   ├── types.ts
+│   │   ├── service.ts
+│   │   └── index.ts
+│   ├── integrations/      # Integration connectors
+│   │   ├── types.ts
+│   │   ├── connectors.ts  # 90+ connectors
+│   │   ├── service.ts
+│   │   └── index.ts
+│   ├── notifications/     # Notification service
+│   │   ├── types.ts
+│   │   ├── service.ts
+│   │   ├── templates.ts
+│   │   └── index.ts
+│   ├── seed/              # Demo data generation
+│   ├── supabase/          # Supabase client setup
+│   ├── theming/           # White-label theming
+│   │   ├── theme-config.ts
+│   │   ├── theme-provider.tsx
+│   │   ├── white-label.ts
+│   │   └── index.ts
+│   ├── workflow-engine/   # Workflow automation
+│   │   ├── types.ts
+│   │   ├── engine.ts
+│   │   ├── templates.ts   # 22+ templates
+│   │   ├── service.ts
+│   │   └── index.ts
+│   ├── config.ts          # App configuration
+│   ├── enums.ts           # Type enums
+│   ├── formatters.ts      # Data formatters
+│   ├── helpers.ts         # Helper functions
+│   ├── utils.ts           # Utility functions
+│   └── validations.ts     # Validation schemas
+supabase/
+├── config.toml            # Supabase configuration
+└── migrations/            # Database migrations (11 files)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Database Schema
 
-## Deploy on Vercel
+The platform includes 100+ database tables organized across domains:
+- Core tables (organizations, users, roles, departments)
+- Project & task management
+- Events & live production
+- Asset & inventory management
+- Workforce & scheduling
+- Finance & accounting
+- CRM & sales
+- Venues & site management
+- Content & marketing
+- Talent & booking
+- Ticketing & guest management
+- Workflows & automation
+- Documents & collaboration
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Running Migrations
+```bash
+npx supabase db push
+```
+
+### Generating Types
+```bash
+npx supabase gen types typescript --local > src/types/database.ts
+```
+
+### Building for Production
+```bash
+npm run build
+```
+
+## License
+
+Proprietary - All rights reserved.

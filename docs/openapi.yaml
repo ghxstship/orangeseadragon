@@ -1,0 +1,1973 @@
+openapi: 3.1.0
+info:
+  title: Unified Operations Platform API
+  description: |
+    Comprehensive API for the Unified Operations Platform supporting event management,
+    resource planning, financial operations, and multi-tenant workflows.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: api-support@example.com
+  license:
+    name: Proprietary
+    url: https://example.com/license
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: https://staging-api.example.com/v1
+    description: Staging server
+  - url: http://localhost:3000/api/v1
+    description: Local development
+
+tags:
+  - name: Authentication
+    description: Authentication and authorization endpoints
+  - name: Users
+    description: User management operations
+  - name: Organizations
+    description: Organization and tenant management
+  - name: Events
+    description: Event management operations
+  - name: Bookings
+    description: Booking and reservation management
+  - name: Venues
+    description: Venue and location management
+  - name: Inventory
+    description: Inventory and asset management
+  - name: Finance
+    description: Financial operations and billing
+  - name: Workflows
+    description: Workflow automation
+  - name: Reports
+    description: Reporting and analytics
+  - name: Notifications
+    description: Notification management
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the API
+      operationId: getHealth
+      tags:
+        - Health
+      responses:
+        "200":
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticate a user and return access tokens
+      operationId: login
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      description: Exchange a refresh token for a new access token
+      operationId: refreshToken
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+      responses:
+        "200":
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      summary: User logout
+      description: Invalidate the current session
+      operationId: logout
+      tags:
+        - Authentication
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Successfully logged out
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users:
+    get:
+      summary: List users
+      description: Retrieve a paginated list of users
+      operationId: listUsers
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SearchParam"
+        - name: role
+          in: query
+          schema:
+            type: string
+          description: Filter by role
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, pending]
+          description: Filter by status
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    post:
+      summary: Create user
+      description: Create a new user
+      operationId: createUser
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{userId}:
+    get:
+      summary: Get user
+      description: Retrieve a specific user by ID
+      operationId: getUser
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      summary: Update user
+      description: Update an existing user
+      operationId: updateUser
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      summary: Delete user
+      description: Delete a user (soft delete)
+      operationId: deleteUser
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "204":
+          description: User deleted successfully
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /organizations:
+    get:
+      summary: List organizations
+      description: Retrieve a paginated list of organizations
+      operationId: listOrganizations
+      tags:
+        - Organizations
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SearchParam"
+      responses:
+        "200":
+          description: List of organizations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrganizationListResponse"
+
+    post:
+      summary: Create organization
+      description: Create a new organization
+      operationId: createOrganization
+      tags:
+        - Organizations
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrganizationRequest"
+      responses:
+        "201":
+          description: Organization created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+
+  /organizations/{organizationId}:
+    get:
+      summary: Get organization
+      description: Retrieve a specific organization by ID
+      operationId: getOrganization
+      tags:
+        - Organizations
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/OrganizationIdParam"
+      responses:
+        "200":
+          description: Organization details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        "404":
+          description: Organization not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      summary: Update organization
+      description: Update an existing organization
+      operationId: updateOrganization
+      tags:
+        - Organizations
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/OrganizationIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrganizationRequest"
+      responses:
+        "200":
+          description: Organization updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+
+  /events:
+    get:
+      summary: List events
+      description: Retrieve a paginated list of events
+      operationId: listEvents
+      tags:
+        - Events
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SearchParam"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, confirmed, in_progress, completed, cancelled]
+          description: Filter by event status
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter events starting after this date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filter events ending before this date
+        - name: venueId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by venue
+      responses:
+        "200":
+          description: List of events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventListResponse"
+
+    post:
+      summary: Create event
+      description: Create a new event
+      operationId: createEvent
+      tags:
+        - Events
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventRequest"
+      responses:
+        "201":
+          description: Event created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /events/{eventId}:
+    get:
+      summary: Get event
+      description: Retrieve a specific event by ID
+      operationId: getEvent
+      tags:
+        - Events
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EventIdParam"
+      responses:
+        "200":
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "404":
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      summary: Update event
+      description: Update an existing event
+      operationId: updateEvent
+      tags:
+        - Events
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EventIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEventRequest"
+      responses:
+        "200":
+          description: Event updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+
+    delete:
+      summary: Delete event
+      description: Delete an event (soft delete)
+      operationId: deleteEvent
+      tags:
+        - Events
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/EventIdParam"
+      responses:
+        "204":
+          description: Event deleted successfully
+
+  /bookings:
+    get:
+      summary: List bookings
+      description: Retrieve a paginated list of bookings
+      operationId: listBookings
+      tags:
+        - Bookings
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, confirmed, cancelled, completed]
+          description: Filter by booking status
+        - name: eventId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by event
+      responses:
+        "200":
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingListResponse"
+
+    post:
+      summary: Create booking
+      description: Create a new booking
+      operationId: createBooking
+      tags:
+        - Bookings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingRequest"
+      responses:
+        "201":
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /bookings/{bookingId}:
+    get:
+      summary: Get booking
+      description: Retrieve a specific booking by ID
+      operationId: getBooking
+      tags:
+        - Bookings
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/BookingIdParam"
+      responses:
+        "200":
+          description: Booking details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+    patch:
+      summary: Update booking
+      description: Update an existing booking
+      operationId: updateBooking
+      tags:
+        - Bookings
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/BookingIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBookingRequest"
+      responses:
+        "200":
+          description: Booking updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /venues:
+    get:
+      summary: List venues
+      description: Retrieve a paginated list of venues
+      operationId: listVenues
+      tags:
+        - Venues
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SearchParam"
+        - name: type
+          in: query
+          schema:
+            type: string
+          description: Filter by venue type
+        - name: capacity
+          in: query
+          schema:
+            type: integer
+          description: Minimum capacity
+      responses:
+        "200":
+          description: List of venues
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VenueListResponse"
+
+    post:
+      summary: Create venue
+      description: Create a new venue
+      operationId: createVenue
+      tags:
+        - Venues
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVenueRequest"
+      responses:
+        "201":
+          description: Venue created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Venue"
+
+  /venues/{venueId}:
+    get:
+      summary: Get venue
+      description: Retrieve a specific venue by ID
+      operationId: getVenue
+      tags:
+        - Venues
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/VenueIdParam"
+      responses:
+        "200":
+          description: Venue details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Venue"
+
+    patch:
+      summary: Update venue
+      description: Update an existing venue
+      operationId: updateVenue
+      tags:
+        - Venues
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/VenueIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVenueRequest"
+      responses:
+        "200":
+          description: Venue updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Venue"
+
+  /inventory:
+    get:
+      summary: List inventory items
+      description: Retrieve a paginated list of inventory items
+      operationId: listInventory
+      tags:
+        - Inventory
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/SearchParam"
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: Filter by category
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [available, reserved, in_use, maintenance]
+          description: Filter by status
+      responses:
+        "200":
+          description: List of inventory items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryListResponse"
+
+    post:
+      summary: Create inventory item
+      description: Create a new inventory item
+      operationId: createInventoryItem
+      tags:
+        - Inventory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInventoryRequest"
+      responses:
+        "201":
+          description: Inventory item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+
+  /invoices:
+    get:
+      summary: List invoices
+      description: Retrieve a paginated list of invoices
+      operationId: listInvoices
+      tags:
+        - Finance
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, sent, paid, overdue, cancelled]
+          description: Filter by invoice status
+        - name: customerId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by customer
+      responses:
+        "200":
+          description: List of invoices
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceListResponse"
+
+    post:
+      summary: Create invoice
+      description: Create a new invoice
+      operationId: createInvoice
+      tags:
+        - Finance
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInvoiceRequest"
+      responses:
+        "201":
+          description: Invoice created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+
+  /invoices/{invoiceId}:
+    get:
+      summary: Get invoice
+      description: Retrieve a specific invoice by ID
+      operationId: getInvoice
+      tags:
+        - Finance
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/InvoiceIdParam"
+      responses:
+        "200":
+          description: Invoice details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+
+  /workflows:
+    get:
+      summary: List workflows
+      description: Retrieve a paginated list of workflow definitions
+      operationId: listWorkflows
+      tags:
+        - Workflows
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, draft]
+          description: Filter by workflow status
+      responses:
+        "200":
+          description: List of workflows
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowListResponse"
+
+    post:
+      summary: Create workflow
+      description: Create a new workflow definition
+      operationId: createWorkflow
+      tags:
+        - Workflows
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkflowRequest"
+      responses:
+        "201":
+          description: Workflow created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workflow"
+
+  /workflows/{workflowId}/execute:
+    post:
+      summary: Execute workflow
+      description: Trigger execution of a workflow
+      operationId: executeWorkflow
+      tags:
+        - Workflows
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WorkflowIdParam"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WorkflowExecutionRequest"
+      responses:
+        "202":
+          description: Workflow execution started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowExecution"
+
+  /reports:
+    get:
+      summary: List reports
+      description: Retrieve a list of available reports
+      operationId: listReports
+      tags:
+        - Reports
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: type
+          in: query
+          schema:
+            type: string
+          description: Filter by report type
+      responses:
+        "200":
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportListResponse"
+
+  /reports/{reportId}/generate:
+    post:
+      summary: Generate report
+      description: Generate a report with specified parameters
+      operationId: generateReport
+      tags:
+        - Reports
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/ReportIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateReportRequest"
+      responses:
+        "202":
+          description: Report generation started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportGeneration"
+
+  /notifications:
+    get:
+      summary: List notifications
+      description: Retrieve a list of notifications for the current user
+      operationId: listNotifications
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: read
+          in: query
+          schema:
+            type: boolean
+          description: Filter by read status
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationListResponse"
+
+  /notifications/{notificationId}/read:
+    post:
+      summary: Mark notification as read
+      description: Mark a specific notification as read
+      operationId: markNotificationRead
+      tags:
+        - Notifications
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/NotificationIdParam"
+      responses:
+        "200":
+          description: Notification marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number for pagination
+
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      description: Number of items per page
+
+    SearchParam:
+      name: search
+      in: query
+      schema:
+        type: string
+      description: Search query string
+
+    UserIdParam:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: User ID
+
+    OrganizationIdParam:
+      name: organizationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Organization ID
+
+    EventIdParam:
+      name: eventId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Event ID
+
+    BookingIdParam:
+      name: bookingId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Booking ID
+
+    VenueIdParam:
+      name: venueId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Venue ID
+
+    InvoiceIdParam:
+      name: invoiceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Invoice ID
+
+    WorkflowIdParam:
+      name: workflowId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Workflow ID
+
+    ReportIdParam:
+      name: reportId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Report ID
+
+    NotificationIdParam:
+      name: notificationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Notification ID
+
+  schemas:
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy]
+        timestamp:
+          type: string
+          format: date-time
+        version:
+          type: string
+        services:
+          type: object
+          additionalProperties:
+            type: string
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+        limit:
+          type: integer
+        total:
+          type: integer
+        totalPages:
+          type: integer
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+        tokenType:
+          type: string
+          default: Bearer
+        user:
+          $ref: "#/components/schemas/User"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        avatar:
+          type: string
+          format: uri
+        role:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, pending]
+        organizationId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateUserRequest:
+      type: object
+      required:
+        - email
+        - firstName
+        - lastName
+      properties:
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+        password:
+          type: string
+          format: password
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, pending]
+
+    UserListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        logo:
+          type: string
+          format: uri
+        settings:
+          type: object
+        plan:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, suspended]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateOrganizationRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        logo:
+          type: string
+          format: uri
+
+    UpdateOrganizationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        logo:
+          type: string
+          format: uri
+        settings:
+          type: object
+
+    OrganizationListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Organization"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+          enum: [draft, confirmed, in_progress, completed, cancelled]
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        venueId:
+          type: string
+          format: uuid
+        venue:
+          $ref: "#/components/schemas/Venue"
+        capacity:
+          type: integer
+        budget:
+          type: number
+          format: decimal
+        organizationId:
+          type: string
+          format: uuid
+        createdBy:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateEventRequest:
+      type: object
+      required:
+        - name
+        - startDate
+        - endDate
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        venueId:
+          type: string
+          format: uuid
+        capacity:
+          type: integer
+        budget:
+          type: number
+          format: decimal
+
+    UpdateEventRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+          enum: [draft, confirmed, in_progress, completed, cancelled]
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        venueId:
+          type: string
+          format: uuid
+        capacity:
+          type: integer
+        budget:
+          type: number
+          format: decimal
+
+    EventListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Event"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        eventId:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled, completed]
+        quantity:
+          type: integer
+        totalAmount:
+          type: number
+          format: decimal
+        notes:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateBookingRequest:
+      type: object
+      required:
+        - eventId
+        - customerId
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          default: 1
+        notes:
+          type: string
+
+    UpdateBookingRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled, completed]
+        quantity:
+          type: integer
+        notes:
+          type: string
+
+    BookingListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    Venue:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        capacity:
+          type: integer
+        amenities:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+        status:
+          type: string
+          enum: [active, inactive, maintenance]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateVenueRequest:
+      type: object
+      required:
+        - name
+        - address
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        capacity:
+          type: integer
+        amenities:
+          type: array
+          items:
+            type: string
+
+    UpdateVenueRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        postalCode:
+          type: string
+        capacity:
+          type: integer
+        amenities:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, inactive, maintenance]
+
+    VenueListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Venue"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    InventoryItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        sku:
+          type: string
+        quantity:
+          type: integer
+        unit:
+          type: string
+        status:
+          type: string
+          enum: [available, reserved, in_use, maintenance]
+        location:
+          type: string
+        cost:
+          type: number
+          format: decimal
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateInventoryRequest:
+      type: object
+      required:
+        - name
+        - category
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        sku:
+          type: string
+        quantity:
+          type: integer
+        unit:
+          type: string
+        location:
+          type: string
+        cost:
+          type: number
+          format: decimal
+
+    InventoryListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InventoryItem"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        invoiceNumber:
+          type: string
+        customerId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [draft, sent, paid, overdue, cancelled]
+        issueDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        subtotal:
+          type: number
+          format: decimal
+        tax:
+          type: number
+          format: decimal
+        total:
+          type: number
+          format: decimal
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceItem"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    InvoiceItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+          format: decimal
+        total:
+          type: number
+          format: decimal
+
+    CreateInvoiceRequest:
+      type: object
+      required:
+        - customerId
+        - items
+      properties:
+        customerId:
+          type: string
+          format: uuid
+        dueDate:
+          type: string
+          format: date
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              description:
+                type: string
+              quantity:
+                type: integer
+              unitPrice:
+                type: number
+                format: decimal
+
+    InvoiceListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Invoice"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        trigger:
+          type: object
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkflowStep"
+        status:
+          type: string
+          enum: [active, inactive, draft]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    WorkflowStep:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        config:
+          type: object
+        nextSteps:
+          type: array
+          items:
+            type: string
+
+    CreateWorkflowRequest:
+      type: object
+      required:
+        - name
+        - trigger
+        - steps
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        trigger:
+          type: object
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkflowStep"
+
+    WorkflowListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Workflow"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    WorkflowExecutionRequest:
+      type: object
+      properties:
+        input:
+          type: object
+          additionalProperties: true
+
+    WorkflowExecution:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        workflowId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+        output:
+          type: object
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        parameters:
+          type: array
+          items:
+            type: object
+        createdAt:
+          type: string
+          format: date-time
+
+    ReportListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Report"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+    GenerateReportRequest:
+      type: object
+      properties:
+        parameters:
+          type: object
+          additionalProperties: true
+        format:
+          type: string
+          enum: [pdf, csv, xlsx, json]
+          default: pdf
+
+    ReportGeneration:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        reportId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, processing, completed, failed]
+        downloadUrl:
+          type: string
+          format: uri
+        expiresAt:
+          type: string
+          format: date-time
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        read:
+          type: boolean
+        data:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+
+    NotificationListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        meta:
+          $ref: "#/components/schemas/PaginationMeta"
+
+security:
+  - bearerAuth: []

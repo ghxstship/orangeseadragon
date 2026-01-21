@@ -1,0 +1,236 @@
+-- ATLVS Platform Database Schema
+-- Demo Seed Data for All Entities
+
+-- ============================================================================
+-- DEMO ORGANIZATION
+-- ============================================================================
+
+INSERT INTO organizations (id, name, slug, legal_name, description, website, email, phone, timezone, currency, settings) VALUES
+('00000000-0000-0000-0000-000000000001', 'ATLVS Demo', 'atlvs-demo', 'ATLVS Demo Inc.', 'Demo organization for ATLVS platform', 'https://demo.atlvs.io', 'demo@atlvs.io', '+1-555-0100', 'America/New_York', 'USD', '{"features": {"workflows": true, "ai_insights": true, "white_label": false}}')
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  settings = EXCLUDED.settings;
+
+-- ============================================================================
+-- DEMO DEPARTMENTS
+-- ============================================================================
+
+INSERT INTO departments (id, organization_id, name, slug, description) VALUES
+('00000000-0000-0000-0000-000000000101', '00000000-0000-0000-0000-000000000001', 'Executive', 'executive', 'Executive leadership team'),
+('00000000-0000-0000-0000-000000000102', '00000000-0000-0000-0000-000000000001', 'Production', 'production', 'Event production and operations'),
+('00000000-0000-0000-0000-000000000103', '00000000-0000-0000-0000-000000000001', 'Sales', 'sales', 'Sales and business development'),
+('00000000-0000-0000-0000-000000000104', '00000000-0000-0000-0000-000000000001', 'Finance', 'finance', 'Finance and accounting'),
+('00000000-0000-0000-0000-000000000105', '00000000-0000-0000-0000-000000000001', 'Marketing', 'marketing', 'Marketing and communications'),
+('00000000-0000-0000-0000-000000000106', '00000000-0000-0000-0000-000000000001', 'Technical', 'technical', 'Technical and AV services')
+ON CONFLICT (organization_id, slug) DO NOTHING;
+
+-- ============================================================================
+-- DEMO ROLES
+-- ============================================================================
+
+INSERT INTO roles (id, organization_id, name, slug, description, level, tier, is_system, permissions) VALUES
+('00000000-0000-0000-0000-000000000201', '00000000-0000-0000-0000-000000000001', 'Owner', 'owner', 'Organization owner with full access', 100, 'core', true, '{"*": true}'),
+('00000000-0000-0000-0000-000000000202', '00000000-0000-0000-0000-000000000001', 'Admin', 'admin', 'Administrator with broad access', 90, 'core', true, '{"admin": true, "users.manage": true, "settings.manage": true}'),
+('00000000-0000-0000-0000-000000000203', '00000000-0000-0000-0000-000000000001', 'Manager', 'manager', 'Department manager', 70, 'core', true, '{"projects.manage": true, "tasks.manage": true, "reports.read": true}'),
+('00000000-0000-0000-0000-000000000204', '00000000-0000-0000-0000-000000000001', 'Team Lead', 'team-lead', 'Team lead with project access', 50, 'core', true, '{"projects.read": true, "tasks.manage": true}'),
+('00000000-0000-0000-0000-000000000205', '00000000-0000-0000-0000-000000000001', 'Member', 'member', 'Standard team member', 30, 'core', true, '{"projects.read": true, "tasks.read": true}'),
+('00000000-0000-0000-0000-000000000206', '00000000-0000-0000-0000-000000000001', 'Contractor', 'contractor', 'External contractor', 20, 'core', true, '{"tasks.assigned": true}'),
+('00000000-0000-0000-0000-000000000207', '00000000-0000-0000-0000-000000000001', 'Viewer', 'viewer', 'Read-only access', 10, 'core', true, '{"*.read": true}')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO WORKSPACES
+-- ============================================================================
+
+INSERT INTO workspaces (id, organization_id, name, slug, description, visibility, settings) VALUES
+('00000000-0000-0000-0000-000000000301', '00000000-0000-0000-0000-000000000001', 'General', 'general', 'General workspace for all projects', 'team', '{}'),
+('00000000-0000-0000-0000-000000000302', '00000000-0000-0000-0000-000000000001', 'Events 2024', 'events-2024', 'All events for 2024 season', 'team', '{}'),
+('00000000-0000-0000-0000-000000000303', '00000000-0000-0000-0000-000000000001', 'Client Projects', 'client-projects', 'Client-facing projects', 'private', '{}')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO PROJECTS
+-- ============================================================================
+
+INSERT INTO projects (id, organization_id, workspace_id, name, slug, description, status, visibility, priority, color, start_date, end_date, budget_amount, budget_currency) VALUES
+('00000000-0000-0000-0000-000000000401', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000302', 'Summer Music Festival 2024', 'summer-fest-2024', 'Annual summer music festival production', 'active', 'team', 'high', '#FF6B6B', '2024-06-01', '2024-08-31', 500000.00, 'USD'),
+('00000000-0000-0000-0000-000000000402', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000302', 'Corporate Awards Gala', 'awards-gala-2024', 'Annual corporate awards ceremony', 'planning', 'team', 'high', '#4ECDC4', '2024-11-01', '2024-12-15', 150000.00, 'USD'),
+('00000000-0000-0000-0000-000000000403', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000303', 'Tech Conference Production', 'tech-conf-2024', 'Technology conference with multiple stages', 'active', 'private', 'medium', '#45B7D1', '2024-09-01', '2024-10-15', 250000.00, 'USD'),
+('00000000-0000-0000-0000-000000000404', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000301', 'Equipment Upgrade Initiative', 'equipment-upgrade', 'Upgrade AV and production equipment', 'active', 'team', 'medium', '#96CEB4', '2024-01-01', '2024-12-31', 100000.00, 'USD')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO EVENTS
+-- ============================================================================
+
+INSERT INTO events (id, organization_id, project_id, name, slug, description, event_type, status, start_date, end_date, timezone, venue_id, expected_attendance, budget_amount, budget_currency) VALUES
+('00000000-0000-0000-0000-000000000501', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000401', 'Summer Fest Day 1', 'summer-fest-day-1', 'Opening day of Summer Music Festival', 'festival', 'confirmed', '2024-07-15 12:00:00', '2024-07-15 23:00:00', 'America/New_York', NULL, 15000, 150000.00, 'USD'),
+('00000000-0000-0000-0000-000000000502', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000401', 'Summer Fest Day 2', 'summer-fest-day-2', 'Second day of Summer Music Festival', 'festival', 'confirmed', '2024-07-16 12:00:00', '2024-07-16 23:00:00', 'America/New_York', NULL, 18000, 180000.00, 'USD'),
+('00000000-0000-0000-0000-000000000503', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000401', 'Summer Fest Day 3', 'summer-fest-day-3', 'Final day of Summer Music Festival', 'festival', 'confirmed', '2024-07-17 12:00:00', '2024-07-17 23:00:00', 'America/New_York', NULL, 20000, 200000.00, 'USD'),
+('00000000-0000-0000-0000-000000000504', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000402', 'Awards Gala Night', 'awards-gala-night', 'Main awards ceremony evening', 'gala', 'planning', '2024-12-10 18:00:00', '2024-12-10 23:00:00', 'America/New_York', NULL, 500, 150000.00, 'USD'),
+('00000000-0000-0000-0000-000000000505', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000403', 'Tech Conference Day 1', 'tech-conf-day-1', 'Opening day with keynotes', 'conference', 'confirmed', '2024-10-01 08:00:00', '2024-10-01 18:00:00', 'America/New_York', NULL, 2000, 80000.00, 'USD'),
+('00000000-0000-0000-0000-000000000506', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000403', 'Tech Conference Day 2', 'tech-conf-day-2', 'Workshops and breakout sessions', 'conference', 'confirmed', '2024-10-02 08:00:00', '2024-10-02 18:00:00', 'America/New_York', NULL, 2000, 80000.00, 'USD')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO VENUES
+-- ============================================================================
+
+INSERT INTO venues (id, organization_id, name, venue_type, description, address, city, state, country, postal_code, capacity, website, email, phone, amenities) VALUES
+('00000000-0000-0000-0000-000000000601', '00000000-0000-0000-0000-000000000001', 'Central Park Amphitheater', 'outdoor', 'Large outdoor amphitheater for concerts and festivals', '123 Park Avenue', 'New York', 'NY', 'USA', '10001', 25000, 'https://centralpark-amp.example.com', 'events@centralpark-amp.example.com', '+1-555-0201', '["parking", "concessions", "restrooms", "backstage", "green_rooms"]'),
+('00000000-0000-0000-0000-000000000602', '00000000-0000-0000-0000-000000000001', 'Grand Ballroom Hotel', 'hotel', 'Luxury hotel ballroom for galas and corporate events', '456 Fifth Avenue', 'New York', 'NY', 'USA', '10002', 800, 'https://grandballroom.example.com', 'events@grandballroom.example.com', '+1-555-0202', '["catering", "av_equipment", "parking", "coat_check", "green_rooms"]'),
+('00000000-0000-0000-0000-000000000603', '00000000-0000-0000-0000-000000000001', 'Convention Center West', 'convention_center', 'Modern convention center with multiple halls', '789 Convention Blvd', 'San Francisco', 'CA', 'USA', '94102', 5000, 'https://convwest.example.com', 'bookings@convwest.example.com', '+1-555-0203', '["wifi", "av_equipment", "catering", "parking", "loading_dock", "breakout_rooms"]'),
+('00000000-0000-0000-0000-000000000604', '00000000-0000-0000-0000-000000000001', 'Downtown Theater', 'theater', 'Historic theater venue for performances', '321 Broadway', 'New York', 'NY', 'USA', '10003', 1200, 'https://downtown-theater.example.com', 'info@downtown-theater.example.com', '+1-555-0204', '["stage_lighting", "sound_system", "dressing_rooms", "orchestra_pit"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO COMPANIES (CRM)
+-- ============================================================================
+
+INSERT INTO companies (id, organization_id, name, legal_name, company_type, industry, website, email, phone, address, city, state, country, postal_code, annual_revenue, employee_count, tags) VALUES
+('00000000-0000-0000-0000-000000000701', '00000000-0000-0000-0000-000000000001', 'TechCorp Industries', 'TechCorp Industries Inc.', 'client', 'Technology', 'https://techcorp.example.com', 'contact@techcorp.example.com', '+1-555-0301', '100 Tech Plaza', 'San Francisco', 'CA', 'USA', '94105', 50000000.00, 500, '["enterprise", "tech", "recurring"]'),
+('00000000-0000-0000-0000-000000000702', '00000000-0000-0000-0000-000000000001', 'Global Events Co', 'Global Events Company LLC', 'partner', 'Events', 'https://globalevents.example.com', 'info@globalevents.example.com', '+1-555-0302', '200 Event Street', 'Los Angeles', 'CA', 'USA', '90001', 25000000.00, 150, '["partner", "events", "production"]'),
+('00000000-0000-0000-0000-000000000703', '00000000-0000-0000-0000-000000000001', 'Startup Ventures', 'Startup Ventures Inc.', 'prospect', 'Technology', 'https://startupventures.example.com', 'hello@startupventures.example.com', '+1-555-0303', '50 Innovation Way', 'Austin', 'TX', 'USA', '78701', 5000000.00, 50, '["startup", "tech", "growth"]'),
+('00000000-0000-0000-0000-000000000704', '00000000-0000-0000-0000-000000000001', 'Media Productions LLC', 'Media Productions LLC', 'vendor', 'Media', 'https://mediaproductions.example.com', 'bookings@mediaproductions.example.com', '+1-555-0304', '75 Studio Lane', 'New York', 'NY', 'USA', '10004', 10000000.00, 75, '["vendor", "media", "production"]'),
+('00000000-0000-0000-0000-000000000705', '00000000-0000-0000-0000-000000000001', 'Sound & Light Rentals', 'S&L Rentals Inc.', 'vendor', 'Equipment Rental', 'https://slrentals.example.com', 'rentals@slrentals.example.com', '+1-555-0305', '300 Equipment Blvd', 'Chicago', 'IL', 'USA', '60601', 8000000.00, 40, '["vendor", "equipment", "av"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO CONTACTS
+-- ============================================================================
+
+INSERT INTO contacts (id, organization_id, company_id, first_name, last_name, email, phone, mobile, job_title, department, tags) VALUES
+('00000000-0000-0000-0000-000000000801', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000701', 'John', 'Smith', 'john.smith@techcorp.example.com', '+1-555-0401', '+1-555-0411', 'VP of Events', 'Marketing', '["decision_maker", "vip"]'),
+('00000000-0000-0000-0000-000000000802', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000701', 'Sarah', 'Johnson', 'sarah.johnson@techcorp.example.com', '+1-555-0402', '+1-555-0412', 'Event Manager', 'Marketing', '["primary_contact"]'),
+('00000000-0000-0000-0000-000000000803', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000702', 'Michael', 'Chen', 'michael.chen@globalevents.example.com', '+1-555-0403', '+1-555-0413', 'CEO', 'Executive', '["decision_maker", "partner"]'),
+('00000000-0000-0000-0000-000000000804', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000703', 'Emily', 'Davis', 'emily.davis@startupventures.example.com', '+1-555-0404', '+1-555-0414', 'Head of Operations', 'Operations', '["prospect", "tech"]'),
+('00000000-0000-0000-0000-000000000805', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000704', 'David', 'Wilson', 'david.wilson@mediaproductions.example.com', '+1-555-0405', '+1-555-0415', 'Production Director', 'Production', '["vendor", "creative"]'),
+('00000000-0000-0000-0000-000000000806', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000705', 'Lisa', 'Brown', 'lisa.brown@slrentals.example.com', '+1-555-0406', '+1-555-0416', 'Account Manager', 'Sales', '["vendor", "equipment"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO DEALS
+-- ============================================================================
+
+INSERT INTO deals (id, organization_id, company_id, contact_id, name, description, value, currency, probability, status, source, expected_close_date, tags) VALUES
+('00000000-0000-0000-0000-000000000901', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000701', '00000000-0000-0000-0000-000000000801', 'TechCorp Annual Conference 2025', 'Full production services for annual tech conference', 350000.00, 'USD', 75, 'open', 'referral', '2024-09-30', '["enterprise", "conference", "recurring"]'),
+('00000000-0000-0000-0000-000000000902', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000703', '00000000-0000-0000-0000-000000000804', 'Startup Launch Event', 'Product launch event production', 75000.00, 'USD', 50, 'open', 'website', '2024-08-15', '["startup", "launch", "new_client"]'),
+('00000000-0000-0000-0000-000000000903', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000701', '00000000-0000-0000-0000-000000000802', 'TechCorp Holiday Party', 'Corporate holiday celebration event', 45000.00, 'USD', 90, 'open', 'existing_client', '2024-10-31', '["corporate", "party", "recurring"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO TASKS
+-- ============================================================================
+
+INSERT INTO tasks (id, organization_id, project_id, title, description, status, priority, task_type, start_date, due_date, estimated_hours, tags) VALUES
+('00000000-0000-0000-0000-000000001001', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000401', 'Finalize headliner contracts', 'Complete negotiations and sign contracts with headlining artists', 'in_progress', 'high', 'task', '2024-03-01', '2024-03-15', 20, '["contracts", "talent", "urgent"]'),
+('00000000-0000-0000-0000-000000001002', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000401', 'Stage design approval', 'Review and approve main stage design concepts', 'todo', 'high', 'task', '2024-03-10', '2024-03-25', 10, '["design", "production"]'),
+('00000000-0000-0000-0000-000000001003', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000401', 'Vendor RFP process', 'Send RFPs to potential vendors for catering and merchandise', 'todo', 'medium', 'task', '2024-03-15', '2024-04-15', 30, '["procurement", "vendors"]'),
+('00000000-0000-0000-0000-000000001004', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000402', 'Venue site visit', 'Conduct site visit at Grand Ballroom Hotel', 'done', 'high', 'task', '2024-02-01', '2024-02-15', 4, '["venue", "planning"]'),
+('00000000-0000-0000-0000-000000001005', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000402', 'Create event timeline', 'Develop detailed timeline for awards ceremony', 'in_progress', 'medium', 'task', '2024-02-20', '2024-03-10', 8, '["planning", "timeline"]'),
+('00000000-0000-0000-0000-000000001006', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000403', 'AV equipment inventory', 'Complete inventory of required AV equipment', 'todo', 'medium', 'task', '2024-04-01', '2024-04-30', 16, '["equipment", "inventory"]'),
+('00000000-0000-0000-0000-000000001007', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000403', 'Speaker coordination', 'Coordinate with all confirmed speakers for requirements', 'in_progress', 'high', 'task', '2024-03-01', '2024-05-31', 40, '["speakers", "coordination"]'),
+('00000000-0000-0000-0000-000000001008', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000404', 'Equipment assessment', 'Assess current equipment and identify upgrade needs', 'done', 'high', 'task', '2024-01-15', '2024-02-15', 24, '["equipment", "assessment"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO ASSET CATEGORIES
+-- ============================================================================
+
+INSERT INTO asset_categories (id, organization_id, name, slug, description, parent_id) VALUES
+('00000000-0000-0000-0000-000000001101', '00000000-0000-0000-0000-000000000001', 'Audio Equipment', 'audio-equipment', 'Sound and audio equipment', NULL),
+('00000000-0000-0000-0000-000000001102', '00000000-0000-0000-0000-000000000001', 'Video Equipment', 'video-equipment', 'Video and display equipment', NULL),
+('00000000-0000-0000-0000-000000001103', '00000000-0000-0000-0000-000000000001', 'Lighting Equipment', 'lighting-equipment', 'Stage and event lighting', NULL),
+('00000000-0000-0000-0000-000000001104', '00000000-0000-0000-0000-000000000001', 'Staging & Rigging', 'staging-rigging', 'Staging structures and rigging equipment', NULL),
+('00000000-0000-0000-0000-000000001105', '00000000-0000-0000-0000-000000000001', 'Power & Cables', 'power-cables', 'Power distribution and cabling', NULL)
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO LOCATIONS
+-- ============================================================================
+
+INSERT INTO locations (id, organization_id, name, location_type, description, address, city, state, country, postal_code, capacity) VALUES
+('00000000-0000-0000-0000-000000001201', '00000000-0000-0000-0000-000000000001', 'Main Warehouse', 'warehouse', 'Primary equipment storage facility', '500 Industrial Pkwy', 'Newark', 'NJ', 'USA', '07102', 10000),
+('00000000-0000-0000-0000-000000001202', '00000000-0000-0000-0000-000000000001', 'West Coast Depot', 'warehouse', 'West coast equipment storage', '200 Logistics Way', 'Los Angeles', 'CA', 'USA', '90001', 5000),
+('00000000-0000-0000-0000-000000001203', '00000000-0000-0000-0000-000000000001', 'Office HQ', 'office', 'Main office headquarters', '100 Main Street', 'New York', 'NY', 'USA', '10001', 100)
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO ASSETS
+-- ============================================================================
+
+INSERT INTO assets (id, organization_id, category_id, location_id, asset_tag, serial_number, name, description, manufacturer, model, status, condition, purchase_date, purchase_price, purchase_currency) VALUES
+('00000000-0000-0000-0000-000000001301', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001101', '00000000-0000-0000-0000-000000001201', 'AUD-001', 'SN-MIXER-001', 'Digital Mixing Console', '48-channel digital mixing console', 'Yamaha', 'CL5', 'available', 'excellent', '2023-01-15', 35000.00, 'USD'),
+('00000000-0000-0000-0000-000000001302', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001101', '00000000-0000-0000-0000-000000001201', 'AUD-002', 'SN-SPEAKER-001', 'Line Array Speaker System', '12-element line array system', 'L-Acoustics', 'K2', 'available', 'good', '2022-06-01', 120000.00, 'USD'),
+('00000000-0000-0000-0000-000000001303', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001102', '00000000-0000-0000-0000-000000001201', 'VID-001', 'SN-LED-001', 'LED Video Wall', '4K LED video wall panels (50 panels)', 'ROE', 'Black Pearl', 'available', 'excellent', '2023-03-01', 150000.00, 'USD'),
+('00000000-0000-0000-0000-000000001304', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001102', '00000000-0000-0000-0000-000000001202', 'VID-002', 'SN-PROJ-001', 'Laser Projector', '20K lumen laser projector', 'Panasonic', 'PT-RZ21K', 'checked_out', 'good', '2022-09-15', 45000.00, 'USD'),
+('00000000-0000-0000-0000-000000001305', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001103', '00000000-0000-0000-0000-000000001201', 'LGT-001', 'SN-MOVING-001', 'Moving Head Lights', 'Beam/spot/wash moving head fixtures (24 units)', 'Robe', 'MegaPointe', 'available', 'excellent', '2023-02-01', 96000.00, 'USD'),
+('00000000-0000-0000-0000-000000001306', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001103', '00000000-0000-0000-0000-000000001201', 'LGT-002', 'SN-CONSOLE-001', 'Lighting Console', 'Grand MA3 lighting console', 'MA Lighting', 'grandMA3 full-size', 'available', 'excellent', '2023-04-01', 65000.00, 'USD'),
+('00000000-0000-0000-0000-000000001307', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001104', '00000000-0000-0000-0000-000000001201', 'STG-001', 'SN-STAGE-001', 'Modular Stage Deck', 'Modular stage deck system (100 4x8 sections)', 'Stageline', 'SL-100', 'available', 'good', '2021-05-01', 80000.00, 'USD'),
+('00000000-0000-0000-0000-000000001308', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000001104', '00000000-0000-0000-0000-000000001202', 'STG-002', 'SN-TRUSS-001', 'Truss System', 'Aluminum box truss (500 linear feet)', 'Tyler Truss', 'GT-12', 'available', 'good', '2020-08-01', 45000.00, 'USD')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO BUDGETS
+-- ============================================================================
+
+INSERT INTO budgets (id, organization_id, project_id, name, description, budget_type, total_amount, currency, start_date, end_date, status) VALUES
+('00000000-0000-0000-0000-000000001401', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000401', 'Summer Fest 2024 Budget', 'Complete budget for Summer Music Festival', 'project', 500000.00, 'USD', '2024-01-01', '2024-08-31', 'approved'),
+('00000000-0000-0000-0000-000000001402', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000402', 'Awards Gala Budget', 'Budget for corporate awards gala', 'project', 150000.00, 'USD', '2024-09-01', '2024-12-31', 'draft'),
+('00000000-0000-0000-0000-000000001403', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000403', 'Tech Conference Budget', 'Budget for technology conference', 'project', 250000.00, 'USD', '2024-06-01', '2024-10-31', 'approved'),
+('00000000-0000-0000-0000-000000001404', '00000000-0000-0000-0000-000000000001', NULL, 'Q1 2024 Operations', 'Quarterly operational budget', 'operational', 200000.00, 'USD', '2024-01-01', '2024-03-31', 'approved')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO TALENT PROFILES
+-- ============================================================================
+
+INSERT INTO talent_profiles (id, organization_id, stage_name, legal_name, talent_type, bio, genres, email, phone, manager_name, manager_email, fee_range_min, fee_range_max, currency, tags) VALUES
+('00000000-0000-0000-0000-000000001501', '00000000-0000-0000-0000-000000000001', 'The Electric Dreams', 'Electric Dreams LLC', 'band', 'High-energy electronic rock band known for spectacular live shows', '["electronic", "rock", "alternative"]', 'booking@electricdreams.example.com', '+1-555-0501', 'Mike Manager', 'mike@talentmgmt.example.com', 25000.00, 50000.00, 'USD', '["headliner", "electronic", "festival"]'),
+('00000000-0000-0000-0000-000000001502', '00000000-0000-0000-0000-000000000001', 'DJ Pulse', 'Marcus Johnson', 'dj', 'World-renowned DJ and producer specializing in house and techno', '["house", "techno", "electronic"]', 'bookings@djpulse.example.com', '+1-555-0502', 'Sarah Agent', 'sarah@djagency.example.com', 15000.00, 35000.00, 'USD', '["dj", "electronic", "international"]'),
+('00000000-0000-0000-0000-000000001503', '00000000-0000-0000-0000-000000000001', 'Acoustic Soul', 'Jennifer Williams', 'solo_artist', 'Singer-songwriter with soulful acoustic performances', '["acoustic", "soul", "folk"]', 'jen@acousticsoul.example.com', '+1-555-0503', NULL, NULL, 5000.00, 15000.00, 'USD', '["acoustic", "intimate", "corporate"]'),
+('00000000-0000-0000-0000-000000001504', '00000000-0000-0000-0000-000000000001', 'Comedy Central Crew', 'CCC Entertainment Inc.', 'comedian', 'Stand-up comedy troupe with rotating performers', '["comedy", "stand-up", "improv"]', 'bookings@cccrew.example.com', '+1-555-0504', 'Tom Booker', 'tom@comedybookings.example.com', 8000.00, 20000.00, 'USD', '["comedy", "corporate", "entertainment"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO INVOICES
+-- ============================================================================
+
+INSERT INTO invoices (id, organization_id, company_id, contact_id, project_id, invoice_number, invoice_type, subtotal, tax_amount, discount_amount, total_amount, currency, issue_date, due_date, status, payment_terms) VALUES
+('00000000-0000-0000-0000-000000001601', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000701', '00000000-0000-0000-0000-000000000801', '00000000-0000-0000-0000-000000000403', 'INV-2024-001', 'standard', 80000.00, 6400.00, 0.00, 86400.00, 'USD', '2024-02-01', '2024-03-01', 'paid', 'Net 30'),
+('00000000-0000-0000-0000-000000001602', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000701', '00000000-0000-0000-0000-000000000802', '00000000-0000-0000-0000-000000000403', 'INV-2024-002', 'standard', 80000.00, 6400.00, 0.00, 86400.00, 'USD', '2024-03-01', '2024-03-31', 'sent', 'Net 30'),
+('00000000-0000-0000-0000-000000001603', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000703', '00000000-0000-0000-0000-000000000804', NULL, 'INV-2024-003', 'deposit', 25000.00, 2000.00, 0.00, 27000.00, 'USD', '2024-02-15', '2024-03-15', 'draft', 'Net 30')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO CAMPAIGNS
+-- ============================================================================
+
+INSERT INTO campaigns (id, organization_id, event_id, name, description, campaign_type, start_date, end_date, budget, currency, status, goals, channels, tags) VALUES
+('00000000-0000-0000-0000-000000001701', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000501', 'Summer Fest Launch Campaign', 'Multi-channel campaign to promote Summer Music Festival', 'marketing', '2024-04-01', '2024-07-14', 50000.00, 'USD', 'active', '{"ticket_sales": 15000, "social_reach": 500000, "email_opens": 25000}', '["social", "email", "paid_ads", "influencer"]', '["festival", "summer", "music"]'),
+('00000000-0000-0000-0000-000000001702', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000504', 'Awards Gala Invitation Campaign', 'Exclusive invitation campaign for awards gala', 'marketing', '2024-10-01', '2024-12-05', 15000.00, 'USD', 'draft', '{"rsvps": 500, "email_opens": 5000}', '["email", "direct_mail"]', '["corporate", "awards", "exclusive"]'),
+('00000000-0000-0000-0000-000000001703', '00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000505', 'Tech Conference Registration Drive', 'Campaign to drive conference registrations', 'marketing', '2024-06-01', '2024-09-30', 30000.00, 'USD', 'active', '{"registrations": 2000, "early_bird": 500}', '["social", "email", "content", "partnerships"]', '["tech", "conference", "b2b"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO MEDIA
+-- ============================================================================
+
+INSERT INTO media (id, organization_id, name, description, media_type, file_url, thumbnail_url, file_size, mime_type, width, height, alt_text, tags) VALUES
+('00000000-0000-0000-0000-000000001801', '00000000-0000-0000-0000-000000000001', 'Summer Fest Hero Image', 'Main promotional image for Summer Music Festival', 'image', 'https://storage.example.com/media/summer-fest-hero.jpg', 'https://storage.example.com/media/thumbs/summer-fest-hero.jpg', 2500000, 'image/jpeg', 1920, 1080, 'Summer Music Festival 2024 promotional banner', '["hero", "promotional", "festival"]'),
+('00000000-0000-0000-0000-000000001802', '00000000-0000-0000-0000-000000000001', 'Awards Gala Logo', 'Official logo for corporate awards gala', 'image', 'https://storage.example.com/media/awards-gala-logo.png', 'https://storage.example.com/media/thumbs/awards-gala-logo.png', 150000, 'image/png', 800, 800, 'Corporate Awards Gala 2024 logo', '["logo", "branding", "awards"]'),
+('00000000-0000-0000-0000-000000001803', '00000000-0000-0000-0000-000000000001', 'Tech Conference Promo Video', 'Promotional video for technology conference', 'video', 'https://storage.example.com/media/tech-conf-promo.mp4', 'https://storage.example.com/media/thumbs/tech-conf-promo.jpg', 50000000, 'video/mp4', 1920, 1080, 'Tech Conference 2024 promotional video', '["video", "promotional", "conference"]'),
+('00000000-0000-0000-0000-000000001804', '00000000-0000-0000-0000-000000000001', 'Company Brand Guidelines', 'Official brand guidelines document', 'document', 'https://storage.example.com/media/brand-guidelines.pdf', NULL, 5000000, 'application/pdf', NULL, NULL, 'ATLVS Demo brand guidelines', '["brand", "guidelines", "internal"]')
+ON CONFLICT DO NOTHING;
+
+-- ============================================================================
+-- DEMO DOCUMENTS
+-- ============================================================================
+
+INSERT INTO documents (id, organization_id, name, description, document_type, file_url, file_size, mime_type, visibility, version, tags) VALUES
+('00000000-0000-0000-0000-000000001901', '00000000-0000-0000-0000-000000000001', 'Event Production Manual', 'Comprehensive guide for event production procedures', 'manual', 'https://storage.example.com/docs/production-manual.pdf', 8500000, 'application/pdf', 'team', 3, '["manual", "production", "procedures"]'),
+('00000000-0000-0000-0000-000000001902', '00000000-0000-0000-0000-000000000001', 'Safety Protocols Guide', 'Event safety and emergency procedures', 'policy', 'https://storage.example.com/docs/safety-protocols.pdf', 2500000, 'application/pdf', 'team', 2, '["safety", "protocols", "compliance"]'),
+('00000000-0000-0000-0000-000000001903', '00000000-0000-0000-0000-000000000001', 'Vendor Contract Template', 'Standard template for vendor agreements', 'template', 'https://storage.example.com/docs/vendor-contract-template.docx', 150000, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'team', 5, '["template", "contract", "vendor"]'),
+('00000000-0000-0000-0000-000000001904', '00000000-0000-0000-0000-000000000001', 'Summer Fest Site Plan', 'Detailed site plan for Summer Music Festival', 'plan', 'https://storage.example.com/docs/summer-fest-site-plan.pdf', 15000000, 'application/pdf', 'private', 1, '["site_plan", "festival", "layout"]')
+ON CONFLICT DO NOTHING;
