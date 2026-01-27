@@ -111,8 +111,55 @@ interface SidebarItemProps {
 }
 
 function SidebarItem({ item, pathname }: SidebarItemProps) {
+  const hasSubpages = item.subpages && item.subpages.length > 0;
   const isActive = pathname === item.path || pathname.startsWith(item.path + "/");
   const Icon = item.icon;
+  const [expanded, setExpanded] = React.useState(isActive);
+
+  if (hasSubpages) {
+    return (
+      <div className="space-y-0.5">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            isActive
+              ? "bg-primary/10 text-primary"
+              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          )}
+        >
+          <Icon className="h-4 w-4 shrink-0" />
+          <span className="truncate flex-1 text-left">{item.title}</span>
+          {expanded ? (
+            <ChevronDown className="h-3 w-3 shrink-0" />
+          ) : (
+            <ChevronRight className="h-3 w-3 shrink-0" />
+          )}
+        </button>
+        {expanded && (
+          <div className="ml-4 space-y-0.5 border-l pl-3">
+            {item.subpages!.map((subpage) => {
+              const isSubActive = pathname === subpage.path;
+              return (
+                <Link
+                  key={subpage.path}
+                  href={subpage.path}
+                  className={cn(
+                    "block rounded-md px-3 py-1.5 text-sm transition-colors",
+                    isSubActive
+                      ? "bg-primary/10 text-primary font-medium"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  )}
+                >
+                  {subpage.title}
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <Link

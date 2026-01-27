@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
   Inbox,
@@ -18,6 +18,8 @@ import {
   Building2,
   Activity,
   RefreshCw,
+  Check,
+  Loader2,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/lib/i18n";
@@ -32,16 +34,68 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useUser } from "@/hooks/use-supabase";
+import { useNotifications } from "@/hooks/use-notifications";
+import { useInbox } from "@/hooks/use-inbox";
+import { useUIStore } from "@/stores/ui-store";
+import { useSupabase } from "@/hooks/use-supabase";
 
 export function TopBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguageStore();
   const [mounted, setMounted] = React.useState(false);
+  const { setCommandPaletteOpen } = useUIStore();
+  const supabase = useSupabase();
+
+  // Live data hooks
+  const { user, loading: userLoading } = useUser();
+  const { 
+    notifications, 
+    unreadCount: notificationUnreadCount, 
+    loading: notificationsLoading,
+    markAsRead: markNotificationRead,
+    markAllAsRead: markAllNotificationsRead,
+  } = useNotifications({ limit: 5 });
+  const { 
+    items: inboxItems, 
+    unreadCount: inboxUnreadCount, 
+    loading: inboxLoading,
+  } = useInbox({ limit: 5 });
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  const getUserInitials = () => {
+    if (!user?.user_metadata?.full_name) return "U";
+    const names = user.user_metadata.full_name.split(" ");
+    return names.map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
+  };
+
+  const getUserDisplayName = () => {
+    return user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
+  };
+
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "just now";
+    if (diffMins < 60) return `${diffMins} min ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  };
 
   const breadcrumbs = React.useMemo(() => {
     const paths = pathname.split("/").filter(Boolean);
@@ -55,7 +109,7 @@ export function TopBar() {
   return (
     <header className="fixed top-0 z-40 flex h-14 w-full items-center border-b bg-background px-4">
       <div className="flex items-center gap-2">
-        <Link href="/dashboard" className="flex items-center gap-2">
+        <Link href="/core/dashboard" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
             A
           </div>
@@ -86,16 +140,23 @@ export function TopBar() {
       <div className="ml-auto flex items-center gap-1">
         <Button
           variant="outline"
-          className="hidden h-9 w-64 justify-start text-muted-foreground lg:flex"
+          className="relative hidden h-9 w-64 items-center gap-2 overflow-hidden pl-3 pr-10 text-muted-foreground lg:flex"
+          onClick={() => setCommandPaletteOpen(true)}
         >
           <Search className="mr-2 h-4 w-4" />
-          <span>Search or type a command...</span>
-          <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-            <span className="text-xs">⌘</span>K
+          <span className="flex-1 truncate text-left">Search or type a command...</span>
+          <kbd className="pointer-events-none absolute right-2 top-1/2 inline-flex h-5 -translate-y-1/2 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <span className="text-xs">⌘</span>
+            <span className="text-xs">K</span>
           </kbd>
         </Button>
 
-        <Button variant="ghost" size="icon" className="lg:hidden">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="lg:hidden"
+          onClick={() => setCommandPaletteOpen(true)}
+        >
           <Search className="h-5 w-5" />
         </Button>
 
@@ -103,43 +164,71 @@ export function TopBar() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
-              <Badge
-                variant="destructive"
-                className="absolute -right-1 -top-1 h-5 min-w-5 px-1"
-              >
-                3
-              </Badge>
+              {notificationUnreadCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -right-1 -top-1 h-5 min-w-5 px-1"
+                >
+                  {notificationUnreadCount > 99 ? "99+" : notificationUnreadCount}
+                </Badge>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+            <div className="flex items-center justify-between px-2">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              {notificationUnreadCount > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto py-1 px-2 text-xs"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    markAllNotificationsRead();
+                  }}
+                >
+                  <Check className="mr-1 h-3 w-3" />
+                  Mark all read
+                </Button>
+              )}
+            </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <div className="flex flex-col gap-1">
-                <span className="font-medium">Task assigned to you</span>
-                <span className="text-xs text-muted-foreground">
-                  Review Q4 budget proposal - 2 min ago
-                </span>
+            {notificationsLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-4 w-4 animate-spin" />
               </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <div className="flex flex-col gap-1">
-                <span className="font-medium">New comment on project</span>
-                <span className="text-xs text-muted-foreground">
-                  Summer Festival 2024 - 15 min ago
-                </span>
+            ) : notifications.length === 0 ? (
+              <div className="py-4 text-center text-sm text-muted-foreground">
+                No notifications
               </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <div className="flex flex-col gap-1">
-                <span className="font-medium">Approval required</span>
-                <span className="text-xs text-muted-foreground">
-                  Equipment purchase request - 1 hour ago
-                </span>
-              </div>
-            </DropdownMenuItem>
+            ) : (
+              notifications.map((notification) => (
+                <DropdownMenuItem
+                  key={notification.id}
+                  className={notification.read ? "opacity-60" : ""}
+                  onClick={() => {
+                    if (!notification.read) {
+                      markNotificationRead(notification.id);
+                    }
+                    if (notification.actionUrl) {
+                      router.push(notification.actionUrl);
+                    }
+                  }}
+                >
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">{notification.title}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {notification.message} - {formatTimeAgo(notification.createdAt)}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              ))
+            )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="justify-center">
+            <DropdownMenuItem 
+              className="justify-center"
+              onClick={() => router.push("/account/history")}
+            >
               View all notifications
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -149,21 +238,64 @@ export function TopBar() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
               <Inbox className="h-5 w-5" />
-              <Badge
-                variant="secondary"
-                className="absolute -right-1 -top-1 h-5 min-w-5 px-1"
-              >
-                5
-              </Badge>
+              {inboxUnreadCount > 0 && (
+                <Badge
+                  variant="secondary"
+                  className="absolute -right-1 -top-1 h-5 min-w-5 px-1"
+                >
+                  {inboxUnreadCount > 99 ? "99+" : inboxUnreadCount}
+                </Badge>
+              )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel>Inbox</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Messages</DropdownMenuItem>
-            <DropdownMenuItem>Approvals pending</DropdownMenuItem>
-            <DropdownMenuItem>Review requests</DropdownMenuItem>
-            <DropdownMenuItem>Mentions</DropdownMenuItem>
+            {inboxLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-4 w-4 animate-spin" />
+              </div>
+            ) : inboxItems.length === 0 ? (
+              <div className="py-4 text-center text-sm text-muted-foreground">
+                Your inbox is empty
+              </div>
+            ) : (
+              inboxItems.map((item) => (
+                <DropdownMenuItem
+                  key={item.id}
+                  className={item.read ? "opacity-60" : ""}
+                  onClick={() => {
+                    if (item.actionUrl) {
+                      router.push(item.actionUrl);
+                    }
+                  }}
+                >
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-[10px] px-1 py-0">
+                        {item.type}
+                      </Badge>
+                      <span className="font-medium text-sm truncate">{item.title}</span>
+                    </div>
+                    {item.description && (
+                      <span className="text-xs text-muted-foreground truncate">
+                        {item.description}
+                      </span>
+                    )}
+                    <span className="text-xs text-muted-foreground">
+                      {item.sender?.name && `${item.sender.name} • `}{formatTimeAgo(item.createdAt)}
+                    </span>
+                  </div>
+                </DropdownMenuItem>
+              ))
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="justify-center"
+              onClick={() => router.push("/account/support")}
+            >
+              View all messages
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -176,11 +308,21 @@ export function TopBar() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Settings</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Workspace settings</DropdownMenuItem>
-            <DropdownMenuItem>Integrations</DropdownMenuItem>
-            <DropdownMenuItem>API keys</DropdownMenuItem>
-            <DropdownMenuItem>Webhooks</DropdownMenuItem>
-            <DropdownMenuItem>Import/Export</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/organization")}>
+              Workspace settings
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/platform")}>
+              Integrations
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/platform")}>
+              API keys
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/platform")}>
+              Webhooks
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/platform")}>
+              Import/Export
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -193,12 +335,24 @@ export function TopBar() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Support</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Documentation</DropdownMenuItem>
-            <DropdownMenuItem>Video tutorials</DropdownMenuItem>
-            <DropdownMenuItem>Contact support</DropdownMenuItem>
-            <DropdownMenuItem>Report bug</DropdownMenuItem>
-            <DropdownMenuItem>Feature request</DropdownMenuItem>
-            <DropdownMenuItem>System status</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/resources")}>
+              Documentation
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/resources")}>
+              Video tutorials
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/support")}>
+              Contact support
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/support/tickets?type=bug")}>
+              Report bug
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/support/tickets?type=feature")}>
+              Feature request
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/support")}>
+              System status
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -242,47 +396,54 @@ export function TopBar() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2 pl-2 pr-3">
               <Avatar className="h-7 w-7">
-                <AvatarImage src="/avatars/user.png" alt="User" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarImage 
+                  src={user?.user_metadata?.avatar_url || "/avatars/user.png"} 
+                  alt={getUserDisplayName()} 
+                />
+                <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               <span className="hidden text-sm font-medium md:inline-block">
-                John Doe
+                {userLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  getUserDisplayName()
+                )}
               </span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">John Doe</p>
+                <p className="text-sm font-medium">{getUserDisplayName()}</p>
                 <p className="text-xs text-muted-foreground">
-                  john@example.com
+                  {user?.email || ""}
                 </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/profile")}>
               <User className="mr-2 h-4 w-4" />
               View profile
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/organization")}>
               <Settings className="mr-2 h-4 w-4" />
               Account settings
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/history")}>
               <Activity className="mr-2 h-4 w-4" />
               Activity log
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/organization")}>
               <Building2 className="mr-2 h-4 w-4" />
               Switch organization
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/account/profile")}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Preferences
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
             </DropdownMenuItem>

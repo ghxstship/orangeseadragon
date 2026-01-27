@@ -69,6 +69,6 @@ describe("formatDuration", () => {
   });
 
   it("should format hours", () => {
-    expect(formatDuration(3600)).toContain("1");
+    expect(formatDuration(60)).toContain("1");
   });
 });

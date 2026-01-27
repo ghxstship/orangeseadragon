@@ -12,6 +12,7 @@ import {
   X,
   Settings,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,13 +30,19 @@ import { useUIStore } from "@/stores/ui-store";
 
 type NotificationType = "info" | "success" | "warning" | "error";
 
-interface Notification {
+interface ApiNotification {
   id: string;
   type: NotificationType;
   title: string;
   message: string;
-  timestamp: Date;
+  timestamp: string;
   read: boolean;
+  action_url?: string;
+  action_label?: string;
+}
+
+interface Notification extends Omit<ApiNotification, "timestamp" | "action_url" | "action_label"> {
+  timestamp: Date;
   actionUrl?: string;
   actionLabel?: string;
 }
@@ -54,54 +61,18 @@ const notificationColors: Record<NotificationType, string> = {
   error: "text-red-500 bg-red-50 dark:bg-red-950",
 };
 
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "info",
-    title: "New task assigned",
-    message: "You have been assigned to 'Review Q4 Budget Report'",
-    timestamp: new Date(Date.now() - 1000 * 60 * 5),
-    read: false,
-    actionUrl: "/tasks",
-    actionLabel: "View Task",
-  },
-  {
-    id: "2",
-    type: "success",
-    title: "Project completed",
-    message: "Website Redesign project has been marked as complete",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30),
-    read: false,
-  },
-  {
-    id: "3",
-    type: "warning",
-    title: "Deadline approaching",
-    message: "Marketing Campaign deadline is in 2 days",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-    read: true,
-    actionUrl: "/projects",
-    actionLabel: "View Project",
-  },
-  {
-    id: "4",
-    type: "error",
-    title: "Payment failed",
-    message: "Your subscription payment could not be processed",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    read: true,
-    actionUrl: "/account/billing",
-    actionLabel: "Update Payment",
-  },
-  {
-    id: "5",
-    type: "info",
-    title: "Team member joined",
-    message: "Sarah Johnson has joined the Design team",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48),
-    read: true,
-  },
-];
+function mapApiNotification(notification: ApiNotification): Notification {
+  return {
+    id: notification.id,
+    type: notification.type,
+    title: notification.title,
+    message: notification.message,
+    timestamp: new Date(notification.timestamp),
+    read: notification.read,
+    actionUrl: notification.action_url,
+    actionLabel: notification.action_label,
+  };
+}
 
 function NotificationItem({
   notification,
@@ -177,7 +148,27 @@ function NotificationItem({
 
 export function NotificationCenter() {
   const { notificationsPanelOpen, setNotificationsPanelOpen } = useUIStore();
-  const [notifications, setNotifications] = React.useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    async function fetchNotifications() {
+      try {
+        const response = await fetch("/api/v1/notifications");
+        if (response.ok) {
+          const result = await response.json();
+          const data: ApiNotification[] = result.data || [];
+          setNotifications(data.map(mapApiNotification));
+        }
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchNotifications();
+  }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const unreadNotifications = notifications.filter((n) => !n.read);
@@ -250,7 +241,11 @@ export function NotificationCenter() {
 
           <ScrollArea className="flex-1">
             <TabsContent value="all" className="m-0">
-              {notifications.length === 0 ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Bell className="h-12 w-12 text-muted-foreground/50 mb-4" />
                   <p className="text-sm font-medium">No notifications</p>
@@ -271,7 +266,11 @@ export function NotificationCenter() {
             </TabsContent>
 
             <TabsContent value="unread" className="m-0">
-              {unreadNotifications.length === 0 ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : unreadNotifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <CheckCheck className="h-12 w-12 text-muted-foreground/50 mb-4" />
                   <p className="text-sm font-medium">All caught up!</p>
@@ -292,7 +291,11 @@ export function NotificationCenter() {
             </TabsContent>
 
             <TabsContent value="read" className="m-0">
-              {readNotifications.length === 0 ? (
+              {loading ? (
+                <div className="flex items-center justify-center py-12">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : readNotifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <Bell className="h-12 w-12 text-muted-foreground/50 mb-4" />
                   <p className="text-sm font-medium">No read notifications</p>

@@ -16,16 +16,32 @@ import { cn } from "@/lib/utils";
 import type { ViewType, DataViewState } from "@/lib/data-view-engine/hooks";
 import type {
   TableViewConfig,
-  ListViewConfig,
-  GridViewConfig,
+  TableColumnDefinition,
   KanbanViewConfig,
   CalendarViewConfig,
   TimelineViewConfig,
-  GanttViewConfig,
   MapViewConfig,
-  ActionConfig,
+  ActionDefinition,
+  ListViewConfig,
+  GridViewConfig,
+  GanttViewConfig,
   ColumnFormat,
-} from "@/config/pages/types";
+} from "@/lib/schema/types";
+
+type ActionConfig = ActionDefinition;
+
+// Helper to normalize column definitions
+function normalizeColumn(col: string | TableColumnDefinition): TableColumnDefinition & { label: string; sortable: boolean; visible: boolean; format?: ColumnFormat } {
+  if (typeof col === 'string') {
+    return { field: col, label: col, sortable: true, visible: true };
+  }
+  return { 
+    ...col, 
+    label: col.field, 
+    sortable: true, 
+    visible: true 
+  };
+}
 
 export interface DataViewProps<T extends object> {
   data: T[];
@@ -49,6 +65,12 @@ export interface DataViewProps<T extends object> {
   emptyMessage?: string;
 }
 
+function haveSameIds(a: string[], b: string[]) {
+  if (a.length !== b.length) return false;
+  const comparison = new Set(b);
+  return a.every((id) => comparison.has(id));
+}
+
 export function DataView<T extends object>({
   data,
   viewType,
@@ -69,9 +91,15 @@ export function DataView<T extends object>({
 
   const handleSelectionChange = React.useCallback(
     (selectedRows: R[]) => {
-      onStateChange({ selectedIds: selectedRows.map(typedGetRowId) });
+      const nextSelectedIds = selectedRows.map(typedGetRowId);
+
+      if (haveSameIds(state.selectedIds, nextSelectedIds)) {
+        return;
+      }
+
+      onStateChange({ selectedIds: nextSelectedIds });
     },
-    [onStateChange, typedGetRowId]
+    [onStateChange, typedGetRowId, state.selectedIds]
   );
 
   switch (viewType) {
@@ -256,6 +284,7 @@ function TableRenderer<T extends Record<string, unknown>>({
     if (!config?.columns) return [];
 
     return config.columns
+      .map((col) => normalizeColumn(col))
       .filter((col) => col.visible !== false)
       .filter((col) =>
         state.visibleColumns.length === 0 ||
@@ -276,10 +305,10 @@ function TableRenderer<T extends Record<string, unknown>>({
     if (!rowActions) return undefined;
 
     return rowActions.map((action) => ({
-      id: action.id,
+      id: action.key,
       label: action.label,
       onClick: (row: T) => {
-        console.log(`Action ${action.id} on row`, row);
+        console.log(`Action ${action.key} on row`, row);
       },
       variant: action.variant === "destructive" ? "destructive" : "default",
     }));
@@ -289,9 +318,9 @@ function TableRenderer<T extends Record<string, unknown>>({
     <DataTable
       columns={columns}
       data={data}
-      pageSize={config?.defaultPageSize ?? 10}
-      pageSizeOptions={config?.pageSizeOptions ?? [10, 20, 50, 100]}
-      selectable={config?.selectable ?? false}
+      pageSize={10}
+      pageSizeOptions={[10, 20, 50, 100]}
+      selectable={config?.features?.selection ?? false}
       onSelectionChange={onSelectionChange}
       onRowClick={onRowClick}
       rowActions={tableRowActions}
@@ -351,7 +380,7 @@ function ListRenderer<T extends Record<string, unknown>>({
       })),
       actions: rowActions?.map((action) => ({
         label: action.label,
-        onClick: () => console.log(`Action ${action.id} on item`, item),
+        onClick: () => console.log(`Action ${action.key} on item`, item),
         destructive: action.variant === "destructive",
       })),
       data: item,
@@ -532,12 +561,12 @@ function KanbanRenderer<T extends Record<string, unknown>>({
   const columns = React.useMemo<KanbanColumn<T & { id: string }>[]>(() => {
     if (!config) return [];
     return config.columns.map((col) => ({
-      id: col.id,
+      id: col.value,
       title: col.label,
       color: col.color,
       limit: col.limit,
       items: data
-        .filter((item) => item[config.statusField] === col.value)
+        .filter((item) => item[config.columnField] === col.value)
         .map((item) => ({ ...item, id: getRowId(item) })),
     }));
   }, [config, data, getRowId]);
@@ -550,6 +579,9 @@ function KanbanRenderer<T extends Record<string, unknown>>({
     );
   }
 
+  const cardTitle = config.card?.title;
+  const cardSubtitle = config.card?.subtitle;
+
   return (
     <KanbanBoard
       columns={columns}
@@ -557,11 +589,15 @@ function KanbanRenderer<T extends Record<string, unknown>>({
       renderCard={(item) => (
         <Card className="p-3">
           <p className="font-medium text-sm">
-            {String(item[config.cardTitleField] ?? "")}
+            {typeof cardTitle === 'function' 
+              ? cardTitle(item) 
+              : String(item[cardTitle as string] ?? "")}
           </p>
-          {config.cardSubtitleField && (
+          {cardSubtitle && (
             <p className="text-xs text-muted-foreground">
-              {String(item[config.cardSubtitleField] ?? "")}
+              {typeof cardSubtitle === 'function'
+                ? cardSubtitle(item)
+                : String(item[cardSubtitle as string] ?? "")}
             </p>
           )}
         </Card>
@@ -637,7 +673,7 @@ function TimelineRenderer<T extends Record<string, unknown>>({
       start: item[config.startField] as Date | string,
       end: item[config.endField] as Date | string,
       group: config.groupField ? String(item[config.groupField]) : undefined,
-      color: config.colorField ? String(item[config.colorField]) : undefined,
+      color: undefined,
       data: item,
     }));
   }, [data, config, getRowId]);
