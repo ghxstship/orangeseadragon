@@ -97,6 +97,40 @@ export { dealSchema } from './deal';
 export { proposalSchema } from './proposal';
 export { contractSchema } from './contract';
 export { pipelineSchema } from './pipeline';
+export { leadScoreSchema } from './leadScore';
+export { campaignSchema } from './campaign';
+
+// New Phase 1-3 schemas
+export { registrationSchema } from './registration';
+export { ticketTypeSchema } from './ticketType';
+export { talentSchema } from './talent';
+export { partnerSchema } from './partner';
+export { issuedCredentialSchema } from './issuedCredential';
+export { chartOfAccountsSchema } from './chartOfAccounts';
+export { journalEntrySchema } from './journalEntry';
+export { bankAccountSchema } from './bankAccount';
+export { onboardingTemplateSchema } from './onboardingTemplate';
+export { leaveRequestSchema } from './leaveRequest';
+export { purchaseOrderSchema } from './purchaseOrder';
+export { supportTicketSchema } from './supportTicket';
+
+// Additional schema exports
+export { eventSessionSchema } from './eventSession';
+export { offboardingTemplateSchema } from './offboardingTemplate';
+export { emailSequenceSchema } from './emailSequence';
+export { compliancePolicySchema } from './compliancePolicy';
+export { formTemplateSchema } from './formTemplate';
+export { hospitalityRequestSchema } from './hospitalityRequest';
+export { performanceReviewSchema } from './performanceReview';
+export { trainingCourseSchema } from './trainingCourse';
+export { landingPageSchema } from './landingPage';
+export { subscriberSchema } from './subscriber';
+export { payrollRunSchema } from './payrollRun';
+export { projectResourceSchema } from './projectResource';
+export { timeEntrySchema } from './timeEntry';
+export { exhibitorSchema } from './exhibitor';
+export { networkingSessionSchema } from './networkingSession';
+export { serviceTicketSchema } from './serviceTicket';
 
 // Re-export the canonical EntitySchema type from schema/types
 export type { EntitySchema } from '@/lib/schema/types';
@@ -146,6 +180,40 @@ import { dealSchema } from './deal';
 import { proposalSchema } from './proposal';
 import { contractSchema } from './contract';
 import { pipelineSchema } from './pipeline';
+
+// Import new Phase 1-3 schemas
+import { registrationSchema } from './registration';
+import { ticketTypeSchema } from './ticketType';
+import { talentSchema } from './talent';
+import { partnerSchema } from './partner';
+import { issuedCredentialSchema } from './issuedCredential';
+import { chartOfAccountsSchema } from './chartOfAccounts';
+import { journalEntrySchema } from './journalEntry';
+import { bankAccountSchema } from './bankAccount';
+import { onboardingTemplateSchema } from './onboardingTemplate';
+import { leaveRequestSchema } from './leaveRequest';
+import { purchaseOrderSchema } from './purchaseOrder';
+import { supportTicketSchema } from './supportTicket';
+import { leadScoreSchema } from './leadScore';
+import { campaignSchema } from './campaign';
+
+// Import additional schemas
+import { eventSessionSchema } from './eventSession';
+import { offboardingTemplateSchema } from './offboardingTemplate';
+import { emailSequenceSchema } from './emailSequence';
+import { compliancePolicySchema } from './compliancePolicy';
+import { formTemplateSchema } from './formTemplate';
+import { hospitalityRequestSchema } from './hospitalityRequest';
+import { performanceReviewSchema } from './performanceReview';
+import { trainingCourseSchema } from './trainingCourse';
+import { landingPageSchema } from './landingPage';
+import { subscriberSchema } from './subscriber';
+import { payrollRunSchema } from './payrollRun';
+import { projectResourceSchema } from './projectResource';
+import { timeEntrySchema } from './timeEntry';
+import { exhibitorSchema } from './exhibitor';
+import { networkingSessionSchema } from './networkingSession';
+import { serviceTicketSchema } from './serviceTicket';
 
 // Helper functions for schema operations
 export function getSchema(entityName: string) {
@@ -284,6 +352,90 @@ export function getSchema(entityName: string) {
     pipeline: pipelineSchema,
     pipelines: pipelineSchema,
     'pipeline_stages': pipelineSchema,
+    // Phase 1-3 new schemas
+    registration: registrationSchema,
+    registrations: registrationSchema,
+    ticketType: ticketTypeSchema,
+    'ticket-types': ticketTypeSchema,
+    talent: talentSchema,
+    partner: partnerSchema,
+    partners: partnerSchema,
+    'event-partners': partnerSchema,
+    issuedCredential: issuedCredentialSchema,
+    'issued-credentials': issuedCredentialSchema,
+    chartOfAccount: chartOfAccountsSchema,
+    'chart-of-accounts': chartOfAccountsSchema,
+    'gl-accounts': chartOfAccountsSchema,
+    journalEntry: journalEntrySchema,
+    'journal-entries': journalEntrySchema,
+    journal: journalEntrySchema,
+    bankAccount: bankAccountSchema,
+    'bank-accounts': bankAccountSchema,
+    banking: bankAccountSchema,
+    onboardingTemplate: onboardingTemplateSchema,
+    'onboarding-templates': onboardingTemplateSchema,
+    leaveRequest: leaveRequestSchema,
+    'leave-requests': leaveRequestSchema,
+    leave: leaveRequestSchema,
+    purchaseOrder: purchaseOrderSchema,
+    'purchase-orders': purchaseOrderSchema,
+    supportTicket: supportTicketSchema,
+    'support-tickets': supportTicketSchema,
+    support: supportTicketSchema,
+    leadScore: leadScoreSchema,
+    'lead-scores': leadScoreSchema,
+    'lead-scoring': leadScoreSchema,
+    campaign: campaignSchema,
+    campaigns: campaignSchema,
+    // Additional schemas
+    eventSession: eventSessionSchema,
+    'event-sessions': eventSessionSchema,
+    sessions: eventSessionSchema,
+    offboardingTemplate: offboardingTemplateSchema,
+    'offboarding-templates': offboardingTemplateSchema,
+    offboarding: offboardingTemplateSchema,
+    emailSequence: emailSequenceSchema,
+    'email-sequences': emailSequenceSchema,
+    sequences: emailSequenceSchema,
+    // Compliance, forms, hospitality
+    compliancePolicy: compliancePolicySchema,
+    'compliance-policies': compliancePolicySchema,
+    formTemplate: formTemplateSchema,
+    'form-templates': formTemplateSchema,
+    forms: formTemplateSchema,
+    hospitalityRequest: hospitalityRequestSchema,
+    'hospitality-requests': hospitalityRequestSchema,
+    hospitality: hospitalityRequestSchema,
+    // Performance, training, landing pages, subscribers
+    performanceReview: performanceReviewSchema,
+    'performance-reviews': performanceReviewSchema,
+    performance: performanceReviewSchema,
+    trainingCourse: trainingCourseSchema,
+    'training-courses': trainingCourseSchema,
+    training: trainingCourseSchema,
+    landingPage: landingPageSchema,
+    'landing-pages': landingPageSchema,
+    subscriber: subscriberSchema,
+    subscribers: subscriberSchema,
+    // Payroll, resources, time tracking
+    payrollRun: payrollRunSchema,
+    'payroll-runs': payrollRunSchema,
+    payroll: payrollRunSchema,
+    projectResource: projectResourceSchema,
+    'project-resources': projectResourceSchema,
+    resources: projectResourceSchema,
+    timeEntry: timeEntrySchema,
+    'time-entries': timeEntrySchema,
+    time: timeEntrySchema,
+    // Exhibitors, networking, service
+    exhibitor: exhibitorSchema,
+    exhibitors: exhibitorSchema,
+    networkingSession: networkingSessionSchema,
+    'networking-sessions': networkingSessionSchema,
+    networking: networkingSessionSchema,
+    serviceTicket: serviceTicketSchema,
+    'service-tickets': serviceTicketSchema,
+    service: serviceTicketSchema,
   };
 
   return schemas[entityName] || null;

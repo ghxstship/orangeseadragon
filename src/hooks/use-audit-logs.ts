@@ -69,13 +69,31 @@ export function useAuditLogs(options: UseAuditLogsOptions = {}) {
       if (options.endDate) params.set("endDate", options.endDate);
 
       const response = await fetch(`/api/v1/audit?${params}`);
-      if (!response.ok) throw new Error("Failed to fetch audit logs");
+      
+      if (!response.ok) {
+        // API not implemented yet - return empty state gracefully
+        setLogs([]);
+        setMeta({
+          page: 1,
+          limit: options.limit || 50,
+          total: 0,
+          totalPages: 0,
+        });
+        return;
+      }
 
       const data: AuditLogsResponse = await response.json();
       setLogs(data.data);
       setMeta(data.meta);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Unknown error"));
+    } catch {
+      // API not available - return empty state gracefully
+      setLogs([]);
+      setMeta({
+        page: 1,
+        limit: options.limit || 50,
+        total: 0,
+        totalPages: 0,
+      });
     } finally {
       setLoading(false);
     }

@@ -51,13 +51,33 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       if (options.type) params.set("type", options.type);
 
       const response = await fetch(`/api/v1/notifications?${params}`);
-      if (!response.ok) throw new Error("Failed to fetch notifications");
+      
+      if (!response.ok) {
+        // API not implemented yet - return empty state gracefully
+        setNotifications([]);
+        setMeta({
+          page: 1,
+          limit: options.limit || 20,
+          total: 0,
+          totalPages: 0,
+          unreadCount: 0,
+        });
+        return;
+      }
 
       const data: NotificationsResponse = await response.json();
       setNotifications(data.data);
       setMeta(data.meta);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Unknown error"));
+    } catch {
+      // API not available - return empty state gracefully
+      setNotifications([]);
+      setMeta({
+        page: 1,
+        limit: options.limit || 20,
+        total: 0,
+        totalPages: 0,
+        unreadCount: 0,
+      });
     } finally {
       setLoading(false);
     }

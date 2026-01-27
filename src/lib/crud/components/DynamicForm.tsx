@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { EntitySchema } from '@/lib/schema/types';
 import { FieldRenderer } from '../../components/fields';
+import { Button } from '@/components/ui/button';
 
 interface DynamicFormProps {
   schema: EntitySchema;
@@ -125,10 +126,10 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
     return (
       <div key={section.key} className="space-y-4">
         {section.title && (
-          <h3 className="text-lg font-medium text-gray-900">{section.title}</h3>
+          <h3 className="text-lg font-medium text-foreground">{section.title}</h3>
         )}
         {section.description && (
-          <p className="text-sm text-gray-600">{section.description}</p>
+          <p className="text-sm text-muted-foreground">{section.description}</p>
         )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {fields}
@@ -141,21 +142,20 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
     <form onSubmit={handleSubmit} className="space-y-8">
       {schema.layouts.form.sections.map(renderSection)}
 
-      <div className="flex justify-end space-x-4 pt-6 border-t">
-        <button
+      <div className="flex justify-end space-x-4 pt-6 border-t border-border">
+        <Button
           type="button"
+          variant="outline"
           onClick={() => window.history.back()}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
         >
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
         >
           {isSubmitting ? 'Saving...' : mode === 'create' ? 'Create' : 'Update'}
-        </button>
+        </Button>
       </div>
     </form>
   );

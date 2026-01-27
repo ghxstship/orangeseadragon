@@ -8,10 +8,10 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: { entity: string; id: string } }
+    { params }: { params: Promise<{ entity: string; id: string }> }
 ) {
     const supabase = await createClient();
-    const { entity, id } = params;
+    const { entity, id } = await params;
 
     const { data, error } = await (supabase as any)
         .from(entity)
@@ -28,10 +28,10 @@ export async function GET(
 
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { entity: string; id: string } }
+    { params }: { params: Promise<{ entity: string; id: string }> }
 ) {
     const supabase = await createClient();
-    const { entity, id } = params;
+    const { entity, id } = await params;
 
     try {
         const body = await request.json();
@@ -54,10 +54,10 @@ export async function PATCH(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { entity: string; id: string } }
+    { params }: { params: Promise<{ entity: string; id: string }> }
 ) {
     const supabase = await createClient();
-    const { entity, id } = params;
+    const { entity, id } = await params;
 
     const { error } = await (supabase as any)
         .from(entity)

@@ -8,10 +8,10 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: { entity: string } }
+    { params }: { params: Promise<{ entity: string }> }
 ) {
     const supabase = await createClient();
-    const { entity } = params;
+    const { entity } = await params;
 
     // Use the entity name as the table name
     let query = (supabase as any).from(entity).select('*', { count: 'exact' });
@@ -80,21 +80,25 @@ export async function GET(
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { entity: string } }
+    { params }: { params: Promise<{ entity: string }> }
 ) {
     const supabase = await createClient();
-    const { entity } = params;
+    const { entity } = await params;
 
     try {
         const body = await request.json();
+        console.log(`[API POST] Entity: ${entity}, Body:`, JSON.stringify(body, null, 2));
+        
         const { data, error } = await (supabase as any).from(entity).insert(body).select().single();
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            console.error(`[API POST] Supabase error for ${entity}:`, error);
+            return NextResponse.json({ error: error.message, details: error }, { status: 500 });
         }
 
         return NextResponse.json(data);
     } catch (e) {
+        console.error(`[API POST] Exception for ${entity}:`, e);
         return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
     }
 }

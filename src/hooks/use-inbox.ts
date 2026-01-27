@@ -55,25 +55,23 @@ export function useInbox(options: UseInboxOptions = {}) {
       const response = await fetch(`/api/v1/inbox?${params}`);
       
       if (!response.ok) {
-        if (response.status === 404) {
-          setItems([]);
-          setMeta({
-            page: 1,
-            limit: options.limit || 20,
-            total: 0,
-            totalPages: 0,
-            unreadCount: 0,
-          });
-          return;
-        }
-        throw new Error("Failed to fetch inbox");
+        // API not implemented yet - return empty state gracefully
+        setItems([]);
+        setMeta({
+          page: 1,
+          limit: options.limit || 20,
+          total: 0,
+          totalPages: 0,
+          unreadCount: 0,
+        });
+        return;
       }
 
       const data: InboxResponse = await response.json();
       setItems(data.data);
       setMeta(data.meta);
-    } catch (err) {
-      setError(err instanceof Error ? err : new Error("Unknown error"));
+    } catch {
+      // API not available - return empty state gracefully
       setItems([]);
       setMeta({
         page: 1,

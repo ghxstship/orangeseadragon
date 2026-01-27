@@ -100,7 +100,11 @@ export function TopBar() {
   const breadcrumbs = React.useMemo(() => {
     const paths = pathname.split("/").filter(Boolean);
     return paths.map((path, index) => ({
-      label: path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, " "),
+      label: path
+        .replace(/-/g, " ")
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "),
       href: "/" + paths.slice(0, index + 1).join("/"),
       isLast: index === paths.length - 1,
     }));

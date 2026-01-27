@@ -17,7 +17,7 @@ export function TabRenderer({ schema, tabConfig, record, onRefresh }: TabRendere
   if (!tabConfig) {
     return (
       <div className="flex items-center justify-center p-12">
-        <p className="text-gray-500">Tab configuration not found</p>
+        <p className="text-muted-foreground">Tab configuration not found</p>
       </div>
     );
   }
@@ -56,7 +56,7 @@ export function TabRenderer({ schema, tabConfig, record, onRefresh }: TabRendere
     default:
       return (
         <div className="flex items-center justify-center p-12">
-          <p className="text-gray-500">Unknown tab type: {content.type}</p>
+          <p className="text-muted-foreground">Unknown tab type: {content.type}</p>
         </div>
       );
   }
@@ -121,7 +121,7 @@ function ActivityTab({ record }: { record: any }) {
   return (
     <div className="p-6">
       <h3 className="text-lg font-medium mb-4">Activity</h3>
-      <p className="text-gray-500">Activity timeline for {record.id}</p>
+      <p className="text-muted-foreground">Activity timeline for {record.id}</p>
       {/* TODO: Implement activity timeline */}
     </div>
   );
@@ -134,7 +134,7 @@ function CommentsTab({ record }: { record: any }) {
   return (
     <div className="p-6">
       <h3 className="text-lg font-medium mb-4">Comments</h3>
-      <p className="text-gray-500">Comments for {record.id}</p>
+      <p className="text-muted-foreground">Comments for {record.id}</p>
       {/* TODO: Implement comments system */}
     </div>
   );
@@ -147,7 +147,7 @@ function FilesTab({ record }: { record: any }) {
   return (
     <div className="p-6">
       <h3 className="text-lg font-medium mb-4">Files</h3>
-      <p className="text-gray-500">Files attached to {record.id}</p>
+      <p className="text-muted-foreground">Files attached to {record.id}</p>
       {/* TODO: Implement file attachments */}
     </div>
   );
@@ -174,9 +174,9 @@ function StatCard({ stat, record }: { stat: any; record: any }) {
   }
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-gray-200">
-      <div className="text-2xl font-bold text-gray-900">{value}</div>
-      <div className="text-sm text-gray-500">{stat.label}</div>
+    <div className="bg-card p-4 rounded-lg border border-border">
+      <div className="text-2xl font-bold text-foreground">{value}</div>
+      <div className="text-sm text-muted-foreground">{stat.label}</div>
     </div>
   );
 }
@@ -186,14 +186,14 @@ function StatCard({ stat, record }: { stat: any; record: any }) {
  */
 function OverviewBlock({ block, record }: { block: any; record: any }) {
   return (
-    <div className="bg-white p-6 rounded-lg border border-gray-200">
+    <div className="bg-card p-6 rounded-lg border border-border">
       <h4 className="text-lg font-medium mb-4">{block.title || block.key}</h4>
 
       {block.content.type === 'fields' && (
         <div className="space-y-4">
           {block.content.fields.map((field: string) => (
             <div key={field} className="flex justify-between">
-              <span className="text-gray-600">{field}:</span>
+              <span className="text-muted-foreground">{field}:</span>
               <span className="font-medium">{record[field] || 'N/A'}</span>
             </div>
           ))}
@@ -201,7 +201,7 @@ function OverviewBlock({ block, record }: { block: any; record: any }) {
       )}
 
       {block.content.type === 'description' && (
-        <div className="text-gray-700 whitespace-pre-wrap">
+        <div className="text-foreground whitespace-pre-wrap">
           {record[block.content.field]}
         </div>
       )}
