@@ -1,8 +1,18 @@
 
 import { createClient } from '@supabase/supabase-js';
+import { Page, expect } from '@playwright/test';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://127.0.0.1:54321';
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+export async function loginUser(page: Page, email: string, password: string) {
+    await page.goto('/login');
+    await page.waitForLoadState('networkidle');
+    await page.fill('input[type="email"]', email);
+    await page.fill('input[type="password"]', password);
+    await page.click('button[type="submit"]');
+    await expect(page).toHaveURL(/\/core\/dashboard/, { timeout: 15000 });
+}
 
 export async function createTestUser() {
     if (!supabaseServiceKey) {
