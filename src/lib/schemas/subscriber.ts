@@ -112,7 +112,7 @@ export const subscriberSchema = defineSchema({
     subtitle: (r: Record<string, unknown>) => {
       const first = r.first_name || '';
       const last = r.last_name || '';
-      return `${first} ${last}`.trim() || undefined;
+      return `${first} ${last}`.trim() || '';
     },
     badge: (r: Record<string, unknown>) => {
       const variants: Record<string, string> = {

@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const hospitalityRequestSchema = defineSchema({
   identity: {
-    name: 'hospitality_request',
+    name: 'Hospitality Request',
     namePlural: 'Hospitality Requests',
     slug: 'modules/production/hospitality',
     icon: '🍽️',

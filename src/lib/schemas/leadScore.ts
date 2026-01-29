@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const leadScoreSchema = defineSchema({
   identity: {
-    name: 'lead_score',
+    name: 'Lead Score',
     namePlural: 'Lead Scores',
     slug: 'modules/business/lead-scoring',
     icon: '📊',

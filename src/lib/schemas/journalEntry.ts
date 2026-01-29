@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const journalEntrySchema = defineSchema({
   identity: {
-    name: 'journal_entry',
+    name: 'Journal Entry',
     namePlural: 'Journal Entries',
     slug: 'modules/finance/journal',
     icon: '📝',

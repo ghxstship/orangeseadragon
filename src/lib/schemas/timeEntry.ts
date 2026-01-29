@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const timeEntrySchema = defineSchema({
   identity: {
-    name: 'time_entry',
+    name: 'Time Entry',
     namePlural: 'Time Entries',
     slug: 'modules/projects/time',
     icon: '⏱️',

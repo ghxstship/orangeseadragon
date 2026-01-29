@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const landingPageSchema = defineSchema({
   identity: {
-    name: 'landing_page',
+    name: 'Landing Page',
     namePlural: 'Landing Pages',
     slug: 'content/landing-pages',
     icon: '🖥️',

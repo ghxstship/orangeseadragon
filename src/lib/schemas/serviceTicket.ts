@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const serviceTicketSchema = defineSchema({
   identity: {
-    name: 'service_ticket',
+    name: 'Service Ticket',
     namePlural: 'Service Tickets',
     slug: 'modules/business/service',
     icon: '🎫',

@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const offboardingTemplateSchema = defineSchema({
   identity: {
-    name: 'offboarding_template',
+    name: 'Offboarding Template',
     namePlural: 'Offboarding Templates',
     slug: 'modules/workforce/offboarding/templates',
     icon: '👋',

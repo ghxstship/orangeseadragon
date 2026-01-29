@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const payrollRunSchema = defineSchema({
   identity: {
-    name: 'payroll_run',
+    name: 'Payroll Run',
     namePlural: 'Payroll Runs',
     slug: 'modules/workforce/payroll',
     icon: '💰',

@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const leaveRequestSchema = defineSchema({
   identity: {
-    name: 'leave_request',
+    name: 'Leave Request',
     namePlural: 'Leave Requests',
     slug: 'modules/workforce/leave',
     icon: '🏖️',

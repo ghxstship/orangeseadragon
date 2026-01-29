@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const bankAccountSchema = defineSchema({
   identity: {
-    name: 'bank_account',
+    name: 'Bank Account',
     namePlural: 'Bank Accounts',
     slug: 'modules/finance/banking',
     icon: '🏦',

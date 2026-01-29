@@ -650,7 +650,8 @@ export interface ActionDefinition {
     | { type: 'navigate'; path: string | ((record: any) => string) }
     | { type: 'modal'; component: string }
     | { type: 'api'; endpoint: string; method: string }
-    | { type: 'function'; fn: (record: any, context: ActionContext) => void | Promise<void> };
+    | { type: 'function'; fn: (record: any, context: ActionContext) => void | Promise<void> }
+    | { type: 'external'; url: string | ((record: any) => string) };
   
   // Feedback
   successMessage?: string;
@@ -700,6 +701,8 @@ export interface QuickStatDefinition {
     | { type: 'relation-sum'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> };
   
   format?: 'number' | 'currency' | 'percentage' | 'duration' | 'date' | 'relative';
+  prefix?: string;
+  suffix?: string;
   
   trend?: {
     compare: 'previous-period' | 'target' | { field: string };

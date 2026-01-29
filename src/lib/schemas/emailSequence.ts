@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const emailSequenceSchema = defineSchema({
   identity: {
-    name: 'email_sequence',
+    name: 'Email Sequence',
     namePlural: 'Email Sequences',
     slug: 'modules/business/sequences',
     icon: '📧',

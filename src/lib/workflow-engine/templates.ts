@@ -4,6 +4,15 @@
  */
 
 import type { WorkflowTemplate } from "./types";
+import { salesCrmTemplates } from "./templates-sales-crm";
+import { marketingTemplates } from "./templates-marketing";
+import { financeExtendedTemplates } from "./templates-finance";
+import { procurementTemplates } from "./templates-procurement";
+import { workforceExtendedTemplates } from "./templates-workforce";
+import { projectManagementExtendedTemplates } from "./templates-projects";
+import { productionExtendedTemplates } from "./templates-production";
+import { supportTemplates } from "./templates-support";
+import { complianceTemplates } from "./templates-compliance";
 
 // Project Management Templates
 export const projectManagementTemplates: WorkflowTemplate[] = [
@@ -1365,6 +1374,7 @@ export const experienceTemplates: WorkflowTemplate[] = [
 
 // Export all templates
 export const allWorkflowTemplates: WorkflowTemplate[] = [
+  // Core domain templates
   ...projectManagementTemplates,
   ...liveProductionTemplates,
   ...workforceTemplates,
@@ -1372,6 +1382,16 @@ export const allWorkflowTemplates: WorkflowTemplate[] = [
   ...financeTemplates,
   ...talentTemplates,
   ...experienceTemplates,
+  // Extended domain templates
+  ...salesCrmTemplates,
+  ...marketingTemplates,
+  ...financeExtendedTemplates,
+  ...procurementTemplates,
+  ...workforceExtendedTemplates,
+  ...projectManagementExtendedTemplates,
+  ...productionExtendedTemplates,
+  ...supportTemplates,
+  ...complianceTemplates,
 ];
 
 export function getTemplatesByCategory(category: string): WorkflowTemplate[] {

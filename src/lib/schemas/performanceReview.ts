@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const performanceReviewSchema = defineSchema({
   identity: {
-    name: 'performance_review',
+    name: 'Performance Review',
     namePlural: 'Performance Reviews',
     slug: 'modules/workforce/performance',
     icon: '📊',

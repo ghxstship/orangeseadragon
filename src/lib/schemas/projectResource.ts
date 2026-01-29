@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const projectResourceSchema = defineSchema({
   identity: {
-    name: 'project_resource',
+    name: 'Project Resource',
     namePlural: 'Project Resources',
     slug: 'modules/projects/resources',
     icon: '👥',

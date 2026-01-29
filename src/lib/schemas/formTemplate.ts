@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const formTemplateSchema = defineSchema({
   identity: {
-    name: 'form_template',
+    name: 'Form Template',
     namePlural: 'Forms',
     slug: 'content/forms',
     icon: '📝',
@@ -149,7 +149,7 @@ export const formTemplateSchema = defineSchema({
       overview: {
         stats: [
           { key: 'submissions', label: 'Submissions', value: { type: 'field', field: 'submission_count' }, format: 'number' },
-          { key: 'conversion', label: 'Conversion Rate', value: { type: 'field', field: 'conversion_rate' }, format: 'percent' },
+          { key: 'conversion', label: 'Conversion Rate', value: { type: 'field', field: 'conversion_rate' }, format: 'percentage' },
         ],
         blocks: [
           { key: 'details', title: 'Form Details', content: { type: 'fields', fields: ['name', 'description', 'form_type', 'status'] } },

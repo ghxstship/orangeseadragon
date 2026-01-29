@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const eventSessionSchema = defineSchema({
   identity: {
-    name: 'event_session',
+    name: 'Session',
     namePlural: 'Sessions',
     slug: 'modules/production/sessions',
     icon: '🎤',

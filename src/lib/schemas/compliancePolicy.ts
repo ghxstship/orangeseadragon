@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const compliancePolicySchema = defineSchema({
   identity: {
-    name: 'compliance_policy',
+    name: 'Compliance Policy',
     namePlural: 'Compliance Policies',
     slug: 'modules/operations/compliance/policies',
     icon: '📋',

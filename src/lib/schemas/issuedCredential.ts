@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const issuedCredentialSchema = defineSchema({
   identity: {
-    name: 'issued_credential',
+    name: 'Issued Credential',
     namePlural: 'Issued Credentials',
     slug: 'modules/production/credentials',
     icon: '🪪',

@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const purchaseOrderSchema = defineSchema({
   identity: {
-    name: 'purchase_order',
+    name: 'Purchase Order',
     namePlural: 'Purchase Orders',
     slug: 'modules/operations/procurement/orders',
     icon: '📦',

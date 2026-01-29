@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const ticketTypeSchema = defineSchema({
   identity: {
-    name: 'ticket_type',
+    name: 'Ticket Type',
     namePlural: 'Ticket Types',
     slug: 'modules/production/ticketing/types',
     icon: '🎟️',

@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const networkingSessionSchema = defineSchema({
   identity: {
-    name: 'networking_session',
+    name: 'Networking Session',
     namePlural: 'Networking Sessions',
     slug: 'modules/production/networking',
     icon: '🤝',

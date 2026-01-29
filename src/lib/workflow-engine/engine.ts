@@ -19,6 +19,8 @@ import {
   NotificationStepConfig,
   TransformStepConfig,
 } from "./types";
+import { getActionHandler } from "./action-handlers";
+import { sendNotification } from "./notification-service";
 
 export class WorkflowEngine {
   private executionHandlers: Map<string, StepHandler>;
@@ -295,8 +297,30 @@ export class WorkflowEngine {
     context: ExecutionContext
   ): Promise<Record<string, unknown>> {
     const actionConfig = config as ActionStepConfig;
-    const contextKeys = Object.keys(context.variables);
-    return { success: true, actionType: actionConfig.actionType, contextSize: contextKeys.length };
+    const handler = getActionHandler(actionConfig.actionType);
+
+    if (handler) {
+      // Interpolate parameters with context variables
+      const interpolatedParams = this.interpolateObject(actionConfig.parameters, context);
+      return handler(interpolatedParams, context);
+    }
+
+    // Fallback for unregistered actions
+    return { success: true, actionType: actionConfig.actionType, message: "No handler registered" };
+  }
+
+  private interpolateObject(obj: Record<string, unknown>, context: ExecutionContext): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === "string") {
+        result[key] = this.interpolateString(value, context);
+      } else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        result[key] = this.interpolateObject(value as Record<string, unknown>, context);
+      } else {
+        result[key] = value;
+      }
+    }
+    return result;
   }
 
   private async executeConditionStep(
@@ -344,8 +368,23 @@ export class WorkflowEngine {
     context: ExecutionContext
   ): Promise<Record<string, unknown>> {
     const notificationConfig = config as NotificationStepConfig;
-    const contextSize = Object.keys(context.variables).length;
-    return { sent: true, channel: notificationConfig.channel, recipients: notificationConfig.recipients, contextSize };
+    
+    // Interpolate recipients and data
+    const recipients = notificationConfig.recipients.map((r) => 
+      typeof r === "string" ? this.interpolateString(r, context) : r
+    );
+    const data = notificationConfig.data 
+      ? this.interpolateObject(notificationConfig.data as Record<string, unknown>, context)
+      : {};
+
+    const result = await sendNotification({
+      channel: notificationConfig.channel,
+      recipients,
+      template: notificationConfig.template,
+      data,
+    });
+
+    return { sent: result.success, channel: notificationConfig.channel, recipients: result.recipients };
   }
 
   private async executeTransformStep(

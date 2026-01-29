@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createUntypedClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -7,11 +7,11 @@ import { NextRequest, NextResponse } from 'next/server';
  * Accepts either a registration confirmation number or credential number
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
+  const supabase = await createUntypedClient();
 
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     if (registration) {
       // Check if event matches (if event_id provided)
       if (event_id && registration.event_id !== event_id) {
-        return NextResponse.json({ 
+        return NextResponse.json({
           error: 'Registration is for a different event',
           registration_event: registration.event?.name
         }, { status: 400 });
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
         success: true,
         type: 'registration',
         registration: updated,
-        message: `Welcome, ${updated.contact?.first_name || 'Guest'}!`
+        message: `Welcome, ${updated?.contact?.first_name || 'Guest'}!`
       });
     }
 
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     if (credential) {
       // Check if event matches (if event_id provided)
       if (event_id && credential.event_id !== event_id) {
-        return NextResponse.json({ 
+        return NextResponse.json({
           error: 'Credential is for a different event',
           credential_event: credential.event?.name
         }, { status: 400 });

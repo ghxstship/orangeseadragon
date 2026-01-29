@@ -85,7 +85,9 @@ function validateSchema(schema: EntitySchema): void {
   schema.layouts.list.subpages.forEach(subpage => {
     if (subpage.query.where) {
       Object.keys(subpage.query.where).forEach(field => {
-        if (!schema.data.fields[field] && field !== 'archived' && !field.startsWith('$')) {
+        // Handle dot-notation for relation fields (e.g., 'status.code' -> 'status_id')
+        const baseField = field.includes('.') ? field.split('.')[0] + '_id' : field;
+        if (!schema.data.fields[field] && !schema.data.fields[baseField] && field !== 'archived' && !field.startsWith('$')) {
           errors.push(`Subpage "${subpage.key}" query references undefined field "${field}"`);
         }
       });

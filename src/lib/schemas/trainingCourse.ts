@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const trainingCourseSchema = defineSchema({
   identity: {
-    name: 'training_course',
+    name: 'Training Course',
     namePlural: 'Training Courses',
     slug: 'modules/workforce/training',
     icon: '🎓',

@@ -2,7 +2,7 @@ import { defineSchema } from '../schema/defineSchema';
 
 export const partnerSchema = defineSchema({
   identity: {
-    name: 'event_partner',
+    name: 'Partner',
     namePlural: 'Partners',
     slug: 'modules/production/partners',
     icon: '🤝',
