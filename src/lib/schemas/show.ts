@@ -5,7 +5,7 @@ export const showSchema = defineSchema({
     name: 'show',
     namePlural: 'Shows',
     slug: 'modules/production/shows',
-    icon: '🎭',
+    icon: 'Theater',
     description: 'Manage show productions and performances',
   },
   data: {

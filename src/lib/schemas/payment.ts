@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const paymentSchema = defineSchema({
-  identity: { name: 'payment', namePlural: 'Payments', slug: 'modules/finance/payments', icon: '💳', description: 'Payment records and transactions' },
+  identity: { name: 'payment', namePlural: 'Payments', slug: 'modules/finance/payments', icon: 'CreditCard', description: 'Payment records and transactions' },
   data: {
     endpoint: '/api/payments', primaryKey: 'id',
     fields: {

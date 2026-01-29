@@ -5,7 +5,7 @@ export const offboardingTemplateSchema = defineSchema({
     name: 'Offboarding Template',
     namePlural: 'Offboarding Templates',
     slug: 'modules/workforce/offboarding/templates',
-    icon: '👋',
+    icon: 'UserMinus',
     description: 'Employee offboarding checklist templates',
   },
   data: {

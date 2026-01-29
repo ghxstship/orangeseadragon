@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const reservationSchema = defineSchema({
-  identity: { name: 'reservation', namePlural: 'Reservations', slug: 'modules/assets/reservations', icon: '📅', description: 'Asset reservations and bookings' },
+  identity: { name: 'reservation', namePlural: 'Reservations', slug: 'modules/assets/reservations', icon: 'CalendarCheck', description: 'Asset reservations and bookings' },
   data: {
     endpoint: '/api/asset_reservations', primaryKey: 'id',
     fields: {

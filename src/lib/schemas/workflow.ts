@@ -8,7 +8,7 @@ export const workflowSchema = defineSchema({
     name: 'Workflow',
     namePlural: 'Workflows',
     slug: 'core/workflows',
-    icon: '⚡',
+    icon: 'Zap',
     description: 'Automation workflows and processes',
   },
 

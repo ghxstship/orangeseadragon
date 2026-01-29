@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const contractSchema = defineSchema({
-  identity: { name: 'contract', namePlural: 'Contracts', slug: 'modules/business/contracts', icon: '📄', description: 'Business contracts and agreements' },
+  identity: { name: 'contract', namePlural: 'Contracts', slug: 'modules/business/contracts', icon: 'FileCheck', description: 'Business contracts and agreements' },
   data: {
     endpoint: '/api/contracts', primaryKey: 'id',
     fields: {

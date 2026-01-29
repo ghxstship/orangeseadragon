@@ -5,7 +5,7 @@ export const registrationSchema = defineSchema({
     name: 'registration',
     namePlural: 'Registrations',
     slug: 'modules/production/registration',
-    icon: '🎫',
+    icon: 'Ticket',
     description: 'Event registrations and attendee management',
   },
   data: {

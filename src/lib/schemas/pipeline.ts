@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const pipelineSchema = defineSchema({
-  identity: { name: 'pipeline', namePlural: 'Pipelines', slug: 'modules/business/pipeline', icon: '📈', description: 'Sales pipelines and stages' },
+  identity: { name: 'pipeline', namePlural: 'Pipelines', slug: 'modules/business/pipeline', icon: 'TrendingUp', description: 'Sales pipelines and stages' },
   data: {
     endpoint: '/api/pipeline_stages', primaryKey: 'id',
     fields: {

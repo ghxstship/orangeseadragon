@@ -5,7 +5,7 @@ export const runsheetSchema = defineSchema({
     name: 'runsheet',
     namePlural: 'Runsheets',
     slug: 'modules/production/runsheets',
-    icon: '📝',
+    icon: 'ScrollText',
     description: 'Event runsheets and schedules',
   },
   data: {

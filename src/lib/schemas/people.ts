@@ -14,7 +14,7 @@ export const peopleSchema = defineSchema({
     name: 'person',
     namePlural: 'People',
     slug: 'modules/workforce/roster',
-    icon: '👤',
+    icon: 'User',
     description: 'Manage staff, crew, and contacts',
   },
 

@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const certificationSchema = defineSchema({
-  identity: { name: 'certification', namePlural: 'Certifications', slug: 'modules/workforce/certifications', icon: '📜', description: 'Staff certifications and qualifications' },
+  identity: { name: 'certification', namePlural: 'Certifications', slug: 'modules/workforce/certifications', icon: 'Award', description: 'Staff certifications and qualifications' },
   data: {
     endpoint: '/api/user_certifications', primaryKey: 'id',
     fields: {

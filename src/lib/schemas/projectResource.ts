@@ -5,7 +5,7 @@ export const projectResourceSchema = defineSchema({
     name: 'Project Resource',
     namePlural: 'Project Resources',
     slug: 'modules/projects/resources',
-    icon: '👥',
+    icon: 'Users',
     description: 'Resource allocation and capacity planning',
   },
   data: {

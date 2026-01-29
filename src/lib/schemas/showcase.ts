@@ -8,7 +8,7 @@ export const showcaseSchema = defineSchema({
     name: 'Showcase',
     namePlural: 'Showcases',
     slug: 'network/showcase',
-    icon: '🌟',
+    icon: 'Star',
     description: 'Portfolio showcases and highlights',
   },
 

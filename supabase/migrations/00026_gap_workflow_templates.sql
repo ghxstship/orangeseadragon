@@ -5,10 +5,11 @@
 -- REGISTRATION WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Registration Confirmation',
+    'registration-confirmation',
     'Send confirmation email when registration is confirmed',
     'registration',
     'entity_updated',
@@ -23,10 +24,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Registration Check-in Notification',
+    'registration-checkin-notification',
     'Send welcome message when attendee checks in',
     'registration',
     'entity_updated',
@@ -41,10 +43,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Waitlist Promotion',
+    'waitlist-promotion',
     'Automatically offer ticket to next person on waitlist when cancellation occurs',
     'registration',
     'entity_updated',
@@ -59,10 +62,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Event Reminder - 24 Hours',
+    'event-reminder-24h',
     'Send reminder email 24 hours before event',
     'registration',
     'schedule',
@@ -80,10 +84,11 @@ ON CONFLICT DO NOTHING;
 -- TICKETING WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Low Ticket Inventory Alert',
+    'low-ticket-inventory-alert',
     'Alert when ticket type reaches 10% remaining',
     'ticketing',
     'entity_updated',
@@ -98,10 +103,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Sold Out Notification',
+    'sold-out-notification',
     'Notify team when ticket type sells out',
     'ticketing',
     'entity_updated',
@@ -120,10 +126,11 @@ ON CONFLICT DO NOTHING;
 -- TALENT WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Talent Invitation',
+    'talent-invitation',
     'Send invitation email when talent is assigned to session',
     'talent',
     'entity_created',
@@ -135,10 +142,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Talent Confirmation Reminder',
+    'talent-confirmation-reminder',
     'Send reminder if talent has not confirmed within 7 days',
     'talent',
     'schedule',
@@ -155,10 +163,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Talent Rider Review',
+    'talent-rider-review',
     'Route talent rider to production manager for review',
     'talent',
     'entity_created',
@@ -174,10 +183,11 @@ ON CONFLICT DO NOTHING;
 -- PARTNER WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Partner Onboarding',
+    'partner-onboarding',
     'Send welcome package when partner is confirmed',
     'partner',
     'entity_updated',
@@ -192,10 +202,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Deliverable Due Reminder',
+    'deliverable-due-reminder',
     'Remind partner of upcoming deliverable deadline',
     'partner',
     'schedule',
@@ -212,10 +223,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Deliverable Overdue Alert',
+    'deliverable-overdue-alert',
     'Alert team when partner deliverable is overdue',
     'partner',
     'schedule',
@@ -236,10 +248,11 @@ ON CONFLICT DO NOTHING;
 -- CREDENTIAL WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Credential Issued Notification',
+    'credential-issued-notification',
     'Notify holder when credential is issued',
     'credential',
     'entity_created',
@@ -251,10 +264,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Credential Expiring Soon',
+    'credential-expiring-soon',
     'Alert holder when credential expires in 7 days',
     'credential',
     'schedule',
@@ -271,10 +285,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Credential Suspended Alert',
+    'credential-suspended-alert',
     'Alert security when credential is suspended',
     'credential',
     'entity_updated',
@@ -293,10 +308,11 @@ ON CONFLICT DO NOTHING;
 -- FINANCE WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Journal Entry Approval',
+    'journal-entry-approval',
     'Route journal entry for approval before posting',
     'finance',
     'entity_created',
@@ -311,10 +327,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Bank Reconciliation Reminder',
+    'bank-reconciliation-reminder',
     'Monthly reminder to reconcile bank accounts',
     'finance',
     'schedule',
@@ -331,10 +348,11 @@ ON CONFLICT DO NOTHING;
 -- LEAD SCORING WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Hot Lead Alert',
+    'hot-lead-alert',
     'Alert sales when lead score exceeds threshold',
     'sales',
     'entity_updated',
@@ -349,10 +367,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Lead Score Decay',
+    'lead-score-decay',
     'Reduce lead scores for inactive leads',
     'sales',
     'schedule',
@@ -369,10 +388,11 @@ ON CONFLICT DO NOTHING;
 -- CAMPAIGN WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Campaign Scheduled',
+    'campaign-scheduled',
     'Notify team when campaign is scheduled',
     'marketing',
     'entity_updated',
@@ -387,10 +407,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Campaign Completed Report',
+    'campaign-completed-report',
     'Generate and send campaign performance report',
     'marketing',
     'entity_updated',
@@ -409,10 +430,11 @@ ON CONFLICT DO NOTHING;
 -- ONBOARDING WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Onboarding Started',
+    'onboarding-started',
     'Notify HR and manager when employee onboarding begins',
     'hr',
     'entity_created',
@@ -424,10 +446,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Onboarding Task Due',
+    'onboarding-task-due',
     'Remind assignee of upcoming onboarding task',
     'hr',
     'schedule',
@@ -444,10 +467,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Onboarding Completed',
+    'onboarding-completed',
     'Notify HR when employee completes onboarding',
     'hr',
     'entity_updated',
@@ -466,10 +490,11 @@ ON CONFLICT DO NOTHING;
 -- LEAVE MANAGEMENT WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Leave Request Submitted',
+    'leave-request-submitted',
     'Notify manager when leave request is submitted',
     'hr',
     'entity_created',
@@ -481,10 +506,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Leave Request Approved',
+    'leave-request-approved',
     'Notify employee when leave is approved',
     'hr',
     'entity_updated',
@@ -499,10 +525,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Leave Request Rejected',
+    'leave-request-rejected',
     'Notify employee when leave is rejected',
     'hr',
     'entity_updated',
@@ -521,10 +548,11 @@ ON CONFLICT DO NOTHING;
 -- PROCUREMENT WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'PO Approval Required',
+    'po-approval-required',
     'Route purchase order for approval',
     'procurement',
     'entity_updated',
@@ -539,10 +567,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'PO Approved',
+    'po-approved',
     'Notify requester when PO is approved',
     'procurement',
     'entity_updated',
@@ -557,10 +586,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Goods Received',
+    'goods-received',
     'Update PO status when goods are received',
     'procurement',
     'entity_created',
@@ -576,10 +606,11 @@ ON CONFLICT DO NOTHING;
 -- SUPPORT TICKET WORKFLOWS
 -- ============================================================================
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'New Ticket Created',
+    'new-ticket-created',
     'Notify support team of new ticket',
     'support',
     'entity_created',
@@ -591,10 +622,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Ticket Assigned',
+    'ticket-assigned',
     'Notify agent when ticket is assigned',
     'support',
     'entity_updated',
@@ -609,10 +641,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Ticket SLA Warning',
+    'ticket-sla-warning',
     'Alert when ticket approaches SLA deadline',
     'support',
     'schedule',
@@ -625,10 +658,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Ticket Resolved',
+    'ticket-resolved',
     'Send satisfaction survey when ticket is resolved',
     'support',
     'entity_updated',
@@ -643,10 +677,11 @@ SELECT
 FROM organizations o
 ON CONFLICT DO NOTHING;
 
-INSERT INTO workflow_templates (organization_id, name, description, category, trigger_type, trigger_config, is_active, created_by)
+INSERT INTO workflow_templates (organization_id, name, slug, description, category, trigger_type, trigger_config, is_active, created_by)
 SELECT 
     o.id,
     'Urgent Ticket Escalation',
+    'urgent-ticket-escalation',
     'Escalate urgent tickets to manager',
     'support',
     'entity_created',

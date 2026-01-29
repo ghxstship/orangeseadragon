@@ -2,6 +2,139 @@
 -- These tables are required by schemas but don't exist in the database
 
 -- ============================================================================
+-- LOOKUP TABLES - Required by 00024_gap_implementation_tables.sql
+-- ============================================================================
+
+-- Statuses table (generic status lookup for various entities)
+CREATE TABLE IF NOT EXISTS statuses (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    domain VARCHAR(100) NOT NULL,
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    color VARCHAR(7),
+    is_default BOOLEAN DEFAULT FALSE,
+    is_terminal BOOLEAN DEFAULT FALSE,
+    sort_order INTEGER DEFAULT 0,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(organization_id, domain, code)
+);
+
+CREATE INDEX IF NOT EXISTS idx_statuses_org ON statuses(organization_id);
+CREATE INDEX IF NOT EXISTS idx_statuses_domain ON statuses(domain);
+
+-- Currencies table
+CREATE TABLE IF NOT EXISTS currencies (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    code CHAR(3) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    symbol VARCHAR(10),
+    decimal_places INTEGER DEFAULT 2,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Seed common currencies
+INSERT INTO currencies (code, name, symbol, decimal_places) VALUES
+    ('USD', 'US Dollar', '$', 2),
+    ('EUR', 'Euro', '€', 2),
+    ('GBP', 'British Pound', '£', 2),
+    ('CAD', 'Canadian Dollar', 'C$', 2),
+    ('AUD', 'Australian Dollar', 'A$', 2),
+    ('JPY', 'Japanese Yen', '¥', 0),
+    ('CHF', 'Swiss Franc', 'CHF', 2),
+    ('MXN', 'Mexican Peso', 'MX$', 2)
+ON CONFLICT (code) DO NOTHING;
+
+-- Event sessions table (required by 00024 session_talent)
+CREATE TABLE IF NOT EXISTS event_sessions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    session_type VARCHAR(50),
+    track VARCHAR(100),
+    room VARCHAR(100),
+    start_time TIMESTAMPTZ,
+    end_time TIMESTAMPTZ,
+    capacity INTEGER,
+    is_featured BOOLEAN DEFAULT FALSE,
+    status VARCHAR(50) DEFAULT 'draft',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_by UUID REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_event_sessions_event ON event_sessions(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_sessions_org ON event_sessions(organization_id);
+
+-- Position types (full-time, part-time, contractor, etc.)
+CREATE TABLE IF NOT EXISTS position_types (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(organization_id, code)
+);
+
+CREATE INDEX IF NOT EXISTS idx_position_types_org ON position_types(organization_id);
+
+-- Employment types (exempt, non-exempt, seasonal, etc.)
+CREATE TABLE IF NOT EXISTS employment_types (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    code VARCHAR(50) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    sort_order INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(organization_id, code)
+);
+
+CREATE INDEX IF NOT EXISTS idx_employment_types_org ON employment_types(organization_id);
+
+-- Staff members table (employees/workforce members)
+CREATE TABLE IF NOT EXISTS staff_members (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    employee_number VARCHAR(50),
+    department_id UUID REFERENCES departments(id) ON DELETE SET NULL,
+    position_id UUID REFERENCES positions(id) ON DELETE SET NULL,
+    position_type_id UUID REFERENCES position_types(id) ON DELETE SET NULL,
+    employment_type_id UUID REFERENCES employment_types(id) ON DELETE SET NULL,
+    manager_id UUID REFERENCES staff_members(id) ON DELETE SET NULL,
+    hire_date DATE,
+    termination_date DATE,
+    employment_status VARCHAR(50) DEFAULT 'active' CHECK (employment_status IN ('active', 'on_leave', 'terminated', 'suspended')),
+    hourly_rate DECIMAL(10,2),
+    salary DECIMAL(12,2),
+    pay_frequency VARCHAR(20) DEFAULT 'biweekly' CHECK (pay_frequency IN ('weekly', 'biweekly', 'semimonthly', 'monthly')),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(organization_id, user_id),
+    UNIQUE(organization_id, employee_number)
+);
+
+CREATE INDEX IF NOT EXISTS idx_staff_members_org ON staff_members(organization_id);
+CREATE INDEX IF NOT EXISTS idx_staff_members_user ON staff_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_staff_members_dept ON staff_members(department_id);
+CREATE INDEX IF NOT EXISTS idx_staff_members_manager ON staff_members(manager_id);
+
+-- ============================================================================
 -- PROJECTS MODULE - Missing Tables
 -- ============================================================================
 

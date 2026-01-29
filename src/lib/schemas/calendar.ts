@@ -8,7 +8,7 @@ export const calendarSchema = defineSchema({
     name: 'Calendar Event',
     namePlural: 'Calendar',
     slug: 'core/calendar',
-    icon: '📅',
+    icon: 'Calendar',
     description: 'Calendar events and scheduling',
   },
 

@@ -5,7 +5,7 @@ export const performanceReviewSchema = defineSchema({
     name: 'Performance Review',
     namePlural: 'Performance Reviews',
     slug: 'modules/workforce/performance',
-    icon: '📊',
+    icon: 'Star',
     description: 'Employee performance reviews and evaluations',
   },
   data: {
@@ -18,7 +18,7 @@ export const performanceReviewSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
+        relation: { entity: 'user', display: 'full_name' },
       },
       reviewer_id: {
         type: 'relation',
@@ -26,29 +26,22 @@ export const performanceReviewSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
+        relation: { entity: 'user', display: 'full_name' },
       },
-      review_period: {
-        type: 'select',
-        label: 'Review Period',
+      review_period_start: {
+        type: 'date',
+        label: 'Period Start',
+        required: true,
+        inForm: true,
+        inDetail: true,
+      },
+      review_period_end: {
+        type: 'date',
+        label: 'Period End',
         required: true,
         inTable: true,
         inForm: true,
-        options: [
-          { label: 'Q1', value: 'q1' },
-          { label: 'Q2', value: 'q2' },
-          { label: 'Q3', value: 'q3' },
-          { label: 'Q4', value: 'q4' },
-          { label: 'Annual', value: 'annual' },
-          { label: 'Probation', value: 'probation' },
-        ],
-      },
-      review_year: {
-        type: 'number',
-        label: 'Year',
-        required: true,
-        inTable: true,
-        inForm: true,
+        sortable: true,
       },
       review_type: {
         type: 'select',
@@ -57,11 +50,14 @@ export const performanceReviewSchema = defineSchema({
         inTable: true,
         inForm: true,
         options: [
-          { label: 'Self Assessment', value: 'self' },
-          { label: 'Manager Review', value: 'manager' },
-          { label: '360 Review', value: '360' },
-          { label: 'Peer Review', value: 'peer' },
+          { label: 'Annual', value: 'annual' },
+          { label: 'Semi-Annual', value: 'semi_annual' },
+          { label: 'Quarterly', value: 'quarterly' },
+          { label: 'Probationary', value: 'probationary' },
+          { label: '90-Day', value: '90_day' },
+          { label: 'Project', value: 'project' },
         ],
+        default: 'annual',
       },
       overall_rating: {
         type: 'select',
@@ -108,22 +104,33 @@ export const performanceReviewSchema = defineSchema({
         inForm: true,
         options: [
           { label: 'Draft', value: 'draft' },
-          { label: 'In Progress', value: 'in_progress' },
-          { label: 'Pending Approval', value: 'pending_approval' },
+          { label: 'Self Review', value: 'self_review' },
+          { label: 'Manager Review', value: 'manager_review' },
+          { label: 'Calibration', value: 'calibration' },
           { label: 'Completed', value: 'completed' },
+          { label: 'Acknowledged', value: 'acknowledged' },
         ],
         default: 'draft',
       },
-      due_date: {
-        type: 'date',
-        label: 'Due Date',
-        inTable: true,
-        inForm: true,
-        sortable: true,
-      },
-      completed_at: {
+      self_review_completed_at: {
         type: 'datetime',
-        label: 'Completed At',
+        label: 'Self Review Completed',
+        inDetail: true,
+      },
+      manager_review_completed_at: {
+        type: 'datetime',
+        label: 'Manager Review Completed',
+        inDetail: true,
+      },
+      acknowledged_at: {
+        type: 'datetime',
+        label: 'Acknowledged At',
+        inDetail: true,
+      },
+      next_review_date: {
+        type: 'date',
+        label: 'Next Review Date',
+        inForm: true,
         inDetail: true,
       },
     },
@@ -133,17 +140,23 @@ export const performanceReviewSchema = defineSchema({
       const employee = r.employee as Record<string, unknown> | undefined;
       return employee ? String(employee.full_name || 'Employee') : 'Performance Review';
     },
-    subtitle: (r: Record<string, unknown>) => `${r.review_period || ''} ${r.review_year || ''}`,
+    subtitle: (r: Record<string, unknown>) => {
+      const start = r.review_period_start ? new Date(String(r.review_period_start)).toLocaleDateString() : '';
+      const end = r.review_period_end ? new Date(String(r.review_period_end)).toLocaleDateString() : '';
+      return start && end ? `${start} - ${end}` : '';
+    },
     badge: (r: Record<string, unknown>) => {
       const variants: Record<string, string> = {
         draft: 'secondary',
-        in_progress: 'warning',
-        pending_approval: 'default',
+        self_review: 'warning',
+        manager_review: 'default',
+        calibration: 'outline',
         completed: 'success',
+        acknowledged: 'success',
       };
       return { label: String(r.status || 'draft'), variant: variants[String(r.status)] || 'secondary' };
     },
-    defaultSort: { field: 'due_date', direction: 'desc' },
+    defaultSort: { field: 'review_period_end', direction: 'desc' },
   },
   search: {
     enabled: true,
@@ -152,16 +165,18 @@ export const performanceReviewSchema = defineSchema({
   },
   filters: {
     quick: [
-      { key: 'pending', label: 'Pending', query: { where: { status: 'pending_approval' } } },
+      { key: 'self_review', label: 'Self Review', query: { where: { status: 'self_review' } } },
+      { key: 'manager_review', label: 'Manager Review', query: { where: { status: 'manager_review' } } },
+      { key: 'completed', label: 'Completed', query: { where: { status: 'completed' } } },
     ],
-    advanced: ['review_period', 'review_type', 'status', 'reviewer_id'],
+    advanced: ['review_type', 'status', 'reviewer_id'],
   },
   layouts: {
     list: {
       subpages: [
         { key: 'all', label: 'All', query: { where: {} }, count: true },
-        { key: 'in_progress', label: 'In Progress', query: { where: { status: 'in_progress' } }, count: true },
-        { key: 'completed', label: 'Completed', query: { where: { status: 'completed' } }, count: true },
+        { key: 'pending', label: 'Pending', query: { where: { status: ['self_review', 'manager_review', 'calibration'] } }, count: true },
+        { key: 'completed', label: 'Completed', query: { where: { status: ['completed', 'acknowledged'] } }, count: true },
       ],
       defaultView: 'table',
       availableViews: ['table'],
@@ -169,7 +184,7 @@ export const performanceReviewSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'goals', label: 'Goals', content: { type: 'related', entity: 'performance_goal', foreignKey: 'review_id' } },
+        { key: 'competencies', label: 'Competencies', content: { type: 'related', entity: 'performance_review_competency', foreignKey: 'review_id' } },
         { key: 'activity', label: 'Activity', content: { type: 'activity' } },
       ],
       overview: {
@@ -177,21 +192,22 @@ export const performanceReviewSchema = defineSchema({
           { key: 'rating', label: 'Overall Rating', value: { type: 'field', field: 'overall_rating' }, format: 'number' },
         ],
         blocks: [
-          { key: 'details', title: 'Review Details', content: { type: 'fields', fields: ['employee_id', 'reviewer_id', 'review_period', 'review_year', 'review_type'] } },
+          { key: 'details', title: 'Review Details', content: { type: 'fields', fields: ['employee_id', 'reviewer_id', 'review_period_start', 'review_period_end', 'review_type'] } },
+          { key: 'feedback', title: 'Feedback', content: { type: 'fields', fields: ['strengths', 'areas_for_improvement', 'goals_achieved', 'next_period_goals'] } },
         ],
       },
     },
     form: {
       sections: [
-        { key: 'basic', title: 'Review Details', fields: ['employee_id', 'reviewer_id', 'review_period', 'review_year', 'review_type', 'status', 'due_date'] },
+        { key: 'basic', title: 'Review Details', fields: ['employee_id', 'reviewer_id', 'review_period_start', 'review_period_end', 'review_type', 'status'] },
         { key: 'evaluation', title: 'Evaluation', fields: ['overall_rating', 'strengths', 'areas_for_improvement'] },
-        { key: 'goals', title: 'Goals', fields: ['goals_achieved', 'next_period_goals'] },
+        { key: 'goals', title: 'Goals', fields: ['goals_achieved', 'next_period_goals', 'next_review_date'] },
       ],
     },
   },
   views: {
     table: {
-      columns: ['employee_id', 'reviewer_id', 'review_period', 'review_year', 'overall_rating', 'status'],
+      columns: ['employee_id', 'reviewer_id', 'review_type', 'review_period_end', 'overall_rating', 'status'],
     },
   },
   actions: {

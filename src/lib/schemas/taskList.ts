@@ -8,7 +8,7 @@ export const taskListSchema = defineSchema({
     name: 'Task List',
     namePlural: 'Task Lists',
     slug: 'core/tasks/lists',
-    icon: '📋',
+    icon: 'ListChecks',
     description: 'Organize tasks into lists',
   },
 

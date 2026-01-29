@@ -8,7 +8,7 @@ export const connectionSchema = defineSchema({
     name: 'Connection',
     namePlural: 'Connections',
     slug: 'network/connections',
-    icon: '🤝',
+    icon: 'Link',
     description: 'Network connections and contacts',
   },
 

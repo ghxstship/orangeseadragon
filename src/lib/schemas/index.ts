@@ -114,6 +114,18 @@ export { leaveRequestSchema } from './leaveRequest';
 export { purchaseOrderSchema } from './purchaseOrder';
 export { supportTicketSchema } from './supportTicket';
 
+// ClickUp SSOT schema exports
+export { productionSchema } from './production';
+export { shipmentSchema } from './shipment';
+export { workOrderSchema } from './workOrder';
+export { permitSchema } from './permit';
+export { inspectionSchema } from './inspection';
+export { punchItemSchema } from './punchItem';
+export { dailySiteReportSchema } from './dailySiteReport';
+export { travelRequestSchema } from './travelRequest';
+export { candidateSchema } from './candidate';
+export { vehicleSchema } from './vehicle';
+
 // Additional schema exports
 export { eventSessionSchema } from './eventSession';
 export { offboardingTemplateSchema } from './offboardingTemplate';
@@ -196,6 +208,18 @@ import { purchaseOrderSchema } from './purchaseOrder';
 import { supportTicketSchema } from './supportTicket';
 import { leadScoreSchema } from './leadScore';
 import { campaignSchema } from './campaign';
+
+// Import ClickUp SSOT schemas
+import { productionSchema } from './production';
+import { shipmentSchema } from './shipment';
+import { workOrderSchema } from './workOrder';
+import { permitSchema } from './permit';
+import { inspectionSchema } from './inspection';
+import { punchItemSchema } from './punchItem';
+import { dailySiteReportSchema } from './dailySiteReport';
+import { travelRequestSchema } from './travelRequest';
+import { candidateSchema } from './candidate';
+import { vehicleSchema } from './vehicle';
 
 // Import additional schemas
 import { eventSessionSchema } from './eventSession';
@@ -436,6 +460,31 @@ export function getSchema(entityName: string) {
     serviceTicket: serviceTicketSchema,
     'service-tickets': serviceTicketSchema,
     service: serviceTicketSchema,
+    // ClickUp SSOT schemas
+    production: productionSchema,
+    productions: productionSchema,
+    shipment: shipmentSchema,
+    shipments: shipmentSchema,
+    workOrder: workOrderSchema,
+    'work-orders': workOrderSchema,
+    work_orders: workOrderSchema,
+    permit: permitSchema,
+    permits: permitSchema,
+    inspection: inspectionSchema,
+    inspections: inspectionSchema,
+    punchItem: punchItemSchema,
+    'punch-items': punchItemSchema,
+    punch_items: punchItemSchema,
+    dailySiteReport: dailySiteReportSchema,
+    'daily-site-reports': dailySiteReportSchema,
+    daily_site_reports: dailySiteReportSchema,
+    travelRequest: travelRequestSchema,
+    'travel-requests': travelRequestSchema,
+    travel_requests: travelRequestSchema,
+    candidate: candidateSchema,
+    candidates: candidateSchema,
+    vehicle: vehicleSchema,
+    vehicles: vehicleSchema,
   };
 
   return schemas[entityName] || null;

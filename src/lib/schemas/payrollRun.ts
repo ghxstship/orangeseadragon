@@ -5,7 +5,7 @@ export const payrollRunSchema = defineSchema({
     name: 'Payroll Run',
     namePlural: 'Payroll Runs',
     slug: 'modules/workforce/payroll',
-    icon: '💰',
+    icon: 'DollarSign',
     description: 'Payroll processing and payment runs',
   },
   data: {

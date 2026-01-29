@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const scheduleSchema = defineSchema({
-  identity: { name: 'schedule', namePlural: 'Schedules', slug: 'modules/workforce/schedules', icon: '📅', description: 'Staff schedules and assignments' },
+  identity: { name: 'schedule', namePlural: 'Schedules', slug: 'modules/workforce/schedules', icon: 'CalendarRange', description: 'Staff schedules and assignments' },
   data: {
     endpoint: '/api/schedules', primaryKey: 'id',
     fields: {

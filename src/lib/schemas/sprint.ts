@@ -5,7 +5,7 @@ export const sprintSchema = defineSchema({
     name: 'sprint',
     namePlural: 'Sprints',
     slug: 'modules/projects/sprints',
-    icon: '🏃',
+    icon: 'Rocket',
     description: 'Manage sprint cycles and iterations',
   },
   data: {

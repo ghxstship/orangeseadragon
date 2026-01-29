@@ -5,7 +5,7 @@ export const teamSchema = defineSchema({
     name: 'team',
     namePlural: 'Teams',
     slug: 'modules/projects/teams',
-    icon: '👥',
+    icon: 'Users',
     description: 'Manage project teams and members',
   },
   data: {

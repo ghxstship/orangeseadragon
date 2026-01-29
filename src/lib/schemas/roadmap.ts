@@ -5,7 +5,7 @@ export const roadmapSchema = defineSchema({
     name: 'roadmap',
     namePlural: 'Roadmaps',
     slug: 'modules/projects/roadmaps',
-    icon: '🗺️',
+    icon: 'Route',
     description: 'Strategic roadmaps and timeline planning',
   },
   data: {

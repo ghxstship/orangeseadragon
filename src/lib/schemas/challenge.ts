@@ -8,7 +8,7 @@ export const challengeSchema = defineSchema({
     name: 'Challenge',
     namePlural: 'Challenges',
     slug: 'network/challenges',
-    icon: '🏆',
+    icon: 'Trophy',
     description: 'Community challenges and competitions',
   },
 

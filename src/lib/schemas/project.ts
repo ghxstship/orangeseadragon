@@ -15,7 +15,7 @@ export const projectSchema = defineSchema({
     name: 'project',
     namePlural: 'Projects',
     slug: 'modules/projects/projects',
-    icon: '🎭',
+    icon: 'FolderKanban',
     description: 'Manage theatrical and production projects',
   },
 

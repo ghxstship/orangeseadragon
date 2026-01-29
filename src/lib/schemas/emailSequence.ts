@@ -5,7 +5,7 @@ export const emailSequenceSchema = defineSchema({
     name: 'Email Sequence',
     namePlural: 'Email Sequences',
     slug: 'modules/business/sequences',
-    icon: '📧',
+    icon: 'MailPlus',
     description: 'Automated email nurture sequences',
   },
   data: {

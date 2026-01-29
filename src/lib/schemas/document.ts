@@ -8,7 +8,7 @@ export const documentSchema = defineSchema({
     name: 'Document',
     namePlural: 'Documents',
     slug: 'core/documents',
-    icon: '📄',
+    icon: 'File',
     description: 'Document management and file storage',
   },
 

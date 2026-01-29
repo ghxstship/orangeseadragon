@@ -5,7 +5,7 @@ export const journalEntrySchema = defineSchema({
     name: 'Journal Entry',
     namePlural: 'Journal Entries',
     slug: 'modules/finance/journal',
-    icon: '📝',
+    icon: 'BookOpen',
     description: 'General ledger journal entries',
   },
   data: {

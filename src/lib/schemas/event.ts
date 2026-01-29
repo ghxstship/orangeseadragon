@@ -14,7 +14,7 @@ export const eventSchema = defineSchema({
     name: 'event',
     namePlural: 'Events',
     slug: 'modules/production/events',
-    icon: '🎪',
+    icon: 'CalendarDays',
     description: 'Manage show productions and events',
   },
 

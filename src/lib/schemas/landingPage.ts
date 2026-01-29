@@ -5,7 +5,7 @@ export const landingPageSchema = defineSchema({
     name: 'Landing Page',
     namePlural: 'Landing Pages',
     slug: 'content/landing-pages',
-    icon: '🖥️',
+    icon: 'Monitor',
     description: 'Marketing landing pages for campaigns and lead capture',
   },
   data: {

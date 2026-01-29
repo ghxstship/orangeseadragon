@@ -8,7 +8,7 @@ export const folderSchema = defineSchema({
     name: 'Folder',
     namePlural: 'Folders',
     slug: 'core/documents/folder',
-    icon: '📁',
+    icon: 'Folder',
     description: 'Document folders and organization',
   },
 

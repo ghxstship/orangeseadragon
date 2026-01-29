@@ -8,7 +8,7 @@ export const discussionSchema = defineSchema({
     name: 'Discussion',
     namePlural: 'Discussions',
     slug: 'network/discussions',
-    icon: '💬',
+    icon: 'MessageSquare',
     description: 'Community discussions and forums',
   },
 

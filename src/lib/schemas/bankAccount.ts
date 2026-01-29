@@ -5,7 +5,7 @@ export const bankAccountSchema = defineSchema({
     name: 'Bank Account',
     namePlural: 'Bank Accounts',
     slug: 'modules/finance/banking',
-    icon: '🏦',
+    icon: 'Landmark',
     description: 'Bank accounts and cash management',
   },
   data: {

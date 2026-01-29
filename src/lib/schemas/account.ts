@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const accountSchema = defineSchema({
-  identity: { name: 'account', namePlural: 'Accounts', slug: 'modules/finance/accounts', icon: '🏦', description: 'Financial accounts and ledgers' },
+  identity: { name: 'account', namePlural: 'Accounts', slug: 'modules/finance/accounts', icon: 'Landmark', description: 'Financial accounts and ledgers' },
   data: {
     endpoint: '/api/accounts', primaryKey: 'id',
     fields: {

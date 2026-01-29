@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const radioChannelSchema = defineSchema({
-  identity: { name: 'radioChannel', namePlural: 'Radio Channels', slug: 'modules/operations/radio', icon: '📻', description: 'Radio channel assignments' },
+  identity: { name: 'radioChannel', namePlural: 'Radio Channels', slug: 'modules/operations/radio', icon: 'Radio', description: 'Radio channel assignments' },
   data: {
     endpoint: '/api/radio_channels', primaryKey: 'id',
     fields: {

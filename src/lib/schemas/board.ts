@@ -5,7 +5,7 @@ export const boardSchema = defineSchema({
     name: 'board',
     namePlural: 'Boards',
     slug: 'modules/projects/boards',
-    icon: '📊',
+    icon: 'LayoutGrid',
     description: 'Kanban boards for visual project management',
   },
   data: {

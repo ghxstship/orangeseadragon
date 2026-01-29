@@ -5,7 +5,7 @@ export const networkingSessionSchema = defineSchema({
     name: 'Networking Session',
     namePlural: 'Networking Sessions',
     slug: 'modules/production/networking',
-    icon: '🤝',
+    icon: 'Handshake',
     description: 'Networking events and matchmaking sessions',
   },
   data: {

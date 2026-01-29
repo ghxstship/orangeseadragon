@@ -8,7 +8,7 @@ export const taskSchema = defineSchema({
     name: 'Task',
     namePlural: 'Tasks',
     slug: 'core/tasks',
-    icon: '✓',
+    icon: 'CheckSquare',
     description: 'Manage tasks and to-dos',
   },
 

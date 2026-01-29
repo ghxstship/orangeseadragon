@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const zoneSchema = defineSchema({
-  identity: { name: 'zone', namePlural: 'Zones', slug: 'modules/operations/zones', icon: '📍', description: 'Venue zones and areas' },
+  identity: { name: 'zone', namePlural: 'Zones', slug: 'modules/operations/zones', icon: 'MapPinned', description: 'Venue zones and areas' },
   data: {
     endpoint: '/api/venue_spaces', primaryKey: 'id',
     fields: {

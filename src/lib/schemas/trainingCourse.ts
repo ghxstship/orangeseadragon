@@ -5,7 +5,7 @@ export const trainingCourseSchema = defineSchema({
     name: 'Training Course',
     namePlural: 'Training Courses',
     slug: 'modules/workforce/training',
-    icon: '🎓',
+    icon: 'GraduationCap',
     description: 'Employee training courses and certifications',
   },
   data: {

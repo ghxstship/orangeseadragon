@@ -5,7 +5,7 @@ export const leaveRequestSchema = defineSchema({
     name: 'Leave Request',
     namePlural: 'Leave Requests',
     slug: 'modules/workforce/leave',
-    icon: '🏖️',
+    icon: 'Palmtree',
     description: 'Employee leave and time-off requests',
   },
   data: {

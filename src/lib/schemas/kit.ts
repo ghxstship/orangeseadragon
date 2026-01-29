@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const kitSchema = defineSchema({
-  identity: { name: 'kit', namePlural: 'Kits', slug: 'modules/assets/kits', icon: '🧰', description: 'Equipment kits and bundles' },
+  identity: { name: 'kit', namePlural: 'Kits', slug: 'modules/assets/kits', icon: 'Boxes', description: 'Equipment kits and bundles' },
   data: {
     endpoint: '/api/asset_kits', primaryKey: 'id',
     fields: {

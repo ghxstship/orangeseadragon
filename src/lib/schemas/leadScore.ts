@@ -5,7 +5,7 @@ export const leadScoreSchema = defineSchema({
     name: 'Lead Score',
     namePlural: 'Lead Scores',
     slug: 'modules/business/lead-scoring',
-    icon: '📊',
+    icon: 'BarChart',
     description: 'Lead scoring rules and configurations',
   },
   data: {

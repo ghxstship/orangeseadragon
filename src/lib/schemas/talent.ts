@@ -5,7 +5,7 @@ export const talentSchema = defineSchema({
     name: 'talent',
     namePlural: 'Talent',
     slug: 'modules/production/talent',
-    icon: '🎤',
+    icon: 'Mic2',
     description: 'Speakers, performers, artists, and other talent',
   },
   data: {

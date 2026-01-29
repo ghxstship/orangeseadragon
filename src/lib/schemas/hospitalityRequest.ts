@@ -5,7 +5,7 @@ export const hospitalityRequestSchema = defineSchema({
     name: 'Hospitality Request',
     namePlural: 'Hospitality Requests',
     slug: 'modules/production/hospitality',
-    icon: '🍽️',
+    icon: 'UtensilsCrossed',
     description: 'Catering, accommodation, and transport requests for events',
   },
   data: {

@@ -8,7 +8,7 @@ export const workflowRunSchema = defineSchema({
     name: 'Workflow Run',
     namePlural: 'Workflow Runs',
     slug: 'core/workflows/runs',
-    icon: '▶️',
+    icon: 'Play',
     description: 'Workflow execution history',
   },
 

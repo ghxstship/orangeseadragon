@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const companySchema = defineSchema({
-  identity: { name: 'company', namePlural: 'Companies', slug: 'modules/business/companies', icon: '🏢', description: 'Companies and organizations' },
+  identity: { name: 'company', namePlural: 'Companies', slug: 'modules/business/companies', icon: 'Building2', description: 'Companies and organizations' },
   data: {
     endpoint: '/api/companies', primaryKey: 'id',
     fields: {

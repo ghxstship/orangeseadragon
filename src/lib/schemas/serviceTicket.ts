@@ -5,7 +5,7 @@ export const serviceTicketSchema = defineSchema({
     name: 'Service Ticket',
     namePlural: 'Service Tickets',
     slug: 'modules/business/service',
-    icon: '🎫',
+    icon: 'HeadsetIcon',
     description: 'Customer service and support ticket management',
   },
   data: {

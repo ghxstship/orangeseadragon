@@ -331,34 +331,46 @@ USING (EXISTS (
 -- PARTNER MANAGEMENT POLICIES
 -- ============================================================================
 
--- Event Partners
+-- Event Partners (via event)
 DROP POLICY IF EXISTS event_partners_select ON event_partners;
 CREATE POLICY event_partners_select ON event_partners FOR SELECT
-USING (is_organization_member(organization_id));
+USING (EXISTS (
+    SELECT 1 FROM events e WHERE e.id = event_id AND is_organization_member(e.organization_id)
+));
 
 DROP POLICY IF EXISTS event_partners_insert ON event_partners;
 CREATE POLICY event_partners_insert ON event_partners FOR INSERT
-WITH CHECK (is_organization_member(organization_id));
+WITH CHECK (EXISTS (
+    SELECT 1 FROM events e WHERE e.id = event_id AND is_organization_member(e.organization_id)
+));
 
 DROP POLICY IF EXISTS event_partners_update ON event_partners;
 CREATE POLICY event_partners_update ON event_partners FOR UPDATE
-USING (is_organization_member(organization_id));
+USING (EXISTS (
+    SELECT 1 FROM events e WHERE e.id = event_id AND is_organization_member(e.organization_id)
+));
 
 DROP POLICY IF EXISTS event_partners_delete ON event_partners;
 CREATE POLICY event_partners_delete ON event_partners FOR DELETE
-USING (is_organization_member(organization_id));
+USING (EXISTS (
+    SELECT 1 FROM events e WHERE e.id = event_id AND is_organization_member(e.organization_id)
+));
 
 -- Partner Contacts (via partner)
 DROP POLICY IF EXISTS partner_contacts_select ON partner_contacts;
 CREATE POLICY partner_contacts_select ON partner_contacts FOR SELECT
 USING (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 DROP POLICY IF EXISTS partner_contacts_insert ON partner_contacts;
 CREATE POLICY partner_contacts_insert ON partner_contacts FOR INSERT
 WITH CHECK (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 -- Sponsorship Benefits
@@ -374,51 +386,67 @@ WITH CHECK (is_organization_member(organization_id));
 DROP POLICY IF EXISTS partner_benefits_granted_select ON partner_benefits_granted;
 CREATE POLICY partner_benefits_granted_select ON partner_benefits_granted FOR SELECT
 USING (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 DROP POLICY IF EXISTS partner_benefits_granted_insert ON partner_benefits_granted;
 CREATE POLICY partner_benefits_granted_insert ON partner_benefits_granted FOR INSERT
 WITH CHECK (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 -- Partner Deliverables (via partner)
 DROP POLICY IF EXISTS partner_deliverables_select ON partner_deliverables;
 CREATE POLICY partner_deliverables_select ON partner_deliverables FOR SELECT
 USING (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 DROP POLICY IF EXISTS partner_deliverables_insert ON partner_deliverables;
 CREATE POLICY partner_deliverables_insert ON partner_deliverables FOR INSERT
 WITH CHECK (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 DROP POLICY IF EXISTS partner_deliverables_update ON partner_deliverables;
 CREATE POLICY partner_deliverables_update ON partner_deliverables FOR UPDATE
 USING (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 -- Booth Assignments (via partner)
 DROP POLICY IF EXISTS booth_assignments_select ON booth_assignments;
 CREATE POLICY booth_assignments_select ON booth_assignments FOR SELECT
 USING (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 DROP POLICY IF EXISTS booth_assignments_insert ON booth_assignments;
 CREATE POLICY booth_assignments_insert ON booth_assignments FOR INSERT
 WITH CHECK (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 DROP POLICY IF EXISTS booth_assignments_update ON booth_assignments;
 CREATE POLICY booth_assignments_update ON booth_assignments FOR UPDATE
 USING (EXISTS (
-    SELECT 1 FROM event_partners p WHERE p.id = partner_id AND is_organization_member(p.organization_id)
+    SELECT 1 FROM event_partners p 
+    JOIN events e ON e.id = p.event_id 
+    WHERE p.id = partner_id AND is_organization_member(e.organization_id)
 ));
 
 -- ============================================================================

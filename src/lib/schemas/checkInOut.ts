@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const checkInOutSchema = defineSchema({
-  identity: { name: 'checkInOut', namePlural: 'Check In/Out', slug: 'modules/assets/check', icon: '✅', description: 'Asset check in and check out records' },
+  identity: { name: 'checkInOut', namePlural: 'Check In/Out', slug: 'modules/assets/check', icon: 'ClipboardCheck', description: 'Asset check in and check out records' },
   data: {
     endpoint: '/api/asset_check_actions', primaryKey: 'id',
     fields: {

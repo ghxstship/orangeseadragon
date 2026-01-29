@@ -5,7 +5,7 @@ export const timeEntrySchema = defineSchema({
     name: 'Time Entry',
     namePlural: 'Time Entries',
     slug: 'modules/projects/time',
-    icon: '⏱️',
+    icon: 'Timer',
     description: 'Project time tracking and logging',
   },
   data: {

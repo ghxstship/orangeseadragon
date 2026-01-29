@@ -8,7 +8,7 @@ export const venueSchema = defineSchema({
     name: 'Venue',
     namePlural: 'Venues',
     slug: 'modules/operations/venues',
-    icon: '🏛️',
+    icon: 'MapPin',
     description: 'Manage event venues and locations',
   },
 

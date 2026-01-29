@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const positionSchema = defineSchema({
-  identity: { name: 'position', namePlural: 'Positions', slug: 'modules/workforce/positions', icon: '💼', description: 'Job positions and roles' },
+  identity: { name: 'position', namePlural: 'Positions', slug: 'modules/workforce/positions', icon: 'Briefcase', description: 'Job positions and roles' },
   data: {
     endpoint: '/api/positions', primaryKey: 'id',
     fields: {

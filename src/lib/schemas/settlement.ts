@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const settlementSchema = defineSchema({
-  identity: { name: 'settlement', namePlural: 'Settlements', slug: 'modules/finance/settlements', icon: '📊', description: 'Event settlements and reconciliation' },
+  identity: { name: 'settlement', namePlural: 'Settlements', slug: 'modules/finance/settlements', icon: 'Calculator', description: 'Event settlements and reconciliation' },
   data: {
     endpoint: '/api/settlements', primaryKey: 'id',
     fields: {

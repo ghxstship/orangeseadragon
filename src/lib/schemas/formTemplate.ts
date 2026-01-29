@@ -5,7 +5,7 @@ export const formTemplateSchema = defineSchema({
     name: 'Form Template',
     namePlural: 'Forms',
     slug: 'content/forms',
-    icon: '📝',
+    icon: 'FormInput',
     description: 'Custom form builder for lead capture and data collection',
   },
   data: {

@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const proposalSchema = defineSchema({
-  identity: { name: 'proposal', namePlural: 'Proposals', slug: 'modules/business/proposals', icon: '📝', description: 'Business proposals and quotes' },
+  identity: { name: 'proposal', namePlural: 'Proposals', slug: 'modules/business/proposals', icon: 'FileSignature', description: 'Business proposals and quotes' },
   data: {
     endpoint: '/api/proposals', primaryKey: 'id',
     fields: {

@@ -5,7 +5,7 @@ export const ticketTypeSchema = defineSchema({
     name: 'Ticket Type',
     namePlural: 'Ticket Types',
     slug: 'modules/production/ticketing/types',
-    icon: '🎟️',
+    icon: 'Ticket',
     description: 'Event ticket types and pricing',
   },
   data: {

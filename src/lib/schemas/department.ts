@@ -5,7 +5,7 @@ export const departmentSchema = defineSchema({
     name: 'department',
     namePlural: 'Departments',
     slug: 'modules/production/departments',
-    icon: '🏢',
+    icon: 'Building2',
     description: 'Production departments and crews',
   },
   data: {

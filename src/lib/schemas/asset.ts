@@ -8,7 +8,7 @@ export const assetSchema = defineSchema({
     name: 'Asset',
     namePlural: 'Assets',
     slug: 'modules/assets/inventory',
-    icon: '📦',
+    icon: 'Package',
     description: 'Manage equipment and inventory assets',
   },
 

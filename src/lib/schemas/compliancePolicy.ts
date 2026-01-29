@@ -5,7 +5,7 @@ export const compliancePolicySchema = defineSchema({
     name: 'Compliance Policy',
     namePlural: 'Compliance Policies',
     slug: 'modules/operations/compliance/policies',
-    icon: '📋',
+    icon: 'Shield',
     description: 'Organizational policies requiring acknowledgment',
   },
   data: {

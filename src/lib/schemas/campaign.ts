@@ -5,7 +5,7 @@ export const campaignSchema = defineSchema({
     name: 'campaign',
     namePlural: 'Campaigns',
     slug: 'modules/business/campaigns',
-    icon: '📧',
+    icon: 'Send',
     description: 'Email marketing campaigns',
   },
   data: {

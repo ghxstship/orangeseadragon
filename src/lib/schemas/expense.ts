@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const expenseSchema = defineSchema({
-  identity: { name: 'expense', namePlural: 'Expenses', slug: 'modules/finance/expenses', icon: '💸', description: 'Expense tracking and reimbursements' },
+  identity: { name: 'expense', namePlural: 'Expenses', slug: 'modules/finance/expenses', icon: 'Receipt', description: 'Expense tracking and reimbursements' },
   data: {
     endpoint: '/api/expenses', primaryKey: 'id',
     fields: {

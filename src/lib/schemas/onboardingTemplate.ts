@@ -5,7 +5,7 @@ export const onboardingTemplateSchema = defineSchema({
     name: 'Onboarding Template',
     namePlural: 'Onboarding Templates',
     slug: 'modules/workforce/onboarding/templates',
-    icon: '📋',
+    icon: 'ClipboardList',
     description: 'Employee onboarding checklists and templates',
   },
   data: {

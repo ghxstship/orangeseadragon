@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const maintenanceSchema = defineSchema({
-  identity: { name: 'maintenance', namePlural: 'Maintenance', slug: 'modules/assets/maintenance', icon: '🔧', description: 'Asset maintenance records' },
+  identity: { name: 'maintenance', namePlural: 'Maintenance', slug: 'modules/assets/maintenance', icon: 'Wrench', description: 'Asset maintenance records' },
   data: {
     endpoint: '/api/asset_maintenance', primaryKey: 'id',
     fields: {

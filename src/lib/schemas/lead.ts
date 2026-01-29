@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const leadSchema = defineSchema({
-  identity: { name: 'lead', namePlural: 'Leads', slug: 'modules/business/leads', icon: '🎯', description: 'Sales leads and prospects' },
+  identity: { name: 'lead', namePlural: 'Leads', slug: 'modules/business/leads', icon: 'Target', description: 'Sales leads and prospects' },
   data: {
     endpoint: '/api/leads', primaryKey: 'id',
     fields: {

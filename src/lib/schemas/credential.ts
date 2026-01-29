@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const credentialSchema = defineSchema({
-  identity: { name: 'credential', namePlural: 'Credentials', slug: 'modules/workforce/credentials', icon: '🎫', description: 'Staff credentials and passes' },
+  identity: { name: 'credential', namePlural: 'Credentials', slug: 'modules/workforce/credentials', icon: 'KeyRound', description: 'Staff credentials and passes' },
   data: {
     endpoint: '/api/credentials', primaryKey: 'id',
     fields: {

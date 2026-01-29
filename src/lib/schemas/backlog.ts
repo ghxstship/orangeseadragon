@@ -5,7 +5,7 @@ export const backlogSchema = defineSchema({
     name: 'backlog',
     namePlural: 'Backlogs',
     slug: 'modules/projects/backlogs',
-    icon: '📋',
+    icon: 'ListTodo',
     description: 'Manage product backlogs and user stories',
   },
   data: {

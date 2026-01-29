@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const checkpointSchema = defineSchema({
-  identity: { name: 'checkpoint', namePlural: 'Checkpoints', slug: 'modules/operations/checkpoints', icon: '🚧', description: 'Security checkpoints and access points' },
+  identity: { name: 'checkpoint', namePlural: 'Checkpoints', slug: 'modules/operations/checkpoints', icon: 'ShieldCheck', description: 'Security checkpoints and access points' },
   data: {
     endpoint: '/api/checkpoints', primaryKey: 'id',
     fields: {

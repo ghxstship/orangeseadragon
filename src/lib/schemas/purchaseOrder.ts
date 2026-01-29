@@ -5,7 +5,7 @@ export const purchaseOrderSchema = defineSchema({
     name: 'Purchase Order',
     namePlural: 'Purchase Orders',
     slug: 'modules/operations/procurement/orders',
-    icon: '📦',
+    icon: 'Package',
     description: 'Purchase orders and procurement',
   },
   data: {

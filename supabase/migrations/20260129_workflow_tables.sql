@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS workflows (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_workflows_org ON workflows(organization_id);
-CREATE INDEX idx_workflows_status ON workflows(status);
-CREATE INDEX idx_workflows_created_by ON workflows(created_by);
+CREATE INDEX IF NOT EXISTS idx_workflows_org ON workflows(organization_id);
+CREATE INDEX IF NOT EXISTS idx_workflows_status ON workflows(status);
+CREATE INDEX IF NOT EXISTS idx_workflows_created_by ON workflows(created_by);
 
 -- Workflow executions table
 CREATE TABLE IF NOT EXISTS workflow_executions (
@@ -42,10 +42,10 @@ CREATE TABLE IF NOT EXISTS workflow_executions (
   completed_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_workflow_executions_workflow ON workflow_executions(workflow_id);
-CREATE INDEX idx_workflow_executions_status ON workflow_executions(status);
-CREATE INDEX idx_workflow_executions_org ON workflow_executions(organization_id);
-CREATE INDEX idx_workflow_executions_started ON workflow_executions(started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_workflow_executions_workflow ON workflow_executions(workflow_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_executions_status ON workflow_executions(status);
+CREATE INDEX IF NOT EXISTS idx_workflow_executions_org ON workflow_executions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_executions_started ON workflow_executions(started_at DESC);
 
 -- Scheduled workflows table
 CREATE TABLE IF NOT EXISTS scheduled_workflows (
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS scheduled_workflows (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_scheduled_workflows_trigger ON scheduled_workflows(trigger_at) WHERE status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_scheduled_workflows_trigger ON scheduled_workflows(trigger_at) WHERE status = 'pending';
 
 -- ==================== Lead/CRM Tables ====================
 
@@ -84,10 +84,17 @@ CREATE TABLE IF NOT EXISTS leads (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_leads_org ON leads(organization_id);
-CREATE INDEX idx_leads_status ON leads(status);
-CREATE INDEX idx_leads_assignee ON leads(assignee_id);
-CREATE INDEX idx_leads_score ON leads(score DESC);
+CREATE INDEX IF NOT EXISTS idx_leads_org ON leads(organization_id);
+CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
+-- Handle both assignee_id and assigned_to column names
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'leads' AND column_name = 'assignee_id') THEN
+        CREATE INDEX IF NOT EXISTS idx_leads_assignee ON leads(assignee_id);
+    ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'leads' AND column_name = 'assigned_to') THEN
+        CREATE INDEX IF NOT EXISTS idx_leads_assignee ON leads(assigned_to);
+    END IF;
+END $$;
+CREATE INDEX IF NOT EXISTS idx_leads_score ON leads(score DESC);
 
 -- Lead scores history
 CREATE TABLE IF NOT EXISTS lead_score_history (
@@ -99,7 +106,7 @@ CREATE TABLE IF NOT EXISTS lead_score_history (
   calculated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_lead_score_history_lead ON lead_score_history(lead_id);
+CREATE INDEX IF NOT EXISTS idx_lead_score_history_lead ON lead_score_history(lead_id);
 
 -- Deals/Opportunities table
 CREATE TABLE IF NOT EXISTS deals (
@@ -121,10 +128,20 @@ CREATE TABLE IF NOT EXISTS deals (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_deals_org ON deals(organization_id);
-CREATE INDEX idx_deals_pipeline ON deals(pipeline_id);
-CREATE INDEX idx_deals_owner ON deals(owner_id);
-CREATE INDEX idx_deals_status ON deals(status);
+CREATE INDEX IF NOT EXISTS idx_deals_org ON deals(organization_id);
+-- Handle pipeline_id column which may not exist in earlier schema
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'deals' AND column_name = 'pipeline_id') THEN
+        CREATE INDEX IF NOT EXISTS idx_deals_pipeline ON deals(pipeline_id);
+    END IF;
+END $$;
+CREATE INDEX IF NOT EXISTS idx_deals_owner ON deals(owner_id);
+-- Handle status column which may not exist in earlier schema
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'deals' AND column_name = 'status') THEN
+        CREATE INDEX IF NOT EXISTS idx_deals_status ON deals(status);
+    END IF;
+END $$;
 
 -- ==================== Support/Ticket Tables ====================
 
@@ -137,7 +154,7 @@ CREATE TABLE IF NOT EXISTS support_tickets (
   category TEXT,
   priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
   status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'assigned', 'in_progress', 'pending', 'resolved', 'closed')),
-  customer_id UUID REFERENCES customers(id),
+  customer_id UUID, -- FK to customers table not defined
   customer_email TEXT,
   assignee_id UUID REFERENCES users(id),
   escalated BOOLEAN DEFAULT FALSE,
@@ -156,11 +173,28 @@ CREATE TABLE IF NOT EXISTS support_tickets (
   resolved_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_support_tickets_org ON support_tickets(organization_id);
-CREATE INDEX idx_support_tickets_status ON support_tickets(status);
-CREATE INDEX idx_support_tickets_assignee ON support_tickets(assignee_id);
-CREATE INDEX idx_support_tickets_customer ON support_tickets(customer_id);
-CREATE INDEX idx_support_tickets_sla ON support_tickets(sla_deadline) WHERE status NOT IN ('resolved', 'closed');
+CREATE INDEX IF NOT EXISTS idx_support_tickets_org ON support_tickets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
+-- Handle assignee_id which may be named assigned_to in earlier schema
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'support_tickets' AND column_name = 'assignee_id') THEN
+        CREATE INDEX IF NOT EXISTS idx_support_tickets_assignee ON support_tickets(assignee_id);
+    ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'support_tickets' AND column_name = 'assigned_to') THEN
+        CREATE INDEX IF NOT EXISTS idx_support_tickets_assignee ON support_tickets(assigned_to);
+    END IF;
+END $$;
+-- Handle customer_id which may not exist
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'support_tickets' AND column_name = 'customer_id') THEN
+        CREATE INDEX IF NOT EXISTS idx_support_tickets_customer ON support_tickets(customer_id);
+    END IF;
+END $$;
+-- Handle sla_deadline which may not exist
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'support_tickets' AND column_name = 'sla_deadline') THEN
+        CREATE INDEX IF NOT EXISTS idx_support_tickets_sla ON support_tickets(sla_deadline) WHERE status NOT IN ('resolved', 'closed');
+    END IF;
+END $$;
 
 -- Ticket activities
 CREATE TABLE IF NOT EXISTS ticket_activities (
@@ -174,7 +208,7 @@ CREATE TABLE IF NOT EXISTS ticket_activities (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_ticket_activities_ticket ON ticket_activities(ticket_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_activities_ticket ON ticket_activities(ticket_id);
 
 -- Support agents
 CREATE TABLE IF NOT EXISTS support_agents (
@@ -190,8 +224,8 @@ CREATE TABLE IF NOT EXISTS support_agents (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_support_agents_org ON support_agents(organization_id);
-CREATE INDEX idx_support_agents_available ON support_agents(is_available, is_online);
+CREATE INDEX IF NOT EXISTS idx_support_agents_org ON support_agents(organization_id);
+CREATE INDEX IF NOT EXISTS idx_support_agents_available ON support_agents(is_available, is_online);
 
 -- Recurring issue alerts
 CREATE TABLE IF NOT EXISTS recurring_issue_alerts (
@@ -226,8 +260,8 @@ CREATE TABLE IF NOT EXISTS email_campaigns (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_email_campaigns_org ON email_campaigns(organization_id);
-CREATE INDEX idx_email_campaigns_status ON email_campaigns(status);
+CREATE INDEX IF NOT EXISTS idx_email_campaigns_org ON email_campaigns(organization_id);
+CREATE INDEX IF NOT EXISTS idx_email_campaigns_status ON email_campaigns(status);
 
 -- Email logs
 CREATE TABLE IF NOT EXISTS email_logs (
@@ -243,7 +277,7 @@ CREATE TABLE IF NOT EXISTS email_logs (
   organization_id UUID REFERENCES organizations(id)
 );
 
-CREATE INDEX idx_email_logs_sent ON email_logs(sent_at DESC);
+CREATE INDEX IF NOT EXISTS idx_email_logs_sent ON email_logs(sent_at DESC);
 
 -- Email events
 CREATE TABLE IF NOT EXISTS email_events (
@@ -254,8 +288,8 @@ CREATE TABLE IF NOT EXISTS email_events (
   occurred_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_email_events_email ON email_events(email_id);
-CREATE INDEX idx_email_events_type ON email_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_email_events_email ON email_events(email_id);
+CREATE INDEX IF NOT EXISTS idx_email_events_type ON email_events(event_type);
 
 -- ==================== Notification Tables ====================
 
@@ -295,7 +329,7 @@ CREATE TABLE IF NOT EXISTS slack_messages (
 CREATE TABLE IF NOT EXISTS survey_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   ticket_id UUID REFERENCES support_tickets(id),
-  customer_id UUID REFERENCES customers(id),
+  customer_id UUID, -- FK to customers table not defined
   type TEXT NOT NULL,
   status TEXT DEFAULT 'sent' CHECK (status IN ('sent', 'completed', 'expired')),
   rating INTEGER,
@@ -304,7 +338,7 @@ CREATE TABLE IF NOT EXISTS survey_requests (
   completed_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_survey_requests_customer ON survey_requests(customer_id);
+CREATE INDEX IF NOT EXISTS idx_survey_requests_customer ON survey_requests(customer_id);
 
 -- ==================== Approval Tables ====================
 
@@ -322,8 +356,8 @@ CREATE TABLE IF NOT EXISTS approval_requests (
   completed_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_approval_requests_status ON approval_requests(status);
-CREATE INDEX idx_approval_requests_entity ON approval_requests(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_status ON approval_requests(status);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_entity ON approval_requests(entity_type, entity_id);
 
 -- Approval decisions
 CREATE TABLE IF NOT EXISTS approval_decisions (
@@ -335,7 +369,12 @@ CREATE TABLE IF NOT EXISTS approval_decisions (
   decided_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_approval_decisions_request ON approval_decisions(request_id);
+-- Handle request_id column which may not exist in earlier schema
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'approval_decisions' AND column_name = 'request_id') THEN
+        CREATE INDEX IF NOT EXISTS idx_approval_decisions_request ON approval_decisions(request_id);
+    END IF;
+END $$;
 
 -- ==================== Knowledge Base Tables ====================
 
@@ -355,9 +394,9 @@ CREATE TABLE IF NOT EXISTS knowledge_base_articles (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_kb_articles_org ON knowledge_base_articles(organization_id);
-CREATE INDEX idx_kb_articles_status ON knowledge_base_articles(status);
-CREATE INDEX idx_kb_articles_category ON knowledge_base_articles(category);
+CREATE INDEX IF NOT EXISTS idx_kb_articles_org ON knowledge_base_articles(organization_id);
+CREATE INDEX IF NOT EXISTS idx_kb_articles_status ON knowledge_base_articles(status);
+CREATE INDEX IF NOT EXISTS idx_kb_articles_category ON knowledge_base_articles(category);
 
 -- ==================== Document Tables ====================
 
@@ -384,8 +423,13 @@ CREATE TABLE IF NOT EXISTS policy_acknowledgments (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_policy_ack_user ON policy_acknowledgments(user_id);
-CREATE INDEX idx_policy_ack_status ON policy_acknowledgments(status);
+CREATE INDEX IF NOT EXISTS idx_policy_ack_user ON policy_acknowledgments(user_id);
+-- Handle status column which may not exist in earlier schema
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'policy_acknowledgments' AND column_name = 'status') THEN
+        CREATE INDEX IF NOT EXISTS idx_policy_ack_status ON policy_acknowledgments(status);
+    END IF;
+END $$;
 
 -- Audit logs
 CREATE TABLE IF NOT EXISTS audit_logs (
@@ -403,9 +447,16 @@ CREATE TABLE IF NOT EXISTS audit_logs (
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
-CREATE INDEX idx_audit_logs_user ON audit_logs(user_id);
-CREATE INDEX idx_audit_logs_timestamp ON audit_logs(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id);
+-- Handle timestamp column which may be named created_at in earlier schema
+DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'audit_logs' AND column_name = 'timestamp') THEN
+        CREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(timestamp DESC);
+    ELSIF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'audit_logs' AND column_name = 'created_at') THEN
+        CREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(created_at DESC);
+    END IF;
+END $$;
 
 -- Compliance incidents
 CREATE TABLE IF NOT EXISTS compliance_incidents (
@@ -422,8 +473,8 @@ CREATE TABLE IF NOT EXISTS compliance_incidents (
   organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_compliance_incidents_org ON compliance_incidents(organization_id);
-CREATE INDEX idx_compliance_incidents_status ON compliance_incidents(status);
+CREATE INDEX IF NOT EXISTS idx_compliance_incidents_org ON compliance_incidents(organization_id);
+CREATE INDEX IF NOT EXISTS idx_compliance_incidents_status ON compliance_incidents(status);
 
 -- Regulatory assessments
 CREATE TABLE IF NOT EXISTS regulatory_assessments (
@@ -449,7 +500,7 @@ CREATE TABLE IF NOT EXISTS auto_response_templates (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_auto_response_category ON auto_response_templates(category) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_auto_response_category ON auto_response_templates(category) WHERE is_active = TRUE;
 
 -- ==================== RPC Functions ====================
 
@@ -473,22 +524,27 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_workflows_updated_at ON workflows;
 CREATE TRIGGER update_workflows_updated_at
   BEFORE UPDATE ON workflows
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS update_leads_updated_at ON leads;
 CREATE TRIGGER update_leads_updated_at
   BEFORE UPDATE ON leads
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS update_deals_updated_at ON deals;
 CREATE TRIGGER update_deals_updated_at
   BEFORE UPDATE ON deals
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS update_support_tickets_updated_at ON support_tickets;
 CREATE TRIGGER update_support_tickets_updated_at
   BEFORE UPDATE ON support_tickets
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 
+DROP TRIGGER IF EXISTS update_kb_articles_updated_at ON knowledge_base_articles;
 CREATE TRIGGER update_kb_articles_updated_at
   BEFORE UPDATE ON knowledge_base_articles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();

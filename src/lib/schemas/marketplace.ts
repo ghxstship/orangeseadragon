@@ -8,7 +8,7 @@ export const marketplaceSchema = defineSchema({
     name: 'Listing',
     namePlural: 'Marketplace',
     slug: 'network/marketplace',
-    icon: '🛒',
+    icon: 'ShoppingCart',
     description: 'Marketplace listings and services',
   },
 

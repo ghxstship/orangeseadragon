@@ -123,23 +123,23 @@ GROUP BY org_id, user_id, project_id, DATE_TRUNC('week', date);
 
 -- Payroll Runs
 ALTER TABLE payroll_runs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "payroll_runs_org_read" ON payroll_runs FOR SELECT USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "payroll_runs_org_insert" ON payroll_runs FOR INSERT WITH CHECK (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "payroll_runs_org_update" ON payroll_runs FOR UPDATE USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "payroll_runs_org_delete" ON payroll_runs FOR DELETE USING (org_id IN (SELECT get_user_organization_ids()));
+CREATE POLICY "payroll_runs_org_read" ON payroll_runs FOR SELECT USING (is_organization_member(org_id));
+CREATE POLICY "payroll_runs_org_insert" ON payroll_runs FOR INSERT WITH CHECK (is_organization_member(org_id));
+CREATE POLICY "payroll_runs_org_update" ON payroll_runs FOR UPDATE USING (is_organization_member(org_id));
+CREATE POLICY "payroll_runs_org_delete" ON payroll_runs FOR DELETE USING (is_organization_member(org_id));
 
 -- Project Resources
 ALTER TABLE project_resources ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "project_resources_org_read" ON project_resources FOR SELECT USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "project_resources_org_insert" ON project_resources FOR INSERT WITH CHECK (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "project_resources_org_update" ON project_resources FOR UPDATE USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "project_resources_org_delete" ON project_resources FOR DELETE USING (org_id IN (SELECT get_user_organization_ids()));
+CREATE POLICY "project_resources_org_read" ON project_resources FOR SELECT USING (is_organization_member(org_id));
+CREATE POLICY "project_resources_org_insert" ON project_resources FOR INSERT WITH CHECK (is_organization_member(org_id));
+CREATE POLICY "project_resources_org_update" ON project_resources FOR UPDATE USING (is_organization_member(org_id));
+CREATE POLICY "project_resources_org_delete" ON project_resources FOR DELETE USING (is_organization_member(org_id));
 
 -- Time Entries
 ALTER TABLE time_entries ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "time_entries_org_read" ON time_entries FOR SELECT USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "time_entries_org_insert" ON time_entries FOR INSERT WITH CHECK (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "time_entries_org_update" ON time_entries FOR UPDATE USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "time_entries_org_delete" ON time_entries FOR DELETE USING (org_id IN (SELECT get_user_organization_ids()));
+CREATE POLICY "time_entries_org_read" ON time_entries FOR SELECT USING (is_organization_member(org_id));
+CREATE POLICY "time_entries_org_insert" ON time_entries FOR INSERT WITH CHECK (is_organization_member(org_id));
+CREATE POLICY "time_entries_org_update" ON time_entries FOR UPDATE USING (is_organization_member(org_id));
+CREATE POLICY "time_entries_org_delete" ON time_entries FOR DELETE USING (is_organization_member(org_id));
 
 COMMIT;

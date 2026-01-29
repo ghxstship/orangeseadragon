@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const categorySchema = defineSchema({
-  identity: { name: 'category', namePlural: 'Categories', slug: 'modules/assets/categories', icon: '📁', description: 'Asset categories and classifications' },
+  identity: { name: 'category', namePlural: 'Categories', slug: 'modules/assets/categories', icon: 'FolderTree', description: 'Asset categories and classifications' },
   data: {
     endpoint: '/api/asset_categories', primaryKey: 'id',
     fields: {

@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const floorPlanSchema = defineSchema({
-  identity: { name: 'floorPlan', namePlural: 'Floor Plans', slug: 'modules/operations/floor-plans', icon: '🗺️', description: 'Venue floor plans and layouts' },
+  identity: { name: 'floorPlan', namePlural: 'Floor Plans', slug: 'modules/operations/floor-plans', icon: 'Map', description: 'Venue floor plans and layouts' },
   data: {
     endpoint: '/api/floor_plans', primaryKey: 'id',
     fields: {

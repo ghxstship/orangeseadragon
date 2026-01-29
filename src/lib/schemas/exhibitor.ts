@@ -5,7 +5,7 @@ export const exhibitorSchema = defineSchema({
     name: 'exhibitor',
     namePlural: 'Exhibitors',
     slug: 'modules/production/exhibitors',
-    icon: '🏪',
+    icon: 'Store',
     description: 'Event exhibitors and booth management',
   },
   data: {

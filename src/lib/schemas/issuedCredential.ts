@@ -5,7 +5,7 @@ export const issuedCredentialSchema = defineSchema({
     name: 'Issued Credential',
     namePlural: 'Issued Credentials',
     slug: 'modules/production/credentials',
-    icon: '🪪',
+    icon: 'BadgeCheck',
     description: 'Badges, passes, wristbands, and access credentials',
   },
   data: {

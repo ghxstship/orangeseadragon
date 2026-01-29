@@ -8,7 +8,7 @@ export const opportunitySchema = defineSchema({
     name: 'Opportunity',
     namePlural: 'Opportunities',
     slug: 'network/opportunities',
-    icon: '💼',
+    icon: 'Briefcase',
     description: 'Network opportunities and collaborations',
   },
 

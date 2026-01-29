@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const timesheetSchema = defineSchema({
-  identity: { name: 'timesheet', namePlural: 'Timesheets', slug: 'modules/workforce/timesheets', icon: '🕐', description: 'Time tracking and timesheets' },
+  identity: { name: 'timesheet', namePlural: 'Timesheets', slug: 'modules/workforce/timesheets', icon: 'ClockIcon', description: 'Time tracking and timesheets' },
   data: {
     endpoint: '/api/timesheets', primaryKey: 'id',
     fields: {

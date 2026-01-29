@@ -75,7 +75,7 @@ CREATE INDEX idx_networking_sessions_org ON networking_sessions(org_id);
 CREATE TABLE IF NOT EXISTS networking_participants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id UUID NOT NULL REFERENCES networking_sessions(id) ON DELETE CASCADE,
-  registration_id UUID NOT NULL REFERENCES registrations(id) ON DELETE CASCADE,
+  registration_id UUID NOT NULL REFERENCES event_registrations(id) ON DELETE CASCADE,
   status TEXT DEFAULT 'registered' CHECK (status IN ('registered', 'checked_in', 'no_show', 'cancelled')),
   interests TEXT,
   looking_for TEXT,
@@ -162,23 +162,23 @@ CREATE INDEX idx_ticket_messages_ticket ON ticket_messages(ticket_id);
 
 -- Exhibitors
 ALTER TABLE exhibitors ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "exhibitors_org_read" ON exhibitors FOR SELECT USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "exhibitors_org_insert" ON exhibitors FOR INSERT WITH CHECK (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "exhibitors_org_update" ON exhibitors FOR UPDATE USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "exhibitors_org_delete" ON exhibitors FOR DELETE USING (org_id IN (SELECT get_user_organization_ids()));
+CREATE POLICY "exhibitors_org_read" ON exhibitors FOR SELECT USING (is_organization_member(org_id));
+CREATE POLICY "exhibitors_org_insert" ON exhibitors FOR INSERT WITH CHECK (is_organization_member(org_id));
+CREATE POLICY "exhibitors_org_update" ON exhibitors FOR UPDATE USING (is_organization_member(org_id));
+CREATE POLICY "exhibitors_org_delete" ON exhibitors FOR DELETE USING (is_organization_member(org_id));
 
 -- Networking Sessions
 ALTER TABLE networking_sessions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "networking_sessions_org_read" ON networking_sessions FOR SELECT USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "networking_sessions_org_insert" ON networking_sessions FOR INSERT WITH CHECK (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "networking_sessions_org_update" ON networking_sessions FOR UPDATE USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "networking_sessions_org_delete" ON networking_sessions FOR DELETE USING (org_id IN (SELECT get_user_organization_ids()));
+CREATE POLICY "networking_sessions_org_read" ON networking_sessions FOR SELECT USING (is_organization_member(org_id));
+CREATE POLICY "networking_sessions_org_insert" ON networking_sessions FOR INSERT WITH CHECK (is_organization_member(org_id));
+CREATE POLICY "networking_sessions_org_update" ON networking_sessions FOR UPDATE USING (is_organization_member(org_id));
+CREATE POLICY "networking_sessions_org_delete" ON networking_sessions FOR DELETE USING (is_organization_member(org_id));
 
 -- Service Tickets
 ALTER TABLE service_tickets ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "service_tickets_org_read" ON service_tickets FOR SELECT USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "service_tickets_org_insert" ON service_tickets FOR INSERT WITH CHECK (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "service_tickets_org_update" ON service_tickets FOR UPDATE USING (org_id IN (SELECT get_user_organization_ids()));
-CREATE POLICY "service_tickets_org_delete" ON service_tickets FOR DELETE USING (org_id IN (SELECT get_user_organization_ids()));
+CREATE POLICY "service_tickets_org_read" ON service_tickets FOR SELECT USING (is_organization_member(org_id));
+CREATE POLICY "service_tickets_org_insert" ON service_tickets FOR INSERT WITH CHECK (is_organization_member(org_id));
+CREATE POLICY "service_tickets_org_update" ON service_tickets FOR UPDATE USING (is_organization_member(org_id));
+CREATE POLICY "service_tickets_org_delete" ON service_tickets FOR DELETE USING (is_organization_member(org_id));
 
 COMMIT;

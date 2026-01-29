@@ -5,7 +5,7 @@ export const techSpecSchema = defineSchema({
     name: 'techSpec',
     namePlural: 'Tech Specs',
     slug: 'modules/production/tech-specs',
-    icon: '⚙️',
+    icon: 'Settings',
     description: 'Technical specifications and requirements',
   },
   data: {

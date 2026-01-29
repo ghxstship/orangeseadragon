@@ -5,7 +5,7 @@ export const eventSessionSchema = defineSchema({
     name: 'Session',
     namePlural: 'Sessions',
     slug: 'modules/production/sessions',
-    icon: '🎤',
+    icon: 'Mic',
     description: 'Event sessions and schedule management',
   },
   data: {

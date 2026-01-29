@@ -1649,3 +1649,456 @@ export const SYNC_STATUS = {
 
 export type SyncStatus = (typeof SYNC_STATUS)[keyof typeof SYNC_STATUS];
 
+// ============================================================================
+// PRODUCTIONS (ClickUp SSOT)
+// ============================================================================
+
+export const PRODUCTION_STATUS = {
+  INTAKE: "intake",
+  SCOPING: "scoping",
+  PROPOSAL: "proposal",
+  AWARDED: "awarded",
+  DESIGN: "design",
+  FABRICATION: "fabrication",
+  DEPLOYMENT: "deployment",
+  INSTALLATION: "installation",
+  SHOW: "show",
+  STRIKE: "strike",
+  CLOSEOUT: "closeout",
+  ARCHIVED: "archived",
+} as const;
+
+export type ProductionStatus = (typeof PRODUCTION_STATUS)[keyof typeof PRODUCTION_STATUS];
+
+export const PRODUCTION_HEALTH = {
+  ON_TRACK: "on_track",
+  AT_RISK: "at_risk",
+  CRITICAL: "critical",
+  BLOCKED: "blocked",
+} as const;
+
+export type ProductionHealth = (typeof PRODUCTION_HEALTH)[keyof typeof PRODUCTION_HEALTH];
+
+export const PRODUCTION_TYPE = {
+  STAGE: "stage",
+  SCENIC: "scenic",
+  TOURING: "touring",
+  INSTALLATION: "installation",
+  ACTIVATION: "activation",
+  HYBRID: "hybrid",
+} as const;
+
+export type ProductionType = (typeof PRODUCTION_TYPE)[keyof typeof PRODUCTION_TYPE];
+
+// ============================================================================
+// SHIPMENTS & LOGISTICS (ClickUp SSOT)
+// ============================================================================
+
+export const SHIPMENT_STATUS = {
+  DRAFT: "draft",
+  PENDING: "pending",
+  PACKED: "packed",
+  IN_TRANSIT: "in_transit",
+  DELIVERED: "delivered",
+  PARTIALLY_RECEIVED: "partially_received",
+  RECEIVED: "received",
+  RETURNED: "returned",
+  CANCELLED: "cancelled",
+} as const;
+
+export type ShipmentStatus = (typeof SHIPMENT_STATUS)[keyof typeof SHIPMENT_STATUS];
+
+export const SHIPMENT_DIRECTION = {
+  OUTBOUND: "outbound",
+  INBOUND: "inbound",
+  TRANSFER: "transfer",
+} as const;
+
+export type ShipmentDirection = (typeof SHIPMENT_DIRECTION)[keyof typeof SHIPMENT_DIRECTION];
+
+export const PULL_LIST_STATUS = {
+  DRAFT: "draft",
+  APPROVED: "approved",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+} as const;
+
+export type PullListStatus = (typeof PULL_LIST_STATUS)[keyof typeof PULL_LIST_STATUS];
+
+export const LOAD_PLAN_STATUS = {
+  DRAFT: "draft",
+  APPROVED: "approved",
+  LOADING: "loading",
+  LOADED: "loaded",
+  VERIFIED: "verified",
+} as const;
+
+export type LoadPlanStatus = (typeof LOAD_PLAN_STATUS)[keyof typeof LOAD_PLAN_STATUS];
+
+// ============================================================================
+// WORK ORDERS (ClickUp SSOT)
+// ============================================================================
+
+export const WORK_ORDER_TYPE = {
+  INSTALL: "install",
+  STRIKE: "strike",
+  MAINTENANCE: "maintenance",
+  REPAIR: "repair",
+  INSPECTION: "inspection",
+} as const;
+
+export type WorkOrderType = (typeof WORK_ORDER_TYPE)[keyof typeof WORK_ORDER_TYPE];
+
+export const WORK_ORDER_STATUS = {
+  DRAFT: "draft",
+  SCHEDULED: "scheduled",
+  IN_PROGRESS: "in_progress",
+  ON_HOLD: "on_hold",
+  COMPLETED: "completed",
+  VERIFIED: "verified",
+  CANCELLED: "cancelled",
+} as const;
+
+export type WorkOrderStatus = (typeof WORK_ORDER_STATUS)[keyof typeof WORK_ORDER_STATUS];
+
+// ============================================================================
+// PERMITS & COMPLIANCE (ClickUp SSOT)
+// ============================================================================
+
+export const PERMIT_STATUS = {
+  NOT_REQUIRED: "not_required",
+  PENDING: "pending",
+  SUBMITTED: "submitted",
+  UNDER_REVIEW: "under_review",
+  APPROVED: "approved",
+  DENIED: "denied",
+  EXPIRED: "expired",
+  REVOKED: "revoked",
+} as const;
+
+export type PermitStatus = (typeof PERMIT_STATUS)[keyof typeof PERMIT_STATUS];
+
+export const PERMIT_TYPE = {
+  BUILDING: "building",
+  FIRE: "fire",
+  ELECTRICAL: "electrical",
+  NOISE: "noise",
+  STREET_CLOSURE: "street_closure",
+  ALCOHOL: "alcohol",
+  FOOD: "food",
+  PYROTECHNICS: "pyrotechnics",
+  TEMPORARY_STRUCTURE: "temporary_structure",
+  OTHER: "other",
+} as const;
+
+export type PermitType = (typeof PERMIT_TYPE)[keyof typeof PERMIT_TYPE];
+
+export const COI_STATUS = {
+  PENDING: "pending",
+  ACTIVE: "active",
+  EXPIRED: "expired",
+  CANCELLED: "cancelled",
+} as const;
+
+export type COIStatus = (typeof COI_STATUS)[keyof typeof COI_STATUS];
+
+export const SAFETY_PLAN_STATUS = {
+  DRAFT: "draft",
+  PENDING_REVIEW: "pending_review",
+  APPROVED: "approved",
+  ARCHIVED: "archived",
+} as const;
+
+export type SafetyPlanStatus = (typeof SAFETY_PLAN_STATUS)[keyof typeof SAFETY_PLAN_STATUS];
+
+// ============================================================================
+// SITE OPERATIONS (ClickUp SSOT)
+// ============================================================================
+
+export const SITE_REPORT_TYPE = {
+  DAILY: "daily",
+  INCIDENT: "incident",
+  SAFETY: "safety",
+  PROGRESS: "progress",
+  FINAL: "final",
+} as const;
+
+export type SiteReportType = (typeof SITE_REPORT_TYPE)[keyof typeof SITE_REPORT_TYPE];
+
+export const SITE_ISSUE_STATUS = {
+  OPEN: "open",
+  IN_PROGRESS: "in_progress",
+  RESOLVED: "resolved",
+  ESCALATED: "escalated",
+  CLOSED: "closed",
+} as const;
+
+export type SiteIssueStatus = (typeof SITE_ISSUE_STATUS)[keyof typeof SITE_ISSUE_STATUS];
+
+export const PUNCH_ITEM_STATUS = {
+  OPEN: "open",
+  IN_PROGRESS: "in_progress",
+  PENDING_REVIEW: "pending_review",
+  RESOLVED: "resolved",
+  DEFERRED: "deferred",
+} as const;
+
+export type PunchItemStatus = (typeof PUNCH_ITEM_STATUS)[keyof typeof PUNCH_ITEM_STATUS];
+
+export const INSPECTION_TYPE = {
+  QC: "qc",
+  SAFETY: "safety",
+  CLIENT_WALKTHROUGH: "client_walkthrough",
+  FINAL_SIGNOFF: "final_signoff",
+  REGULATORY: "regulatory",
+} as const;
+
+export type InspectionType = (typeof INSPECTION_TYPE)[keyof typeof INSPECTION_TYPE];
+
+export const INSPECTION_STATUS = {
+  SCHEDULED: "scheduled",
+  IN_PROGRESS: "in_progress",
+  PASSED: "passed",
+  FAILED: "failed",
+  CONDITIONAL: "conditional",
+  CANCELLED: "cancelled",
+} as const;
+
+export type InspectionStatus = (typeof INSPECTION_STATUS)[keyof typeof INSPECTION_STATUS];
+
+// ============================================================================
+// WORKFORCE - AVAILABILITY (ClickUp SSOT)
+// ============================================================================
+
+export const AVAILABILITY_STATUS = {
+  AVAILABLE: "available",
+  UNAVAILABLE: "unavailable",
+  TENTATIVE: "tentative",
+  PREFERRED: "preferred",
+  BLACKOUT: "blackout",
+} as const;
+
+export type AvailabilityStatus = (typeof AVAILABILITY_STATUS)[keyof typeof AVAILABILITY_STATUS];
+
+// ============================================================================
+// WORKFORCE - TRAVEL (ClickUp SSOT)
+// ============================================================================
+
+export const TRAVEL_STATUS = {
+  DRAFT: "draft",
+  SUBMITTED: "submitted",
+  APPROVED: "approved",
+  BOOKED: "booked",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+} as const;
+
+export type TravelStatus = (typeof TRAVEL_STATUS)[keyof typeof TRAVEL_STATUS];
+
+export const FLIGHT_STATUS = {
+  BOOKED: "booked",
+  CONFIRMED: "confirmed",
+  CHECKED_IN: "checked_in",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+} as const;
+
+export type FlightStatus = (typeof FLIGHT_STATUS)[keyof typeof FLIGHT_STATUS];
+
+export const HOTEL_STATUS = {
+  BOOKED: "booked",
+  CONFIRMED: "confirmed",
+  CHECKED_IN: "checked_in",
+  CHECKED_OUT: "checked_out",
+  CANCELLED: "cancelled",
+} as const;
+
+export type HotelStatus = (typeof HOTEL_STATUS)[keyof typeof HOTEL_STATUS];
+
+// ============================================================================
+// WORKFORCE - RECRUITMENT (ClickUp SSOT)
+// ============================================================================
+
+export const CANDIDATE_STATUS = {
+  NEW: "new",
+  SCREENING: "screening",
+  PHONE_SCREEN: "phone_screen",
+  INTERVIEW: "interview",
+  ASSESSMENT: "assessment",
+  REFERENCE_CHECK: "reference_check",
+  OFFER: "offer",
+  HIRED: "hired",
+  REJECTED: "rejected",
+  WITHDRAWN: "withdrawn",
+} as const;
+
+export type CandidateStatus = (typeof CANDIDATE_STATUS)[keyof typeof CANDIDATE_STATUS];
+
+export const JOB_REQUISITION_STATUS = {
+  DRAFT: "draft",
+  PENDING_APPROVAL: "pending_approval",
+  APPROVED: "approved",
+  OPEN: "open",
+  ON_HOLD: "on_hold",
+  FILLED: "filled",
+  CANCELLED: "cancelled",
+} as const;
+
+export type JobRequisitionStatus = (typeof JOB_REQUISITION_STATUS)[keyof typeof JOB_REQUISITION_STATUS];
+
+export const INTERVIEW_STATUS = {
+  SCHEDULED: "scheduled",
+  CONFIRMED: "confirmed",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+  NO_SHOW: "no_show",
+} as const;
+
+export type InterviewStatus = (typeof INTERVIEW_STATUS)[keyof typeof INTERVIEW_STATUS];
+
+export const INTERVIEW_RECOMMENDATION = {
+  STRONG_YES: "strong_yes",
+  YES: "yes",
+  NEUTRAL: "neutral",
+  NO: "no",
+  STRONG_NO: "strong_no",
+} as const;
+
+export type InterviewRecommendation = (typeof INTERVIEW_RECOMMENDATION)[keyof typeof INTERVIEW_RECOMMENDATION];
+
+export const OFFER_STATUS = {
+  DRAFT: "draft",
+  PENDING_APPROVAL: "pending_approval",
+  APPROVED: "approved",
+  SENT: "sent",
+  ACCEPTED: "accepted",
+  DECLINED: "declined",
+  EXPIRED: "expired",
+  WITHDRAWN: "withdrawn",
+} as const;
+
+export type OfferStatus = (typeof OFFER_STATUS)[keyof typeof OFFER_STATUS];
+
+// ============================================================================
+// WORKFORCE - PERFORMANCE (ClickUp SSOT)
+// ============================================================================
+
+export const GOAL_STATUS = {
+  NOT_STARTED: "not_started",
+  IN_PROGRESS: "in_progress",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+} as const;
+
+export type GoalStatus = (typeof GOAL_STATUS)[keyof typeof GOAL_STATUS];
+
+export const PIP_STATUS = {
+  DRAFT: "draft",
+  ACTIVE: "active",
+  EXTENDED: "extended",
+  COMPLETED_SUCCESS: "completed_success",
+  COMPLETED_FAILURE: "completed_failure",
+  CANCELLED: "cancelled",
+} as const;
+
+export type PIPStatus = (typeof PIP_STATUS)[keyof typeof PIP_STATUS];
+
+export const FEEDBACK_VISIBILITY = {
+  PRIVATE: "private",
+  MANAGER: "manager",
+  PUBLIC: "public",
+} as const;
+
+export type FeedbackVisibility = (typeof FEEDBACK_VISIBILITY)[keyof typeof FEEDBACK_VISIBILITY];
+
+// ============================================================================
+// WORKFORCE - SAFETY (ClickUp SSOT)
+// ============================================================================
+
+export const NEAR_MISS_STATUS = {
+  REPORTED: "reported",
+  INVESTIGATING: "investigating",
+  RESOLVED: "resolved",
+  CLOSED: "closed",
+} as const;
+
+export type NearMissStatus = (typeof NEAR_MISS_STATUS)[keyof typeof NEAR_MISS_STATUS];
+
+export const SAFETY_OBSERVATION_STATUS = {
+  OPEN: "open",
+  ACKNOWLEDGED: "acknowledged",
+  RESOLVED: "resolved",
+  CLOSED: "closed",
+} as const;
+
+export type SafetyObservationStatus = (typeof SAFETY_OBSERVATION_STATUS)[keyof typeof SAFETY_OBSERVATION_STATUS];
+
+export const WORKERS_COMP_STATUS = {
+  FILED: "filed",
+  UNDER_REVIEW: "under_review",
+  APPROVED: "approved",
+  DENIED: "denied",
+  SETTLED: "settled",
+  CLOSED: "closed",
+} as const;
+
+export type WorkersCompStatus = (typeof WORKERS_COMP_STATUS)[keyof typeof WORKERS_COMP_STATUS];
+
+// ============================================================================
+// ASSETS - FLEET (ClickUp SSOT)
+// ============================================================================
+
+export const VEHICLE_STATUS = {
+  AVAILABLE: "available",
+  IN_USE: "in_use",
+  MAINTENANCE: "maintenance",
+  RETIRED: "retired",
+} as const;
+
+export type VehicleStatus = (typeof VEHICLE_STATUS)[keyof typeof VEHICLE_STATUS];
+
+export const GPS_DEVICE_STATUS = {
+  ACTIVE: "active",
+  INACTIVE: "inactive",
+  MAINTENANCE: "maintenance",
+  RETIRED: "retired",
+} as const;
+
+export type GPSDeviceStatus = (typeof GPS_DEVICE_STATUS)[keyof typeof GPS_DEVICE_STATUS];
+
+export const MISSING_ITEM_STATUS = {
+  MISSING: "missing",
+  SEARCHING: "searching",
+  FOUND: "found",
+  WRITTEN_OFF: "written_off",
+} as const;
+
+export type MissingItemStatus = (typeof MISSING_ITEM_STATUS)[keyof typeof MISSING_ITEM_STATUS];
+
+// ============================================================================
+// RUN OF SHOW (ClickUp SSOT)
+// ============================================================================
+
+export const RUN_OF_SHOW_STATUS = {
+  DRAFT: "draft",
+  APPROVED: "approved",
+  ACTIVE: "active",
+  LOCKED: "locked",
+  ARCHIVED: "archived",
+} as const;
+
+export type RunOfShowStatus = (typeof RUN_OF_SHOW_STATUS)[keyof typeof RUN_OF_SHOW_STATUS];
+
+export const ROS_ELEMENT_STATUS = {
+  PENDING: "pending",
+  STANDBY: "standby",
+  ACTIVE: "active",
+  COMPLETED: "completed",
+  SKIPPED: "skipped",
+} as const;
+
+export type ROSElementStatus = (typeof ROS_ELEMENT_STATUS)[keyof typeof ROS_ELEMENT_STATUS];
+

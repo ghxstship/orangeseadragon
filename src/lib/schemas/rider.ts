@@ -5,7 +5,7 @@ export const riderSchema = defineSchema({
     name: 'rider',
     namePlural: 'Riders',
     slug: 'modules/production/riders',
-    icon: '📄',
+    icon: 'FileText',
     description: 'Artist and technical riders',
   },
   data: {

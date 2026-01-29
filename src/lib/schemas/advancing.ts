@@ -5,7 +5,7 @@ export const advancingSchema = defineSchema({
     name: 'advancing',
     namePlural: 'Advancing',
     slug: 'modules/production/advancing',
-    icon: '📞',
+    icon: 'Phone',
     description: 'Artist and production advancing',
   },
   data: {

@@ -1569,4 +1569,573 @@ export const productionExtendedTemplates: WorkflowTemplate[] = [
     },
     variables: [],
   },
+  // ============================================================================
+  // CLICKUP SSOT WORKFLOWS - Productions, Shipments, Work Orders
+  // ============================================================================
+  {
+    id: "production-status-advance",
+    name: "Production Status Advancement",
+    description: "Advance production through lifecycle stages with notifications",
+    category: "production",
+    tags: ["productions", "status", "lifecycle"],
+    workflow: {
+      name: "Production Status Advancement",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "event",
+        config: { eventType: "production.status_changed" },
+      },
+      steps: [
+        {
+          id: "get-production",
+          name: "Get Production Details",
+          type: "action",
+          config: {
+            actionType: "query",
+            parameters: {
+              entity: "productions",
+              filters: { id: "{{trigger.data.id}}" },
+              include: ["client", "venue", "project_manager", "account_executive"],
+            },
+          },
+        },
+        {
+          id: "notify-stakeholders",
+          name: "Notify Stakeholders",
+          type: "notification",
+          config: {
+            channel: "email",
+            recipients: [
+              "{{steps.get-production.output[0].project_manager.email}}",
+              "{{steps.get-production.output[0].account_executive.email}}",
+            ],
+            template: "production-status-changed",
+            data: {
+              production: "{{steps.get-production.output[0]}}",
+              previousStatus: "{{trigger.data.previousStatus}}",
+              newStatus: "{{trigger.data.newStatus}}",
+            },
+          },
+        },
+        {
+          id: "check-awarded",
+          name: "Check if Awarded",
+          type: "condition",
+          config: {
+            expression: "{{trigger.data.newStatus}}",
+            trueBranch: ["create-project-tasks"],
+            falseBranch: [],
+          },
+          conditions: [{ field: "trigger.data.newStatus", operator: "eq", value: "awarded" }],
+        },
+        {
+          id: "create-project-tasks",
+          name: "Create Project Tasks",
+          type: "action",
+          config: {
+            actionType: "createFromTemplate",
+            parameters: {
+              template: "production-awarded-checklist",
+              data: { productionId: "{{trigger.data.id}}" },
+            },
+          },
+        },
+        {
+          id: "log-status-change",
+          name: "Log Status Change",
+          type: "action",
+          config: {
+            actionType: "createEntity",
+            parameters: {
+              entity: "activity_log",
+              data: {
+                entityType: "production",
+                entityId: "{{trigger.data.id}}",
+                action: "status_changed",
+                details: {
+                  from: "{{trigger.data.previousStatus}}",
+                  to: "{{trigger.data.newStatus}}",
+                },
+                performedAt: "{{now}}",
+              },
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
+  {
+    id: "production-health-alert",
+    name: "Production Health Alert",
+    description: "Alert when production health changes to at-risk or critical",
+    category: "production",
+    tags: ["productions", "health", "alerts"],
+    workflow: {
+      name: "Production Health Alert",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "event",
+        config: { eventType: "production.health_changed" },
+      },
+      steps: [
+        {
+          id: "check-severity",
+          name: "Check Health Severity",
+          type: "condition",
+          config: {
+            expression: "{{trigger.data.newHealth}}",
+            trueBranch: ["escalate-alert"],
+            falseBranch: [],
+          },
+          conditions: [{ field: "trigger.data.newHealth", operator: "in", value: ["at_risk", "critical", "blocked"] }],
+        },
+        {
+          id: "escalate-alert",
+          name: "Escalate Health Alert",
+          type: "notification",
+          config: {
+            channel: "push",
+            recipients: ["{{trigger.data.project_manager_id}}", "{{trigger.data.account_executive_id}}"],
+            template: "production-health-alert",
+            data: {
+              production: "{{trigger.data}}",
+              health: "{{trigger.data.newHealth}}",
+              urgency: "{{trigger.data.newHealth === 'critical' ? 'high' : 'medium'}}",
+            },
+          },
+        },
+        {
+          id: "create-action-item",
+          name: "Create Action Item",
+          type: "action",
+          config: {
+            actionType: "createEntity",
+            parameters: {
+              entity: "tasks",
+              data: {
+                name: "Address {{trigger.data.name}} health status: {{trigger.data.newHealth}}",
+                priority: "{{trigger.data.newHealth === 'critical' ? 'urgent' : 'high'}}",
+                assigneeId: "{{trigger.data.project_manager_id}}",
+                dueDate: "{{now + 1d}}",
+                category: "production_health",
+              },
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
+  {
+    id: "shipment-status-tracking",
+    name: "Shipment Status Tracking",
+    description: "Track shipment status changes and notify stakeholders",
+    category: "production",
+    tags: ["shipments", "logistics", "tracking"],
+    workflow: {
+      name: "Shipment Status Tracking",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "event",
+        config: { eventType: "shipment.status_changed" },
+      },
+      steps: [
+        {
+          id: "get-shipment",
+          name: "Get Shipment Details",
+          type: "action",
+          config: {
+            actionType: "query",
+            parameters: {
+              entity: "shipments",
+              filters: { id: "{{trigger.data.id}}" },
+              include: ["production", "carrier"],
+            },
+          },
+        },
+        {
+          id: "notify-production-team",
+          name: "Notify Production Team",
+          type: "notification",
+          config: {
+            channel: "push",
+            recipients: ["{{steps.get-shipment.output[0].production.project_manager_id}}"],
+            template: "shipment-status-update",
+            data: {
+              shipment: "{{steps.get-shipment.output[0]}}",
+              newStatus: "{{trigger.data.newStatus}}",
+            },
+          },
+        },
+        {
+          id: "check-delivered",
+          name: "Check if Delivered",
+          type: "condition",
+          config: {
+            expression: "{{trigger.data.newStatus}}",
+            trueBranch: ["create-receiving-task"],
+            falseBranch: [],
+          },
+          conditions: [{ field: "trigger.data.newStatus", operator: "eq", value: "delivered" }],
+        },
+        {
+          id: "create-receiving-task",
+          name: "Create Receiving Task",
+          type: "action",
+          config: {
+            actionType: "createEntity",
+            parameters: {
+              entity: "tasks",
+              data: {
+                name: "Receive shipment {{trigger.data.shipment_number}}",
+                priority: "high",
+                dueDate: "{{now + 4h}}",
+                category: "logistics",
+              },
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
+  {
+    id: "work-order-lifecycle",
+    name: "Work Order Lifecycle Management",
+    description: "Manage work order status transitions and crew notifications",
+    category: "production",
+    tags: ["work-orders", "crew", "installation"],
+    workflow: {
+      name: "Work Order Lifecycle Management",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "event",
+        config: { eventType: "work_order.status_changed" },
+      },
+      steps: [
+        {
+          id: "get-work-order",
+          name: "Get Work Order Details",
+          type: "action",
+          config: {
+            actionType: "query",
+            parameters: {
+              entity: "work_orders",
+              filters: { id: "{{trigger.data.id}}" },
+              include: ["production", "crew_lead", "venue"],
+            },
+          },
+        },
+        {
+          id: "notify-crew-lead",
+          name: "Notify Crew Lead",
+          type: "notification",
+          config: {
+            channel: "push",
+            recipients: ["{{steps.get-work-order.output[0].crew_lead_id}}"],
+            template: "work-order-status-update",
+            data: {
+              workOrder: "{{steps.get-work-order.output[0]}}",
+              newStatus: "{{trigger.data.newStatus}}",
+            },
+          },
+        },
+        {
+          id: "check-completed",
+          name: "Check if Completed",
+          type: "condition",
+          config: {
+            expression: "{{trigger.data.newStatus}}",
+            trueBranch: ["create-verification-task"],
+            falseBranch: [],
+          },
+          conditions: [{ field: "trigger.data.newStatus", operator: "eq", value: "completed" }],
+        },
+        {
+          id: "create-verification-task",
+          name: "Create Verification Task",
+          type: "action",
+          config: {
+            actionType: "createEntity",
+            parameters: {
+              entity: "tasks",
+              data: {
+                name: "Verify work order {{trigger.data.work_order_number}}",
+                priority: "high",
+                dueDate: "{{now + 1d}}",
+                category: "quality_control",
+              },
+            },
+          },
+        },
+        {
+          id: "update-daily-report",
+          name: "Update Daily Site Report",
+          type: "action",
+          config: {
+            actionType: "appendToDailyReport",
+            parameters: {
+              productionId: "{{steps.get-work-order.output[0].production_id}}",
+              workOrderId: "{{trigger.data.id}}",
+              status: "{{trigger.data.newStatus}}",
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
+  {
+    id: "permit-expiration-alert",
+    name: "Permit Expiration Alert",
+    description: "Alert before permits expire",
+    category: "production",
+    tags: ["permits", "compliance", "alerts"],
+    workflow: {
+      name: "Permit Expiration Alert",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "schedule",
+        config: { cron: "0 8 * * *", timezone: "UTC" },
+      },
+      steps: [
+        {
+          id: "find-expiring-permits",
+          name: "Find Expiring Permits",
+          type: "action",
+          config: {
+            actionType: "query",
+            parameters: {
+              entity: "permits",
+              filters: {
+                expiration_date: { $gte: "{{now}}", $lte: "{{now + 30d}}" },
+                status: "approved",
+              },
+              include: ["production", "venue"],
+            },
+          },
+        },
+        {
+          id: "send-alerts",
+          name: "Send Expiration Alerts",
+          type: "loop",
+          config: {
+            collection: "{{steps.find-expiring-permits.output}}",
+            itemVariable: "permit",
+            steps: ["send-permit-alert"],
+          },
+        },
+        {
+          id: "send-permit-alert",
+          name: "Send Permit Alert",
+          type: "notification",
+          config: {
+            channel: "email",
+            recipients: ["{{permit.production.project_manager.email}}"],
+            template: "permit-expiring",
+            data: {
+              permit: "{{permit}}",
+              daysUntilExpiry: "{{dateDiff(permit.expiration_date, now, 'days')}}",
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
+  {
+    id: "coi-expiration-tracking",
+    name: "Certificate of Insurance Expiration Tracking",
+    description: "Track and alert on expiring certificates of insurance",
+    category: "production",
+    tags: ["coi", "insurance", "compliance"],
+    workflow: {
+      name: "COI Expiration Tracking",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "schedule",
+        config: { cron: "0 9 * * 1", timezone: "UTC" },
+      },
+      steps: [
+        {
+          id: "find-expiring-cois",
+          name: "Find Expiring COIs",
+          type: "action",
+          config: {
+            actionType: "query",
+            parameters: {
+              entity: "certificates_of_insurance",
+              filters: {
+                expiration_date: { $gte: "{{now}}", $lte: "{{now + 60d}}" },
+                status: "active",
+              },
+              include: ["vendor", "company", "production"],
+            },
+          },
+        },
+        {
+          id: "send-vendor-reminders",
+          name: "Send Vendor Reminders",
+          type: "loop",
+          config: {
+            collection: "{{steps.find-expiring-cois.output}}",
+            itemVariable: "coi",
+            steps: ["send-coi-reminder"],
+          },
+        },
+        {
+          id: "send-coi-reminder",
+          name: "Send COI Reminder",
+          type: "notification",
+          config: {
+            channel: "email",
+            recipients: ["{{coi.vendor.email || coi.company.email}}"],
+            template: "coi-expiring-reminder",
+            data: {
+              coi: "{{coi}}",
+              daysUntilExpiry: "{{dateDiff(coi.expiration_date, now, 'days')}}",
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
+  {
+    id: "inspection-scheduling",
+    name: "Inspection Scheduling and Notification",
+    description: "Schedule inspections and notify relevant parties",
+    category: "production",
+    tags: ["inspections", "quality", "scheduling"],
+    workflow: {
+      name: "Inspection Scheduling",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "event",
+        config: { eventType: "inspection.scheduled" },
+      },
+      steps: [
+        {
+          id: "get-inspection",
+          name: "Get Inspection Details",
+          type: "action",
+          config: {
+            actionType: "query",
+            parameters: {
+              entity: "inspections",
+              filters: { id: "{{trigger.data.id}}" },
+              include: ["production", "work_order"],
+            },
+          },
+        },
+        {
+          id: "notify-inspector",
+          name: "Notify Inspector",
+          type: "notification",
+          config: {
+            channel: "email",
+            recipients: ["{{steps.get-inspection.output[0].inspector_id}}"],
+            template: "inspection-scheduled",
+            data: { inspection: "{{steps.get-inspection.output[0]}}" },
+          },
+        },
+        {
+          id: "notify-production-team",
+          name: "Notify Production Team",
+          type: "notification",
+          config: {
+            channel: "push",
+            recipients: ["{{steps.get-inspection.output[0].production.project_manager_id}}"],
+            template: "inspection-scheduled-internal",
+            data: { inspection: "{{steps.get-inspection.output[0]}}" },
+          },
+        },
+        {
+          id: "create-calendar-event",
+          name: "Create Calendar Event",
+          type: "action",
+          config: {
+            actionType: "createCalendarEvent",
+            parameters: {
+              title: "{{steps.get-inspection.output[0].inspection_type}} Inspection - {{steps.get-inspection.output[0].production.name}}",
+              startTime: "{{steps.get-inspection.output[0].scheduled_date}}T{{steps.get-inspection.output[0].scheduled_time}}",
+              duration: 60,
+              attendees: ["{{steps.get-inspection.output[0].inspector_id}}"],
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
+  {
+    id: "punch-item-resolution",
+    name: "Punch Item Resolution Tracking",
+    description: "Track punch item resolution and escalate overdue items",
+    category: "production",
+    tags: ["punch-items", "quality", "resolution"],
+    workflow: {
+      name: "Punch Item Resolution Tracking",
+      version: 1,
+      status: "active",
+      trigger: {
+        type: "schedule",
+        config: { cron: "0 10 * * *", timezone: "UTC" },
+      },
+      steps: [
+        {
+          id: "find-overdue-items",
+          name: "Find Overdue Punch Items",
+          type: "action",
+          config: {
+            actionType: "query",
+            parameters: {
+              entity: "punch_items",
+              filters: {
+                due_date: { $lt: "{{now}}" },
+                status: { $nin: ["resolved", "deferred"] },
+              },
+              include: ["production", "assigned_to"],
+            },
+          },
+        },
+        {
+          id: "escalate-overdue",
+          name: "Escalate Overdue Items",
+          type: "loop",
+          config: {
+            collection: "{{steps.find-overdue-items.output}}",
+            itemVariable: "item",
+            steps: ["send-escalation"],
+          },
+        },
+        {
+          id: "send-escalation",
+          name: "Send Escalation",
+          type: "notification",
+          config: {
+            channel: "email",
+            recipients: [
+              "{{item.assigned_to.email}}",
+              "{{item.production.project_manager.email}}",
+            ],
+            template: "punch-item-overdue",
+            data: {
+              item: "{{item}}",
+              daysOverdue: "{{dateDiff(now, item.due_date, 'days')}}",
+            },
+          },
+        },
+      ],
+    },
+    variables: [],
+  },
 ];

@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const incidentSchema = defineSchema({
-  identity: { name: 'incident', namePlural: 'Incidents', slug: 'modules/operations/incidents', icon: '⚠️', description: 'Incident reports and tracking' },
+  identity: { name: 'incident', namePlural: 'Incidents', slug: 'modules/operations/incidents', icon: 'AlertTriangle', description: 'Incident reports and tracking' },
   data: {
     endpoint: '/api/incident_reports', primaryKey: 'id',
     fields: {

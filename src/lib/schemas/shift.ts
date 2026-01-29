@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const shiftSchema = defineSchema({
-  identity: { name: 'shift', namePlural: 'Shifts', slug: 'modules/workforce/shifts', icon: '⏰', description: 'Work shifts and time slots' },
+  identity: { name: 'shift', namePlural: 'Shifts', slug: 'modules/workforce/shifts', icon: 'Clock', description: 'Work shifts and time slots' },
   data: {
     endpoint: '/api/shifts', primaryKey: 'id',
     fields: {

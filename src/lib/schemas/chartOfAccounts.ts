@@ -5,7 +5,7 @@ export const chartOfAccountsSchema = defineSchema({
     name: 'chart_of_account',
     namePlural: 'Chart of Accounts',
     slug: 'modules/finance/gl-accounts',
-    icon: '📊',
+    icon: 'FileSpreadsheet',
     description: 'General ledger accounts',
   },
   data: {

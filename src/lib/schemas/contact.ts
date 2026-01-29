@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const contactSchema = defineSchema({
-  identity: { name: 'contact', namePlural: 'Contacts', slug: 'modules/business/contacts', icon: '👤', description: 'Business contacts and relationships' },
+  identity: { name: 'contact', namePlural: 'Contacts', slug: 'modules/business/contacts', icon: 'Contact', description: 'Business contacts and relationships' },
   data: {
     endpoint: '/api/contacts', primaryKey: 'id',
     fields: {

@@ -5,7 +5,7 @@ export const subscriberSchema = defineSchema({
     name: 'subscriber',
     namePlural: 'Subscribers',
     slug: 'content/subscribers',
-    icon: '📬',
+    icon: 'Mail',
     description: 'Email subscribers and mailing list management',
   },
   data: {

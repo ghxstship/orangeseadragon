@@ -5,7 +5,7 @@ export const partnerSchema = defineSchema({
     name: 'Partner',
     namePlural: 'Partners',
     slug: 'modules/production/partners',
-    icon: '🤝',
+    icon: 'Handshake',
     description: 'Sponsors, exhibitors, vendors, and other event partners',
   },
   data: {

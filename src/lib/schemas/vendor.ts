@@ -1,7 +1,7 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const vendorSchema = defineSchema({
-  identity: { name: 'vendor', namePlural: 'Vendor Contacts', slug: 'modules/assets/vendors', icon: '🏪', description: 'Vendor contact relationships' },
+  identity: { name: 'vendor', namePlural: 'Vendor Contacts', slug: 'modules/assets/vendors', icon: 'Building', description: 'Vendor contact relationships' },
   data: {
     endpoint: '/api/vendor_contacts', primaryKey: 'id',
     fields: {
