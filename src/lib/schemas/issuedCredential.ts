@@ -217,7 +217,7 @@ export const issuedCredentialSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/credentials/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/credentials/${r.id}` } },
       { key: 'print', label: 'Print', handler: { type: 'api', endpoint: '/api/issued-credentials/print', method: 'POST' }, condition: (r: Record<string, unknown>) => !r.printed_at },
       { key: 'suspend', label: 'Suspend', variant: 'warning', handler: { type: 'modal', component: 'SuspendCredentialModal' }, condition: (r: Record<string, unknown>) => { const status = r.status as Record<string, unknown> | undefined; return status?.code === 'active'; } },
       { key: 'revoke', label: 'Revoke', variant: 'destructive', handler: { type: 'modal', component: 'RevokeCredentialModal' }, condition: (r: Record<string, unknown>) => { const status = r.status as Record<string, unknown> | undefined; return status?.code !== 'revoked'; } },
@@ -226,7 +226,7 @@ export const issuedCredentialSchema = defineSchema({
       { key: 'bulk_print', label: 'Print Selected', handler: { type: 'api', endpoint: '/api/issued-credentials/bulk-print', method: 'POST' } },
     ],
     global: [
-      { key: 'create', label: 'Issue Credential', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/credentials/new' } },
+      { key: 'create', label: 'Issue Credential', variant: 'primary', handler: { type: 'navigate', path: '/productions/credentials/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: false },

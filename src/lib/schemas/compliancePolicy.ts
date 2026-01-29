@@ -186,11 +186,11 @@ export const compliancePolicySchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/compliance/policies/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/compliance/policies/${r.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Policy', variant: 'primary', handler: { type: 'navigate', path: '/modules/operations/compliance/policies/new' } },
+      { key: 'create', label: 'New Policy', variant: 'primary', handler: { type: 'navigate', path: '/operations/compliance/policies/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

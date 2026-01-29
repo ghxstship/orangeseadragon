@@ -20,6 +20,6 @@ export const dealSchema = defineSchema({
   filters: { quick: [{ key: 'open', label: 'Open', query: { where: {} } }], advanced: ['stage', 'companyId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table', 'kanban'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'value', label: 'Value', value: { type: 'field', field: 'value' }, format: 'currency' }, { key: 'prob', label: 'Probability', value: { type: 'field', field: 'probability' }, format: 'percentage' }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Deal Details', fields: ['name', 'contactId', 'companyId', 'value', 'stage', 'probability', 'closeDate', 'notes'] }] } },
   views: { table: { columns: ['name', 'companyId', 'value', 'stage', 'probability', 'closeDate'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/deals/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Deal', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/deals/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Deal', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

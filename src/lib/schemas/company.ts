@@ -20,6 +20,6 @@ export const companySchema = defineSchema({
   filters: { quick: [], advanced: ['industry'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'contacts', label: 'Contacts', value: { type: 'field', field: 'contactCount' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Company Details', fields: ['name', 'industry', 'website', 'phone', 'email', 'address', 'notes'] }] } },
   views: { table: { columns: ['name', 'industry', 'website', 'phone', 'contactCount'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/companies/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Company', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/companies/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Company', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

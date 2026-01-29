@@ -212,11 +212,11 @@ export const performanceReviewSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/performance/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/performance/${r.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Review', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/performance/new' } },
+      { key: 'create', label: 'New Review', variant: 'primary', handler: { type: 'navigate', path: '/people/performance/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

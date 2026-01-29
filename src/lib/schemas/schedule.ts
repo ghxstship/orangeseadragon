@@ -18,6 +18,6 @@ export const scheduleSchema = defineSchema({
   filters: { quick: [], advanced: ['status', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Details', fields: ['name', 'eventId', 'startDate', 'endDate', 'status', 'notes'] }] } },
   views: { table: { columns: ['name', 'eventId', 'startDate', 'endDate', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/schedules/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Schedule', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/schedules/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Schedule', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

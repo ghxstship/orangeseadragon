@@ -72,7 +72,7 @@ export const sprintSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'projectId', 'status', 'startDate', 'endDate', 'velocity'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/projects/sprints/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/sprints/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Sprint', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

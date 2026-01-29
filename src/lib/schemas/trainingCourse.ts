@@ -192,11 +192,11 @@ export const trainingCourseSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/training/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/training/${r.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Course', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/training/new' } },
+      { key: 'create', label: 'New Course', variant: 'primary', handler: { type: 'navigate', path: '/people/training/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

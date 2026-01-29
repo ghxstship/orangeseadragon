@@ -185,11 +185,11 @@ export const assetSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record) => `/modules/assets/inventory/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record) => `/assets/inventory/${record.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Asset', variant: 'primary', handler: { type: 'navigate', path: () => '/modules/assets/inventory/new' } }
+      { key: 'create', label: 'New Asset', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/inventory/new' } }
     ]
   },
 

@@ -18,6 +18,6 @@ export const radioChannelSchema = defineSchema({
   filters: { quick: [], advanced: ['eventId', 'departmentId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All Channels', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Channel Details', fields: ['name', 'channel', 'frequency', 'eventId', 'departmentId', 'notes'] }] } },
   views: { table: { columns: ['name', 'channel', 'frequency', 'departmentId'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/radio/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Channel', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/radio/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Channel', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

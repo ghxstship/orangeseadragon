@@ -207,7 +207,7 @@ export const dailySiteReportSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/operations/daily-reports/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/operations/daily-reports/${record.id}` } },
     ],
     bulk: [],
     global: [

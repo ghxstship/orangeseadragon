@@ -206,7 +206,7 @@ export const inspectionSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/operations/inspections/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/operations/inspections/${record.id}` } },
     ],
     bulk: [],
     global: [

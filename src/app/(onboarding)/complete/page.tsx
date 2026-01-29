@@ -23,7 +23,7 @@ export default function OnboardingCompletePage() {
 
       {/* Quick actions */}
       <div className="grid gap-3 md:grid-cols-2 text-left">
-        <Link href="/modules/projects/projects/new">
+        <Link href="/productions/events/new">
           <div className="rounded-lg border p-4 hover:border-primary/50 hover:bg-muted/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
@@ -38,7 +38,7 @@ export default function OnboardingCompletePage() {
             </div>
           </div>
         </Link>
-        <Link href="/modules/production/events/new">
+        <Link href="/productions/events/new">
           <div className="rounded-lg border p-4 hover:border-primary/50 hover:bg-muted/50 transition-colors cursor-pointer">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">

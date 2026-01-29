@@ -134,12 +134,12 @@ export const offboardingTemplateSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/offboarding/templates/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/offboarding/templates/${r.id}` } },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/offboarding_templates', method: 'POST' } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Template', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/offboarding/templates/new' } },
+      { key: 'create', label: 'New Template', variant: 'primary', handler: { type: 'navigate', path: '/people/offboarding/templates/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

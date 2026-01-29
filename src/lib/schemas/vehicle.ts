@@ -216,7 +216,7 @@ export const vehicleSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/assets/vehicles/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/assets/vehicles/${record.id}` } },
     ],
     bulk: [],
     global: [

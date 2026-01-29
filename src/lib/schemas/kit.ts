@@ -18,6 +18,6 @@ export const kitSchema = defineSchema({
   filters: { quick: [{ key: 'available', label: 'Available', query: { where: { status: 'available' } } }], advanced: ['status', 'categoryId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'items', label: 'Items', value: { type: 'field', field: 'itemCount' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Kit Details', fields: ['name', 'code', 'categoryId', 'status', 'description'] }] } },
   views: { table: { columns: ['name', 'code', 'categoryId', 'itemCount', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/assets/kits/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Kit', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/kits/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Kit', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

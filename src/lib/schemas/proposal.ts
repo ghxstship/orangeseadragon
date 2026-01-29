@@ -19,6 +19,6 @@ export const proposalSchema = defineSchema({
   filters: { quick: [{ key: 'sent', label: 'Sent', query: { where: { status: 'sent' } } }], advanced: ['status', 'companyId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'amount', label: 'Amount', value: { type: 'field', field: 'amount' }, format: 'currency' }], blocks: [{ key: 'content', title: 'Content', content: { type: 'fields', fields: ['content'] } }] } }, form: { sections: [{ key: 'basic', title: 'Proposal Details', fields: ['title', 'dealId', 'companyId', 'amount', 'status', 'validUntil', 'content'] }] } },
   views: { table: { columns: ['title', 'companyId', 'amount', 'status', 'validUntil'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/proposals/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Proposal', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/proposals/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Proposal', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

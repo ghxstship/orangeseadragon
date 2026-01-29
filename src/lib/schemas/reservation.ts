@@ -19,6 +19,6 @@ export const reservationSchema = defineSchema({
   filters: { quick: [{ key: 'pending', label: 'Pending', query: { where: { status: 'pending' } } }], advanced: ['status', 'assetId', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'pending', label: 'Pending', query: { where: { status: 'pending' } }, count: true }], defaultView: 'table', availableViews: ['table', 'calendar'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Reservation Details', fields: ['assetId', 'eventId', 'requestedBy', 'startDate', 'endDate', 'status', 'notes'] }] } },
   views: { table: { columns: ['assetId', 'eventId', 'requestedBy', 'startDate', 'endDate', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/assets/reservations/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Reservation', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/reservations/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Reservation', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

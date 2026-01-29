@@ -153,12 +153,12 @@ export const chartOfAccountsSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/finance/gl-accounts/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/finance/gl-accounts/${r.id}/edit` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/gl-accounts/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/gl-accounts/${r.id}/edit` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Account', variant: 'primary', handler: { type: 'navigate', path: '/modules/finance/gl-accounts/new' } },
+      { key: 'create', label: 'New Account', variant: 'primary', handler: { type: 'navigate', path: '/finance/gl-accounts/new' } },
       { key: 'import', label: 'Import', handler: { type: 'modal', component: 'ImportModal' } },
     ],
   },

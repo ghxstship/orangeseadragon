@@ -78,7 +78,7 @@ export const backlogSchema = defineSchema({
   },
   views: { table: { columns: ['title', 'type', 'priority', 'points', 'projectId'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/projects/backlogs/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/backlogs/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Item', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

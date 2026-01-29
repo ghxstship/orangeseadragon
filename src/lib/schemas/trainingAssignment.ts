@@ -181,14 +181,14 @@ export const trainingAssignmentSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/training/assignments/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/training/assignments/${r.id}` } },
       { key: 'mark_complete', label: 'Mark Complete', handler: { type: 'api', endpoint: '/api/training_assignments/complete', method: 'POST' } },
     ],
     bulk: [
       { key: 'remind', label: 'Send Reminder', handler: { type: 'api', endpoint: '/api/training_assignments/remind', method: 'POST' } },
     ],
     global: [
-      { key: 'create', label: 'New Assignment', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/training/assignments/new' } },
+      { key: 'create', label: 'New Assignment', variant: 'primary', handler: { type: 'navigate', path: '/people/training/assignments/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

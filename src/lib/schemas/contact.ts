@@ -20,6 +20,6 @@ export const contactSchema = defineSchema({
   filters: { quick: [], advanced: ['type', 'companyId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [{ key: 'contact', title: 'Contact Info', content: { type: 'fields', fields: ['email', 'phone'] } }] } }, form: { sections: [{ key: 'basic', title: 'Contact Details', fields: ['firstName', 'lastName', 'email', 'phone', 'companyId', 'title', 'type', 'notes'] }] } },
   views: { table: { columns: ['firstName', 'lastName', 'email', 'phone', 'companyId', 'type'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/contacts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Contact', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/contacts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Contact', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

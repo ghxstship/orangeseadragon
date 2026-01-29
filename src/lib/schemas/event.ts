@@ -192,7 +192,7 @@ export const eventSchema = defineSchema({
   // Actions
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/production/events/${record.id}` } }
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/productions/events/${record.id}` } }
     ],
     bulk: [],
     global: [

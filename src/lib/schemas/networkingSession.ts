@@ -198,11 +198,11 @@ export const networkingSessionSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/networking/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/networking/${r.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Session', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/networking/new' } },
+      { key: 'create', label: 'New Session', variant: 'primary', handler: { type: 'navigate', path: '/productions/networking/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

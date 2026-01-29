@@ -197,14 +197,14 @@ export const campaignSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/campaigns/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/campaigns/${r.id}/edit` }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/campaigns/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/campaigns/${r.id}/edit` }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
       { key: 'send', label: 'Send Now', variant: 'primary', handler: { type: 'api', endpoint: '/api/campaigns/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' || r.status === 'scheduled' },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/campaigns/duplicate', method: 'POST' } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Campaign', variant: 'primary', handler: { type: 'navigate', path: '/modules/business/campaigns/new' } },
+      { key: 'create', label: 'New Campaign', variant: 'primary', handler: { type: 'navigate', path: '/business/campaigns/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

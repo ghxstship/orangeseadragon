@@ -182,11 +182,11 @@ export const venueSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record) => `/modules/operations/venues/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record) => `/operations/venues/${record.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Venue', variant: 'primary', handler: { type: 'navigate', path: () => '/modules/operations/venues/new' } }
+      { key: 'create', label: 'New Venue', variant: 'primary', handler: { type: 'navigate', path: () => '/operations/venues/new' } }
     ]
   },
 

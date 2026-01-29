@@ -17,6 +17,6 @@ export const floorPlanSchema = defineSchema({
   filters: { quick: [], advanced: ['status', 'venueId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Details', fields: ['name', 'venueId', 'version', 'status', 'description'] }] } },
   views: { table: { columns: ['name', 'venueId', 'version', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/floor-plans/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Floor Plan', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/floor-plans/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Floor Plan', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

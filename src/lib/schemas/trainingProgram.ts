@@ -200,7 +200,7 @@ export const trainingProgramSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/training/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/training/${r.id}` } },
       { key: 'assign', label: 'Assign', handler: { type: 'modal', component: 'AssignTrainingModal' } },
     ],
     bulk: [
@@ -208,7 +208,7 @@ export const trainingProgramSchema = defineSchema({
       { key: 'deactivate', label: 'Deactivate', handler: { type: 'api', endpoint: '/api/training_programs/bulk-deactivate', method: 'POST' } },
     ],
     global: [
-      { key: 'create', label: 'New Program', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/training/new' } },
+      { key: 'create', label: 'New Program', variant: 'primary', handler: { type: 'navigate', path: '/people/training/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

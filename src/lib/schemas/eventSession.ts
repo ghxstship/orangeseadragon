@@ -181,11 +181,11 @@ export const eventSessionSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/sessions/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/sessions/${r.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Session', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/sessions/new' } },
+      { key: 'create', label: 'New Session', variant: 'primary', handler: { type: 'navigate', path: '/productions/sessions/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

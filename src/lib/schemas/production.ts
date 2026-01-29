@@ -261,7 +261,7 @@ export const productionSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/production/productions/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/productions/productions/${record.id}` } },
     ],
     bulk: [],
     global: [

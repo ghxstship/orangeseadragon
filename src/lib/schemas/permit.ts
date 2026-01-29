@@ -234,7 +234,7 @@ export const permitSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/compliance/permits/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/productions/compliance/${record.id}` } },
     ],
     bulk: [],
     global: [

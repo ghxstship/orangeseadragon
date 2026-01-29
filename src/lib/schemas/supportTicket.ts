@@ -237,7 +237,7 @@ export const supportTicketSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/support/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/support/${r.id}` } },
       { key: 'assign', label: 'Assign', handler: { type: 'modal', component: 'AssignTicketModal' } },
       { key: 'resolve', label: 'Resolve', variant: 'primary', handler: { type: 'api', endpoint: '/api/support-tickets/resolve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status !== 'resolved' && r.status !== 'closed' },
       { key: 'close', label: 'Close', handler: { type: 'api', endpoint: '/api/support-tickets/close', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'resolved' },
@@ -246,7 +246,7 @@ export const supportTicketSchema = defineSchema({
       { key: 'bulk_assign', label: 'Assign Selected', handler: { type: 'modal', component: 'BulkAssignModal' } },
     ],
     global: [
-      { key: 'create', label: 'New Ticket', variant: 'primary', handler: { type: 'navigate', path: '/modules/operations/support/new' } },
+      { key: 'create', label: 'New Ticket', variant: 'primary', handler: { type: 'navigate', path: '/operations/support/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: false },

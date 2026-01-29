@@ -61,7 +61,7 @@ export const riderSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'artistId', 'type', 'status'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/riders/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/riders/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Rider', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

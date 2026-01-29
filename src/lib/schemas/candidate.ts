@@ -190,7 +190,7 @@ export const candidateSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/workforce/candidates/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/people/candidates/${record.id}` } },
     ],
     bulk: [],
     global: [

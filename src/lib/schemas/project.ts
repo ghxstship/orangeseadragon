@@ -220,7 +220,7 @@ export const projectSchema = defineSchema({
       {
         key: 'view',
         label: 'View Details',
-        handler: { type: 'navigate', path: (record: any) => `/modules/projects/projects/${record.id}` }
+        handler: { type: 'navigate', path: (record: any) => `/productions/projects/${record.id}` }
       }
     ],
     bulk: [],

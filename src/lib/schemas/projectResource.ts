@@ -169,11 +169,11 @@ export const projectResourceSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/projects/resources/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/resources/${r.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Resource', variant: 'primary', handler: { type: 'navigate', path: '/modules/projects/resources/new' } },
+      { key: 'create', label: 'Add Resource', variant: 'primary', handler: { type: 'navigate', path: '/productions/resources/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

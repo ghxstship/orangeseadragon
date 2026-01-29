@@ -49,7 +49,7 @@ export const boardSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'projectId', 'type', 'isDefault'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/projects/boards/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/boards/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Board', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

@@ -145,13 +145,13 @@ export const onboardingTemplateSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/onboarding/templates/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/onboarding/templates/${r.id}/edit` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/onboarding/templates/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/onboarding/templates/${r.id}/edit` } },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/onboarding-templates/duplicate', method: 'POST' } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Template', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/onboarding/templates/new' } },
+      { key: 'create', label: 'New Template', variant: 'primary', handler: { type: 'navigate', path: '/people/onboarding/templates/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

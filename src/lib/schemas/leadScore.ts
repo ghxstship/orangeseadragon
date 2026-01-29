@@ -172,13 +172,13 @@ export const leadScoreSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/lead-scoring/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/lead-scoring/${r.id}/edit` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/lead-scoring/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/lead-scoring/${r.id}/edit` } },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/lead-scores/duplicate', method: 'POST' } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Rule', variant: 'primary', handler: { type: 'navigate', path: '/modules/business/lead-scoring/new' } },
+      { key: 'create', label: 'New Rule', variant: 'primary', handler: { type: 'navigate', path: '/business/lead-scoring/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

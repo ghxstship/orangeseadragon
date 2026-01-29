@@ -17,6 +17,6 @@ export const categorySchema = defineSchema({
   filters: { quick: [], advanced: ['parentId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'count', label: 'Assets', value: { type: 'field', field: 'assetCount' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Category Details', fields: ['name', 'parentId', 'code', 'description'] }] } },
   views: { table: { columns: ['name', 'code', 'parentId', 'assetCount'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/assets/categories/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/categories/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

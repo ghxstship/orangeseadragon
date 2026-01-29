@@ -89,7 +89,7 @@ export function CommandPalette() {
           icon: FolderOpen,
           label: "Projects",
           shortcut: "⌘P",
-          action: () => router.push("/modules/projects"),
+          action: () => router.push("/productions"),
         },
         {
           icon: Calendar,
@@ -99,7 +99,7 @@ export function CommandPalette() {
         {
           icon: Users,
           label: "People",
-          action: () => router.push("/modules/workforce/roster"),
+          action: () => router.push("/people/rosters"),
         },
         {
           icon: FileText,
@@ -114,17 +114,17 @@ export function CommandPalette() {
         {
           icon: Package,
           label: "Assets",
-          action: () => router.push("/modules/assets"),
+          action: () => router.push("/assets"),
         },
         {
           icon: MapPin,
           label: "Places",
-          action: () => router.push("/modules/operations/venues"),
+          action: () => router.push("/operations/venues"),
         },
         {
           icon: BarChart3,
           label: "Reports",
-          action: () => router.push("/modules/projects/reports"),
+          action: () => router.push("/finance/reports"),
         },
       ],
     },

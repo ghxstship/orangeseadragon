@@ -163,13 +163,13 @@ export const bankAccountSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/finance/banking/${r.id}` } },
-      { key: 'reconcile', label: 'Reconcile', variant: 'primary', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/finance/banking/${r.id}/reconciliation` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/banking/${r.id}` } },
+      { key: 'reconcile', label: 'Reconcile', variant: 'primary', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/banking/${r.id}/reconciliation` } },
       { key: 'import', label: 'Import Transactions', handler: { type: 'modal', component: 'ImportTransactionsModal' } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Bank Account', variant: 'primary', handler: { type: 'navigate', path: '/modules/finance/banking/new' } },
+      { key: 'create', label: 'Add Bank Account', variant: 'primary', handler: { type: 'navigate', path: '/finance/banking/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: false },

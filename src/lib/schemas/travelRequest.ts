@@ -179,7 +179,7 @@ export const travelRequestSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/workforce/travel-requests/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/people/travel-requests/${record.id}` } },
     ],
     bulk: [],
     global: [

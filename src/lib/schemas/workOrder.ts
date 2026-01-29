@@ -235,7 +235,7 @@ export const workOrderSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/operations/work-orders/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/operations/work-orders/${record.id}` } },
     ],
     bulk: [],
     global: [

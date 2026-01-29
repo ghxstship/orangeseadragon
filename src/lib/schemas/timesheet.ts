@@ -20,6 +20,6 @@ export const timesheetSchema = defineSchema({
   filters: { quick: [{ key: 'submitted', label: 'Submitted', query: { where: { status: 'submitted' } } }], advanced: ['status'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'submitted', label: 'Submitted', query: { where: { status: 'submitted' } }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'hours', label: 'Hours', value: { type: 'field', field: 'total_regular_hours' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Timesheet Details', fields: ['user_id', 'period_start', 'period_end', 'status', 'notes'] }] } },
   views: { table: { columns: ['user_id', 'period_start', 'period_end', 'total_regular_hours', 'total_amount', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/timesheets/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Timesheet', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/timesheets/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Timesheet', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

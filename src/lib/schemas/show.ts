@@ -56,7 +56,7 @@ export const showSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'artist', 'eventId', 'stage', 'startTime', 'status'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/shows/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/shows/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Show', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

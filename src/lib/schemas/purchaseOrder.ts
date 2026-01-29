@@ -221,15 +221,15 @@ export const purchaseOrderSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/procurement/orders/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/procurement/orders/${r.id}/edit` }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/procurement/orders/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/procurement/orders/${r.id}/edit` }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
       { key: 'submit', label: 'Submit for Approval', variant: 'primary', handler: { type: 'api', endpoint: '/api/purchase-orders/submit', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
       { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/purchase-orders/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending_approval' },
       { key: 'send', label: 'Send to Vendor', handler: { type: 'api', endpoint: '/api/purchase-orders/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'approved' },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New PO', variant: 'primary', handler: { type: 'navigate', path: '/modules/operations/procurement/orders/new' } },
+      { key: 'create', label: 'New PO', variant: 'primary', handler: { type: 'navigate', path: '/operations/procurement/orders/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: false },

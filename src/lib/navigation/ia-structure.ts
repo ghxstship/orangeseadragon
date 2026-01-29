@@ -2,31 +2,51 @@
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * CANONICAL INFORMATION ARCHITECTURE
+ * CANONICAL INFORMATION ARCHITECTURE - v5
  * ═══════════════════════════════════════════════════════════════════════════
  *
  * This is the SINGLE SOURCE OF TRUTH for all navigation.
  * All sidebar, page, and subpage rendering derives from this structure.
+ *
+ * v5 STRUCTURE (7 Modules, 57 Pages):
+ * - CORE: Personal workspace (6 pages)
+ * - PRODUCTIONS: Pre/post event lifecycle (8 pages)
+ * - OPERATIONS: Run of show (7 pages)
+ * - PEOPLE: Human resources (11 pages)
+ * - ASSETS: Equipment & logistics (9 pages) - Catalog = Equipment SSOT
+ * - BUSINESS: Revenue + relationships (8 pages) - Products & Services = Business SSOT
+ * - FINANCE: Money in/out (8 pages)
+ * - NETWORK: Community/social layer (header access, not sidebar)
+ *
+ * DESIGN PRINCIPLES:
+ * - 3NF/SSOT compliance (zero data overlap)
+ * - Cognitive load reduction (7±2 items per level)
+ * - Workflow-based page ordering
+ * - Catalog = Equipment (what you OWN)
+ * - Products & Services = Business offerings (what you SELL)
  *
  * MODIFICATION RULES:
  * - Adding a page? It goes in ONE group only.
  * - Adding a subpage? It's defined in the page schema, not here.
  * - Adding a view mode? It's defined in the page schema views config.
  * - Need cross-linking? Use contextual links, not duplicate entries.
+ *
+ * See: /docs/OPTIMIZED_IA_STRUCTURE.md for full specification
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
-// LEVEL 1: SIDEBAR GROUPS
+// LEVEL 1: SIDEBAR GROUPS (7 Modules + Settings)
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type SidebarGroupKey =
-  | 'overview'      // Dashboard, home, quick access
-  | 'production'    // Events, projects, schedules
-  | 'operations'    // Venues, inventory, logistics
-  | 'people'        // Team, clients, contacts
-  | 'finance'       // Budgets, invoices, payments
-  | 'content'       // Files, documents, media
-  | 'network'       // Community, connections, marketplace
+  | 'core'          // Personal workspace
+  | 'productions'   // Pre/post event lifecycle
+  | 'operations'    // Run of show
+  | 'people'        // Human resources
+  | 'assets'        // Equipment & logistics
+  | 'business'      // Revenue + relationships
+  | 'finance'       // Money in/out
+  | 'network'       // Community/social (header access)
   | 'settings';     // Configuration, preferences
 
 export interface SidebarGroupDefinition {
@@ -57,26 +77,77 @@ export interface SidebarGroupDefinition {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type PageKey =
-  // Overview
+  // CORE (6 pages)
   | 'dashboard'
-  // Production
+  | 'calendar'
+  | 'tasks'
+  | 'inbox'
+  | 'documents'
+  | 'workflows'
+  // PRODUCTIONS (8 pages)
+  | 'productions'
   | 'events'
-  | 'projects'
-  // Operations
+  | 'activations'
+  | 'build-strike'
+  | 'compliance'
+  | 'inspections'
+  | 'punch-lists'
+  | 'advancing'
+  // OPERATIONS (7 pages)
+  | 'shows'
+  | 'runsheets'
   | 'venues'
+  | 'incidents'
+  | 'work-orders'
+  | 'daily-reports'
+  | 'comms'
+  // PEOPLE (11 pages)
+  | 'rosters'
+  | 'availability'
+  | 'travel'
+  | 'recruitment'
+  | 'onboarding'
+  | 'training'
+  | 'scheduling'
+  | 'timekeeping'
+  | 'performance'
+  | 'certifications'
+  | 'positions'
+  // ASSETS (9 pages)
+  | 'catalog'
   | 'inventory'
-  // People
-  | 'people'
+  | 'locations'
+  | 'reservations'
+  | 'advances'
+  | 'deployment'
+  | 'logistics'
+  | 'asset-status'
+  | 'maintenance'
+  // BUSINESS (8 pages)
+  | 'pipeline'
   | 'companies'
-  // Finance
+  | 'proposals'
+  | 'contracts'
+  | 'products'
+  | 'campaigns'
+  | 'subscribers'
+  | 'brand-kit'
+  // FINANCE (8 pages)
   | 'budgets'
+  | 'procurement'
+  | 'expenses'
   | 'invoices'
-  // Content
-  | 'content'
-  // Network
+  | 'payments'
+  | 'payroll'
+  | 'accounts'
+  | 'reports'
+  // NETWORK (header access)
   | 'connections'
   | 'discussions'
   | 'marketplace'
+  | 'opportunities'
+  | 'showcase'
+  | 'challenges'
   // Settings
   | 'settings';
 
@@ -174,87 +245,102 @@ export const informationArchitecture: {
 } = {
   groups: [
     // ═══════════════════════════════════════════════════════════════
-    // OVERVIEW GROUP
+    // CORE - Personal Workspace (6 pages)
     // ═══════════════════════════════════════════════════════════════
     {
-      key: 'overview',
-      label: 'Overview',
+      key: 'core',
+      label: 'Core',
       icon: 'layout-dashboard',
-      description: 'Dashboard and quick access',
-      pages: ['dashboard'],
+      description: 'Personal workspace',
+      pages: ['dashboard', 'calendar', 'tasks', 'inbox', 'documents', 'workflows'],
       collapsible: false,
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // PRODUCTION GROUP
-    // ═══════════════════════════════════════════════════════════════
-    {
-      key: 'production',
-      label: 'Production',
-      icon: 'calendar-event',
-      description: 'Events, projects, and schedules',
-      pages: ['events', 'projects'],
       defaultExpanded: true,
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // OPERATIONS GROUP
+    // PRODUCTIONS - Pre/Post Event Lifecycle (8 pages)
+    // ═══════════════════════════════════════════════════════════════
+    {
+      key: 'productions',
+      label: 'Productions',
+      icon: 'clapperboard',
+      description: 'Pre/post event lifecycle',
+      pages: ['productions', 'events', 'activations', 'build-strike', 'compliance', 'inspections', 'punch-lists', 'advancing'],
+      defaultExpanded: true,
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // OPERATIONS - Run of Show (7 pages)
     // ═══════════════════════════════════════════════════════════════
     {
       key: 'operations',
       label: 'Operations',
-      icon: 'building',
-      description: 'Venues, inventory, and logistics',
-      pages: ['venues', 'inventory'],
+      icon: 'clipboard-list',
+      description: 'Run of show',
+      pages: ['shows', 'runsheets', 'venues', 'incidents', 'work-orders', 'daily-reports', 'comms'],
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // PEOPLE GROUP
+    // PEOPLE - Human Resources (11 pages)
     // ═══════════════════════════════════════════════════════════════
     {
       key: 'people',
       label: 'People',
       icon: 'users',
-      description: 'Team members, companies, and contacts',
-      pages: ['people', 'companies'],
+      description: 'Human resources',
+      pages: ['rosters', 'availability', 'travel', 'recruitment', 'onboarding', 'training', 'scheduling', 'timekeeping', 'performance', 'certifications', 'positions'],
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // FINANCE GROUP
+    // ASSETS - Equipment & Logistics (9 pages)
+    // Catalog = Equipment SSOT (what you OWN)
+    // ═══════════════════════════════════════════════════════════════
+    {
+      key: 'assets',
+      label: 'Assets',
+      icon: 'package',
+      description: 'Equipment & logistics',
+      pages: ['catalog', 'inventory', 'locations', 'reservations', 'advances', 'deployment', 'logistics', 'asset-status', 'maintenance'],
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // BUSINESS - Revenue + Relationships (8 pages)
+    // Products & Services = Business SSOT (what you SELL)
+    // ═══════════════════════════════════════════════════════════════
+    {
+      key: 'business',
+      label: 'Business',
+      icon: 'building-2',
+      description: 'Revenue + relationships',
+      pages: ['pipeline', 'companies', 'proposals', 'contracts', 'products', 'campaigns', 'subscribers', 'brand-kit'],
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // FINANCE - Money In/Out (8 pages)
     // ═══════════════════════════════════════════════════════════════
     {
       key: 'finance',
       label: 'Finance',
-      icon: 'calculator',
-      description: 'Budgets, invoices, and payments',
-      pages: ['budgets', 'invoices'],
+      icon: 'dollar-sign',
+      description: 'Money in/out',
+      pages: ['budgets', 'procurement', 'expenses', 'invoices', 'payments', 'payroll', 'accounts', 'reports'],
       permission: 'finance:read',
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // CONTENT GROUP
-    // ═══════════════════════════════════════════════════════════════
-    {
-      key: 'content',
-      label: 'Content',
-      icon: 'folder',
-      description: 'Files, documents, and media',
-      pages: ['content'],
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // NETWORK GROUP
+    // NETWORK - Community/Social (Header Access)
     // ═══════════════════════════════════════════════════════════════
     {
       key: 'network',
       label: 'Network',
-      icon: 'network',
-      description: 'Community, connections, and marketplace',
-      pages: ['connections', 'discussions', 'marketplace'],
+      icon: 'link',
+      description: 'Community & social',
+      pages: ['connections', 'discussions', 'marketplace', 'opportunities', 'showcase', 'challenges'],
+      collapsible: true,
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // SETTINGS GROUP
+    // SETTINGS
     // ═══════════════════════════════════════════════════════════════
     {
       key: 'settings',
@@ -268,155 +354,528 @@ export const informationArchitecture: {
 
   pages: {
     // ═══════════════════════════════════════════════════════════════
-    // DASHBOARD
+    // CORE PAGES
     // ═══════════════════════════════════════════════════════════════
     dashboard: {
       key: 'dashboard',
-      path: '/',
+      path: '/core/dashboard',
       label: 'Dashboard',
       icon: 'layout-dashboard',
       type: 'dashboard',
-      // Dashboard has NO subpages - it's a unified view
+    },
+    calendar: {
+      key: 'calendar',
+      path: '/core/calendar',
+      label: 'Calendar',
+      icon: 'calendar',
+      type: 'custom',
+    },
+    tasks: {
+      key: 'tasks',
+      path: '/core/tasks',
+      label: 'Tasks',
+      icon: 'check-square',
+      entity: 'task',
+      type: 'entity-list',
+    },
+    inbox: {
+      key: 'inbox',
+      path: '/core/inbox',
+      label: 'Inbox',
+      icon: 'inbox',
+      type: 'custom',
+    },
+    documents: {
+      key: 'documents',
+      path: '/core/documents',
+      label: 'Documents',
+      icon: 'file-text',
+      entity: 'document',
+      type: 'entity-list',
+    },
+    workflows: {
+      key: 'workflows',
+      path: '/core/workflows',
+      label: 'Workflows',
+      icon: 'git-branch',
+      entity: 'workflow',
+      type: 'entity-list',
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // EVENTS (Consolidated from: /events, /projects/productions, etc.)
+    // PRODUCTIONS PAGES
     // ═══════════════════════════════════════════════════════════════
+    productions: {
+      key: 'productions',
+      path: '/productions',
+      label: 'Productions',
+      icon: 'clapperboard',
+      entity: 'production',
+      type: 'entity-list',
+    },
     events: {
       key: 'events',
-      path: '/events',
+      path: '/productions/events',
       label: 'Events',
-      icon: 'calendar-event',
+      icon: 'calendar',
       entity: 'event',
       type: 'entity-list',
-      // Subpages defined in event.schema.ts layouts.list.subpages
-      subpages: ['all', 'upcoming', 'active', 'completed', 'drafts', 'archived'],
-      badge: { type: 'count', source: '/api/events/count?filter=upcoming' },
     },
-
-    // ═══════════════════════════════════════════════════════════════
-    // PROJECTS
-    // ═══════════════════════════════════════════════════════════════
-    projects: {
-      key: 'projects',
-      path: '/projects',
-      label: 'Projects',
-      icon: 'folder-kanban',
-      entity: 'project',
+    activations: {
+      key: 'activations',
+      path: '/productions/activations',
+      label: 'Activations',
+      icon: 'award',
+      entity: 'activation',
       type: 'entity-list',
-      subpages: ['all', 'active', 'my-projects', 'archived'],
+    },
+    'build-strike': {
+      key: 'build-strike',
+      path: '/productions/build-strike',
+      label: 'Build & Strike',
+      icon: 'wrench',
+      entity: 'buildStrikeTask',
+      type: 'entity-list',
+    },
+    compliance: {
+      key: 'compliance',
+      path: '/productions/compliance',
+      label: 'Compliance',
+      icon: 'clipboard-list',
+      entity: 'permit',
+      type: 'entity-list',
+      subpages: ['permits', 'licenses', 'certificates'],
+    },
+    inspections: {
+      key: 'inspections',
+      path: '/productions/inspections',
+      label: 'Inspections',
+      icon: 'check-square',
+      entity: 'inspection',
+      type: 'entity-list',
+    },
+    'punch-lists': {
+      key: 'punch-lists',
+      path: '/productions/punch-lists',
+      label: 'Punch Lists',
+      icon: 'clipboard-list',
+      entity: 'punchItem',
+      type: 'entity-list',
+    },
+    advancing: {
+      key: 'advancing',
+      path: '/productions/advancing',
+      label: 'Advancing',
+      icon: 'users',
+      entity: 'advancing',
+      type: 'entity-list',
+      subpages: ['riders', 'tech-specs'],
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // VENUES (Consolidated from: /venues, /locations)
+    // OPERATIONS PAGES
     // ═══════════════════════════════════════════════════════════════
+    shows: {
+      key: 'shows',
+      path: '/operations/shows',
+      label: 'Shows',
+      icon: 'clapperboard',
+      entity: 'show',
+      type: 'entity-list',
+    },
+    runsheets: {
+      key: 'runsheets',
+      path: '/operations/runsheets',
+      label: 'Runsheets',
+      icon: 'clipboard-list',
+      entity: 'runsheet',
+      type: 'entity-list',
+    },
     venues: {
       key: 'venues',
-      path: '/venues',
+      path: '/operations/venues',
       label: 'Venues',
-      icon: 'building',
+      icon: 'map-pin',
       entity: 'venue',
       type: 'entity-list',
-      subpages: ['all', 'favorites', 'archived'],
+      subpages: ['floor-plans', 'zones', 'checkpoints'],
     },
-
-    // ═══════════════════════════════════════════════════════════════
-    // INVENTORY
-    // ═══════════════════════════════════════════════════════════════
-    inventory: {
-      key: 'inventory',
-      path: '/inventory',
-      label: 'Inventory',
-      icon: 'package',
-      entity: 'inventoryItem',
+    incidents: {
+      key: 'incidents',
+      path: '/operations/incidents',
+      label: 'Incidents',
+      icon: 'clipboard-list',
+      entity: 'incident',
       type: 'entity-list',
-      subpages: ['all', 'in-stock', 'low-stock', 'checked-out'],
+    },
+    'work-orders': {
+      key: 'work-orders',
+      path: '/operations/work-orders',
+      label: 'Work Orders',
+      icon: 'wrench',
+      entity: 'workOrder',
+      type: 'entity-list',
+    },
+    'daily-reports': {
+      key: 'daily-reports',
+      path: '/operations/daily-reports',
+      label: 'Daily Reports',
+      icon: 'file-text',
+      entity: 'dailyReport',
+      type: 'entity-list',
+    },
+    comms: {
+      key: 'comms',
+      path: '/operations/comms',
+      label: 'Comms',
+      icon: 'message-square',
+      entity: 'radioChannel',
+      type: 'entity-list',
+      subpages: ['radio', 'weather'],
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // PEOPLE (Consolidated from: /people, /people/teams, /people/crew, etc.)
+    // PEOPLE PAGES
     // ═══════════════════════════════════════════════════════════════
-    people: {
-      key: 'people',
-      path: '/people',
-      label: 'People',
+    rosters: {
+      key: 'rosters',
+      path: '/people/rosters',
+      label: 'Rosters',
       icon: 'users',
       entity: 'person',
       type: 'entity-list',
-      subpages: ['all', 'team', 'crew', 'contractors', 'talent', 'contacts'],
+    },
+    availability: {
+      key: 'availability',
+      path: '/people/availability',
+      label: 'Availability',
+      icon: 'calendar',
+      entity: 'availability',
+      type: 'entity-list',
+    },
+    travel: {
+      key: 'travel',
+      path: '/people/travel',
+      label: 'Travel & Lodging',
+      icon: 'map-pin',
+      entity: 'travelRequest',
+      type: 'entity-list',
+      subpages: ['bookings', 'accommodations'],
+    },
+    recruitment: {
+      key: 'recruitment',
+      path: '/people/recruitment',
+      label: 'Recruitment',
+      icon: 'user-plus',
+      entity: 'candidate',
+      type: 'entity-list',
+    },
+    onboarding: {
+      key: 'onboarding',
+      path: '/people/onboarding',
+      label: 'Onboarding',
+      icon: 'check-square',
+      entity: 'onboardingTask',
+      type: 'entity-list',
+    },
+    training: {
+      key: 'training',
+      path: '/people/training',
+      label: 'Training',
+      icon: 'award',
+      entity: 'trainingRecord',
+      type: 'entity-list',
+      subpages: ['courses', 'materials'],
+    },
+    scheduling: {
+      key: 'scheduling',
+      path: '/people/scheduling',
+      label: 'Scheduling',
+      icon: 'calendar',
+      entity: 'schedule',
+      type: 'entity-list',
+      subpages: ['shifts'],
+    },
+    timekeeping: {
+      key: 'timekeeping',
+      path: '/people/timekeeping',
+      label: 'Timekeeping',
+      icon: 'clipboard-list',
+      entity: 'timesheet',
+      type: 'entity-list',
+    },
+    performance: {
+      key: 'performance',
+      path: '/people/performance',
+      label: 'Performance',
+      icon: 'bar-chart-3',
+      entity: 'performanceReview',
+      type: 'entity-list',
+      subpages: ['reviews', 'goals'],
+    },
+    certifications: {
+      key: 'certifications',
+      path: '/people/certifications',
+      label: 'Certifications',
+      icon: 'award',
+      entity: 'certification',
+      type: 'entity-list',
+    },
+    positions: {
+      key: 'positions',
+      path: '/people/positions',
+      label: 'Positions',
+      icon: 'users',
+      entity: 'position',
+      type: 'entity-list',
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // COMPANIES
+    // ASSETS PAGES
     // ═══════════════════════════════════════════════════════════════
+    catalog: {
+      key: 'catalog',
+      path: '/assets/catalog',
+      label: 'Catalog',
+      icon: 'package',
+      entity: 'catalogItem',
+      type: 'entity-list',
+      subpages: ['categories'],
+    },
+    inventory: {
+      key: 'inventory',
+      path: '/assets/inventory',
+      label: 'Inventory',
+      icon: 'package',
+      entity: 'asset',
+      type: 'entity-list',
+    },
+    locations: {
+      key: 'locations',
+      path: '/assets/locations',
+      label: 'Locations',
+      icon: 'map-pin',
+      entity: 'location',
+      type: 'entity-list',
+      subpages: ['warehouses', 'staging'],
+    },
+    reservations: {
+      key: 'reservations',
+      path: '/assets/reservations',
+      label: 'Reservations',
+      icon: 'calendar',
+      entity: 'reservation',
+      type: 'entity-list',
+    },
+    advances: {
+      key: 'advances',
+      path: '/assets/advances',
+      label: 'Advances',
+      icon: 'truck',
+      entity: 'advance',
+      type: 'entity-list',
+    },
+    deployment: {
+      key: 'deployment',
+      path: '/assets/deployment',
+      label: 'Deployment',
+      icon: 'map-pin',
+      entity: 'deployment',
+      type: 'entity-list',
+    },
+    logistics: {
+      key: 'logistics',
+      path: '/assets/logistics',
+      label: 'Logistics',
+      icon: 'truck',
+      entity: 'shipment',
+      type: 'entity-list',
+      subpages: ['shipments', 'vehicles'],
+    },
+    'asset-status': {
+      key: 'asset-status',
+      path: '/assets/status',
+      label: 'Asset Status',
+      icon: 'check-square',
+      entity: 'assetStatus',
+      type: 'entity-list',
+      subpages: ['check', 'service'],
+    },
+    maintenance: {
+      key: 'maintenance',
+      path: '/assets/maintenance',
+      label: 'Maintenance',
+      icon: 'wrench',
+      entity: 'maintenance',
+      type: 'entity-list',
+      subpages: ['scheduled', 'repairs'],
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // BUSINESS PAGES
+    // ═══════════════════════════════════════════════════════════════
+    pipeline: {
+      key: 'pipeline',
+      path: '/business/pipeline',
+      label: 'Pipeline',
+      icon: 'bar-chart-3',
+      entity: 'deal',
+      type: 'entity-list',
+      subpages: ['leads', 'opportunities'],
+    },
     companies: {
       key: 'companies',
-      path: '/companies',
+      path: '/business/companies',
       label: 'Companies',
-      icon: 'briefcase',
+      icon: 'building-2',
       entity: 'company',
       type: 'entity-list',
-      subpages: ['all', 'clients', 'vendors', 'partners'],
+      subpages: ['contacts'],
+    },
+    proposals: {
+      key: 'proposals',
+      path: '/business/proposals',
+      label: 'Proposals',
+      icon: 'file-text',
+      entity: 'proposal',
+      type: 'entity-list',
+    },
+    contracts: {
+      key: 'contracts',
+      path: '/business/contracts',
+      label: 'Contracts',
+      icon: 'file-text',
+      entity: 'contract',
+      type: 'entity-list',
+    },
+    products: {
+      key: 'products',
+      path: '/business/products',
+      label: 'Products & Services',
+      icon: 'shopping-cart',
+      entity: 'product',
+      type: 'entity-list',
+      subpages: ['list', 'services'],
+    },
+    campaigns: {
+      key: 'campaigns',
+      path: '/business/campaigns',
+      label: 'Campaigns',
+      icon: 'mail',
+      entity: 'campaign',
+      type: 'entity-list',
+      subpages: ['email', 'content', 'forms'],
+    },
+    subscribers: {
+      key: 'subscribers',
+      path: '/business/subscribers',
+      label: 'Subscribers',
+      icon: 'users',
+      entity: 'subscriber',
+      type: 'entity-list',
+    },
+    'brand-kit': {
+      key: 'brand-kit',
+      path: '/business/brand',
+      label: 'Brand Kit',
+      icon: 'palette',
+      entity: 'brandAsset',
+      type: 'entity-list',
+      subpages: ['logos', 'colors', 'typography'],
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // BUDGETS
+    // FINANCE PAGES
     // ═══════════════════════════════════════════════════════════════
     budgets: {
       key: 'budgets',
-      path: '/budgets',
+      path: '/finance/budgets',
       label: 'Budgets',
-      icon: 'wallet',
+      icon: 'dollar-sign',
       entity: 'budget',
       type: 'entity-list',
-      subpages: ['all', 'active', 'over-budget', 'closed'],
+      subpages: ['line-items'],
       permission: 'finance:read',
     },
-
-    // ═══════════════════════════════════════════════════════════════
-    // INVOICES (Consolidated from: /invoices, /business/invoices)
-    // ═══════════════════════════════════════════════════════════════
+    procurement: {
+      key: 'procurement',
+      path: '/finance/procurement',
+      label: 'Procurement',
+      icon: 'shopping-cart',
+      entity: 'purchaseOrder',
+      type: 'entity-list',
+      permission: 'finance:read',
+    },
+    expenses: {
+      key: 'expenses',
+      path: '/finance/expenses',
+      label: 'Expenses',
+      icon: 'credit-card',
+      entity: 'expense',
+      type: 'entity-list',
+      permission: 'finance:read',
+    },
     invoices: {
       key: 'invoices',
-      path: '/invoices',
+      path: '/finance/invoices',
       label: 'Invoices',
-      icon: 'receipt',
+      icon: 'file-text',
       entity: 'invoice',
       type: 'entity-list',
-      subpages: ['all', 'pending', 'overdue', 'paid'],
+      subpages: ['line-items', 'payments'],
       permission: 'finance:read',
-      badge: { type: 'count', source: '/api/invoices/count?filter=overdue' },
     },
-
-    // ═══════════════════════════════════════════════════════════════
-    // CONTENT (Consolidated from: /content, /documents, /media)
-    // ═══════════════════════════════════════════════════════════════
-    content: {
-      key: 'content',
-      path: '/content',
-      label: 'Content',
-      icon: 'folder',
-      entity: 'content',
+    payments: {
+      key: 'payments',
+      path: '/finance/payments',
+      label: 'Payments',
+      icon: 'credit-card',
+      entity: 'payment',
       type: 'entity-list',
-      subpages: ['all', 'documents', 'media', 'recent', 'shared'],
+      subpages: ['incoming', 'outgoing'],
+      permission: 'finance:read',
+    },
+    payroll: {
+      key: 'payroll',
+      path: '/finance/payroll',
+      label: 'Payroll',
+      icon: 'users',
+      entity: 'payrollRun',
+      type: 'entity-list',
+      subpages: ['stubs'],
+      permission: 'finance:read',
+    },
+    accounts: {
+      key: 'accounts',
+      path: '/finance/accounts',
+      label: 'Accounts',
+      icon: 'building-2',
+      entity: 'account',
+      type: 'entity-list',
+      subpages: ['gl', 'bank'],
+      permission: 'finance:read',
+    },
+    reports: {
+      key: 'reports',
+      path: '/finance/reports',
+      label: 'Reports',
+      icon: 'bar-chart-3',
+      type: 'custom',
+      subpages: ['pnl', 'cash-flow', 'ar-ap'],
+      permission: 'finance:read',
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // CONNECTIONS
+    // NETWORK PAGES (Header Access)
     // ═══════════════════════════════════════════════════════════════
     connections: {
       key: 'connections',
       path: '/network/connections',
       label: 'Connections',
-      icon: 'network',
+      icon: 'link',
       entity: 'connection',
       type: 'entity-list',
-      subpages: ['all', 'requests', 'groups'],
     },
-
-    // ═══════════════════════════════════════════════════════════════
-    // DISCUSSIONS
-    // ═══════════════════════════════════════════════════════════════
     discussions: {
       key: 'discussions',
       path: '/network/discussions',
@@ -424,20 +883,38 @@ export const informationArchitecture: {
       icon: 'message-circle',
       entity: 'discussion',
       type: 'entity-list',
-      subpages: ['all', 'categories', 'my-posts'],
     },
-
-    // ═══════════════════════════════════════════════════════════════
-    // MARKETPLACE
-    // ═══════════════════════════════════════════════════════════════
     marketplace: {
       key: 'marketplace',
       path: '/network/marketplace',
       label: 'Marketplace',
-      icon: 'shopping-bag',
+      icon: 'store',
       entity: 'marketplaceItem',
       type: 'entity-list',
-      subpages: ['browse', 'my-listings', 'bookings', 'reviews'],
+    },
+    opportunities: {
+      key: 'opportunities',
+      path: '/network/opportunities',
+      label: 'Opportunities',
+      icon: 'compass',
+      entity: 'opportunity',
+      type: 'entity-list',
+    },
+    showcase: {
+      key: 'showcase',
+      path: '/network/showcase',
+      label: 'Showcase',
+      icon: 'award',
+      entity: 'showcase',
+      type: 'entity-list',
+    },
+    challenges: {
+      key: 'challenges',
+      path: '/network/challenges',
+      label: 'Challenges',
+      icon: 'trophy',
+      entity: 'challenge',
+      type: 'entity-list',
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -449,7 +926,6 @@ export const informationArchitecture: {
       label: 'Settings',
       icon: 'settings',
       type: 'settings',
-      // Settings subpages are sections, not data subsets
       subpages: ['general', 'account', 'team', 'integrations', 'billing'],
     },
   },

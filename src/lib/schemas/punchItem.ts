@@ -211,7 +211,7 @@ export const punchItemSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/operations/punch-items/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/operations/punch-items/${record.id}` } },
     ],
     bulk: [],
     global: [

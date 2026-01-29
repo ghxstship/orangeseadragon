@@ -20,6 +20,6 @@ export const shiftSchema = defineSchema({
   filters: { quick: [{ key: 'scheduled', label: 'Scheduled', query: { where: { status: 'scheduled' } } }], advanced: ['status', 'scheduleId', 'positionId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table', 'calendar'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Shift Details', fields: ['name', 'scheduleId', 'personId', 'positionId', 'startTime', 'endTime', 'status', 'notes'] }] } },
   views: { table: { columns: ['name', 'personId', 'positionId', 'startTime', 'endTime', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/shifts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Shift', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/shifts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Shift', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -187,12 +187,12 @@ export const talentSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/talent/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/talent/${r.id}/edit` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/talent/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/talent/${r.id}/edit` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Talent', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/talent/new' } },
+      { key: 'create', label: 'Add Talent', variant: 'primary', handler: { type: 'navigate', path: '/productions/talent/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

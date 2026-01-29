@@ -21,6 +21,6 @@ export const pipelineSchema = defineSchema({
   filters: { quick: [], advanced: ['is_won', 'is_lost'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'probability', label: 'Probability', value: { type: 'field', field: 'probability' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Stage Details', fields: ['name', 'description', 'position', 'probability', 'is_won', 'is_lost'] }] } },
   views: { table: { columns: ['name', 'position', 'probability', 'is_won', 'is_lost'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/pipeline/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Pipeline', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/pipeline/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Pipeline', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

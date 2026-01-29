@@ -18,6 +18,6 @@ export const positionSchema = defineSchema({
   filters: { quick: [], advanced: ['category', 'departmentId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'rate', label: 'Hourly Rate', value: { type: 'field', field: 'hourlyRate' }, format: 'currency' }], blocks: [{ key: 'desc', title: 'Description', content: { type: 'fields', fields: ['description', 'requirements'] } }] } }, form: { sections: [{ key: 'basic', title: 'Position Details', fields: ['name', 'departmentId', 'category', 'hourlyRate', 'description', 'requirements'] }] } },
   views: { table: { columns: ['name', 'departmentId', 'category', 'hourlyRate'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/positions/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Position', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/positions/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Position', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -41,7 +41,7 @@ export const teamSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'projectId', 'leadId', 'memberCount'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/projects/teams/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/teams/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Team', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

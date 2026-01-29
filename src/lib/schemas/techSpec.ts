@@ -50,7 +50,7 @@ export const techSpecSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'category', 'eventId', 'venueId'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/tech-specs/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/tech-specs/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Spec', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

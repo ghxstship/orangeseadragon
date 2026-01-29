@@ -256,7 +256,7 @@ export const shipmentSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/modules/logistics/shipments/${record.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: any) => `/assets/logistics/${record.id}` } },
     ],
     bulk: [],
     global: [

@@ -18,6 +18,6 @@ export const zoneSchema = defineSchema({
   filters: { quick: [], advanced: ['type', 'venueId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All Zones', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'capacity', label: 'Capacity', value: { type: 'field', field: 'capacity' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Zone Details', fields: ['name', 'venueId', 'type', 'capacity', 'color', 'description'] }] } },
   views: { table: { columns: ['name', 'venueId', 'type', 'capacity'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/zones/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Zone', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/zones/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Zone', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

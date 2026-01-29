@@ -19,6 +19,6 @@ export const checkInOutSchema = defineSchema({
   filters: { quick: [], advanced: ['type', 'assetId', 'personId', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Check In/Out Details', fields: ['assetId', 'personId', 'eventId', 'type', 'timestamp', 'condition', 'notes'] }] } },
   views: { table: { columns: ['assetId', 'personId', 'type', 'timestamp', 'condition'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/assets/check/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Record', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/check/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Record', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

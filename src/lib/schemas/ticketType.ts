@@ -177,12 +177,12 @@ export const ticketTypeSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/ticketing/types/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/ticketing/types/${r.id}/edit` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/ticketing/types/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/ticketing/types/${r.id}/edit` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Ticket Type', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/ticketing/types/new' } },
+      { key: 'create', label: 'New Ticket Type', variant: 'primary', handler: { type: 'navigate', path: '/productions/ticketing/types/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

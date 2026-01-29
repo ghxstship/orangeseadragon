@@ -19,6 +19,6 @@ export const leadSchema = defineSchema({
   filters: { quick: [{ key: 'new', label: 'New', query: { where: { status: 'new' } } }, { key: 'qualified', label: 'Qualified', query: { where: { status: 'qualified' } } }], advanced: ['status', 'source'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'new', label: 'New', query: { where: { status: 'new' } }, count: true }], defaultView: 'table', availableViews: ['table', 'kanban'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'value', label: 'Value', value: { type: 'field', field: 'value' }, format: 'currency' }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Lead Details', fields: ['name', 'contactId', 'companyId', 'source', 'status', 'value', 'notes'] }] } },
   views: { table: { columns: ['name', 'companyId', 'source', 'status', 'value'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/business/leads/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Lead', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/leads/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Lead', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -41,7 +41,7 @@ export const departmentSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'code', 'headId', 'memberCount'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/departments/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/departments/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Department', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

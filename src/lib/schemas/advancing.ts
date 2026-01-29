@@ -54,7 +54,7 @@ export const advancingSchema = defineSchema({
   },
   views: { table: { columns: ['title', 'eventId', 'artistId', 'status', 'dueDate'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/advancing/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/advancing/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Item', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

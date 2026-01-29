@@ -18,6 +18,6 @@ export const checkpointSchema = defineSchema({
   filters: { quick: [], advanced: ['type', 'status', 'venueId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Details', fields: ['name', 'venueId', 'zoneId', 'type', 'status', 'notes'] }] } },
   views: { table: { columns: ['name', 'venueId', 'type', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/operations/checkpoints/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Checkpoint', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/checkpoints/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Checkpoint', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

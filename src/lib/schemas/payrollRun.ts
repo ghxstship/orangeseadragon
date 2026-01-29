@@ -189,12 +189,12 @@ export const payrollRunSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/payroll/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/payroll/${r.id}` } },
       { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/payroll_runs', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'pending_approval' },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Payroll Run', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/payroll/new' } },
+      { key: 'create', label: 'New Payroll Run', variant: 'primary', handler: { type: 'navigate', path: '/people/payroll/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

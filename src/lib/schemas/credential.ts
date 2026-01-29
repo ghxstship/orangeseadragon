@@ -19,6 +19,6 @@ export const credentialSchema = defineSchema({
   filters: { quick: [{ key: 'active', label: 'Active', query: { where: { status: 'active' } } }], advanced: ['type', 'status', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Credential Details', fields: ['personId', 'eventId', 'type', 'status', 'issuedAt', 'expiresAt', 'notes'] }] } },
   views: { table: { columns: ['personId', 'eventId', 'type', 'status', 'expiresAt'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/credentials/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'Issue Credential', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/credentials/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'Issue Credential', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

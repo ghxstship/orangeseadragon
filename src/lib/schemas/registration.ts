@@ -185,7 +185,7 @@ export const registrationSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/registration/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/registration/${r.id}` } },
       { key: 'check_in', label: 'Check In', variant: 'primary', handler: { type: 'api', endpoint: '/api/registrations', method: 'POST' }, condition: (r: Record<string, unknown>) => !r.checked_in_at },
       { key: 'cancel', label: 'Cancel', variant: 'destructive', handler: { type: 'api', endpoint: '/api/registrations', method: 'POST' }, condition: (r: Record<string, unknown>) => { const status = r.status as Record<string, unknown> | undefined; return status?.code !== 'cancelled'; } },
     ],
@@ -193,7 +193,7 @@ export const registrationSchema = defineSchema({
       { key: 'bulk_check_in', label: 'Check In Selected', handler: { type: 'api', endpoint: '/api/registrations/bulk-check-in', method: 'POST' } },
     ],
     global: [
-      { key: 'create', label: 'New Registration', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/registration/new' } },
+      { key: 'create', label: 'New Registration', variant: 'primary', handler: { type: 'navigate', path: '/productions/registration/new' } },
       { key: 'import', label: 'Import', handler: { type: 'modal', component: 'ImportModal' } },
     ],
   },

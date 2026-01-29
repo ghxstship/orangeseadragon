@@ -51,7 +51,7 @@ export const roadmapSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'projectId', 'timeframe', 'startDate', 'endDate', 'isPublic'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/projects/roadmaps/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/roadmaps/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Roadmap', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

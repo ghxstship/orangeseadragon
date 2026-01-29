@@ -185,7 +185,7 @@ export const leaveRequestSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/leave/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/leave/${r.id}` } },
       { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/leave-requests/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
       { key: 'reject', label: 'Reject', variant: 'destructive', handler: { type: 'modal', component: 'RejectLeaveModal' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
       { key: 'cancel', label: 'Cancel', handler: { type: 'api', endpoint: '/api/leave-requests/cancel', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' || r.status === 'approved' },
@@ -194,7 +194,7 @@ export const leaveRequestSchema = defineSchema({
       { key: 'bulk_approve', label: 'Approve Selected', handler: { type: 'api', endpoint: '/api/leave-requests/bulk-approve', method: 'POST' } },
     ],
     global: [
-      { key: 'create', label: 'New Request', variant: 'primary', handler: { type: 'navigate', path: '/modules/workforce/leave/new' } },
+      { key: 'create', label: 'New Request', variant: 'primary', handler: { type: 'navigate', path: '/people/leave/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: false },

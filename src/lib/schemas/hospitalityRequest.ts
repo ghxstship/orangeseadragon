@@ -212,12 +212,12 @@ export const hospitalityRequestSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/hospitality/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/hospitality/${r.id}` } },
       { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/hospitality_requests', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Request', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/hospitality/new' } },
+      { key: 'create', label: 'New Request', variant: 'primary', handler: { type: 'navigate', path: '/productions/hospitality/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

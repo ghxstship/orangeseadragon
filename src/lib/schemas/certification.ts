@@ -19,6 +19,6 @@ export const certificationSchema = defineSchema({
   filters: { quick: [{ key: 'expiring', label: 'Expiring Soon', query: { where: {} } }], advanced: ['type', 'status', 'personId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Certification Details', fields: ['name', 'personId', 'type', 'issuedDate', 'expiryDate', 'status', 'notes'] }] } },
   views: { table: { columns: ['name', 'personId', 'type', 'expiryDate', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/workforce/certifications/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'Add Certification', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/certifications/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'Add Certification', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

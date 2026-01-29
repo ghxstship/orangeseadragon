@@ -53,7 +53,7 @@ export const runsheetSchema = defineSchema({
   },
   views: { table: { columns: ['name', 'eventId', 'date', 'status'] } },
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/runsheets/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/runsheets/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'New Runsheet', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },

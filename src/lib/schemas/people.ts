@@ -158,7 +158,7 @@ export const peopleSchema = defineSchema({
   // Actions
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: Record<string, unknown>) => `/modules/workforce/roster/${record.id}` } }
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (record: Record<string, unknown>) => `/people/roster/${record.id}` } }
     ],
     bulk: [],
     global: [

@@ -196,11 +196,11 @@ export const exhibitorSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/exhibitors/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/exhibitors/${r.id}` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Exhibitor', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/exhibitors/new' } },
+      { key: 'create', label: 'Add Exhibitor', variant: 'primary', handler: { type: 'navigate', path: '/productions/exhibitors/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },

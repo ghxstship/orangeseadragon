@@ -174,12 +174,12 @@ export const partnerSchema = defineSchema({
   },
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/partners/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/modules/production/partners/${r.id}/edit` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/partners/${r.id}` } },
+      { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/partners/${r.id}/edit` } },
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Partner', variant: 'primary', handler: { type: 'navigate', path: '/modules/production/partners/new' } },
+      { key: 'create', label: 'Add Partner', variant: 'primary', handler: { type: 'navigate', path: '/productions/partners/new' } },
     ],
   },
   permissions: { create: true, read: true, update: true, delete: true },
