@@ -26,6 +26,7 @@ interface ViewRendererProps {
   sort?: { field: string; direction: 'asc' | 'desc' };
   onSortChange?: (sort: any) => void;
   onRowClick?: (record: any) => void;
+  visibleColumns?: string[];
 }
 
 /**
@@ -55,28 +56,40 @@ export function ViewRenderer({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSortChange,
   onRowClick,
+  visibleColumns,
 }: ViewRendererProps) {
-  // Map schema to columns for DataTable
+  // Map schema to columns for DataTable, filtering by visibleColumns if provided
   const columns = React.useMemo<ColumnDef<any>[]>(() => {
     const tableConfig = schema.views.table;
     if (!tableConfig) return [];
 
-    return tableConfig.columns.map((col: any) => {
-      const fieldKey = typeof col === 'string' ? col : col.field;
-      const field = schema.data.fields[fieldKey] || schema.data.computed?.[fieldKey];
-
-      return {
-        id: fieldKey,
-        accessorKey: fieldKey,
-        header: field?.label || fieldKey,
-        cell: ({ getValue }: any) => {
-          const value = getValue();
-          if (value === null || value === undefined) return '-';
-          return String(value);
+    return tableConfig.columns
+      .map((col: any) => {
+        const fieldKey = typeof col === 'string' ? col : col.field;
+        return fieldKey;
+      })
+      .filter((fieldKey: string) => {
+        // If visibleColumns is provided, only include visible columns
+        if (visibleColumns && visibleColumns.length > 0) {
+          return visibleColumns.includes(fieldKey);
         }
-      };
-    });
-  }, [schema]);
+        return true;
+      })
+      .map((fieldKey: string) => {
+        const field = schema.data.fields[fieldKey] || schema.data.computed?.[fieldKey];
+
+        return {
+          id: fieldKey,
+          accessorKey: fieldKey,
+          header: field?.label || fieldKey,
+          cell: ({ getValue }: any) => {
+            const value = getValue();
+            if (value === null || value === undefined) return '-';
+            return String(value);
+          }
+        };
+      });
+  }, [schema, visibleColumns]);
 
   // Handle loading state
   if (loading) {

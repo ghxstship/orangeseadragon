@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { EntitySchema } from '@/lib/schema/types';
 import { useCrud } from '../hooks/useCrud';
 import { useViewPreference } from '../hooks/useViewPreference';
+import { useColumnPreference } from '../hooks/useColumnPreference';
 import { ListLayout } from '@/lib/layouts';
 import { ViewRenderer } from '@/lib/views/components/ViewRenderer';
+import type { ViewType } from '@/lib/data-view-engine/hooks/use-data-view';
 
 interface CrudListProps<T = Record<string, unknown>> {
   schema: EntitySchema<T>;
@@ -32,8 +34,20 @@ export function CrudList<T extends Record<string, unknown>>({
 
   const [currentView, setCurrentView] = useViewPreference(
     schema.identity.slug,
-    schema.layouts.list.defaultView
+    (schema.layouts.list.defaultView || 'table') as ViewType
   );
+
+  // Build column definitions from schema for column preference
+  const schemaColumns = (schema.views?.table?.columns ?? []).map((col) => {
+    const fieldKey = typeof col === 'string' ? col : col.field;
+    const fieldDef = schema.data.fields[fieldKey];
+    return {
+      id: fieldKey,
+      label: fieldDef?.label || fieldKey,
+    };
+  });
+
+  const { visibleColumnIds } = useColumnPreference(schema.identity.slug, schemaColumns);
 
   const subpageConfig = schema.layouts.list.subpages.find(s => s.key === currentSubpage);
 
@@ -52,11 +66,10 @@ export function CrudList<T extends Record<string, unknown>>({
     router.push(`/${schema.identity.slug}/${id}`);
   };
 
-  const handleAction = (actionId: string, payload?: unknown) => {
+  const handleAction = (actionId: string) => {
     if (actionId === 'create') {
       router.push(`/${schema.identity.slug}/new`);
     }
-    // Handle other actions as needed
   };
 
   return (
@@ -87,6 +100,7 @@ export function CrudList<T extends Record<string, unknown>>({
         onPaginationChange={crud.setPagination}
         sort={crud.sort}
         onSortChange={crud.onSortChange}
+        visibleColumns={currentView === 'table' ? visibleColumnIds : undefined}
       />
     </ListLayout>
   );

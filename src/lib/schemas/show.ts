@@ -44,7 +44,13 @@ export const showSchema = defineSchema({
   filters: { quick: [{ key: 'confirmed', label: 'Confirmed', query: { where: { status: 'confirmed' } } }], advanced: ['status', 'eventId'] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Shows', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'today', label: 'Today', query: { where: { startTime: { gte: 'today', lt: 'tomorrow' } } }, count: true },
+        { key: 'upcoming', label: 'Upcoming', query: { where: { startTime: { gte: 'now' } } }, count: true },
+        { key: 'confirmed', label: 'Confirmed', query: { where: { status: 'confirmed' } } },
+        { key: 'cancelled', label: 'Cancelled', query: { where: { status: 'cancelled' } } },
+      ],
       defaultView: 'table',
       availableViews: ['table', 'calendar'],
     },

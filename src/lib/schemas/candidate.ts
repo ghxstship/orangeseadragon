@@ -117,6 +117,12 @@ export const candidateSchema = defineSchema({
         inForm: true,
         inDetail: true,
       },
+      created_at: {
+        type: 'datetime',
+        label: 'Applied',
+        inTable: true,
+        sortable: true,
+      },
     },
   },
 
@@ -151,8 +157,12 @@ export const candidateSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Candidates', query: { where: {} }, count: true },
-        { key: 'active', label: 'Active', query: { where: { status: { notIn: ['hired', 'rejected', 'withdrawn'] } } }, count: true },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'new', label: 'New', query: { where: { status: 'new' } }, count: true },
+        { key: 'screening', label: 'Screening', query: { where: { status: { in: ['screening', 'phone_screen'] } } }, count: true },
+        { key: 'interview', label: 'Interview', query: { where: { status: { in: ['interview', 'assessment'] } } }, count: true },
+        { key: 'offer', label: 'Offer', query: { where: { status: { in: ['reference_check', 'offer'] } } }, count: true },
+        { key: 'hired', label: 'Hired', query: { where: { status: 'hired' } } },
       ],
       defaultView: 'table',
       availableViews: ['table', 'kanban'],

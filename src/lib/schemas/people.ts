@@ -76,6 +76,12 @@ export const peopleSchema = defineSchema({
         inTable: true,
         inForm: true,
       },
+      created_at: {
+        type: 'datetime',
+        label: 'Created',
+        inTable: true,
+        sortable: true,
+      },
     },
   },
 

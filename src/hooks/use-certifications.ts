@@ -4,8 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "./use-supabase";
 import type { Database } from "@/types/database";
 
-type UserCertification = Database["public"]["Tables"]["user_certifications"]["Row"];
-type UserCertificationInsert = Database["public"]["Tables"]["user_certifications"]["Insert"];
+type UserCredential = Database["public"]["Tables"]["user_credentials"]["Row"];
+type UserCredentialInsert = Database["public"]["Tables"]["user_credentials"]["Insert"];
 
 export function useCertifications(organizationId: string | null) {
   const supabase = useSupabase();
@@ -16,10 +16,10 @@ export function useCertifications(organizationId: string | null) {
       if (!organizationId) return [];
 
       const { data, error } = await supabase
-        .from("user_certifications")
+        .from("user_credentials")
         .select(`
           *,
-          user:users!user_certifications_user_id_fkey (
+          user:users!user_credentials_user_id_fkey (
             id,
             full_name
           ),
@@ -37,8 +37,8 @@ export function useCertifications(organizationId: string | null) {
         id: cert.id,
         user_name: cert.user?.full_name,
         certification_name: cert.certification_type?.name,
-        certification_number: cert.certification_number,
-        issued_date: cert.issued_date,
+        certification_number: cert.credential_number,
+        issued_date: cert.issue_date,
         expiry_date: cert.expiry_date,
         status: cert.status,
         issuing_authority: cert.issuing_authority,
@@ -54,15 +54,15 @@ export function useCreateCertification() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (cert: UserCertificationInsert) => {
+    mutationFn: async (cert: UserCredentialInsert) => {
       const { data, error } = await supabase
-        .from("user_certifications")
+        .from("user_credentials")
         .insert(cert)
         .select()
         .single();
 
       if (error) throw error;
-      return data as UserCertification;
+      return data as UserCredential;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["certifications", data.organization_id] });

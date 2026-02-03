@@ -14,6 +14,7 @@ import { ContextualEmptyState } from "@/components/common/contextual-empty-state
 import { useDataView, useFilteredData } from "@/lib/data-view-engine/hooks/use-data-view";
 import type { ViewType } from "@/lib/data-view-engine/hooks/use-data-view";
 import type { EntitySchema } from "@/lib/schema/types";
+import { useColumnPreference } from "@/lib/crud/hooks/useColumnPreference";
 import { Plus, RefreshCw } from "lucide-react";
 
 /**
@@ -70,15 +71,41 @@ export function ListLayout<T extends object>({
   const tableConfig = schema.views?.table;
   
   const defaultViewType = (currentView || listConfig.defaultView || 'table') as ViewType;
-  const defaultColumns = tableConfig?.columns
-    ?.filter((c): c is string => typeof c === 'string')
-    .slice(0, 6) ?? Object.keys(schema.data.fields).slice(0, 6);
+  
+  // Build column definitions from schema
+  const schemaColumns = React.useMemo(() => {
+    const cols = tableConfig?.columns ?? [];
+    return cols.map((col) => {
+      const fieldKey = typeof col === 'string' ? col : col.field;
+      const fieldDef = schema.data.fields[fieldKey];
+      return {
+        id: fieldKey,
+        label: fieldDef?.label || fieldKey,
+      };
+    });
+  }, [tableConfig?.columns, schema.data.fields]);
 
+  // Column visibility and order persistence
+  const {
+    columns: columnPreferences,
+    visibleColumnIds,
+    setColumnVisibility,
+    setColumnOrder,
+  } = useColumnPreference(schema.identity.slug, schemaColumns);
+
+  
   const { state, actions } = useDataView({
     defaultViewType,
-    defaultColumns,
+    defaultColumns: visibleColumnIds,
     defaultPageSize: listConfig.pageSize ?? 20,
   });
+
+  // Sync column preferences with data view state
+  React.useEffect(() => {
+    if (visibleColumnIds.length > 0) {
+      actions.setVisibleColumns(visibleColumnIds);
+    }
+  }, [visibleColumnIds, actions]);
 
   const searchFields = (schema.search?.fields ?? []) as (keyof T)[];
   
@@ -99,6 +126,22 @@ export function ListLayout<T extends object>({
     actions.setViewType(view);
     onViewChange?.(view);
   }, [actions, onViewChange]);
+
+  // Handle column visibility changes from Toolbar
+  const handleColumnChange = React.useCallback((columns: Array<{ id: string; label: string; visible: boolean }>) => {
+    columns.forEach(col => {
+      setColumnVisibility(col.id, col.visible);
+    });
+  }, [setColumnVisibility]);
+
+  // Build toolbar column items
+  const toolbarColumns = React.useMemo(() => {
+    return columnPreferences.map(col => ({
+      id: col.id,
+      label: col.label,
+      visible: col.visible,
+    }));
+  }, [columnPreferences]);
 
   if (error) {
     return (
@@ -195,6 +238,11 @@ export function ListLayout<T extends object>({
             value: state.search,
             onChange: actions.setSearch,
             placeholder: schema.search.placeholder,
+          } : undefined}
+          columns={state.viewType === 'table' && (tableConfig?.features?.columnVisibility !== false) ? {
+            items: toolbarColumns,
+            onChange: handleColumnChange,
+            onReorder: setColumnOrder,
           } : undefined}
           view={listConfig.availableViews.length > 1 ? {
             current: state.viewType,

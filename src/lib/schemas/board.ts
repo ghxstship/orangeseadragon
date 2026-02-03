@@ -37,7 +37,12 @@ export const boardSchema = defineSchema({
   filters: { quick: [{ key: 'kanban', label: 'Kanban', query: { where: { type: 'kanban' } } }], advanced: ['type', 'projectId'] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Boards', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'kanban', label: 'Kanban', query: { where: { type: 'kanban' } } },
+        { key: 'scrum', label: 'Scrum', query: { where: { type: 'scrum' } } },
+        { key: 'custom', label: 'Custom', query: { where: { type: 'custom' } } },
+      ],
       defaultView: 'table',
       availableViews: ['table'],
     },

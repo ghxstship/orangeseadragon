@@ -178,7 +178,7 @@ export const punchItemSchema = defineSchema({
         { key: 'open', label: 'Open', query: { where: { status: { in: ['open', 'in_progress'] } } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban'],
+      availableViews: ['table', 'kanban', 'list', 'calendar'],
     },
     detail: {
       tabs: [
@@ -206,6 +206,32 @@ export const punchItemSchema = defineSchema({
   views: {
     table: {
       columns: ['item_number', 'title', 'production_id', 'status', 'priority', 'assigned_to_id', 'due_date'],
+    },
+    list: {
+      titleField: 'title',
+      subtitleField: 'location',
+      metaFields: ['due_date', 'assigned_to_id'],
+      showChevron: true,
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'open', label: 'Open', color: 'blue' },
+        { value: 'in_progress', label: 'In Progress', color: 'yellow' },
+        { value: 'pending_review', label: 'Pending Review', color: 'purple' },
+        { value: 'resolved', label: 'Resolved', color: 'green' },
+        { value: 'deferred', label: 'Deferred', color: 'gray' },
+      ],
+      card: {
+        title: 'title',
+        subtitle: 'location',
+        fields: ['priority', 'due_date'],
+      },
+    },
+    calendar: {
+      titleField: 'title',
+      startField: 'due_date',
+      colorField: 'priority',
     },
   },
 

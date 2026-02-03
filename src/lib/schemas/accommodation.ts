@@ -159,7 +159,10 @@ export const accommodationSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Accommodations', query: { where: {} } },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'upcoming', label: 'Upcoming', query: { where: { check_in_date: { gte: 'now' } } }, count: true },
+        { key: 'checked-in', label: 'Checked In', query: { where: { status: 'checked_in' } }, count: true },
+        { key: 'completed', label: 'Completed', query: { where: { status: 'checked_out' } } },
       ],
       defaultView: 'table',
       availableViews: ['table'],

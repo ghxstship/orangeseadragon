@@ -66,6 +66,12 @@ export const notificationSchema = defineSchema({
         label: 'User',
         inTable: true,
       },
+      created_at: {
+        type: 'datetime',
+        label: 'Created',
+        inTable: true,
+        sortable: true,
+      },
     },
   },
 

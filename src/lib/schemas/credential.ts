@@ -9,7 +9,7 @@ export const credentialSchema = defineSchema({
     description: 'Staff credentials, licenses, and permits',
   },
   data: {
-    endpoint: '/api/credentials',
+    endpoint: '/api/user-credentials',
     primaryKey: 'id',
     fields: {
       credential_number: {
@@ -134,7 +134,7 @@ export const credentialSchema = defineSchema({
         { key: 'active', label: 'Active', query: { where: { status: 'active' } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table'],
+      availableViews: ['table', 'list', 'calendar'],
     },
     detail: {
       tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }],
@@ -149,7 +149,20 @@ export const credentialSchema = defineSchema({
       ],
     },
   },
-  views: { table: { columns: ['credential_number', 'name', 'credential_type', 'user_id', 'status', 'expiry_date', 'issuing_authority'] } },
+  views: {
+    table: { columns: ['credential_number', 'name', 'credential_type', 'user_id', 'status', 'expiry_date', 'issuing_authority'] },
+    list: {
+      titleField: 'name',
+      subtitleField: 'credential_type',
+      metaFields: ['expiry_date', 'issuing_authority'],
+      showChevron: true,
+    },
+    calendar: {
+      titleField: 'name',
+      startField: 'expiry_date',
+      colorField: 'status',
+    },
+  },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/credentials/${r.id}` } }],
     bulk: [],

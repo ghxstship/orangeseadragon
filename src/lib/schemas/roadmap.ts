@@ -39,7 +39,12 @@ export const roadmapSchema = defineSchema({
   filters: { quick: [], advanced: ['timeframe', 'projectId'] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Roadmaps', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'quarterly', label: 'Quarterly', query: { where: { timeframe: 'quarterly' } } },
+        { key: 'yearly', label: 'Yearly', query: { where: { timeframe: 'yearly' } } },
+        { key: 'multi-year', label: 'Multi-Year', query: { where: { timeframe: 'multi-year' } } },
+      ],
       defaultView: 'table',
       availableViews: ['table'],
     },

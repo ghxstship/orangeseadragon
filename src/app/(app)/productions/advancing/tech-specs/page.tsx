@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { advancingSchema } from '@/lib/schemas/advancing';
+import { techSpecSchema } from '@/lib/schemas/techSpec';
 
 export default function TechSpecsPage() {
-  return <CrudList schema={advancingSchema} filter={{ advance_type: 'tech_spec' }} />;
+  return <CrudList schema={techSpecSchema} />;
 }

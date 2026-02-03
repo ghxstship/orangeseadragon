@@ -291,12 +291,14 @@ export interface EntitySchema<T = any> {
   // ═══════════════════════════════════════════════════════════════
   views: {
     table?: TableViewConfig;
+    list?: ListViewConfig;
+    grid?: GridViewConfig;
     kanban?: KanbanViewConfig;
     calendar?: CalendarViewConfig;
     timeline?: TimelineViewConfig;
+    gantt?: GanttViewConfig;
     gallery?: GalleryViewConfig;
     map?: MapViewConfig;
-    // ... other view configs
   };
 
   // ═══════════════════════════════════════════════════════════════
@@ -460,6 +462,7 @@ export interface TableViewConfig {
     rowExpansion?: boolean;
     columnResize?: boolean;
     columnReorder?: boolean;
+    columnVisibility?: boolean;
   };
 }
 

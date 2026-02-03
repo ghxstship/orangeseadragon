@@ -180,7 +180,7 @@ export const vehicleSchema = defineSchema({
         { key: 'available', label: 'Available', query: { where: { status: 'available' } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table'],
+      availableViews: ['table', 'grid', 'list', 'kanban', 'map'],
     },
     detail: {
       tabs: [
@@ -211,6 +211,38 @@ export const vehicleSchema = defineSchema({
   views: {
     table: {
       columns: ['vehicle_number', 'name', 'vehicle_type', 'make', 'model', 'status', 'current_location', 'license_plate'],
+    },
+    list: {
+      titleField: 'name',
+      subtitleField: 'vehicle_type',
+      metaFields: ['license_plate', 'current_location'],
+      showChevron: true,
+    },
+    grid: {
+      titleField: 'name',
+      subtitleField: 'vehicle_type',
+      badgeField: 'status',
+      cardFields: ['make', 'model', 'license_plate', 'current_location'],
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'available', label: 'Available', color: 'green' },
+        { value: 'in_use', label: 'In Use', color: 'blue' },
+        { value: 'reserved', label: 'Reserved', color: 'purple' },
+        { value: 'maintenance', label: 'Maintenance', color: 'yellow' },
+        { value: 'out_of_service', label: 'Out of Service', color: 'red' },
+      ],
+      card: {
+        title: 'name',
+        subtitle: 'vehicle_type',
+        fields: ['license_plate', 'current_location'],
+      },
+    },
+    map: {
+      titleField: 'name',
+      latitudeField: 'latitude',
+      longitudeField: 'longitude',
     },
   },
 

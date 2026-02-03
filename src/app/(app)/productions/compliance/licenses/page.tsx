@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { permitSchema } from '@/lib/schemas/permit';
+import { credentialSchema } from '@/lib/schemas/credential';
 
 export default function LicensesPage() {
-  return <CrudList schema={permitSchema} filter={{ permit_type: 'license' }} />;
+  return <CrudList schema={credentialSchema} filter={{ credential_type: 'license' }} />;
 }

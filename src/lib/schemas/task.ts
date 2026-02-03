@@ -113,13 +113,14 @@ export const taskSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Tasks', query: { where: {} } },
-        { key: 'todo', label: 'To Do', query: { where: { status: 'todo' } } },
-        { key: 'in-progress', label: 'In Progress', query: { where: { status: 'in_progress' } } },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'todo', label: 'To Do', query: { where: { status: 'todo' } }, count: true },
+        { key: 'in-progress', label: 'In Progress', query: { where: { status: 'in_progress' } }, count: true },
+        { key: 'in-review', label: 'In Review', query: { where: { status: 'in_review' } }, count: true },
         { key: 'done', label: 'Done', query: { where: { status: 'done' } } },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban', 'list'],
+      availableViews: ['table', 'kanban', 'list', 'calendar'],
     },
     detail: {
       tabs: [
@@ -154,6 +155,12 @@ export const taskSchema = defineSchema({
     table: {
       columns: ['title', 'status', 'priority', 'due_date', 'assignee_id'],
     },
+    list: {
+      titleField: 'title',
+      subtitleField: 'project_id',
+      metaFields: ['due_date', 'assignee_id'],
+      showChevron: true,
+    },
     kanban: {
       columnField: 'status',
       columns: [
@@ -166,6 +173,11 @@ export const taskSchema = defineSchema({
         title: 'title',
         subtitle: 'project_id',
       },
+    },
+    calendar: {
+      titleField: 'title',
+      startField: 'due_date',
+      colorField: 'priority',
     },
   },
 

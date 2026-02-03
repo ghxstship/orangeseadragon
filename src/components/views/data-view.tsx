@@ -283,22 +283,35 @@ function TableRenderer<T extends Record<string, unknown>>({
   const columns = React.useMemo<ColumnDef<T, unknown>[]>(() => {
     if (!config?.columns) return [];
 
-    return config.columns
-      .map((col) => normalizeColumn(col))
+    // Get all normalized columns
+    const allColumns = config.columns.map((col) => normalizeColumn(col));
+    
+    // Filter by visibility
+    const visibleCols = allColumns
       .filter((col) => col.visible !== false)
       .filter((col) =>
         state.visibleColumns.length === 0 ||
         state.visibleColumns.includes(col.field)
-      )
-      .map((col) => ({
-        accessorKey: col.field,
-        header: col.label,
-        cell: ({ row }) => {
-          const value = row.getValue(col.field);
-          return formatValue(value, col.format);
-        },
-        enableSorting: col.sortable !== false,
-      }));
+      );
+
+    // Sort by order in visibleColumns if provided
+    const orderedCols = state.visibleColumns.length > 0
+      ? visibleCols.sort((a, b) => {
+          const aIndex = state.visibleColumns.indexOf(a.field);
+          const bIndex = state.visibleColumns.indexOf(b.field);
+          return aIndex - bIndex;
+        })
+      : visibleCols;
+
+    return orderedCols.map((col) => ({
+      accessorKey: col.field,
+      header: col.label,
+      cell: ({ row }) => {
+        const value = row.getValue(col.field);
+        return formatValue(value, col.format);
+      },
+      enableSorting: col.sortable !== false,
+    }));
   }, [config?.columns, state.visibleColumns]);
 
   const tableRowActions = React.useMemo<RowAction<T>[] | undefined>(() => {

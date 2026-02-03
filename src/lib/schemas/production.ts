@@ -207,7 +207,7 @@ export const productionSchema = defineSchema({
         { key: 'active', label: 'Active', query: { where: { status: { notIn: ['archived', 'closeout'] } } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban'],
+      availableViews: ['table', 'kanban', 'list', 'calendar', 'timeline'],
     },
     detail: {
       tabs: [
@@ -240,22 +240,43 @@ export const productionSchema = defineSchema({
     table: {
       columns: ['production_code', 'name', 'client_id', 'status', 'health', 'event_start', 'contract_value'],
     },
+    list: {
+      titleField: 'name',
+      subtitleField: 'production_code',
+      metaFields: ['event_start', 'event_end'],
+      showChevron: true,
+    },
     kanban: {
       columnField: 'status',
       columns: [
-        { value: 'planning', label: 'Planning', color: 'blue' },
-        { value: 'pre_production', label: 'Pre-Production', color: 'cyan' },
-        { value: 'in_production', label: 'In Production', color: 'yellow' },
-        { value: 'load_in', label: 'Load In', color: 'orange' },
-        { value: 'show', label: 'Show', color: 'green' },
-        { value: 'load_out', label: 'Load Out', color: 'purple' },
-        { value: 'wrap', label: 'Wrap', color: 'gray' },
+        { value: 'intake', label: 'Intake', color: 'gray' },
+        { value: 'scoping', label: 'Scoping', color: 'blue' },
+        { value: 'proposal', label: 'Proposal', color: 'purple' },
+        { value: 'awarded', label: 'Awarded', color: 'green' },
+        { value: 'design', label: 'Design', color: 'cyan' },
+        { value: 'fabrication', label: 'Fabrication', color: 'orange' },
+        { value: 'deployment', label: 'Deployment', color: 'yellow' },
+        { value: 'show', label: 'Show', color: 'emerald' },
+        { value: 'strike', label: 'Strike', color: 'red' },
+        { value: 'closeout', label: 'Closeout', color: 'slate' },
       ],
       card: {
         title: 'name',
-        subtitle: (record: any) => record.client_id || '',
+        subtitle: 'production_code',
         fields: ['event_start', 'health'],
       },
+    },
+    calendar: {
+      titleField: 'name',
+      startField: 'event_start',
+      endField: 'event_end',
+      colorField: 'health',
+    },
+    timeline: {
+      titleField: 'name',
+      startField: 'load_in_date',
+      endField: 'strike_date',
+      groupField: 'production_type',
     },
   },
 

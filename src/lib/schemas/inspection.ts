@@ -173,7 +173,7 @@ export const inspectionSchema = defineSchema({
         { key: 'upcoming', label: 'Upcoming', query: { where: { status: 'scheduled' } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'calendar'],
+      availableViews: ['table', 'calendar', 'list', 'kanban'],
     },
     detail: {
       tabs: [
@@ -201,6 +201,32 @@ export const inspectionSchema = defineSchema({
   views: {
     table: {
       columns: ['inspection_number', 'name', 'inspection_type', 'production_id', 'status', 'scheduled_date', 'inspector_id'],
+    },
+    list: {
+      titleField: 'name',
+      subtitleField: 'inspection_type',
+      metaFields: ['scheduled_date', 'inspector_id'],
+      showChevron: true,
+    },
+    calendar: {
+      titleField: 'name',
+      startField: 'scheduled_date',
+      colorField: 'status',
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'scheduled', label: 'Scheduled', color: 'blue' },
+        { value: 'in_progress', label: 'In Progress', color: 'yellow' },
+        { value: 'passed', label: 'Passed', color: 'green' },
+        { value: 'failed', label: 'Failed', color: 'red' },
+        { value: 'conditional', label: 'Conditional', color: 'orange' },
+      ],
+      card: {
+        title: 'name',
+        subtitle: 'inspection_type',
+        fields: ['scheduled_date', 'inspector_id'],
+      },
     },
   },
 

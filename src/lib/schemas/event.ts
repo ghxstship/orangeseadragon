@@ -146,8 +146,10 @@ export const eventSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Events', query: { where: {} } },
-        { key: 'upcoming', label: 'Upcoming', query: { where: { startDate: { gte: 'now' } } } },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'upcoming', label: 'Upcoming', query: { where: { startDate: { gte: 'now' } } }, count: true },
+        { key: 'live', label: 'Live', query: { where: { startDate: { lte: 'now' }, endDate: { gte: 'now' } } }, count: true },
+        { key: 'past', label: 'Past', query: { where: { endDate: { lt: 'now' } } } },
       ],
       defaultView: 'table',
       availableViews: ['table', 'calendar', 'timeline'],

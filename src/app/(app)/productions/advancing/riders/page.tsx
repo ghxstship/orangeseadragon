@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { advancingSchema } from '@/lib/schemas/advancing';
+import { riderSchema } from '@/lib/schemas/rider';
 
 export default function RidersPage() {
-  return <CrudList schema={advancingSchema} filter={{ advance_type: 'rider' }} />;
+  return <CrudList schema={riderSchema} />;
 }

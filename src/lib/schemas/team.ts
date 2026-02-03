@@ -29,7 +29,7 @@ export const teamSchema = defineSchema({
   filters: { quick: [], advanced: ['projectId'] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Teams', query: { where: {} }, count: true }],
+      subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }],
       defaultView: 'table',
       availableViews: ['table'],
     },

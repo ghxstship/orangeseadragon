@@ -68,6 +68,12 @@ export const emailTemplateSchema = defineSchema({
         inTable: true,
         inForm: true,
       },
+      updated_at: {
+        type: 'datetime',
+        label: 'Updated',
+        inTable: true,
+        sortable: true,
+      },
     },
   },
 

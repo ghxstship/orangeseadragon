@@ -85,6 +85,12 @@ export const feedbackSchema = defineSchema({
         label: 'Performance Review',
         inForm: true,
       },
+      created_at: {
+        type: 'datetime',
+        label: 'Created',
+        inTable: true,
+        sortable: true,
+      },
     },
   },
 

@@ -54,7 +54,7 @@ export { teamSchema } from './team';
 export { showSchema } from './show';
 export { runsheetSchema } from './runsheet';
 export { departmentSchema } from './department';
-export { advancingSchema } from './advancing';
+export { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema } from './advancing';
 export { techSpecSchema } from './techSpec';
 export { riderSchema } from './rider';
 
@@ -152,6 +152,7 @@ export { documentTemplateSchema } from './documentTemplate';
 export { workflowTriggerSchema } from './workflowTrigger';
 export { stageSchema } from './stage';
 export { insuranceSchema } from './insurance';
+export { certificateOfInsuranceSchema } from './certificateOfInsurance';
 export { cateringSchema } from './catering';
 export { guestListSchema } from './guestList';
 export { crewCallSchema } from './crewCall';
@@ -187,7 +188,7 @@ import { teamSchema } from './team';
 import { showSchema } from './show';
 import { runsheetSchema } from './runsheet';
 import { departmentSchema } from './department';
-import { advancingSchema } from './advancing';
+import { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema } from './advancing';
 import { techSpecSchema } from './techSpec';
 import { riderSchema } from './rider';
 import { floorPlanSchema } from './floorPlan';
@@ -275,6 +276,7 @@ import { documentTemplateSchema } from './documentTemplate';
 import { workflowTriggerSchema } from './workflowTrigger';
 import { stageSchema } from './stage';
 import { insuranceSchema } from './insurance';
+import { certificateOfInsuranceSchema } from './certificateOfInsurance';
 import { cateringSchema } from './catering';
 import { guestListSchema } from './guestList';
 import { crewCallSchema } from './crewCall';
@@ -352,7 +354,17 @@ export function getSchema(entityName: string) {
     runsheets: runsheetSchema,
     department: departmentSchema,
     departments: departmentSchema,
-    advancing: advancingSchema,
+    advancing: productionAdvanceSchema,
+    productionAdvance: productionAdvanceSchema,
+    'production-advances': productionAdvanceSchema,
+    advanceItem: advanceItemSchema,
+    'advance-items': advanceItemSchema,
+    advanceItemFulfillment: advanceItemFulfillmentSchema,
+    'advance-fulfillment': advanceItemFulfillmentSchema,
+    vendorRating: vendorRatingSchema,
+    'vendor-ratings': vendorRatingSchema,
+    advanceCategory: advanceCategorySchema,
+    'advance-categories': advanceCategorySchema,
     techSpec: techSpecSchema,
     'tech-specs': techSpecSchema,
     rider: riderSchema,
@@ -557,6 +569,12 @@ export function getSchema(entityName: string) {
     stages: stageSchema,
     insurance: insuranceSchema,
     'insurance-policies': insuranceSchema,
+    certificate: certificateOfInsuranceSchema,
+    certificates: certificateOfInsuranceSchema,
+    certificateOfInsurance: certificateOfInsuranceSchema,
+    'certificate-of-insurance': certificateOfInsuranceSchema,
+    'certificates-of-insurance': certificateOfInsuranceSchema,
+    certificates_of_insurance: certificateOfInsuranceSchema,
     catering: cateringSchema,
     'catering-orders': cateringSchema,
     guestList: guestListSchema,

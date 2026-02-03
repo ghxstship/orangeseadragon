@@ -131,7 +131,7 @@ export const venueSchema = defineSchema({
         { key: 'outdoor', label: 'Outdoor', query: { where: { venue_type: 'outdoor' } } },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'grid', 'map'],
+      availableViews: ['table', 'grid', 'map', 'list'],
     },
     detail: {
       tabs: [

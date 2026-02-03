@@ -4,5 +4,5 @@ import { CrudList } from '@/lib/crud/components/CrudList';
 import { campaignSchema } from '@/lib/schemas/campaign';
 
 export default function ContentCampaignsPage() {
-  return <CrudList schema={campaignSchema} filter={{ campaign_type: 'content' }} />;
+  return <CrudList schema={campaignSchema} />;
 }

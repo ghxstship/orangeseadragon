@@ -13,7 +13,7 @@ export const insuranceSchema = defineSchema({
   },
 
   data: {
-    endpoint: '/api/insurance-policies',
+    endpoint: '/api/certificates-of-insurance',
     primaryKey: 'id',
     fields: {
       policy_number: {

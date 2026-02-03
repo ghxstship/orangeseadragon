@@ -5,3 +5,4 @@ export { CrudDetail } from './components/CrudDetail';
 export { CrudForm } from './components/CrudForm';
 export { useCrud } from './hooks/useCrud';
 export { useViewPreference } from './hooks/useViewPreference';
+export { useColumnPreference } from './hooks/useColumnPreference';

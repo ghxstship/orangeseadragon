@@ -29,7 +29,7 @@ export const departmentSchema = defineSchema({
   filters: { quick: [], advanced: [] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Departments', query: { where: {} }, count: true }],
+      subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }],
       defaultView: 'table',
       availableViews: ['table'],
     },

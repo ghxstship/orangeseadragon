@@ -194,11 +194,14 @@ export const permitSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Permits', query: { where: {} }, count: true },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'pending', label: 'Pending', query: { where: { status: { $in: ['pending', 'submitted', 'under_review'] } } }, count: true },
         { key: 'active', label: 'Active', query: { where: { status: 'approved' } }, count: true },
+        { key: 'expiring', label: 'Expiring', query: { where: { status: 'approved', expiration_date: { $lte: '{{now + 30d}}' } } }, count: true },
+        { key: 'expired', label: 'Expired', query: { where: { status: { $in: ['expired', 'revoked'] } } } },
       ],
       defaultView: 'table',
-      availableViews: ['table'],
+      availableViews: ['table', 'list', 'calendar', 'kanban'],
     },
     detail: {
       tabs: [
@@ -229,6 +232,33 @@ export const permitSchema = defineSchema({
   views: {
     table: {
       columns: ['permit_number', 'name', 'permit_type', 'production_id', 'status', 'expiration_date', 'issuing_authority'],
+    },
+    list: {
+      titleField: 'name',
+      subtitleField: 'permit_type',
+      metaFields: ['expiration_date', 'issuing_authority'],
+      showChevron: true,
+    },
+    calendar: {
+      titleField: 'name',
+      startField: 'expiration_date',
+      colorField: 'status',
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'pending', label: 'Pending', color: 'yellow' },
+        { value: 'submitted', label: 'Submitted', color: 'blue' },
+        { value: 'under_review', label: 'Under Review', color: 'purple' },
+        { value: 'approved', label: 'Approved', color: 'green' },
+        { value: 'denied', label: 'Denied', color: 'red' },
+        { value: 'expired', label: 'Expired', color: 'orange' },
+      ],
+      card: {
+        title: 'name',
+        subtitle: 'permit_type',
+        fields: ['expiration_date', 'issuing_authority'],
+      },
     },
   },
 

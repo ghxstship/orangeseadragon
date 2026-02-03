@@ -129,13 +129,14 @@ export const assetSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Assets', query: { where: {} } },
-        { key: 'available', label: 'Available', query: { where: { status: 'available' } } },
-        { key: 'in-use', label: 'In Use', query: { where: { status: 'in_use' } } },
-        { key: 'maintenance', label: 'Maintenance', query: { where: { status: 'maintenance' } } },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'available', label: 'Available', query: { where: { status: 'available' } }, count: true },
+        { key: 'in-use', label: 'In Use', query: { where: { status: 'in_use' } }, count: true },
+        { key: 'maintenance', label: 'Maintenance', query: { where: { status: 'maintenance' } }, count: true },
+        { key: 'retired', label: 'Retired', query: { where: { status: 'retired' } } },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'grid'],
+      availableViews: ['table', 'grid', 'list', 'kanban'],
     },
     detail: {
       tabs: [
@@ -180,6 +181,32 @@ export const assetSchema = defineSchema({
   views: {
     table: {
       columns: ['name', 'asset_type', 'status', 'serial_number', 'location', 'current_value'],
+    },
+    list: {
+      titleField: 'name',
+      subtitleField: 'asset_type',
+      metaFields: ['serial_number', 'location'],
+      showChevron: true,
+    },
+    grid: {
+      titleField: 'name',
+      subtitleField: 'asset_type',
+      badgeField: 'status',
+      cardFields: ['serial_number', 'location', 'current_value'],
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'available', label: 'Available', color: 'green' },
+        { value: 'in_use', label: 'In Use', color: 'blue' },
+        { value: 'maintenance', label: 'Maintenance', color: 'yellow' },
+        { value: 'retired', label: 'Retired', color: 'gray' },
+      ],
+      card: {
+        title: 'name',
+        subtitle: 'asset_type',
+        fields: ['serial_number', 'location'],
+      },
     },
   },
 

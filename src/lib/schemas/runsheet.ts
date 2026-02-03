@@ -41,7 +41,13 @@ export const runsheetSchema = defineSchema({
   filters: { quick: [{ key: 'published', label: 'Published', query: { where: { status: 'published' } } }], advanced: ['status', 'eventId'] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Runsheets', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'today', label: 'Today', query: { where: { date: { gte: 'today', lt: 'tomorrow' } } }, count: true },
+        { key: 'upcoming', label: 'Upcoming', query: { where: { date: { gte: 'now' } } }, count: true },
+        { key: 'draft', label: 'Draft', query: { where: { status: 'draft' } }, count: true },
+        { key: 'published', label: 'Published', query: { where: { status: 'published' } } },
+      ],
       defaultView: 'table',
       availableViews: ['table'],
     },

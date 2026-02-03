@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { permitSchema } from '@/lib/schemas/permit';
+import { certificateOfInsuranceSchema } from '@/lib/schemas/certificateOfInsurance';
 
 export default function CertificatesPage() {
-  return <CrudList schema={permitSchema} filter={{ permit_type: 'certificate' }} />;
+  return <CrudList schema={certificateOfInsuranceSchema} />;
 }

@@ -8,15 +8,35 @@ export const productionAdvanceSchema = defineSchema({
     icon: 'ClipboardList',
     description: 'Production advance coordination by event',
   },
+
   data: {
     endpoint: '/api/advancing/advances',
-    table: 'production_advances',
     primaryKey: 'id',
     fields: {
-      advanceCode: { type: 'text', label: 'Advance Code', required: true, inTable: true, inForm: true, inDetail: true, sortable: true, searchable: true },
-      eventId: { type: 'relation', label: 'Event', required: true, inTable: true, inForm: true, relation: { table: 'events', labelField: 'name' } },
-      advanceType: {
-        type: 'select', label: 'Type', required: true, inTable: true, inForm: true,
+      advance_code: {
+        type: 'text',
+        label: 'Advance Code',
+        required: true,
+        inTable: true,
+        inForm: true,
+        inDetail: true,
+        sortable: true,
+        searchable: true,
+      },
+      event_id: {
+        type: 'select',
+        label: 'Event',
+        required: true,
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      advance_type: {
+        type: 'select',
+        label: 'Type',
+        required: true,
+        inTable: true,
+        inForm: true,
         options: [
           { label: 'Pre-Event', value: 'pre_event', color: 'blue' },
           { label: 'Load-In', value: 'load_in', color: 'purple' },
@@ -26,7 +46,11 @@ export const productionAdvanceSchema = defineSchema({
         ],
       },
       status: {
-        type: 'select', label: 'Status', required: true, inTable: true, inForm: true,
+        type: 'select',
+        label: 'Status',
+        required: true,
+        inTable: true,
+        inForm: true,
         options: [
           { label: 'Draft', value: 'draft', color: 'gray' },
           { label: 'In Progress', value: 'in_progress', color: 'blue' },
@@ -38,7 +62,10 @@ export const productionAdvanceSchema = defineSchema({
         default: 'draft',
       },
       priority: {
-        type: 'select', label: 'Priority', inTable: true, inForm: true,
+        type: 'select',
+        label: 'Priority',
+        inTable: true,
+        inForm: true,
         options: [
           { label: 'Critical', value: 'critical', color: 'red' },
           { label: 'High', value: 'high', color: 'orange' },
@@ -47,36 +74,60 @@ export const productionAdvanceSchema = defineSchema({
         ],
         default: 'medium',
       },
-      dueDate: { type: 'datetime', label: 'Due Date', inTable: true, inForm: true, sortable: true },
-      completedDate: { type: 'datetime', label: 'Completed Date', inDetail: true },
-      assignedTo: { type: 'relation', label: 'Assigned To', inTable: true, inForm: true, relation: { table: 'users', labelField: 'full_name' } },
-      notes: { type: 'textarea', label: 'Notes', inForm: true, inDetail: true },
+      due_date: {
+        type: 'datetime',
+        label: 'Due Date',
+        inTable: true,
+        inForm: true,
+        sortable: true,
+      },
+      assigned_to: {
+        type: 'select',
+        label: 'Assigned To',
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      notes: {
+        type: 'textarea',
+        label: 'Notes',
+        inForm: true,
+        inDetail: true,
+      },
     },
   },
+
   display: {
-    title: (record: Record<string, unknown>) => String(record.advanceCode || 'Untitled'),
-    subtitle: (record: Record<string, unknown>) => String(record.advanceType || ''),
-    badge: (record: Record<string, unknown>) => {
-      const statusMap: Record<string, { label: string; variant: string }> = {
-        draft: { label: 'Draft', variant: 'secondary' },
-        in_progress: { label: 'In Progress', variant: 'warning' },
-        pending_approval: { label: 'Pending Approval', variant: 'warning' },
-        approved: { label: 'Approved', variant: 'success' },
-        completed: { label: 'Completed', variant: 'success' },
-        cancelled: { label: 'Cancelled', variant: 'destructive' },
+    title: (record: any) => record.advance_code || 'Untitled',
+    subtitle: (record: any) => record.advance_type || '',
+    badge: (record: any) => {
+      const statusMap: Record<string, string> = {
+        draft: 'secondary',
+        in_progress: 'warning',
+        pending_approval: 'warning',
+        approved: 'success',
+        completed: 'success',
+        cancelled: 'destructive',
       };
-      return statusMap[String(record.status)] || { label: 'Unknown', variant: 'secondary' };
+      return { label: record.status || 'Unknown', variant: statusMap[record.status] || 'secondary' };
     },
-    defaultSort: { field: 'dueDate', direction: 'asc' },
+    defaultSort: { field: 'due_date', direction: 'asc' },
   },
-  search: { enabled: true, fields: ['advanceCode', 'notes'], placeholder: 'Search advances...' },
+
+  search: {
+    enabled: true,
+    fields: ['advance_code', 'notes'],
+    placeholder: 'Search advances...',
+  },
+
   filters: {
     quick: [
       { key: 'in_progress', label: 'In Progress', query: { where: { status: 'in_progress' } } },
       { key: 'pending', label: 'Pending Approval', query: { where: { status: 'pending_approval' } } },
     ],
-    advanced: ['status', 'advanceType', 'priority', 'eventId', 'assignedTo'],
+    advanced: ['status', 'advance_type', 'priority', 'event_id', 'assigned_to'],
   },
+
   layouts: {
     list: {
       subpages: [
@@ -85,44 +136,77 @@ export const productionAdvanceSchema = defineSchema({
         { key: 'completed', label: 'Completed', query: { where: { status: 'completed' } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban'],
+      availableViews: ['table', 'kanban', 'list', 'calendar'],
     },
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'items', label: 'Items', content: { type: 'relation', entity: 'advanceItem', filter: { productionAdvanceId: '$id' } } },
+        { key: 'items', label: 'Items', content: { type: 'related', entity: 'advanceItem', foreignKey: 'production_advance_id' } },
       ],
       overview: {
-        stats: [
-          { key: 'totalItems', label: 'Total Items', value: { type: 'count', relation: 'advance_items' } },
-          { key: 'completedItems', label: 'Completed', value: { type: 'count', relation: 'advance_items', filter: { status: 'complete' } } },
+        stats: [],
+        blocks: [
+          { key: 'notes', title: 'Notes', content: { type: 'fields', fields: ['notes'] } },
         ],
-        blocks: [{ key: 'notes', title: 'Notes', content: { type: 'fields', fields: ['notes'] } }],
       },
     },
     form: {
       sections: [
-        { key: 'basic', title: 'Advance Details', fields: ['advanceCode', 'eventId', 'advanceType', 'status', 'priority'] },
-        { key: 'schedule', title: 'Schedule', fields: ['dueDate', 'assignedTo'] },
+        { key: 'basic', title: 'Advance Details', fields: ['advance_code', 'event_id', 'advance_type', 'status', 'priority'] },
+        { key: 'schedule', title: 'Schedule', fields: ['due_date', 'assigned_to'] },
         { key: 'notes', title: 'Notes', fields: ['notes'] },
       ],
     },
   },
+
   views: {
-    table: { columns: ['advanceCode', 'eventId', 'advanceType', 'status', 'priority', 'dueDate', 'assignedTo'] },
-    kanban: { groupBy: 'status', cardTitle: 'advanceCode', cardSubtitle: 'eventId' },
+    table: {
+      columns: ['advance_code', 'event_id', 'advance_type', 'status', 'priority', 'due_date', 'assigned_to'],
+    },
+    list: {
+      titleField: 'advance_code',
+      subtitleField: 'advance_type',
+      metaFields: ['due_date', 'assigned_to'],
+      showChevron: true,
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'draft', label: 'Draft', color: 'gray' },
+        { value: 'in_progress', label: 'In Progress', color: 'blue' },
+        { value: 'pending_approval', label: 'Pending Approval', color: 'yellow' },
+        { value: 'approved', label: 'Approved', color: 'green' },
+        { value: 'completed', label: 'Completed', color: 'emerald' },
+      ],
+      card: {
+        title: 'advance_code',
+        subtitle: 'advance_type',
+        fields: ['due_date', 'priority'],
+      },
+    },
+    calendar: {
+      titleField: 'advance_code',
+      startField: 'due_date',
+      colorField: 'status',
+    },
   },
+
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/advancing/advances/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'modal', modal: 'edit' } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/advances/${r.id}` } },
     ],
-    bulk: [
-      { key: 'updateStatus', label: 'Update Status', handler: { type: 'modal', modal: 'bulkStatus' } },
+    bulk: [],
+    global: [
+      { key: 'create', label: 'New Advance', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Advance') } },
     ],
-    global: [{ key: 'create', label: 'New Advance', variant: 'primary', handler: { type: 'modal', modal: 'create' } }],
   },
-  permissions: { create: true, read: true, update: true, delete: true },
+
+  permissions: {
+    create: true,
+    read: true,
+    update: true,
+    delete: true,
+  },
 });
 
 export const advanceItemSchema = defineSchema({
@@ -133,130 +217,205 @@ export const advanceItemSchema = defineSchema({
     icon: 'Package',
     description: 'Individual advance line items',
   },
+
   data: {
     endpoint: '/api/advancing/items',
-    table: 'advance_items',
     primaryKey: 'id',
     fields: {
-      itemName: { type: 'text', label: 'Item Name', required: true, inTable: true, inForm: true, inDetail: true, sortable: true, searchable: true },
-      productionAdvanceId: { type: 'relation', label: 'Advance', required: true, inForm: true, relation: { table: 'production_advances', labelField: 'advance_code' } },
-      categoryId: { type: 'relation', label: 'Category', inTable: true, inForm: true, relation: { table: 'advance_categories', labelField: 'name' } },
-      description: { type: 'textarea', label: 'Description', inForm: true, inDetail: true },
-      specifications: { type: 'json', label: 'Specifications', inForm: true, inDetail: true },
-      vendorId: { type: 'relation', label: 'Vendor', inTable: true, inForm: true, relation: { table: 'companies', labelField: 'name', filter: { companyType: 'vendor' } } },
-      quantityRequired: { type: 'number', label: 'Qty Required', inTable: true, inForm: true, default: 1 },
-      quantityConfirmed: { type: 'number', label: 'Qty Confirmed', inTable: true, inForm: true, default: 0 },
-      unitCost: { type: 'currency', label: 'Unit Cost', inTable: true, inForm: true },
+      item_name: {
+        type: 'text',
+        label: 'Item Name',
+        required: true,
+        inTable: true,
+        inForm: true,
+        inDetail: true,
+        sortable: true,
+        searchable: true,
+      },
+      production_advance_id: {
+        type: 'select',
+        label: 'Advance',
+        required: true,
+        inForm: true,
+        options: [],
+      },
+      category_id: {
+        type: 'select',
+        label: 'Category',
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      description: {
+        type: 'textarea',
+        label: 'Description',
+        inForm: true,
+        inDetail: true,
+      },
+      vendor_id: {
+        type: 'select',
+        label: 'Vendor',
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      quantity_required: {
+        type: 'number',
+        label: 'Qty Required',
+        inTable: true,
+        inForm: true,
+        default: 1,
+      },
+      quantity_confirmed: {
+        type: 'number',
+        label: 'Qty Confirmed',
+        inTable: true,
+        inForm: true,
+        default: 0,
+      },
+      unit_cost: {
+        type: 'currency',
+        label: 'Unit Cost',
+        inTable: true,
+        inForm: true,
+      },
       status: {
-        type: 'select', label: 'Status', required: true, inTable: true, inForm: true,
+        type: 'select',
+        label: 'Status',
+        required: true,
+        inTable: true,
+        inForm: true,
         options: [
           { label: 'Pending', value: 'pending', color: 'gray' },
           { label: 'Requested', value: 'requested', color: 'blue' },
           { label: 'Confirmed', value: 'confirmed', color: 'cyan' },
           { label: 'In Transit', value: 'in_transit', color: 'purple' },
           { label: 'Delivered', value: 'delivered', color: 'green' },
-          { label: 'Installed', value: 'installed', color: 'emerald' },
-          { label: 'Tested', value: 'tested', color: 'teal' },
           { label: 'Complete', value: 'complete', color: 'emerald' },
-          { label: 'Struck', value: 'struck', color: 'orange' },
-          { label: 'Returned', value: 'returned', color: 'gray' },
           { label: 'Cancelled', value: 'cancelled', color: 'red' },
         ],
         default: 'pending',
       },
-      scheduledDelivery: { type: 'datetime', label: 'Scheduled Delivery', inTable: true, inForm: true, sortable: true },
-      actualDelivery: { type: 'datetime', label: 'Actual Delivery', inDetail: true },
-      loadInTime: { type: 'datetime', label: 'Load-In Time', inForm: true },
-      strikeTime: { type: 'datetime', label: 'Strike Time', inForm: true },
-      location: { type: 'text', label: 'Location', inTable: true, inForm: true },
-      isCriticalPath: { type: 'boolean', label: 'Critical Path', inTable: true, inForm: true, default: false },
-      assignedTo: { type: 'relation', label: 'Assigned To', inTable: true, inForm: true, relation: { table: 'users', labelField: 'full_name' } },
-      notes: { type: 'textarea', label: 'Notes', inForm: true, inDetail: true },
-    },
-    computed: {
-      totalCost: { type: 'currency', label: 'Total Cost', formula: 'quantityRequired * unitCost' },
+      scheduled_delivery: {
+        type: 'datetime',
+        label: 'Scheduled Delivery',
+        inTable: true,
+        inForm: true,
+        sortable: true,
+      },
+      location: {
+        type: 'text',
+        label: 'Location',
+        inTable: true,
+        inForm: true,
+      },
+      is_critical_path: {
+        type: 'checkbox',
+        label: 'Critical Path',
+        inTable: true,
+        inForm: true,
+        default: false,
+      },
+      assigned_to: {
+        type: 'select',
+        label: 'Assigned To',
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      notes: {
+        type: 'textarea',
+        label: 'Notes',
+        inForm: true,
+        inDetail: true,
+      },
     },
   },
+
   display: {
-    title: (record: Record<string, unknown>) => String(record.itemName || 'Untitled'),
-    subtitle: (record: Record<string, unknown>) => String(record.vendorId || ''),
-    badge: (record: Record<string, unknown>) => {
-      if (record.isCriticalPath) return { label: 'Critical', variant: 'destructive' };
-      const statusMap: Record<string, { label: string; variant: string }> = {
-        pending: { label: 'Pending', variant: 'secondary' },
-        confirmed: { label: 'Confirmed', variant: 'success' },
-        in_transit: { label: 'In Transit', variant: 'warning' },
-        delivered: { label: 'Delivered', variant: 'success' },
-        complete: { label: 'Complete', variant: 'success' },
+    title: (record: any) => record.item_name || 'Untitled',
+    subtitle: (record: any) => record.vendor_id || '',
+    badge: (record: any) => {
+      if (record.is_critical_path) return { label: 'Critical', variant: 'destructive' };
+      const statusMap: Record<string, string> = {
+        pending: 'secondary',
+        confirmed: 'success',
+        in_transit: 'warning',
+        delivered: 'success',
+        complete: 'success',
       };
-      return statusMap[String(record.status)] || { label: String(record.status), variant: 'secondary' };
+      return { label: record.status || 'Unknown', variant: statusMap[record.status] || 'secondary' };
     },
-    defaultSort: { field: 'scheduledDelivery', direction: 'asc' },
+    defaultSort: { field: 'scheduled_delivery', direction: 'asc' },
   },
-  search: { enabled: true, fields: ['itemName', 'description', 'notes'], placeholder: 'Search items...' },
+
+  search: {
+    enabled: true,
+    fields: ['item_name', 'description', 'notes'],
+    placeholder: 'Search items...',
+  },
+
   filters: {
     quick: [
-      { key: 'critical', label: 'Critical Path', query: { where: { isCriticalPath: true } } },
+      { key: 'critical', label: 'Critical Path', query: { where: { is_critical_path: true } } },
       { key: 'pending', label: 'Pending', query: { where: { status: 'pending' } } },
     ],
-    advanced: ['status', 'categoryId', 'vendorId', 'isCriticalPath', 'assignedTo'],
+    advanced: ['status', 'category_id', 'vendor_id', 'is_critical_path', 'assigned_to'],
   },
+
   layouts: {
     list: {
       subpages: [
         { key: 'all', label: 'All', query: { where: {} }, count: true },
-        { key: 'technical', label: 'Technical', query: { where: { 'categoryId.code': { $like: 'technical%' } } }, count: true },
-        { key: 'logistics', label: 'Logistics', query: { where: { 'categoryId.code': { $like: 'logistics%' } } }, count: true },
-        { key: 'hospitality', label: 'Hospitality', query: { where: { 'categoryId.code': { $like: 'hospitality%' } } }, count: true },
-        { key: 'staffing', label: 'Staffing', query: { where: { 'categoryId.code': { $like: 'staffing%' } } }, count: true },
-        { key: 'safety', label: 'Safety', query: { where: { 'categoryId.code': { $like: 'safety%' } } }, count: true },
-        { key: 'marketing', label: 'Marketing', query: { where: { 'categoryId.code': { $like: 'marketing%' } } }, count: true },
+        { key: 'critical', label: 'Critical', query: { where: { is_critical_path: true } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban', 'timeline'],
+      availableViews: ['table', 'kanban'],
     },
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'fulfillment', label: 'Fulfillment', content: { type: 'relation', entity: 'advanceItemFulfillment', filter: { advanceItemId: '$id' } } },
       ],
       overview: {
-        stats: [
-          { key: 'totalCost', label: 'Total Cost', value: { type: 'computed', field: 'totalCost' } },
-        ],
+        stats: [],
         blocks: [
-          { key: 'specs', title: 'Specifications', content: { type: 'json', field: 'specifications' } },
           { key: 'notes', title: 'Notes', content: { type: 'fields', fields: ['notes'] } },
         ],
       },
     },
     form: {
       sections: [
-        { key: 'basic', title: 'Item Details', fields: ['itemName', 'productionAdvanceId', 'categoryId', 'description'] },
-        { key: 'vendor', title: 'Vendor & Cost', fields: ['vendorId', 'quantityRequired', 'quantityConfirmed', 'unitCost'] },
-        { key: 'schedule', title: 'Schedule', fields: ['scheduledDelivery', 'loadInTime', 'strikeTime', 'location'] },
-        { key: 'assignment', title: 'Assignment', fields: ['status', 'assignedTo', 'isCriticalPath'] },
-        { key: 'details', title: 'Details', fields: ['specifications', 'notes'] },
+        { key: 'basic', title: 'Item Details', fields: ['item_name', 'production_advance_id', 'category_id', 'description'] },
+        { key: 'vendor', title: 'Vendor & Cost', fields: ['vendor_id', 'quantity_required', 'quantity_confirmed', 'unit_cost'] },
+        { key: 'schedule', title: 'Schedule', fields: ['scheduled_delivery', 'location'] },
+        { key: 'assignment', title: 'Assignment', fields: ['status', 'assigned_to', 'is_critical_path'] },
+        { key: 'details', title: 'Details', fields: ['notes'] },
       ],
     },
   },
+
   views: {
-    table: { columns: ['itemName', 'categoryId', 'vendorId', 'status', 'scheduledDelivery', 'location', 'isCriticalPath'] },
-    kanban: { groupBy: 'status', cardTitle: 'itemName', cardSubtitle: 'vendorId' },
-    timeline: { startField: 'scheduledDelivery', endField: 'strikeTime', titleField: 'itemName' },
+    table: {
+      columns: ['item_name', 'category_id', 'vendor_id', 'status', 'scheduled_delivery', 'location', 'is_critical_path'],
+    },
   },
+
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/advancing/items/${r.id}` } },
-      { key: 'edit', label: 'Edit', handler: { type: 'modal', modal: 'edit' } },
-      { key: 'updateStatus', label: 'Update Status', handler: { type: 'modal', modal: 'statusUpdate' } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/items/${r.id}` } },
     ],
-    bulk: [
-      { key: 'updateStatus', label: 'Update Status', handler: { type: 'modal', modal: 'bulkStatus' } },
+    bulk: [],
+    global: [
+      { key: 'create', label: 'New Item', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Item') } },
     ],
-    global: [{ key: 'create', label: 'New Item', variant: 'primary', handler: { type: 'modal', modal: 'create' } }],
   },
-  permissions: { create: true, read: true, update: true, delete: true },
+
+  permissions: {
+    create: true,
+    read: true,
+    update: true,
+    delete: true,
+  },
 });
 
 export const advanceItemFulfillmentSchema = defineSchema({
@@ -267,94 +426,145 @@ export const advanceItemFulfillmentSchema = defineSchema({
     icon: 'Truck',
     description: 'Fulfillment stage tracking for advance items',
   },
+
   data: {
     endpoint: '/api/advancing/fulfillment',
-    table: 'advance_item_fulfillment',
     primaryKey: 'id',
     fields: {
-      advanceItemId: { type: 'relation', label: 'Advance Item', required: true, inTable: true, inForm: true, relation: { table: 'advance_items', labelField: 'item_name' } },
-      fulfillmentStage: {
-        type: 'select', label: 'Stage', required: true, inTable: true, inForm: true,
+      advance_item_id: {
+        type: 'select',
+        label: 'Advance Item',
+        required: true,
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      fulfillment_stage: {
+        type: 'select',
+        label: 'Stage',
+        required: true,
+        inTable: true,
+        inForm: true,
         options: [
           { label: 'Requested', value: 'requested', color: 'gray' },
           { label: 'Quoted', value: 'quoted', color: 'blue' },
           { label: 'Ordered', value: 'ordered', color: 'cyan' },
           { label: 'Confirmed', value: 'confirmed', color: 'teal' },
-          { label: 'In Production', value: 'in_production', color: 'purple' },
           { label: 'Shipped', value: 'shipped', color: 'indigo' },
-          { label: 'In Transit', value: 'in_transit', color: 'violet' },
           { label: 'Delivered', value: 'delivered', color: 'green' },
-          { label: 'Inspected', value: 'inspected', color: 'lime' },
-          { label: 'Installed', value: 'installed', color: 'emerald' },
-          { label: 'Tested', value: 'tested', color: 'teal' },
-          { label: 'Operational', value: 'operational', color: 'green' },
-          { label: 'Struck', value: 'struck', color: 'orange' },
-          { label: 'Returned', value: 'returned', color: 'gray' },
           { label: 'Complete', value: 'complete', color: 'emerald' },
         ],
       },
-      stageEnteredAt: { type: 'datetime', label: 'Stage Entered', inTable: true, sortable: true },
-      expectedCompletion: { type: 'datetime', label: 'Expected Completion', inTable: true, inForm: true },
-      actualCompletion: { type: 'datetime', label: 'Actual Completion', inTable: true },
-      percentageComplete: { type: 'number', label: '% Complete', inTable: true, inForm: true, min: 0, max: 100 },
-      assignedTo: { type: 'relation', label: 'Assigned To', inTable: true, inForm: true, relation: { table: 'users', labelField: 'full_name' } },
-      notes: { type: 'textarea', label: 'Notes', inForm: true, inDetail: true },
-      evidence: { type: 'json', label: 'Evidence', inDetail: true },
+      expected_completion: {
+        type: 'datetime',
+        label: 'Expected Completion',
+        inTable: true,
+        inForm: true,
+      },
+      actual_completion: {
+        type: 'datetime',
+        label: 'Actual Completion',
+        inTable: true,
+      },
+      percentage_complete: {
+        type: 'number',
+        label: '% Complete',
+        inTable: true,
+        inForm: true,
+        min: 0,
+        max: 100,
+      },
+      assigned_to: {
+        type: 'select',
+        label: 'Assigned To',
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      notes: {
+        type: 'textarea',
+        label: 'Notes',
+        inForm: true,
+        inDetail: true,
+      },
     },
   },
+
   display: {
-    title: (record: Record<string, unknown>) => String(record.fulfillmentStage || 'Unknown Stage'),
-    subtitle: (record: Record<string, unknown>) => `${record.percentageComplete || 0}% complete`,
-    badge: (record: Record<string, unknown>) => {
-      const pct = Number(record.percentageComplete) || 0;
+    title: (record: any) => record.fulfillment_stage || 'Unknown Stage',
+    subtitle: (record: any) => `${record.percentage_complete || 0}% complete`,
+    badge: (record: any) => {
+      const pct = Number(record.percentage_complete) || 0;
       if (pct === 100) return { label: 'Complete', variant: 'success' };
       if (pct > 0) return { label: `${pct}%`, variant: 'warning' };
       return { label: 'Not Started', variant: 'secondary' };
     },
-    defaultSort: { field: 'stageEnteredAt', direction: 'desc' },
+    defaultSort: { field: 'expected_completion', direction: 'asc' },
   },
-  search: { enabled: true, fields: ['notes'], placeholder: 'Search fulfillment...' },
+
+  search: {
+    enabled: true,
+    fields: ['notes'],
+    placeholder: 'Search fulfillment...',
+  },
+
   filters: {
     quick: [
-      { key: 'incomplete', label: 'Incomplete', query: { where: { actualCompletion: null } } },
+      { key: 'incomplete', label: 'Incomplete', query: { where: { actual_completion: null } } },
     ],
-    advanced: ['fulfillmentStage', 'assignedTo'],
+    advanced: ['fulfillment_stage', 'assigned_to'],
   },
+
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Stages', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All Stages', query: { where: {} }, count: true },
+      ],
       defaultView: 'table',
       availableViews: ['table'],
     },
     detail: {
-      tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }],
+      tabs: [
+        { key: 'overview', label: 'Overview', content: { type: 'overview' } },
+      ],
       overview: {
         stats: [],
         blocks: [
-          { key: 'evidence', title: 'Evidence', content: { type: 'json', field: 'evidence' } },
           { key: 'notes', title: 'Notes', content: { type: 'fields', fields: ['notes'] } },
         ],
       },
     },
     form: {
       sections: [
-        { key: 'stage', title: 'Stage Details', fields: ['advanceItemId', 'fulfillmentStage', 'percentageComplete'] },
-        { key: 'schedule', title: 'Schedule', fields: ['expectedCompletion', 'assignedTo'] },
+        { key: 'stage', title: 'Stage Details', fields: ['advance_item_id', 'fulfillment_stage', 'percentage_complete'] },
+        { key: 'schedule', title: 'Schedule', fields: ['expected_completion', 'assigned_to'] },
         { key: 'notes', title: 'Notes', fields: ['notes'] },
       ],
     },
   },
+
   views: {
-    table: { columns: ['advanceItemId', 'fulfillmentStage', 'percentageComplete', 'expectedCompletion', 'actualCompletion', 'assignedTo'] },
+    table: {
+      columns: ['advance_item_id', 'fulfillment_stage', 'percentage_complete', 'expected_completion', 'actual_completion', 'assigned_to'],
+    },
   },
+
   actions: {
     row: [
-      { key: 'complete', label: 'Mark Complete', handler: { type: 'function', fn: () => {} } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/fulfillment/${r.id}` } },
     ],
     bulk: [],
-    global: [{ key: 'create', label: 'Add Stage', variant: 'primary', handler: { type: 'modal', modal: 'create' } }],
+    global: [
+      { key: 'create', label: 'Add Stage', variant: 'primary', handler: { type: 'function', fn: () => console.log('Add Stage') } },
+    ],
   },
-  permissions: { create: true, read: true, update: true, delete: true },
+
+  permissions: {
+    create: true,
+    read: true,
+    update: true,
+    delete: true,
+  },
 });
 
 export const vendorRatingSchema = defineSchema({
@@ -365,80 +575,159 @@ export const vendorRatingSchema = defineSchema({
     icon: 'Star',
     description: 'Vendor performance ratings and feedback',
   },
+
   data: {
     endpoint: '/api/advancing/vendors/ratings',
-    table: 'vendor_ratings',
     primaryKey: 'id',
     fields: {
-      vendorId: { type: 'relation', label: 'Vendor', required: true, inTable: true, inForm: true, relation: { table: 'companies', labelField: 'name', filter: { companyType: 'vendor' } } },
-      advanceItemId: { type: 'relation', label: 'Advance Item', inTable: true, inForm: true, relation: { table: 'advance_items', labelField: 'item_name' } },
-      eventId: { type: 'relation', label: 'Event', inTable: true, inForm: true, relation: { table: 'events', labelField: 'name' } },
-      onTimeDelivery: { type: 'boolean', label: 'On-Time Delivery', inTable: true, inForm: true },
-      qualityRating: { type: 'rating', label: 'Quality', inTable: true, inForm: true, min: 1, max: 5 },
-      communicationRating: { type: 'rating', label: 'Communication', inTable: true, inForm: true, min: 1, max: 5 },
-      professionalismRating: { type: 'rating', label: 'Professionalism', inForm: true, min: 1, max: 5 },
-      valueRating: { type: 'rating', label: 'Value', inForm: true, min: 1, max: 5 },
-      overallRating: { type: 'rating', label: 'Overall', inTable: true, inForm: true, min: 1, max: 5 },
-      wouldRecommend: { type: 'boolean', label: 'Would Recommend', inTable: true, inForm: true },
-      issuesEncountered: { type: 'textarea', label: 'Issues Encountered', inForm: true, inDetail: true },
-      positiveFeedback: { type: 'textarea', label: 'Positive Feedback', inForm: true, inDetail: true },
-      improvementSuggestions: { type: 'textarea', label: 'Improvement Suggestions', inForm: true, inDetail: true },
-      ratedAt: { type: 'datetime', label: 'Rated At', inTable: true, sortable: true },
+      vendor_id: {
+        type: 'select',
+        label: 'Vendor',
+        required: true,
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      event_id: {
+        type: 'select',
+        label: 'Event',
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      on_time_delivery: {
+        type: 'checkbox',
+        label: 'On-Time Delivery',
+        inTable: true,
+        inForm: true,
+      },
+      quality_rating: {
+        type: 'rating',
+        label: 'Quality',
+        inTable: true,
+        inForm: true,
+        min: 1,
+        max: 5,
+      },
+      communication_rating: {
+        type: 'rating',
+        label: 'Communication',
+        inTable: true,
+        inForm: true,
+        min: 1,
+        max: 5,
+      },
+      overall_rating: {
+        type: 'rating',
+        label: 'Overall',
+        inTable: true,
+        inForm: true,
+        min: 1,
+        max: 5,
+      },
+      would_recommend: {
+        type: 'checkbox',
+        label: 'Would Recommend',
+        inTable: true,
+        inForm: true,
+      },
+      positive_feedback: {
+        type: 'textarea',
+        label: 'Positive Feedback',
+        inForm: true,
+        inDetail: true,
+      },
+      issues_encountered: {
+        type: 'textarea',
+        label: 'Issues Encountered',
+        inForm: true,
+        inDetail: true,
+      },
+      rated_at: {
+        type: 'datetime',
+        label: 'Rated At',
+        inTable: true,
+        sortable: true,
+      },
     },
   },
+
   display: {
-    title: (record: Record<string, unknown>) => String(record.vendorId || 'Unknown Vendor'),
-    subtitle: (record: Record<string, unknown>) => `${record.overallRating || 0}/5`,
-    badge: (record: Record<string, unknown>) => {
-      const rating = Number(record.overallRating) || 0;
+    title: (record: any) => record.vendor_id || 'Unknown Vendor',
+    subtitle: (record: any) => `${record.overall_rating || 0}/5`,
+    badge: (record: any) => {
+      const rating = Number(record.overall_rating) || 0;
       if (rating >= 4) return { label: `${rating}/5`, variant: 'success' };
       if (rating >= 3) return { label: `${rating}/5`, variant: 'warning' };
       return { label: `${rating}/5`, variant: 'destructive' };
     },
-    defaultSort: { field: 'ratedAt', direction: 'desc' },
+    defaultSort: { field: 'rated_at', direction: 'desc' },
   },
-  search: { enabled: true, fields: ['issuesEncountered', 'positiveFeedback'], placeholder: 'Search ratings...' },
+
+  search: {
+    enabled: true,
+    fields: ['issues_encountered', 'positive_feedback'],
+    placeholder: 'Search ratings...',
+  },
+
   filters: {
     quick: [
-      { key: 'recommended', label: 'Recommended', query: { where: { wouldRecommend: true } } },
+      { key: 'recommended', label: 'Recommended', query: { where: { would_recommend: true } } },
     ],
-    advanced: ['vendorId', 'eventId', 'overallRating', 'onTimeDelivery'],
+    advanced: ['vendor_id', 'event_id', 'overall_rating', 'on_time_delivery'],
   },
+
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Ratings', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All Ratings', query: { where: {} }, count: true },
+      ],
       defaultView: 'table',
       availableViews: ['table'],
     },
     detail: {
-      tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }],
+      tabs: [
+        { key: 'overview', label: 'Overview', content: { type: 'overview' } },
+      ],
       overview: {
         stats: [],
         blocks: [
-          { key: 'feedback', title: 'Feedback', content: { type: 'fields', fields: ['positiveFeedback', 'issuesEncountered', 'improvementSuggestions'] } },
+          { key: 'feedback', title: 'Feedback', content: { type: 'fields', fields: ['positive_feedback', 'issues_encountered'] } },
         ],
       },
     },
     form: {
       sections: [
-        { key: 'context', title: 'Context', fields: ['vendorId', 'advanceItemId', 'eventId'] },
-        { key: 'ratings', title: 'Ratings', fields: ['overallRating', 'qualityRating', 'communicationRating', 'professionalismRating', 'valueRating'] },
-        { key: 'delivery', title: 'Delivery', fields: ['onTimeDelivery', 'wouldRecommend'] },
-        { key: 'feedback', title: 'Feedback', fields: ['positiveFeedback', 'issuesEncountered', 'improvementSuggestions'] },
+        { key: 'context', title: 'Context', fields: ['vendor_id', 'event_id'] },
+        { key: 'ratings', title: 'Ratings', fields: ['overall_rating', 'quality_rating', 'communication_rating'] },
+        { key: 'delivery', title: 'Delivery', fields: ['on_time_delivery', 'would_recommend'] },
+        { key: 'feedback', title: 'Feedback', fields: ['positive_feedback', 'issues_encountered'] },
       ],
     },
   },
+
   views: {
-    table: { columns: ['vendorId', 'eventId', 'overallRating', 'qualityRating', 'communicationRating', 'onTimeDelivery', 'wouldRecommend', 'ratedAt'] },
+    table: {
+      columns: ['vendor_id', 'event_id', 'overall_rating', 'quality_rating', 'communication_rating', 'on_time_delivery', 'would_recommend', 'rated_at'],
+    },
   },
+
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/advancing/vendors/performance/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/vendors/performance/${r.id}` } },
     ],
     bulk: [],
-    global: [{ key: 'create', label: 'Add Rating', variant: 'primary', handler: { type: 'modal', modal: 'create' } }],
+    global: [
+      { key: 'create', label: 'Add Rating', variant: 'primary', handler: { type: 'function', fn: () => console.log('Add Rating') } },
+    ],
   },
-  permissions: { create: true, read: true, update: true, delete: true },
+
+  permissions: {
+    create: true,
+    read: true,
+    update: true,
+    delete: true,
+  },
 });
 
 export const advanceCategorySchema = defineSchema({
@@ -449,64 +738,136 @@ export const advanceCategorySchema = defineSchema({
     icon: 'FolderTree',
     description: 'Categories for advance items',
   },
+
   data: {
     endpoint: '/api/advancing/categories',
-    table: 'advance_categories',
     primaryKey: 'id',
     fields: {
-      code: { type: 'text', label: 'Code', required: true, inTable: true, inForm: true, sortable: true },
-      name: { type: 'text', label: 'Name', required: true, inTable: true, inForm: true, searchable: true },
-      description: { type: 'textarea', label: 'Description', inForm: true, inDetail: true },
-      parentCategoryId: { type: 'relation', label: 'Parent Category', inTable: true, inForm: true, relation: { table: 'advance_categories', labelField: 'name' } },
-      icon: { type: 'text', label: 'Icon', inForm: true },
-      color: { type: 'color', label: 'Color', inTable: true, inForm: true },
-      sortOrder: { type: 'number', label: 'Sort Order', inForm: true, default: 0 },
-      isActive: { type: 'boolean', label: 'Active', inTable: true, inForm: true, default: true },
+      code: {
+        type: 'text',
+        label: 'Code',
+        required: true,
+        inTable: true,
+        inForm: true,
+        sortable: true,
+      },
+      name: {
+        type: 'text',
+        label: 'Name',
+        required: true,
+        inTable: true,
+        inForm: true,
+        searchable: true,
+      },
+      description: {
+        type: 'textarea',
+        label: 'Description',
+        inForm: true,
+        inDetail: true,
+      },
+      parent_category_id: {
+        type: 'select',
+        label: 'Parent Category',
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      icon: {
+        type: 'text',
+        label: 'Icon',
+        inForm: true,
+      },
+      color: {
+        type: 'color',
+        label: 'Color',
+        inTable: true,
+        inForm: true,
+      },
+      sort_order: {
+        type: 'number',
+        label: 'Sort Order',
+        inForm: true,
+        default: 0,
+      },
+      is_active: {
+        type: 'checkbox',
+        label: 'Active',
+        inTable: true,
+        inForm: true,
+        default: true,
+      },
     },
   },
+
   display: {
-    title: (record: Record<string, unknown>) => String(record.name || 'Untitled'),
-    subtitle: (record: Record<string, unknown>) => String(record.code || ''),
-    badge: (record: Record<string, unknown>) => {
-      return record.isActive ? { label: 'Active', variant: 'success' } : { label: 'Inactive', variant: 'secondary' };
+    title: (record: any) => record.name || 'Untitled',
+    subtitle: (record: any) => record.code || '',
+    badge: (record: any) => {
+      return record.is_active ? { label: 'Active', variant: 'success' } : { label: 'Inactive', variant: 'secondary' };
     },
-    defaultSort: { field: 'sortOrder', direction: 'asc' },
+    defaultSort: { field: 'sort_order', direction: 'asc' },
   },
-  search: { enabled: true, fields: ['name', 'code', 'description'], placeholder: 'Search categories...' },
+
+  search: {
+    enabled: true,
+    fields: ['name', 'code', 'description'],
+    placeholder: 'Search categories...',
+  },
+
   filters: {
-    quick: [{ key: 'active', label: 'Active', query: { where: { isActive: true } } }],
-    advanced: ['isActive', 'parentCategoryId'],
+    quick: [
+      { key: 'active', label: 'Active', query: { where: { is_active: true } } },
+    ],
+    advanced: ['is_active', 'parent_category_id'],
   },
+
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Categories', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All Categories', query: { where: {} }, count: true },
+      ],
       defaultView: 'table',
-      availableViews: ['table', 'tree'],
+      availableViews: ['table'],
     },
     detail: {
-      tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }],
+      tabs: [
+        { key: 'overview', label: 'Overview', content: { type: 'overview' } },
+      ],
       overview: {
         stats: [],
-        blocks: [{ key: 'description', title: 'Description', content: { type: 'fields', fields: ['description'] } }],
+        blocks: [
+          { key: 'description', title: 'Description', content: { type: 'fields', fields: ['description'] } },
+        ],
       },
     },
     form: {
       sections: [
-        { key: 'basic', title: 'Category Details', fields: ['code', 'name', 'description', 'parentCategoryId'] },
-        { key: 'display', title: 'Display', fields: ['icon', 'color', 'sortOrder', 'isActive'] },
+        { key: 'basic', title: 'Category Details', fields: ['code', 'name', 'description', 'parent_category_id'] },
+        { key: 'display', title: 'Display', fields: ['icon', 'color', 'sort_order', 'is_active'] },
       ],
     },
   },
+
   views: {
-    table: { columns: ['name', 'code', 'parentCategoryId', 'color', 'isActive'] },
-    tree: { parentField: 'parentCategoryId', labelField: 'name' },
+    table: {
+      columns: ['name', 'code', 'parent_category_id', 'color', 'is_active'],
+    },
   },
+
   actions: {
     row: [
-      { key: 'edit', label: 'Edit', handler: { type: 'modal', modal: 'edit' } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/categories/${r.id}` } },
     ],
     bulk: [],
-    global: [{ key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'modal', modal: 'create' } }],
+    global: [
+      { key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => console.log('New Category') } },
+    ],
   },
-  permissions: { create: true, read: true, update: true, delete: true },
+
+  permissions: {
+    create: true,
+    read: true,
+    update: true,
+    delete: true,
+  },
 });

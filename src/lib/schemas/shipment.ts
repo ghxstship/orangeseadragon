@@ -216,7 +216,7 @@ export const shipmentSchema = defineSchema({
         { key: 'active', label: 'Active', query: { where: { status: { notIn: ['received', 'cancelled', 'returned'] } } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban'],
+      availableViews: ['table', 'kanban', 'list', 'timeline', 'map'],
     },
     detail: {
       tabs: [
@@ -251,6 +251,39 @@ export const shipmentSchema = defineSchema({
   views: {
     table: {
       columns: ['shipment_number', 'direction', 'production_id', 'status', 'scheduled_pickup_date', 'scheduled_delivery_date', 'tracking_number'],
+    },
+    list: {
+      titleField: 'shipment_number',
+      subtitleField: 'name',
+      metaFields: ['scheduled_delivery_date', 'tracking_number'],
+      showChevron: true,
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'draft', label: 'Draft', color: 'gray' },
+        { value: 'pending', label: 'Pending', color: 'yellow' },
+        { value: 'packed', label: 'Packed', color: 'blue' },
+        { value: 'in_transit', label: 'In Transit', color: 'purple' },
+        { value: 'delivered', label: 'Delivered', color: 'cyan' },
+        { value: 'received', label: 'Received', color: 'green' },
+      ],
+      card: {
+        title: 'shipment_number',
+        subtitle: 'name',
+        fields: ['scheduled_delivery_date', 'tracking_number'],
+      },
+    },
+    timeline: {
+      titleField: 'shipment_number',
+      startField: 'scheduled_pickup_date',
+      endField: 'scheduled_delivery_date',
+      groupField: 'direction',
+    },
+    map: {
+      titleField: 'shipment_number',
+      latitudeField: 'destination_latitude',
+      longitudeField: 'destination_longitude',
     },
   },
 

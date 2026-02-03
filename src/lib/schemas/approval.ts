@@ -117,9 +117,10 @@ export const approvalSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'pending', label: 'Pending', query: { where: { status: 'pending' } } },
-        { key: 'all', label: 'All', query: { where: {} } },
-        { key: 'decided', label: 'Decided', query: { where: { status: { in: ['approved', 'rejected'] } } } },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'pending', label: 'Pending', query: { where: { status: 'pending' } }, count: true },
+        { key: 'approved', label: 'Approved', query: { where: { status: 'approved' } } },
+        { key: 'rejected', label: 'Rejected', query: { where: { status: 'rejected' } } },
       ],
       defaultView: 'table',
       availableViews: ['table', 'list'],

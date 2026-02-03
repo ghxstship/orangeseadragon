@@ -134,7 +134,10 @@ export const flightSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Flights', query: { where: {} } },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'upcoming', label: 'Upcoming', query: { where: { departure_time: { gte: 'now' } } }, count: true },
+        { key: 'today', label: 'Today', query: { where: { departure_time: { gte: 'today', lt: 'tomorrow' } } }, count: true },
+        { key: 'past', label: 'Past', query: { where: { departure_time: { lt: 'now' } } } },
       ],
       defaultView: 'table',
       availableViews: ['table'],

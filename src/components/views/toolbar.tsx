@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -20,6 +19,23 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   Search,
   Filter,
@@ -44,6 +60,7 @@ import {
   ChevronDown,
   X,
   QrCode,
+  GripVertical,
 } from "lucide-react";
 
 export type ViewType = "table" | "list" | "grid" | "kanban" | "calendar" | "timeline" | "gantt" | "map" | "workload";
@@ -66,6 +83,54 @@ export interface ToolbarColumn {
   visible: boolean;
 }
 
+interface SortableColumnItemProps {
+  column: ToolbarColumn;
+  onVisibilityChange: (visible: boolean) => void;
+}
+
+function SortableColumnItem({ column, onVisibilityChange }: SortableColumnItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: column.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-accent"
+    >
+      <button
+        type="button"
+        className="cursor-grab touch-none text-muted-foreground hover:text-foreground"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-4 w-4" />
+      </button>
+      <label className="flex items-center gap-2 flex-1 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={column.visible}
+          onChange={(e) => onVisibilityChange(e.target.checked)}
+          className="h-4 w-4 rounded border-input"
+        />
+        <span className="text-sm">{column.label}</span>
+      </label>
+    </div>
+  );
+}
+
 export interface ToolbarAction {
   id: string;
   label: string;
@@ -73,6 +138,97 @@ export interface ToolbarAction {
   onClick: () => void;
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost";
   disabled?: boolean;
+}
+
+interface ColumnsDropdownProps {
+  columns: {
+    items: ToolbarColumn[];
+    onChange: (columns: ToolbarColumn[]) => void;
+    onReorder?: (columnIds: string[]) => void;
+  };
+}
+
+function ColumnsDropdown({ columns }: ColumnsDropdownProps) {
+  const [localItems, setLocalItems] = React.useState(columns.items);
+  
+  // Sync local state with props
+  React.useEffect(() => {
+    setLocalItems(columns.items);
+  }, [columns.items]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = localItems.findIndex((item) => item.id === active.id);
+      const newIndex = localItems.findIndex((item) => item.id === over.id);
+      
+      const newItems = arrayMove(localItems, oldIndex, newIndex);
+      setLocalItems(newItems);
+      
+      // Notify parent of reorder
+      if (columns.onReorder) {
+        columns.onReorder(newItems.map((item) => item.id));
+      }
+    }
+  };
+
+  const handleVisibilityChange = (columnId: string, visible: boolean) => {
+    const newItems = localItems.map((item) =>
+      item.id === columnId ? { ...item, visible } : item
+    );
+    setLocalItems(newItems);
+    columns.onChange(newItems);
+  };
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="h-9">
+          <Columns3 className="mr-2 h-4 w-4" />
+          Columns
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-[240px] p-2">
+        <div className="mb-2 px-2 text-sm font-medium text-muted-foreground">
+          Toggle & reorder columns
+        </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={localItems.map((item) => item.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-0.5">
+              {localItems.map((column) => (
+                <SortableColumnItem
+                  key={column.id}
+                  column={column}
+                  onVisibilityChange={(visible) =>
+                    handleVisibilityChange(column.id, visible)
+                  }
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 export interface ToolbarProps {
@@ -96,6 +252,7 @@ export interface ToolbarProps {
   columns?: {
     items: ToolbarColumn[];
     onChange: (columns: ToolbarColumn[]) => void;
+    onReorder?: (columnIds: string[]) => void;
   };
   view?: {
     current: ViewType;
@@ -282,33 +439,7 @@ export function Toolbar({
         )}
 
         {columns && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9">
-                <Columns3 className="mr-2 h-4 w-4" />
-                Columns
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[200px]">
-              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {columns.items.map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  checked={column.visible}
-                  onCheckedChange={(checked) => {
-                    columns.onChange(
-                      columns.items.map((c) =>
-                        c.id === column.id ? { ...c, visible: checked } : c
-                      )
-                    );
-                  }}
-                >
-                  {column.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ColumnsDropdown columns={columns} />
         )}
 
         {view && view.available.length > 1 && (

@@ -114,9 +114,11 @@ export const documentSchema = defineSchema({
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Documents', query: { where: {} } },
-        { key: 'starred', label: 'Starred', query: { where: { is_starred: true } } },
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
         { key: 'recent', label: 'Recent', query: { where: {} } },
+        { key: 'starred', label: 'Starred', query: { where: { is_starred: true } }, count: true },
+        { key: 'shared', label: 'Shared', query: { where: { shared_with: { not: [] } } } },
+        { key: 'templates', label: 'Templates', query: { where: { document_type: 'template' } } },
       ],
       defaultView: 'grid',
       availableViews: ['grid', 'table', 'list'],

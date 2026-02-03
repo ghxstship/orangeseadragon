@@ -38,7 +38,14 @@ export const techSpecSchema = defineSchema({
   filters: { quick: [], advanced: ['category', 'eventId', 'venueId'] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Specs', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'audio', label: 'Audio', query: { where: { category: 'audio' } } },
+        { key: 'lighting', label: 'Lighting', query: { where: { category: 'lighting' } } },
+        { key: 'video', label: 'Video', query: { where: { category: 'video' } } },
+        { key: 'staging', label: 'Staging', query: { where: { category: 'staging' } } },
+        { key: 'power', label: 'Power', query: { where: { category: 'power' } } },
+      ],
       defaultView: 'table',
       availableViews: ['table'],
     },

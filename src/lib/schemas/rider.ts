@@ -49,7 +49,13 @@ export const riderSchema = defineSchema({
   filters: { quick: [{ key: 'approved', label: 'Approved', query: { where: { status: 'approved' } } }], advanced: ['type', 'status'] },
   layouts: {
     list: {
-      subpages: [{ key: 'all', label: 'All Riders', query: { where: {} }, count: true }],
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'technical', label: 'Technical', query: { where: { type: 'technical' } }, count: true },
+        { key: 'hospitality', label: 'Hospitality', query: { where: { type: 'hospitality' } } },
+        { key: 'security', label: 'Security', query: { where: { type: 'security' } } },
+        { key: 'draft', label: 'Draft', query: { where: { status: 'draft' } }, count: true },
+      ],
       defaultView: 'table',
       availableViews: ['table'],
     },

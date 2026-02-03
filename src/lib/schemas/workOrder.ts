@@ -198,7 +198,7 @@ export const workOrderSchema = defineSchema({
         { key: 'active', label: 'Active', query: { where: { status: { in: ['scheduled', 'in_progress'] } } }, count: true },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban', 'calendar'],
+      availableViews: ['table', 'kanban', 'calendar', 'list', 'timeline'],
     },
     detail: {
       tabs: [
@@ -230,6 +230,41 @@ export const workOrderSchema = defineSchema({
   views: {
     table: {
       columns: ['work_order_number', 'name', 'work_order_type', 'production_id', 'status', 'scheduled_start', 'crew_lead_id'],
+    },
+    list: {
+      titleField: 'name',
+      subtitleField: 'work_order_type',
+      metaFields: ['scheduled_start', 'crew_lead_id'],
+      showChevron: true,
+    },
+    kanban: {
+      columnField: 'status',
+      columns: [
+        { value: 'draft', label: 'Draft', color: 'gray' },
+        { value: 'scheduled', label: 'Scheduled', color: 'blue' },
+        { value: 'in_progress', label: 'In Progress', color: 'yellow' },
+        { value: 'on_hold', label: 'On Hold', color: 'orange' },
+        { value: 'completed', label: 'Completed', color: 'green' },
+        { value: 'verified', label: 'Verified', color: 'emerald' },
+      ],
+      card: {
+        title: 'name',
+        subtitle: 'work_order_type',
+        fields: ['scheduled_start', 'priority'],
+      },
+    },
+    calendar: {
+      titleField: 'name',
+      startField: 'scheduled_start',
+      endField: 'scheduled_end',
+      colorField: 'status',
+    },
+    timeline: {
+      titleField: 'name',
+      startField: 'scheduled_start',
+      endField: 'scheduled_end',
+      groupField: 'work_order_type',
+      progressField: 'completion_percentage',
     },
   },
 
