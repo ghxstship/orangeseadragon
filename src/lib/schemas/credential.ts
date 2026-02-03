@@ -1,24 +1,159 @@
 import { defineSchema } from '../schema/defineSchema';
 
 export const credentialSchema = defineSchema({
-  identity: { name: 'credential', namePlural: 'Credentials', slug: 'modules/workforce/credentials', icon: 'KeyRound', description: 'Staff credentials and passes' },
+  identity: {
+    name: 'credential',
+    namePlural: 'Credentials',
+    slug: 'modules/workforce/credentials',
+    icon: 'KeyRound',
+    description: 'Staff credentials, licenses, and permits',
+  },
   data: {
-    endpoint: '/api/credentials', primaryKey: 'id',
+    endpoint: '/api/credentials',
+    primaryKey: 'id',
     fields: {
-      personId: { type: 'select', label: 'Person', required: true, inTable: true, inForm: true, options: [] },
-      eventId: { type: 'select', label: 'Event', inTable: true, inForm: true, options: [] },
-      type: { type: 'select', label: 'Type', required: true, inTable: true, inForm: true, options: [{ label: 'All Access', value: 'all-access', color: 'purple' }, { label: 'Backstage', value: 'backstage', color: 'blue' }, { label: 'Staff', value: 'staff', color: 'green' }, { label: 'Vendor', value: 'vendor', color: 'gray' }] },
-      status: { type: 'select', label: 'Status', required: true, inTable: true, inForm: true, options: [{ label: 'Active', value: 'active', color: 'green' }, { label: 'Revoked', value: 'revoked', color: 'red' }, { label: 'Expired', value: 'expired', color: 'gray' }], default: 'active' },
-      issuedAt: { type: 'datetime', label: 'Issued At', inTable: true, inForm: true },
-      expiresAt: { type: 'datetime', label: 'Expires At', inTable: true, inForm: true },
-      notes: { type: 'textarea', label: 'Notes', inForm: true, inDetail: true },
+      credential_number: {
+        type: 'text',
+        label: 'Credential #',
+        inTable: true,
+        inForm: true,
+        inDetail: true,
+        sortable: true,
+        searchable: true,
+      },
+      name: {
+        type: 'text',
+        label: 'Name',
+        required: true,
+        inTable: true,
+        inForm: true,
+        inDetail: true,
+        sortable: true,
+        searchable: true,
+      },
+      credential_type: {
+        type: 'select',
+        label: 'Type',
+        required: true,
+        inTable: true,
+        inForm: true,
+        options: [
+          { label: 'Certification', value: 'certification', color: 'blue' },
+          { label: 'License', value: 'license', color: 'purple' },
+          { label: 'Permit', value: 'permit', color: 'amber' },
+          { label: 'Training', value: 'training', color: 'green' },
+          { label: 'Degree', value: 'degree', color: 'gray' },
+          { label: 'Other', value: 'other', color: 'slate' },
+        ],
+      },
+      user_id: {
+        type: 'select',
+        label: 'Person',
+        required: true,
+        inTable: true,
+        inForm: true,
+        options: [],
+      },
+      issuing_authority: {
+        type: 'text',
+        label: 'Issuing Authority',
+        inTable: true,
+        inForm: true,
+      },
+      issue_date: {
+        type: 'date',
+        label: 'Issue Date',
+        inTable: true,
+        inForm: true,
+        sortable: true,
+      },
+      expiry_date: {
+        type: 'date',
+        label: 'Expiry Date',
+        inTable: true,
+        inForm: true,
+        sortable: true,
+      },
+      status: {
+        type: 'select',
+        label: 'Status',
+        required: true,
+        inTable: true,
+        inForm: true,
+        options: [
+          { label: 'Active', value: 'active', color: 'green' },
+          { label: 'Expired', value: 'expired', color: 'red' },
+          { label: 'Pending', value: 'pending', color: 'yellow' },
+          { label: 'Revoked', value: 'revoked', color: 'gray' },
+        ],
+        default: 'active',
+      },
+      document_url: {
+        type: 'file',
+        label: 'Document',
+        inForm: true,
+        inDetail: true,
+      },
+      verified_at: {
+        type: 'datetime',
+        label: 'Verified At',
+        inDetail: true,
+      },
+      verified_by: {
+        type: 'select',
+        label: 'Verified By',
+        inDetail: true,
+        options: [],
+      },
     },
   },
-  display: { title: (r: Record<string, unknown>) => String(r.type || 'Credential'), subtitle: (r: Record<string, unknown>) => String(r.personId || ''), badge: (r: Record<string, unknown>) => r.status === 'active' ? { label: 'Active', variant: 'success' } : { label: String(r.status), variant: 'secondary' }, defaultSort: { field: 'issuedAt', direction: 'desc' } },
-  search: { enabled: true, fields: [], placeholder: 'Search credentials...' },
-  filters: { quick: [{ key: 'active', label: 'Active', query: { where: { status: 'active' } } }], advanced: ['type', 'status', 'eventId'] },
-  layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Credential Details', fields: ['personId', 'eventId', 'type', 'status', 'issuedAt', 'expiresAt', 'notes'] }] } },
-  views: { table: { columns: ['personId', 'eventId', 'type', 'status', 'expiresAt'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/credentials/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'Issue Credential', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  display: {
+    title: (r: Record<string, unknown>) => String(r.name || r.credential_number || 'Credential'),
+    subtitle: (r: Record<string, unknown>) => String(r.credential_type || ''),
+    badge: (r: Record<string, unknown>) => {
+      const status = String(r.status || '');
+      if (status === 'active') return { label: 'Active', variant: 'success' };
+      if (status === 'expired') return { label: 'Expired', variant: 'destructive' };
+      if (status === 'pending') return { label: 'Pending', variant: 'warning' };
+      return { label: status || 'Unknown', variant: 'secondary' };
+    },
+    defaultSort: { field: 'expiry_date', direction: 'asc' },
+  },
+  search: { enabled: true, fields: ['name', 'credential_number', 'issuing_authority'], placeholder: 'Search credentials...' },
+  filters: {
+    quick: [
+      { key: 'active', label: 'Active', query: { where: { status: 'active' } } },
+      { key: 'all', label: 'All', query: { where: {} } },
+    ],
+    advanced: ['credential_type', 'status', 'user_id', 'expiry_date'],
+  },
+  layouts: {
+    list: {
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'active', label: 'Active', query: { where: { status: 'active' } }, count: true },
+      ],
+      defaultView: 'table',
+      availableViews: ['table'],
+    },
+    detail: {
+      tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }],
+      overview: { stats: [], blocks: [] },
+    },
+    form: {
+      sections: [
+        { key: 'basic', title: 'Credential Details', fields: ['credential_number', 'name', 'credential_type', 'status'] },
+        { key: 'relationships', title: 'Assignment', fields: ['user_id', 'issuing_authority'] },
+        { key: 'dates', title: 'Dates', fields: ['issue_date', 'expiry_date'] },
+        { key: 'documents', title: 'Documentation', fields: ['document_url'] },
+      ],
+    },
+  },
+  views: { table: { columns: ['credential_number', 'name', 'credential_type', 'user_id', 'status', 'expiry_date', 'issuing_authority'] } },
+  actions: {
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/credentials/${r.id}` } }],
+    bulk: [],
+    global: [{ key: 'create', label: 'Add Credential', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
+  },
   permissions: { create: true, read: true, update: true, delete: true },
 });

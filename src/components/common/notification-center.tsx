@@ -231,7 +231,7 @@ export function NotificationCenter() {
         </SheetHeader>
 
         <Tabs defaultValue="all" className="flex flex-col h-[calc(100vh-80px)]">
-          <TabsList className="mx-4 mt-2 grid w-auto grid-cols-3">
+          <TabsList variant="underline" className="mx-4 mt-2">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="unread">
               Unread {unreadCount > 0 && `(${unreadCount})`}

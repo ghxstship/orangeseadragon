@@ -144,6 +144,34 @@ export { exhibitorSchema } from './exhibitor';
 export { networkingSessionSchema } from './networkingSession';
 export { serviceTicketSchema } from './serviceTicket';
 
+// Navigation v6 schema exports
+export { checklistSchema } from './checklist';
+export { notificationSchema } from './notification';
+export { approvalSchema } from './approval';
+export { documentTemplateSchema } from './documentTemplate';
+export { workflowTriggerSchema } from './workflowTrigger';
+export { stageSchema } from './stage';
+export { insuranceSchema } from './insurance';
+export { cateringSchema } from './catering';
+export { guestListSchema } from './guestList';
+export { crewCallSchema } from './crewCall';
+export { talentBookingSchema } from './talentBooking';
+export { punchListSchema } from './punchList';
+export { dailyReportSchema } from './dailyReport';
+export { flightSchema } from './flight';
+export { groundTransportSchema } from './groundTransport';
+export { accommodationSchema } from './accommodation';
+export { feedbackSchema } from './feedback';
+export { storageBinSchema } from './storageBin';
+export { assetTransferSchema } from './assetTransfer';
+export { serviceHistorySchema } from './serviceHistory';
+export { priceListSchema } from './priceList';
+export { servicePackageSchema } from './servicePackage';
+export { activitySchema } from './activity';
+export { emailTemplateSchema } from './emailTemplate';
+export { brandAssetSchema } from './brandAsset';
+export { creditNoteSchema } from './creditNote';
+
 // Re-export the canonical EntitySchema type from schema/types
 export type { EntitySchema } from '@/lib/schema/types';
 
@@ -238,6 +266,34 @@ import { timeEntrySchema } from './timeEntry';
 import { exhibitorSchema } from './exhibitor';
 import { networkingSessionSchema } from './networkingSession';
 import { serviceTicketSchema } from './serviceTicket';
+
+// Import Navigation v6 schemas
+import { checklistSchema } from './checklist';
+import { notificationSchema } from './notification';
+import { approvalSchema } from './approval';
+import { documentTemplateSchema } from './documentTemplate';
+import { workflowTriggerSchema } from './workflowTrigger';
+import { stageSchema } from './stage';
+import { insuranceSchema } from './insurance';
+import { cateringSchema } from './catering';
+import { guestListSchema } from './guestList';
+import { crewCallSchema } from './crewCall';
+import { talentBookingSchema } from './talentBooking';
+import { punchListSchema } from './punchList';
+import { dailyReportSchema } from './dailyReport';
+import { flightSchema } from './flight';
+import { groundTransportSchema } from './groundTransport';
+import { accommodationSchema } from './accommodation';
+import { feedbackSchema } from './feedback';
+import { storageBinSchema } from './storageBin';
+import { assetTransferSchema } from './assetTransfer';
+import { serviceHistorySchema } from './serviceHistory';
+import { priceListSchema } from './priceList';
+import { servicePackageSchema } from './servicePackage';
+import { activitySchema } from './activity';
+import { emailTemplateSchema } from './emailTemplate';
+import { brandAssetSchema } from './brandAsset';
+import { creditNoteSchema } from './creditNote';
 
 // Helper functions for schema operations
 export function getSchema(entityName: string) {
@@ -485,6 +541,64 @@ export function getSchema(entityName: string) {
     candidates: candidateSchema,
     vehicle: vehicleSchema,
     vehicles: vehicleSchema,
+    // Navigation v6 schemas
+    checklist: checklistSchema,
+    checklists: checklistSchema,
+    notification: notificationSchema,
+    notifications: notificationSchema,
+    approval: approvalSchema,
+    approvals: approvalSchema,
+    documentTemplate: documentTemplateSchema,
+    'document-templates': documentTemplateSchema,
+    workflowTrigger: workflowTriggerSchema,
+    'workflow-triggers': workflowTriggerSchema,
+    triggers: workflowTriggerSchema,
+    stage: stageSchema,
+    stages: stageSchema,
+    insurance: insuranceSchema,
+    'insurance-policies': insuranceSchema,
+    catering: cateringSchema,
+    'catering-orders': cateringSchema,
+    guestList: guestListSchema,
+    'guest-lists': guestListSchema,
+    crewCall: crewCallSchema,
+    'crew-calls': crewCallSchema,
+    talentBooking: talentBookingSchema,
+    'talent-bookings': talentBookingSchema,
+    punchList: punchListSchema,
+    'punch-lists': punchListSchema,
+    dailyReport: dailyReportSchema,
+    'daily-reports': dailyReportSchema,
+    flight: flightSchema,
+    flights: flightSchema,
+    groundTransport: groundTransportSchema,
+    'ground-transport': groundTransportSchema,
+    accommodation: accommodationSchema,
+    accommodations: accommodationSchema,
+    feedback: feedbackSchema,
+    storageBin: storageBinSchema,
+    'storage-bins': storageBinSchema,
+    bins: storageBinSchema,
+    assetTransfer: assetTransferSchema,
+    'asset-transfers': assetTransferSchema,
+    transfers: assetTransferSchema,
+    serviceHistory: serviceHistorySchema,
+    'service-history': serviceHistorySchema,
+    priceList: priceListSchema,
+    'price-lists': priceListSchema,
+    pricing: priceListSchema,
+    servicePackage: servicePackageSchema,
+    'service-packages': servicePackageSchema,
+    packages: servicePackageSchema,
+    activity: activitySchema,
+    activities: activitySchema,
+    emailTemplate: emailTemplateSchema,
+    'email-templates': emailTemplateSchema,
+    templates: emailTemplateSchema,
+    brandAsset: brandAssetSchema,
+    'brand-assets': brandAssetSchema,
+    creditNote: creditNoteSchema,
+    'credit-notes': creditNoteSchema,
   };
 
   return schemas[entityName] || null;

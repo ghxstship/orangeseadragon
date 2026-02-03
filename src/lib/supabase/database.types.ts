@@ -587,6 +587,138 @@ export type Database = {
           },
         ]
       }
+      activity_feed: {
+        Row: {
+          activity_at: string
+          activity_category: string | null
+          activity_type: string
+          actor_id: string | null
+          actor_name: string | null
+          company_id: string | null
+          contact_id: string | null
+          content: string | null
+          created_at: string | null
+          deal_id: string | null
+          entity_id: string | null
+          entity_name: string | null
+          entity_type: string | null
+          event_id: string | null
+          external_id: string | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          project_id: string | null
+          title: string
+          updated_at: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Insert: {
+          activity_at?: string
+          activity_category?: string | null
+          activity_type: string
+          actor_id?: string | null
+          actor_name?: string | null
+          company_id?: string | null
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
+          entity_type?: string | null
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          project_id?: string | null
+          title: string
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Update: {
+          activity_at?: string
+          activity_category?: string | null
+          activity_type?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          company_id?: string | null
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          entity_id?: string | null
+          entity_name?: string | null
+          entity_type?: string | null
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          project_id?: string | null
+          title?: string
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_feed_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_feed_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       addresses: {
         Row: {
           address_type: string | null
@@ -2059,6 +2191,110 @@ export type Database = {
             columns: ["vendor_id"]
             isOneToOne: false
             referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assignments: {
+        Row: {
+          assignment_type: string
+          created_at: string | null
+          due_date: string | null
+          end_time: string | null
+          entity_id: string
+          entity_name: string | null
+          entity_path: string | null
+          entity_type: string
+          event_id: string | null
+          external_id: string | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          priority: string | null
+          project_id: string | null
+          role: string | null
+          start_time: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+          user_name: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Insert: {
+          assignment_type: string
+          created_at?: string | null
+          due_date?: string | null
+          end_time?: string | null
+          entity_id: string
+          entity_name?: string | null
+          entity_path?: string | null
+          entity_type: string
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          priority?: string | null
+          project_id?: string | null
+          role?: string | null
+          start_time?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+          user_name?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Update: {
+          assignment_type?: string
+          created_at?: string | null
+          due_date?: string | null
+          end_time?: string | null
+          entity_id?: string
+          entity_name?: string | null
+          entity_path?: string | null
+          entity_type?: string
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          priority?: string | null
+          project_id?: string | null
+          role?: string | null
+          start_time?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+          user_name?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -8709,6 +8945,156 @@ export type Database = {
           },
         ]
       }
+      document_registry: {
+        Row: {
+          company_id: string | null
+          contact_id: string | null
+          created_at: string | null
+          deal_id: string | null
+          description: string | null
+          document_category: string | null
+          document_type: string
+          entity_id: string | null
+          entity_type: string | null
+          event_id: string | null
+          expires_at: string | null
+          external_id: string | null
+          file_name: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          project_id: string | null
+          signed_at: string | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          uploaded_by: string | null
+          version: number | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Insert: {
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          description?: string | null
+          document_category?: string | null
+          document_type: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_id?: string | null
+          expires_at?: string | null
+          external_id?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          project_id?: string | null
+          signed_at?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          uploaded_by?: string | null
+          version?: number | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Update: {
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          description?: string | null
+          document_category?: string | null
+          document_type?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          event_id?: string | null
+          expires_at?: string | null
+          external_id?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          project_id?: string | null
+          signed_at?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          uploaded_by?: string | null
+          version?: number | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_registry_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_registry_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_registry_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_registry_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_registry_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_registry_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_registry_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_registry_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_shares: {
         Row: {
           created_at: string | null
@@ -10682,6 +11068,148 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      financial_ledger: {
+        Row: {
+          amount: number
+          amount_base: number | null
+          budget_category_id: string | null
+          company_id: string | null
+          counterparty_id: string | null
+          counterparty_name: string | null
+          counterparty_type: string | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          description: string | null
+          direction: string
+          due_date: string | null
+          entity_id: string
+          entity_type: string
+          event_id: string | null
+          exchange_rate: number | null
+          external_id: string | null
+          id: string
+          metadata: Json | null
+          notes: string | null
+          organization_id: string
+          paid_date: string | null
+          project_id: string | null
+          reference_number: string | null
+          status: string | null
+          transaction_date: string
+          transaction_type: string
+          updated_at: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Insert: {
+          amount: number
+          amount_base?: number | null
+          budget_category_id?: string | null
+          company_id?: string | null
+          counterparty_id?: string | null
+          counterparty_name?: string | null
+          counterparty_type?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          direction: string
+          due_date?: string | null
+          entity_id: string
+          entity_type: string
+          event_id?: string | null
+          exchange_rate?: number | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          organization_id: string
+          paid_date?: string | null
+          project_id?: string | null
+          reference_number?: string | null
+          status?: string | null
+          transaction_date: string
+          transaction_type: string
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Update: {
+          amount?: number
+          amount_base?: number | null
+          budget_category_id?: string | null
+          company_id?: string | null
+          counterparty_id?: string | null
+          counterparty_name?: string | null
+          counterparty_type?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          direction?: string
+          due_date?: string | null
+          entity_id?: string
+          entity_type?: string
+          event_id?: string | null
+          exchange_rate?: number | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          organization_id?: string
+          paid_date?: string | null
+          project_id?: string | null
+          reference_number?: string | null
+          status?: string | null
+          transaction_date?: string
+          transaction_type?: string
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_ledger_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_ledger_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_ledger_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_ledger_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_ledger_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_ledger_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fiscal_periods: {
         Row: {
@@ -12898,6 +13426,150 @@ export type Database = {
           },
         ]
       }
+      inventory_registry: {
+        Row: {
+          barcode: string | null
+          category_id: string | null
+          category_name: string | null
+          condition: string | null
+          created_at: string | null
+          currency: string | null
+          current_holder_id: string | null
+          current_holder_name: string | null
+          description: string | null
+          entity_id: string
+          entity_type: string
+          event_id: string | null
+          external_id: string | null
+          id: string
+          image_url: string | null
+          item_type: string
+          last_maintenance_date: string | null
+          location_id: string | null
+          location_name: string | null
+          metadata: Json | null
+          name: string
+          next_maintenance_date: string | null
+          organization_id: string
+          project_id: string | null
+          quantity: number | null
+          serial_number: string | null
+          sku: string | null
+          specifications: Json | null
+          status: string | null
+          total_value: number | null
+          unit_value: number | null
+          updated_at: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Insert: {
+          barcode?: string | null
+          category_id?: string | null
+          category_name?: string | null
+          condition?: string | null
+          created_at?: string | null
+          currency?: string | null
+          current_holder_id?: string | null
+          current_holder_name?: string | null
+          description?: string | null
+          entity_id: string
+          entity_type: string
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          item_type: string
+          last_maintenance_date?: string | null
+          location_id?: string | null
+          location_name?: string | null
+          metadata?: Json | null
+          name: string
+          next_maintenance_date?: string | null
+          organization_id: string
+          project_id?: string | null
+          quantity?: number | null
+          serial_number?: string | null
+          sku?: string | null
+          specifications?: Json | null
+          status?: string | null
+          total_value?: number | null
+          unit_value?: number | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Update: {
+          barcode?: string | null
+          category_id?: string | null
+          category_name?: string | null
+          condition?: string | null
+          created_at?: string | null
+          currency?: string | null
+          current_holder_id?: string | null
+          current_holder_name?: string | null
+          description?: string | null
+          entity_id?: string
+          entity_type?: string
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          item_type?: string
+          last_maintenance_date?: string | null
+          location_id?: string | null
+          location_name?: string | null
+          metadata?: Json | null
+          name?: string
+          next_maintenance_date?: string | null
+          organization_id?: string
+          project_id?: string | null
+          quantity?: number | null
+          serial_number?: string | null
+          sku?: string | null
+          specifications?: Json | null
+          status?: string | null
+          total_value?: number | null
+          unit_value?: number | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_registry_current_holder_id_fkey"
+            columns: ["current_holder_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_registry_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_registry_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_registry_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_registry_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventory_transactions: {
         Row: {
           created_at: string | null
@@ -14636,6 +15308,113 @@ export type Database = {
             columns: ["vehicle_id"]
             isOneToOne: false
             referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      location_registry: {
+        Row: {
+          address: string | null
+          amenities: string[] | null
+          capacity: number | null
+          city: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          country: string | null
+          created_at: string | null
+          description: string | null
+          entity_id: string
+          entity_type: string
+          external_id: string | null
+          id: string
+          is_active: boolean | null
+          is_partner: boolean | null
+          latitude: number | null
+          location_category: string | null
+          location_type: string
+          longitude: number | null
+          metadata: Json | null
+          name: string
+          organization_id: string
+          parent_id: string | null
+          postal_code: string | null
+          state: string | null
+          timezone: string | null
+          updated_at: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          amenities?: string[] | null
+          capacity?: number | null
+          city?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          entity_id: string
+          entity_type: string
+          external_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_partner?: boolean | null
+          latitude?: number | null
+          location_category?: string | null
+          location_type: string
+          longitude?: number | null
+          metadata?: Json | null
+          name: string
+          organization_id: string
+          parent_id?: string | null
+          postal_code?: string | null
+          state?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          amenities?: string[] | null
+          capacity?: number | null
+          city?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          entity_id?: string
+          entity_type?: string
+          external_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_partner?: boolean | null
+          latitude?: number | null
+          location_category?: string | null
+          location_type?: string
+          longitude?: number | null
+          metadata?: Json | null
+          name?: string
+          organization_id?: string
+          parent_id?: string | null
+          postal_code?: string | null
+          state?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "location_registry_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -17965,6 +18744,124 @@ export type Database = {
             columns: ["to_user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      people_directory: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          company_id: string | null
+          company_name: string | null
+          created_at: string | null
+          department: string | null
+          display_name: string | null
+          email: string | null
+          entity_id: string
+          entity_type: string
+          external_id: string | null
+          first_name: string | null
+          full_name: string
+          id: string
+          is_active: boolean | null
+          is_internal: boolean | null
+          job_title: string | null
+          last_name: string | null
+          linkedin_url: string | null
+          metadata: Json | null
+          mobile: string | null
+          organization_id: string
+          person_type: string
+          phone: string | null
+          tags: string[] | null
+          twitter_handle: string | null
+          updated_at: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+          website_url: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          company_id?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          department?: string | null
+          display_name?: string | null
+          email?: string | null
+          entity_id: string
+          entity_type: string
+          external_id?: string | null
+          first_name?: string | null
+          full_name: string
+          id?: string
+          is_active?: boolean | null
+          is_internal?: boolean | null
+          job_title?: string | null
+          last_name?: string | null
+          linkedin_url?: string | null
+          metadata?: Json | null
+          mobile?: string | null
+          organization_id: string
+          person_type: string
+          phone?: string | null
+          tags?: string[] | null
+          twitter_handle?: string | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+          website_url?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          company_id?: string | null
+          company_name?: string | null
+          created_at?: string | null
+          department?: string | null
+          display_name?: string | null
+          email?: string | null
+          entity_id?: string
+          entity_type?: string
+          external_id?: string | null
+          first_name?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean | null
+          is_internal?: boolean | null
+          job_title?: string | null
+          last_name?: string | null
+          linkedin_url?: string | null
+          metadata?: Json | null
+          mobile?: string | null
+          organization_id?: string
+          person_type?: string
+          phone?: string | null
+          tags?: string[] | null
+          twitter_handle?: string | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "people_directory_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_directory_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "people_directory_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -25709,6 +26606,104 @@ export type Database = {
           },
         ]
       }
+      status_tracker: {
+        Row: {
+          changed_at: string | null
+          changed_by: string | null
+          created_at: string | null
+          current_status: string
+          due_date: string | null
+          entity_id: string
+          entity_name: string | null
+          entity_path: string | null
+          entity_type: string
+          event_id: string | null
+          external_id: string | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          previous_status: string | null
+          priority: string | null
+          project_id: string | null
+          status_category: string | null
+          updated_at: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Insert: {
+          changed_at?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          current_status: string
+          due_date?: string | null
+          entity_id: string
+          entity_name?: string | null
+          entity_path?: string | null
+          entity_type: string
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          previous_status?: string | null
+          priority?: string | null
+          project_id?: string | null
+          status_category?: string | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Update: {
+          changed_at?: string | null
+          changed_by?: string | null
+          created_at?: string | null
+          current_status?: string
+          due_date?: string | null
+          entity_id?: string
+          entity_name?: string | null
+          entity_path?: string | null
+          entity_type?: string
+          event_id?: string | null
+          external_id?: string | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          previous_status?: string | null
+          priority?: string | null
+          project_id?: string | null
+          status_category?: string | null
+          updated_at?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "status_tracker_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "status_tracker_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "status_tracker_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "status_tracker_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       statuses: {
         Row: {
           code: string
@@ -32099,6 +33094,43 @@ export type Database = {
       }
     }
     Functions: {
+      categorize_status: { Args: { p_status: string }; Returns: string }
+      delete_activity_feed_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_assignments_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_calendar_events_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_document_registry_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_financial_ledger_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_inventory_registry_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_location_registry_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_people_directory_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
+      delete_status_tracker_for_entity: {
+        Args: { p_entity_id: string; p_entity_type: string }
+        Returns: undefined
+      }
       get_user_organization_ids: { Args: never; Returns: string[] }
       get_user_role_level: { Args: { org_id: string }; Returns: number }
       has_permission: {
@@ -32115,6 +33147,243 @@ export type Database = {
       migrate_inline_addresses: { Args: never; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      upsert_activity_feed: {
+        Args: {
+          p_activity_at?: string
+          p_activity_category: string
+          p_activity_type: string
+          p_actor_id: string
+          p_company_id?: string
+          p_contact_id?: string
+          p_content?: string
+          p_deal_id?: string
+          p_entity_id: string
+          p_entity_name: string
+          p_entity_type: string
+          p_event_id?: string
+          p_metadata?: Json
+          p_organization_id: string
+          p_project_id?: string
+          p_suffix?: string
+          p_title: string
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Returns: string
+      }
+      upsert_assignment: {
+        Args: {
+          p_assignment_type: string
+          p_due_date?: string
+          p_end_time?: string
+          p_entity_id: string
+          p_entity_name: string
+          p_entity_path: string
+          p_entity_type: string
+          p_event_id?: string
+          p_metadata?: Json
+          p_organization_id: string
+          p_priority?: string
+          p_project_id?: string
+          p_role: string
+          p_start_time?: string
+          p_status?: string
+          p_suffix?: string
+          p_user_id: string
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Returns: string
+      }
+      upsert_calendar_event: {
+        Args: {
+          p_all_day?: boolean
+          p_color?: string
+          p_description: string
+          p_end_time: string
+          p_entity_id: string
+          p_entity_type: string
+          p_location?: string
+          p_organization_id: string
+          p_start_time: string
+          p_suffix?: string
+          p_title: string
+          p_user_id?: string
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Returns: string
+      }
+      upsert_document_registry: {
+        Args: {
+          p_company_id?: string
+          p_contact_id?: string
+          p_deal_id?: string
+          p_description?: string
+          p_document_category: string
+          p_document_type: string
+          p_entity_id: string
+          p_entity_type: string
+          p_event_id?: string
+          p_expires_at?: string
+          p_file_name?: string
+          p_file_size?: number
+          p_file_type?: string
+          p_file_url?: string
+          p_metadata?: Json
+          p_organization_id: string
+          p_project_id?: string
+          p_signed_at?: string
+          p_status?: string
+          p_suffix?: string
+          p_tags?: string[]
+          p_title: string
+          p_uploaded_by?: string
+          p_version?: number
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Returns: string
+      }
+      upsert_financial_ledger: {
+        Args: {
+          p_amount: number
+          p_budget_category_id?: string
+          p_company_id?: string
+          p_counterparty_id?: string
+          p_counterparty_name?: string
+          p_counterparty_type?: string
+          p_created_by?: string
+          p_currency?: string
+          p_description?: string
+          p_direction: string
+          p_due_date?: string
+          p_entity_id: string
+          p_entity_type: string
+          p_event_id?: string
+          p_metadata?: Json
+          p_notes?: string
+          p_organization_id: string
+          p_paid_date?: string
+          p_project_id?: string
+          p_reference_number: string
+          p_status?: string
+          p_suffix?: string
+          p_transaction_date?: string
+          p_transaction_type: string
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Returns: string
+      }
+      upsert_inventory_registry: {
+        Args: {
+          p_barcode?: string
+          p_category_id?: string
+          p_category_name?: string
+          p_condition?: string
+          p_currency?: string
+          p_current_holder_id?: string
+          p_current_holder_name?: string
+          p_description?: string
+          p_entity_id: string
+          p_entity_type: string
+          p_event_id?: string
+          p_image_url?: string
+          p_item_type: string
+          p_last_maintenance_date?: string
+          p_location_id?: string
+          p_location_name?: string
+          p_metadata?: Json
+          p_name: string
+          p_next_maintenance_date?: string
+          p_organization_id: string
+          p_project_id?: string
+          p_quantity?: number
+          p_serial_number?: string
+          p_sku?: string
+          p_specifications?: Json
+          p_status?: string
+          p_unit_value?: number
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Returns: string
+      }
+      upsert_location_registry: {
+        Args: {
+          p_address?: string
+          p_amenities?: string[]
+          p_capacity?: number
+          p_city?: string
+          p_contact_email?: string
+          p_contact_name?: string
+          p_contact_phone?: string
+          p_country?: string
+          p_description?: string
+          p_entity_id: string
+          p_entity_type: string
+          p_is_active?: boolean
+          p_is_partner?: boolean
+          p_latitude?: number
+          p_location_category: string
+          p_location_type: string
+          p_longitude?: number
+          p_metadata?: Json
+          p_name?: string
+          p_organization_id: string
+          p_parent_id?: string
+          p_postal_code?: string
+          p_state?: string
+          p_timezone?: string
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+          p_website?: string
+        }
+        Returns: string
+      }
+      upsert_people_directory: {
+        Args: {
+          p_avatar_url?: string
+          p_bio?: string
+          p_company_id?: string
+          p_company_name?: string
+          p_department?: string
+          p_display_name?: string
+          p_email?: string
+          p_entity_id: string
+          p_entity_type: string
+          p_first_name?: string
+          p_full_name?: string
+          p_is_active?: boolean
+          p_is_internal?: boolean
+          p_job_title?: string
+          p_last_name?: string
+          p_linkedin_url?: string
+          p_metadata?: Json
+          p_mobile?: string
+          p_organization_id: string
+          p_person_type: string
+          p_phone?: string
+          p_tags?: string[]
+          p_twitter_handle?: string
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+          p_website_url?: string
+        }
+        Returns: string
+      }
+      upsert_status_tracker: {
+        Args: {
+          p_changed_by?: string
+          p_current_status: string
+          p_due_date?: string
+          p_entity_id: string
+          p_entity_name: string
+          p_entity_path: string
+          p_entity_type: string
+          p_event_id?: string
+          p_metadata?: Json
+          p_organization_id: string
+          p_previous_status?: string
+          p_priority?: string
+          p_project_id?: string
+          p_visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Returns: string
+      }
     }
     Enums: {
       accommodation_status:

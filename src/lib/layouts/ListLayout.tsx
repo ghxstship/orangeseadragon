@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/common/page-header";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
 import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
 import { useDataView, useFilteredData } from "@/lib/data-view-engine/hooks/use-data-view";
+import type { ViewType } from "@/lib/data-view-engine/hooks/use-data-view";
 import type { EntitySchema } from "@/lib/schema/types";
 import { Plus, RefreshCw } from "lucide-react";
 
@@ -31,8 +32,8 @@ export interface ListLayoutProps<T extends object> {
   currentSubpage?: string;
   onSubpageChange?: (subpage: string) => void;
   
-  currentView?: string;
-  onViewChange?: (view: string) => void;
+  currentView?: ViewType;
+  onViewChange?: (view: ViewType) => void;
   
   stats?: Array<{
     id: string;
@@ -68,7 +69,7 @@ export function ListLayout<T extends object>({
   const listConfig = schema.layouts.list;
   const tableConfig = schema.views?.table;
   
-  const defaultViewType = (currentView || listConfig.defaultView || 'table') as import('@/lib/data-view-engine/hooks').ViewType;
+  const defaultViewType = (currentView || listConfig.defaultView || 'table') as ViewType;
   const defaultColumns = tableConfig?.columns
     ?.filter((c): c is string => typeof c === 'string')
     .slice(0, 6) ?? Object.keys(schema.data.fields).slice(0, 6);
@@ -94,8 +95,8 @@ export function ListLayout<T extends object>({
     onAction?.('create');
   }, [onAction]);
 
-  const handleViewChange = React.useCallback((view: string) => {
-    actions.setViewType(view as any);
+  const handleViewChange = React.useCallback((view: ViewType) => {
+    actions.setViewType(view);
     onViewChange?.(view);
   }, [actions, onViewChange]);
 
@@ -147,17 +148,9 @@ export function ListLayout<T extends object>({
         {listConfig.subpages.length > 1 && (
           <div className="px-6 pb-0 border-t bg-muted/30">
             <Tabs value={activeSubpage} onValueChange={onSubpageChange}>
-              <TabsList className="h-12 bg-transparent p-0 gap-0">
+              <TabsList variant="underline">
                 {listConfig.subpages.map((subpage) => (
-                  <TabsTrigger
-                    key={subpage.key}
-                    value={subpage.key}
-                    className={cn(
-                      "relative h-12 px-4 rounded-none border-b-2 border-transparent",
-                      "data-[state=active]:border-primary data-[state=active]:bg-transparent",
-                      "hover:bg-accent/50 transition-colors"
-                    )}
-                  >
+                  <TabsTrigger key={subpage.key} value={subpage.key}>
                     <div className="flex items-center gap-2">
                       {subpage.icon && <span className="text-sm">{subpage.icon}</span>}
                       <span>{subpage.label}</span>
@@ -205,8 +198,8 @@ export function ListLayout<T extends object>({
           } : undefined}
           view={listConfig.availableViews.length > 1 ? {
             current: state.viewType,
-            available: listConfig.availableViews as import('@/lib/data-view-engine/hooks').ViewType[],
-            onChange: handleViewChange as (view: import('@/lib/data-view-engine/hooks').ViewType) => void,
+            available: listConfig.availableViews as ViewType[],
+            onChange: handleViewChange,
           } : undefined}
           refresh={onRefresh ? { onRefresh, loading } : undefined}
           selectedCount={state.selectedIds.length}

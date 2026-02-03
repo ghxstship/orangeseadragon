@@ -1,0 +1,153 @@
+// /app/api/calendar/aggregated/route.ts
+
+import { createServiceClient } from '@/lib/supabase/server';
+import { NextRequest, NextResponse } from 'next/server';
+
+/**
+ * CALENDAR EVENTS API (SSOT)
+ * 
+ * Queries calendar_events table directly. All source entities (events,
+ * productions, tasks, contracts, etc.) sync to this table via database
+ * triggers. RLS policies enforce RBAC at the database level.
+ * 
+ * Query Parameters:
+ * - startDate: ISO date string (required)
+ * - endDate: ISO date string (required)
+ * - sources: comma-separated list of entity_type values (optional)
+ * - projectId: filter by project (optional) - requires join to source
+ */
+
+export type CalendarSourceType =
+  | 'event'
+  | 'production'
+  | 'task'
+  | 'contract'
+  | 'activation'
+  | 'shift'
+  | 'maintenance'
+  | 'calendar_event';
+
+const SOURCE_CONFIG: Record<CalendarSourceType, { label: string; color: string; basePath: string }> = {
+  event: { label: 'Events', color: '#3b82f6', basePath: '/productions/events' },
+  production: { label: 'Productions', color: '#8b5cf6', basePath: '/productions' },
+  task: { label: 'Tasks', color: '#f59e0b', basePath: '/core/tasks' },
+  contract: { label: 'Contracts', color: '#10b981', basePath: '/business/contracts' },
+  activation: { label: 'Activations', color: '#ec4899', basePath: '/productions/activations' },
+  shift: { label: 'Shifts', color: '#14b8a6', basePath: '/people/scheduling' },
+  maintenance: { label: 'Maintenance', color: '#f97316', basePath: '/assets/maintenance' },
+  calendar_event: { label: 'Calendar', color: '#6366f1', basePath: '/core/calendar' },
+};
+
+export async function GET(request: NextRequest) {
+  const supabase = await createServiceClient();
+  
+  // Auth check - RLS will handle the rest
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const searchParams = request.nextUrl.searchParams;
+  
+  // Parse required date range
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
+  
+  if (!startDate || !endDate) {
+    return NextResponse.json(
+      { error: 'startDate and endDate are required' }, 
+      { status: 400 }
+    );
+  }
+
+  // Parse optional filters
+  const sourcesParam = searchParams.get('sources');
+  const sources = sourcesParam?.split(',') as CalendarSourceType[] | undefined;
+
+  try {
+    // Build query - RLS policies handle organization filtering and RBAC
+    type CalendarEventRow = {
+      id: string;
+      title: string;
+      description: string | null;
+      start_time: string;
+      end_time: string;
+      all_day: boolean | null;
+      timezone: string | null;
+      entity_type: string | null;
+      entity_id: string | null;
+      color: string | null;
+      location: string | null;
+      visibility: string | null;
+    };
+
+    let query = supabase
+      .from('calendar_events')
+      .select('*')
+      .gte('start_time', startDate)
+      .lte('start_time', endDate + 'T23:59:59')
+      .order('start_time', { ascending: true });
+
+    // Filter by source types if specified
+    if (sources && sources.length > 0) {
+      query = query.in('entity_type', sources);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('[Calendar API] Query error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Transform to unified format with source paths
+    const items = ((data || []) as CalendarEventRow[]).map((item) => {
+      const sourceType = (item.entity_type || 'calendar_event') as CalendarSourceType;
+      const config = SOURCE_CONFIG[sourceType] || SOURCE_CONFIG.calendar_event;
+      
+      return {
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        startTime: item.start_time,
+        endTime: item.end_time,
+        allDay: item.all_day || false,
+        timezone: item.timezone,
+        sourceType,
+        sourceId: item.entity_id || item.id,
+        sourcePath: item.entity_id 
+          ? `${config.basePath}/${item.entity_id}`
+          : `${config.basePath}/${item.id}`,
+        color: item.color || config.color,
+        location: item.location,
+        visibility: item.visibility,
+      };
+    });
+
+    // Count by source type
+    const sourceCounts = new Map<CalendarSourceType, number>();
+    items.forEach((item) => {
+      sourceCounts.set(item.sourceType, (sourceCounts.get(item.sourceType) || 0) + 1);
+    });
+
+    // Build sources array for UI filtering
+    const enabledSources = sources || Object.keys(SOURCE_CONFIG) as CalendarSourceType[];
+    const sourcesResult = enabledSources.map((type) => ({
+      type,
+      count: sourceCounts.get(type) || 0,
+      label: SOURCE_CONFIG[type]?.label || type,
+      color: SOURCE_CONFIG[type]?.color || '#6366f1',
+    }));
+
+    return NextResponse.json({
+      items,
+      sources: sourcesResult,
+    });
+  } catch (error) {
+    console.error('[Calendar API] Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch calendar data' }, 
+      { status: 500 }
+    );
+  }
+}

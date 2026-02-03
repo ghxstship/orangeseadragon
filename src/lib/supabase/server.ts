@@ -56,3 +56,29 @@ export async function createUntypedClient() {
     }
   );
 }
+
+/**
+ * Creates a Supabase client with service role key that bypasses RLS.
+ * Use this ONLY for server-side operations that need full database access.
+ * WARNING: This bypasses all Row Level Security - use with caution.
+ */
+export async function createServiceClient() {
+  const { createClient } = await import("@supabase/supabase-js");
+  
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceRoleKey) {
+    console.warn("SUPABASE_SERVICE_ROLE_KEY not set, falling back to anon key (RLS will apply)");
+    return createUntypedClient();
+  }
+
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    serviceRoleKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  );
+}

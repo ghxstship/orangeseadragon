@@ -1,4 +1,4 @@
-import { createUntypedClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Accepts either a registration confirmation number or credential number
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createUntypedClient();
+  const supabase = await createServiceClient();
 
   try {
     const { data: { user } } = await supabase.auth.getUser();

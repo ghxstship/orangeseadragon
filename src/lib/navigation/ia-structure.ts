@@ -41,6 +41,7 @@
 export type SidebarGroupKey =
   | 'core'          // Personal workspace
   | 'productions'   // Pre/post event lifecycle
+  | 'advancing'     // Production advance coordination
   | 'operations'    // Run of show
   | 'people'        // Human resources
   | 'assets'        // Equipment & logistics
@@ -84,7 +85,7 @@ export type PageKey =
   | 'inbox'
   | 'documents'
   | 'workflows'
-  // PRODUCTIONS (8 pages)
+  // PRODUCTIONS (7 pages)
   | 'productions'
   | 'events'
   | 'activations'
@@ -92,7 +93,12 @@ export type PageKey =
   | 'compliance'
   | 'inspections'
   | 'punch-lists'
-  | 'advancing'
+  // ADVANCING (5 pages)
+  | 'advancing-dashboard'
+  | 'advancing-advances'
+  | 'advancing-items'
+  | 'advancing-fulfillment'
+  | 'advancing-vendors'
   // OPERATIONS (7 pages)
   | 'shows'
   | 'runsheets'
@@ -113,12 +119,11 @@ export type PageKey =
   | 'performance'
   | 'certifications'
   | 'positions'
-  // ASSETS (9 pages)
+  // ASSETS (8 pages)
   | 'catalog'
   | 'inventory'
   | 'locations'
   | 'reservations'
-  | 'advances'
   | 'deployment'
   | 'logistics'
   | 'asset-status'
@@ -258,15 +263,30 @@ export const informationArchitecture: {
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // PRODUCTIONS - Pre/Post Event Lifecycle (8 pages)
+    // PRODUCTIONS - Pre/Post Event Lifecycle (7 pages)
     // ═══════════════════════════════════════════════════════════════
     {
       key: 'productions',
       label: 'Productions',
       icon: 'clapperboard',
       description: 'Pre/post event lifecycle',
-      pages: ['productions', 'events', 'activations', 'build-strike', 'compliance', 'inspections', 'punch-lists', 'advancing'],
+      pages: ['productions', 'events', 'activations', 'build-strike', 'compliance', 'inspections', 'punch-lists'],
       defaultExpanded: true,
+    },
+
+    // ═══════════════════════════════════════════════════════════════
+    // ADVANCING - Production Advance Coordination (5 pages)
+    // Unified module for all advance coordination: technical, logistics,
+    // hospitality, staffing, safety, marketing. Consolidates former
+    // PRODUCTIONS > Advancing and ASSETS > Logistics > Advances.
+    // ═══════════════════════════════════════════════════════════════
+    {
+      key: 'advancing',
+      label: 'Advancing',
+      icon: 'clipboard-check',
+      description: 'Production advance coordination',
+      pages: ['advancing-dashboard', 'advancing-advances', 'advancing-items', 'advancing-fulfillment', 'advancing-vendors'],
+      defaultExpanded: false,
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -292,15 +312,16 @@ export const informationArchitecture: {
     },
 
     // ═══════════════════════════════════════════════════════════════
-    // ASSETS - Equipment & Logistics (9 pages)
+    // ASSETS - Equipment & Logistics (8 pages)
     // Catalog = Equipment SSOT (what you OWN)
+    // Note: Advances moved to ADVANCING module for unified coordination
     // ═══════════════════════════════════════════════════════════════
     {
       key: 'assets',
       label: 'Assets',
       icon: 'package',
       description: 'Equipment & logistics',
-      pages: ['catalog', 'inventory', 'locations', 'reservations', 'advances', 'deployment', 'logistics', 'asset-status', 'maintenance'],
+      pages: ['catalog', 'inventory', 'locations', 'reservations', 'deployment', 'logistics', 'asset-status', 'maintenance'],
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -462,14 +483,50 @@ export const informationArchitecture: {
       entity: 'punchItem',
       type: 'entity-list',
     },
-    advancing: {
-      key: 'advancing',
-      path: '/productions/advancing',
-      label: 'Advancing',
-      icon: 'users',
-      entity: 'advancing',
+
+    // ═══════════════════════════════════════════════════════════════
+    // ADVANCING PAGES
+    // ═══════════════════════════════════════════════════════════════
+    'advancing-dashboard': {
+      key: 'advancing-dashboard',
+      path: '/advancing',
+      label: 'Dashboard',
+      icon: 'layout-dashboard',
+      type: 'dashboard',
+    },
+    'advancing-advances': {
+      key: 'advancing-advances',
+      path: '/advancing/advances',
+      label: 'Advances',
+      icon: 'clipboard-list',
+      entity: 'productionAdvance',
       type: 'entity-list',
-      subpages: ['riders', 'tech-specs'],
+    },
+    'advancing-items': {
+      key: 'advancing-items',
+      path: '/advancing/items',
+      label: 'Items',
+      icon: 'package',
+      entity: 'advanceItem',
+      type: 'entity-list',
+      subpages: ['technical', 'logistics', 'hospitality', 'staffing', 'safety', 'marketing'],
+    },
+    'advancing-fulfillment': {
+      key: 'advancing-fulfillment',
+      path: '/advancing/fulfillment',
+      label: 'Fulfillment',
+      icon: 'truck',
+      entity: 'advanceItemFulfillment',
+      type: 'entity-list',
+    },
+    'advancing-vendors': {
+      key: 'advancing-vendors',
+      path: '/advancing/vendors',
+      label: 'Vendors',
+      icon: 'building-2',
+      entity: 'company',
+      type: 'entity-list',
+      subpages: ['communications', 'performance'],
     },
 
     // ═══════════════════════════════════════════════════════════════
@@ -665,14 +722,6 @@ export const informationArchitecture: {
       label: 'Reservations',
       icon: 'calendar',
       entity: 'reservation',
-      type: 'entity-list',
-    },
-    advances: {
-      key: 'advances',
-      path: '/assets/advances',
-      label: 'Advances',
-      icon: 'truck',
-      entity: 'advance',
       type: 'entity-list',
     },
     deployment: {

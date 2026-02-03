@@ -39,7 +39,10 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
     queryFn: async () => {
       const url = queryParams ? `${endpoint}?${queryParams}` : endpoint;
       const res = await fetch(url);
-      if (!res.ok) throw new Error('Failed to fetch');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to load ${schema.identity.namePlural}`);
+      }
       return res.json();
     },
   });
@@ -50,7 +53,10 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
       queryKey: [schema.identity.slug, 'record', id],
       queryFn: async () => {
         const res = await fetch(`${endpoint}/${id}`);
-        if (!res.ok) throw new Error('Failed to fetch');
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || `Failed to load ${schema.identity.name}`);
+        }
         return res.json();
       },
     });
@@ -71,7 +77,10 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
         body: JSON.stringify(processedData),
       });
 
-      if (!res.ok) throw new Error('Failed to create');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to create ${schema.identity.name}`);
+      }
       return res.json();
     },
     onSuccess: async (record) => {
@@ -101,7 +110,10 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
         body: JSON.stringify(processedData),
       });
 
-      if (!res.ok) throw new Error('Failed to update');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to update ${schema.identity.name}`);
+      }
       return res.json();
     },
     onSuccess: async (record, { id, data }) => {
@@ -131,7 +143,10 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
         method: 'DELETE',
       });
 
-      if (!res.ok) throw new Error('Failed to delete');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to delete ${schema.identity.name}`);
+      }
       return id;
     },
     onSuccess: async (id) => {

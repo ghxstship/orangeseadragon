@@ -27,7 +27,7 @@ import {
   PanelRightClose,
   PanelRight,
 } from "lucide-react";
-import type { WorkspaceLayoutConfig, TabConfig } from "./types";
+import type { WorkspaceLayoutConfig } from "./types";
 
 /**
  * WORKSPACE LAYOUT
@@ -238,17 +238,9 @@ export function WorkspaceLayout({
         {config.tabPosition !== "left" && config.tabs.length > 0 && (
           <div className="px-6 border-t bg-muted/30">
             <Tabs value={activeTab} onValueChange={onTabChange}>
-              <TabsList className="h-12 bg-transparent p-0 gap-0">
+              <TabsList variant="underline">
                 {config.tabs.map((tab) => (
-                  <TabsTrigger
-                    key={tab.key}
-                    value={tab.key}
-                    className={cn(
-                      "relative h-12 px-4 rounded-none border-b-2 border-transparent",
-                      "data-[state=active]:border-primary data-[state=active]:bg-transparent",
-                      "hover:bg-accent/50 transition-colors"
-                    )}
-                  >
+                  <TabsTrigger key={tab.key} value={tab.key}>
                     <div className="flex items-center gap-2">
                       {tab.icon && <span className="text-sm">{tab.icon}</span>}
                       <span>{tab.label}</span>

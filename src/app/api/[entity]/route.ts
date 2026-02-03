@@ -1,20 +1,24 @@
-import { createUntypedClient as createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+
+const normalizeEntity = (entity: string) => entity.replace(/-/g, '_');
 
 /**
  * GENERIC ENTITY LIST API
  * 
  * Handles GET (list) and POST (create) for any entity.
+ * Uses service role client to bypass RLS for server-side operations.
  */
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string }> }
 ) {
-    const supabase = await createClient();
+    const supabase = await createServiceClient();
     const { entity } = await params;
+    const tableName = normalizeEntity(entity);
 
     // Use the entity name as the table name
-    let query = (supabase as any).from(entity).select('*', { count: 'exact' });
+    let query = supabase.from(tableName).select('*', { count: 'exact' });
 
     const searchParams = request.nextUrl.searchParams;
     const where = searchParams.get('where');
@@ -82,14 +86,15 @@ export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string }> }
 ) {
-    const supabase = await createClient();
+    const supabase = await createServiceClient();
     const { entity } = await params;
+    const tableName = normalizeEntity(entity);
 
     try {
         const body = await request.json();
         console.log(`[API POST] Entity: ${entity}, Body:`, JSON.stringify(body, null, 2));
         
-        const { data, error } = await (supabase as any).from(entity).insert(body).select().single();
+        const { data, error } = await supabase.from(tableName).insert(body).select().single();
 
         if (error) {
             console.error(`[API POST] Supabase error for ${entity}:`, error);

@@ -1,4 +1,4 @@
-import { createUntypedClient as createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Validate a promo code for an event
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
+  const supabase = await createServiceClient();
 
   try {
     const body = await request.json();

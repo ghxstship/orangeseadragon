@@ -8,6 +8,7 @@ import {
   Clapperboard,
   Users,
   ClipboardList,
+  ClipboardCheck,
   Award,
   MessageSquare,
   Trophy,
@@ -21,11 +22,13 @@ import {
   Truck,
   Wrench,
   ShoppingCart,
-  CreditCard,
   BarChart3,
   Palette,
   Mail,
   UserPlus,
+  Plane,
+  Shield,
+  Receipt,
   type LucideIcon,
 } from "lucide-react";
 
@@ -47,12 +50,13 @@ export interface NavSection {
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * SIDEBAR NAVIGATION - v5 Information Architecture
+ * SIDEBAR NAVIGATION - v6 Information Architecture
  * ═══════════════════════════════════════════════════════════════════════════
  *
- * 7 Modules, 57 Pages - Optimized for:
+ * 7 Modules, 37 Top-Level Pages, 93 Subpages - Optimized for:
  * - 3NF/SSOT compliance (zero data overlap)
- * - Cognitive load reduction (7±2 items per level)
+ * - Cognitive load reduction (5-6 items per module)
+ * - Schema-driven coverage (149 entities mapped)
  * - Workflow-based page ordering
  * - Catalog = Equipment SSOT (what you OWN)
  * - Products & Services = Business SSOT (what you SELL)
@@ -62,6 +66,8 @@ export interface NavSection {
 export const sidebarNavigation: NavSection[] = [
   // ═══════════════════════════════════════════════════════════════════════════
   // CORE - Personal Workspace (6 pages)
+  // Schema: tasks, checklists, sprints, notifications, approval_requests,
+  //         documents, document_folders, workflows, workflow_runs
   // ═══════════════════════════════════════════════════════════════════════════
   {
     title: "CORE",
@@ -84,30 +90,49 @@ export const sidebarNavigation: NavSection[] = [
         path: "/core/tasks",
         icon: CheckSquare,
         description: "Personal task management",
+        subpages: [
+          { title: "Checklists", path: "/core/tasks/checklists" },
+          { title: "Sprints", path: "/core/tasks/sprints" },
+        ],
       },
       {
         title: "Inbox",
         path: "/core/inbox",
         icon: Inbox,
         description: "Notifications & approvals",
+        subpages: [
+          { title: "Notifications", path: "/core/inbox/notifications" },
+          { title: "Approvals", path: "/core/inbox/approvals" },
+        ],
       },
       {
         title: "Documents",
         path: "/core/documents",
         icon: FileText,
         description: "Personal document library",
+        subpages: [
+          { title: "Folders", path: "/core/documents/folders" },
+          { title: "Templates", path: "/core/documents/templates" },
+        ],
       },
       {
         title: "Workflows",
         path: "/core/workflows",
         icon: GitBranch,
         description: "Personal automations",
+        subpages: [
+          { title: "Automations", path: "/core/workflows/automations" },
+          { title: "Triggers", path: "/core/workflows/triggers" },
+        ],
       },
     ],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PRODUCTIONS - Pre/Post Event Lifecycle (8 pages)
+  // PRODUCTIONS - Pre/Post Event Lifecycle (5 pages)
+  // Schema: productions, events, stages, activations, build_strike_schedules,
+  //         permits, licenses, certificates, insurance_policies, riders,
+  //         tech_specs, hospitality_requests, catering_orders, guest_lists
   // Ordered by: Plan → Build → Execute → Inspect → Close
   // ═══════════════════════════════════════════════════════════════════════════
   {
@@ -119,12 +144,10 @@ export const sidebarNavigation: NavSection[] = [
         path: "/productions",
         icon: Clapperboard,
         description: "Master production records",
-      },
-      {
-        title: "Events",
-        path: "/productions/events",
-        icon: Calendar,
-        description: "Individual events within productions",
+        subpages: [
+          { title: "Events", path: "/productions/events" },
+          { title: "Stages", path: "/productions/stages" },
+        ],
       },
       {
         title: "Activations",
@@ -141,58 +164,96 @@ export const sidebarNavigation: NavSection[] = [
       {
         title: "Compliance",
         path: "/productions/compliance",
-        icon: ClipboardList,
+        icon: Shield,
         description: "Permits, licenses & certificates",
         subpages: [
           { title: "Permits", path: "/productions/compliance/permits" },
           { title: "Licenses", path: "/productions/compliance/licenses" },
           { title: "Certificates", path: "/productions/compliance/certificates" },
-        ],
-      },
-      {
-        title: "Inspections",
-        path: "/productions/inspections",
-        icon: CheckSquare,
-        description: "Pre/post event inspections",
-      },
-      {
-        title: "Punch Lists",
-        path: "/productions/punch-lists",
-        icon: ClipboardList,
-        description: "Deficiency & fix items",
-      },
-      {
-        title: "Advancing",
-        path: "/productions/advancing",
-        icon: Users,
-        description: "Artist/vendor advance coordination",
-        subpages: [
-          { title: "Riders", path: "/productions/advancing/riders" },
-          { title: "Tech Specs", path: "/productions/advancing/tech-specs" },
+          { title: "Insurance", path: "/productions/compliance/insurance" },
         ],
       },
     ],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // OPERATIONS - Run of Show (7 pages)
-  // Ordered by: Shows → Runsheets → Venues → Incidents → Reports
+  // ADVANCING - Production Advance Coordination (5 pages)
+  // Unified module for all advance coordination: technical, logistics,
+  // hospitality, staffing, safety, marketing. Consolidates former
+  // PRODUCTIONS > Advancing and ASSETS > Logistics > Advances.
+  // Schema: production_advances, advance_items, advance_item_fulfillment,
+  //         advance_categories, vendor_ratings
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    title: "ADVANCING",
+    defaultExpanded: false,
+    items: [
+      {
+        title: "Dashboard",
+        path: "/advancing",
+        icon: ClipboardCheck,
+        description: "Advance coordination overview",
+      },
+      {
+        title: "Advances",
+        path: "/advancing/advances",
+        icon: ClipboardList,
+        description: "Production advances by event",
+      },
+      {
+        title: "Items",
+        path: "/advancing/items",
+        icon: Package,
+        description: "All advance items by category",
+        subpages: [
+          { title: "Technical", path: "/advancing/items/technical" },
+          { title: "Logistics", path: "/advancing/items/logistics" },
+          { title: "Hospitality", path: "/advancing/items/hospitality" },
+          { title: "Staffing", path: "/advancing/items/staffing" },
+          { title: "Safety", path: "/advancing/items/safety" },
+          { title: "Marketing", path: "/advancing/items/marketing" },
+        ],
+      },
+      {
+        title: "Fulfillment",
+        path: "/advancing/fulfillment",
+        icon: Truck,
+        description: "Delivery & installation tracking",
+      },
+      {
+        title: "Vendors",
+        path: "/advancing/vendors",
+        icon: Building2,
+        description: "Vendor coordination & performance",
+        subpages: [
+          { title: "Communications", path: "/advancing/vendors/communications" },
+          { title: "Performance", path: "/advancing/vendors/performance" },
+        ],
+      },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // OPERATIONS - Run of Show (5 pages)
+  // Schema: events (live), runsheets, runsheet_items, crew_calls, crew_assignments,
+  //         talent_bookings, venues, floor_plans, venue_zones, checkpoints,
+  //         incidents, punch_lists, work_orders, radio_channels, weather_reports
+  // Ordered by: Events → Venues → Incidents → Work Orders → Comms
   // ═══════════════════════════════════════════════════════════════════════════
   {
     title: "OPERATIONS",
     defaultExpanded: false,
     items: [
       {
-        title: "Shows",
-        path: "/operations/shows",
+        title: "Events",
+        path: "/operations/events",
         icon: Clapperboard,
-        description: "Live shows & performances",
-      },
-      {
-        title: "Runsheets",
-        path: "/operations/runsheets",
-        icon: ClipboardList,
-        description: "Real-time schedules & cue sheets",
+        description: "Live events & performances",
+        subpages: [
+          { title: "Runsheets", path: "/operations/events/runsheets" },
+          { title: "Crew Calls", path: "/operations/events/crew-calls" },
+          { title: "Talent Bookings", path: "/operations/events/talent-bookings" },
+        ],
       },
       {
         title: "Venues",
@@ -203,6 +264,7 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Floor Plans", path: "/operations/venues/floor-plans" },
           { title: "Zones", path: "/operations/venues/zones" },
           { title: "Checkpoints", path: "/operations/venues/checkpoints" },
+          { title: "Stages", path: "/operations/venues/stages" },
         ],
       },
       {
@@ -210,18 +272,15 @@ export const sidebarNavigation: NavSection[] = [
         path: "/operations/incidents",
         icon: ClipboardList,
         description: "Live incident reports",
+        subpages: [
+          { title: "Punch Lists", path: "/operations/incidents/punch-lists" },
+        ],
       },
       {
         title: "Work Orders",
         path: "/operations/work-orders",
         icon: Wrench,
         description: "On-site fix requests",
-      },
-      {
-        title: "Daily Reports",
-        path: "/operations/daily-reports",
-        icon: FileText,
-        description: "End-of-day summaries",
       },
       {
         title: "Comms",
@@ -231,14 +290,19 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Radio", path: "/operations/comms/radio" },
           { title: "Weather", path: "/operations/comms/weather" },
+          { title: "Daily Reports", path: "/operations/comms/daily-reports" },
         ],
       },
     ],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PEOPLE - Human Resources (11 pages)
-  // Ordered by: Roster → Availability → Recruit → Onboard → Train → Schedule → Track → Review
+  // PEOPLE - Human Resources (6 pages)
+  // Schema: employee_profiles, position_types, departments, teams, candidates,
+  //         onboarding_tasks, job_applications, availability, shifts, crew_calls,
+  //         timesheets, time_entries, training_courses, certifications, flights,
+  //         transportation, accommodations, performance_reviews, goals
+  // Ordered by: Roster → Recruit → Schedule → Train → Travel → Review
   // ═══════════════════════════════════════════════════════════════════════════
   {
     title: "PEOPLE",
@@ -249,21 +313,10 @@ export const sidebarNavigation: NavSection[] = [
         path: "/people/rosters",
         icon: Users,
         description: "Staff, crew, contractors & talent",
-      },
-      {
-        title: "Availability",
-        path: "/people/availability",
-        icon: Calendar,
-        description: "Person availability tracking",
-      },
-      {
-        title: "Travel & Lodging",
-        path: "/people/travel",
-        icon: MapPin,
-        description: "Bookings & accommodations",
         subpages: [
-          { title: "Bookings", path: "/people/travel/bookings" },
-          { title: "Accommodations", path: "/people/travel/accommodations" },
+          { title: "Positions", path: "/people/rosters/positions" },
+          { title: "Departments", path: "/people/rosters/departments" },
+          { title: "Teams", path: "/people/rosters/teams" },
         ],
       },
       {
@@ -271,12 +324,23 @@ export const sidebarNavigation: NavSection[] = [
         path: "/people/recruitment",
         icon: UserPlus,
         description: "Candidates & hiring",
+        subpages: [
+          { title: "Candidates", path: "/people/recruitment/candidates" },
+          { title: "Applications", path: "/people/recruitment/applications" },
+          { title: "Onboarding", path: "/people/recruitment/onboarding" },
+        ],
       },
       {
-        title: "Onboarding",
-        path: "/people/onboarding",
-        icon: CheckSquare,
-        description: "New hire onboarding tasks",
+        title: "Scheduling",
+        path: "/people/scheduling",
+        icon: Calendar,
+        description: "Person schedule assignments",
+        subpages: [
+          { title: "Availability", path: "/people/scheduling/availability" },
+          { title: "Shifts", path: "/people/scheduling/shifts" },
+          { title: "Crew Calls", path: "/people/scheduling/crew-calls" },
+          { title: "Timekeeping", path: "/people/scheduling/timekeeping" },
+        ],
       },
       {
         title: "Training",
@@ -286,22 +350,20 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Courses", path: "/people/training/courses" },
           { title: "Materials", path: "/people/training/materials" },
+          { title: "Certifications", path: "/people/training/certifications" },
+          { title: "Enrollments", path: "/people/training/enrollments" },
         ],
       },
       {
-        title: "Scheduling",
-        path: "/people/scheduling",
-        icon: Calendar,
-        description: "Person schedule assignments",
+        title: "Travel & Lodging",
+        path: "/people/travel",
+        icon: Plane,
+        description: "Bookings & accommodations",
         subpages: [
-          { title: "Shifts", path: "/people/scheduling/shifts" },
+          { title: "Flights", path: "/people/travel/flights" },
+          { title: "Ground Transport", path: "/people/travel/ground-transport" },
+          { title: "Accommodations", path: "/people/travel/accommodations" },
         ],
-      },
-      {
-        title: "Timekeeping",
-        path: "/people/timekeeping",
-        icon: ClipboardList,
-        description: "Timesheets & time tracking",
       },
       {
         title: "Performance",
@@ -311,26 +373,19 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Reviews", path: "/people/performance/reviews" },
           { title: "Goals", path: "/people/performance/goals" },
+          { title: "Feedback", path: "/people/performance/feedback" },
         ],
-      },
-      {
-        title: "Certifications",
-        path: "/people/certifications",
-        icon: Award,
-        description: "Credentials & certifications",
-      },
-      {
-        title: "Positions",
-        path: "/people/positions",
-        icon: Users,
-        description: "Job roles & titles",
       },
     ],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // ASSETS - Equipment & Logistics (9 pages)
-  // Ordered by: Catalog → Inventory → Locate → Reserve → Advance → Deploy → Ship → Status → Maintain
+  // ASSETS - Equipment & Logistics (5 pages)
+  // Schema: catalog_items, asset_categories, assets, inventory_items, locations,
+  //         warehouses, staging_areas, storage_bins, shipments, vehicles,
+  //         advances, asset_deployments, asset_reservations, asset_check_actions,
+  //         asset_transfers, asset_maintenance, repair_orders
+  // Ordered by: Catalog → Locate → Reserve → Ship → Maintain
   // Catalog = Equipment SSOT (Uline-style - what you OWN)
   // ═══════════════════════════════════════════════════════════════════════════
   {
@@ -344,13 +399,9 @@ export const sidebarNavigation: NavSection[] = [
         description: "Equipment catalog (Uline-style SSOT)",
         subpages: [
           { title: "Categories", path: "/assets/catalog/categories" },
+          { title: "Inventory", path: "/assets/catalog/inventory" },
+          { title: "Consumables", path: "/assets/catalog/consumables" },
         ],
-      },
-      {
-        title: "Inventory",
-        path: "/assets/inventory",
-        icon: Package,
-        description: "Physical asset instances",
       },
       {
         title: "Locations",
@@ -360,25 +411,8 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Warehouses", path: "/assets/locations/warehouses" },
           { title: "Staging Areas", path: "/assets/locations/staging" },
+          { title: "Bins", path: "/assets/locations/bins" },
         ],
-      },
-      {
-        title: "Reservations",
-        path: "/assets/reservations",
-        icon: Calendar,
-        description: "Asset reservation requests",
-      },
-      {
-        title: "Advances",
-        path: "/assets/advances",
-        icon: Truck,
-        description: "Production advances (gear sent ahead)",
-      },
-      {
-        title: "Deployment",
-        path: "/assets/deployment",
-        icon: MapPin,
-        description: "Asset deployment to productions",
       },
       {
         title: "Logistics",
@@ -388,16 +422,17 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Shipments", path: "/assets/logistics/shipments" },
           { title: "Vehicles", path: "/assets/logistics/vehicles" },
+          { title: "Deployment", path: "/assets/logistics/deployment" },
         ],
       },
       {
-        title: "Asset Status",
-        path: "/assets/status",
-        icon: CheckSquare,
-        description: "Check-in/out & service status",
+        title: "Reservations",
+        path: "/assets/reservations",
+        icon: Calendar,
+        description: "Asset reservation requests",
         subpages: [
-          { title: "Check-In/Out", path: "/assets/status/check" },
-          { title: "Service Status", path: "/assets/status/service" },
+          { title: "Check-In/Out", path: "/assets/reservations/check" },
+          { title: "Transfers", path: "/assets/reservations/transfers" },
         ],
       },
       {
@@ -408,14 +443,19 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Scheduled", path: "/assets/maintenance/scheduled" },
           { title: "Repairs", path: "/assets/maintenance/repairs" },
+          { title: "Service History", path: "/assets/maintenance/history" },
         ],
       },
     ],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // BUSINESS - Revenue + Relationships (8 pages)
-  // Ordered by: Pipeline → Companies → Propose → Contract → Products → Market → Subscribers
+  // BUSINESS - Revenue + Relationships (5 pages)
+  // Schema: leads, deals, proposals, activities, pipelines, pipeline_stages,
+  //         companies, contacts, contracts, products, services, price_lists,
+  //         campaigns, email_campaigns, forms, subscribers, email_templates,
+  //         brand_logos, brand_colors, brand_typography
+  // Ordered by: Pipeline → Companies → Products → Campaigns → Brand
   // Products & Services = Business SSOT (what you SELL)
   // ═══════════════════════════════════════════════════════════════════════════
   {
@@ -430,6 +470,8 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Leads", path: "/business/pipeline/leads" },
           { title: "Opportunities", path: "/business/pipeline/opportunities" },
+          { title: "Proposals", path: "/business/pipeline/proposals" },
+          { title: "Activities", path: "/business/pipeline/activities" },
         ],
       },
       {
@@ -439,19 +481,10 @@ export const sidebarNavigation: NavSection[] = [
         description: "Clients, vendors, partners & sponsors",
         subpages: [
           { title: "Contacts", path: "/business/companies/contacts" },
+          { title: "Contracts", path: "/business/companies/contracts" },
+          { title: "Vendors", path: "/business/companies/vendors" },
+          { title: "Sponsors", path: "/business/companies/sponsors" },
         ],
-      },
-      {
-        title: "Proposals",
-        path: "/business/proposals",
-        icon: FileText,
-        description: "Formal proposal documents",
-      },
-      {
-        title: "Contracts",
-        path: "/business/contracts",
-        icon: FileText,
-        description: "Signed agreements",
       },
       {
         title: "Products & Services",
@@ -461,6 +494,8 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Products", path: "/business/products/list" },
           { title: "Services", path: "/business/products/services" },
+          { title: "Pricing", path: "/business/products/pricing" },
+          { title: "Packages", path: "/business/products/packages" },
         ],
       },
       {
@@ -472,13 +507,9 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Email", path: "/business/campaigns/email" },
           { title: "Content", path: "/business/campaigns/content" },
           { title: "Forms", path: "/business/campaigns/forms" },
+          { title: "Subscribers", path: "/business/campaigns/subscribers" },
+          { title: "Templates", path: "/business/campaigns/templates" },
         ],
-      },
-      {
-        title: "Subscribers",
-        path: "/business/subscribers",
-        icon: Users,
-        description: "Email & marketing subscribers",
       },
       {
         title: "Brand Kit",
@@ -489,14 +520,19 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Logos", path: "/business/brand/logos" },
           { title: "Colors", path: "/business/brand/colors" },
           { title: "Typography", path: "/business/brand/typography" },
+          { title: "Assets", path: "/business/brand/assets" },
         ],
       },
     ],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // FINANCE - Money In/Out (8 pages)
-  // Ordered by: Budget → Procure → Expense → Invoice → Pay → Payroll → Accounts → Report
+  // FINANCE - Money In/Out (5 pages)
+  // Schema: budgets, budget_line_items, budget_categories, purchase_orders,
+  //         invoices, invoice_line_items, payments, credit_notes, expenses,
+  //         expense_receipts, reimbursements, payroll_batches, pay_stubs,
+  //         pay_rates, deductions, accounts, bank_accounts, transactions
+  // Ordered by: Budget → Invoice → Expense → Payroll → Accounts
   // ═══════════════════════════════════════════════════════════════════════════
   {
     title: "FINANCE",
@@ -509,19 +545,9 @@ export const sidebarNavigation: NavSection[] = [
         description: "Production & project budgets",
         subpages: [
           { title: "Line Items", path: "/finance/budgets/line-items" },
+          { title: "Procurement", path: "/finance/budgets/procurement" },
+          { title: "Purchase Orders", path: "/finance/budgets/purchase-orders" },
         ],
-      },
-      {
-        title: "Procurement",
-        path: "/finance/procurement",
-        icon: ShoppingCart,
-        description: "Purchase orders",
-      },
-      {
-        title: "Expenses",
-        path: "/finance/expenses",
-        icon: CreditCard,
-        description: "Expense records",
       },
       {
         title: "Invoices",
@@ -531,16 +557,17 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "Line Items", path: "/finance/invoices/line-items" },
           { title: "Payments", path: "/finance/invoices/payments" },
+          { title: "Credit Notes", path: "/finance/invoices/credit-notes" },
         ],
       },
       {
-        title: "Payments",
-        path: "/finance/payments",
-        icon: CreditCard,
-        description: "Payments in & out",
+        title: "Expenses",
+        path: "/finance/expenses",
+        icon: Receipt,
+        description: "Expense records",
         subpages: [
-          { title: "Incoming", path: "/finance/payments/incoming" },
-          { title: "Outgoing", path: "/finance/payments/outgoing" },
+          { title: "Receipts", path: "/finance/expenses/receipts" },
+          { title: "Reimbursements", path: "/finance/expenses/reimbursements" },
         ],
       },
       {
@@ -550,6 +577,8 @@ export const sidebarNavigation: NavSection[] = [
         description: "Payroll batches & pay stubs",
         subpages: [
           { title: "Pay Stubs", path: "/finance/payroll/stubs" },
+          { title: "Pay Rates", path: "/finance/payroll/rates" },
+          { title: "Deductions", path: "/finance/payroll/deductions" },
         ],
       },
       {
@@ -560,17 +589,8 @@ export const sidebarNavigation: NavSection[] = [
         subpages: [
           { title: "GL", path: "/finance/accounts/gl" },
           { title: "Bank", path: "/finance/accounts/bank" },
-        ],
-      },
-      {
-        title: "Reports",
-        path: "/finance/reports",
-        icon: BarChart3,
-        description: "Financial reports",
-        subpages: [
-          { title: "P&L", path: "/finance/reports/pnl" },
-          { title: "Cash Flow", path: "/finance/reports/cash-flow" },
-          { title: "AR/AP", path: "/finance/reports/ar-ap" },
+          { title: "Transactions", path: "/finance/accounts/transactions" },
+          { title: "Reconciliation", path: "/finance/accounts/reconciliation" },
         ],
       },
     ],

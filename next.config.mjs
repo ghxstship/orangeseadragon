@@ -13,6 +13,16 @@ const nextConfig = {
       // Any additional redirects
     ];
   },
+  async rewrites() {
+    return {
+      afterFiles: [
+        {
+          source: "/api/v1/:path*",
+          destination: "/api/:path*",
+        },
+      ],
+    };
+  },
 };
 
 export default nextConfig;

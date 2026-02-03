@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -76,7 +75,7 @@ export function DetailLayout<T extends object>({
       return titleDef(record);
     }
     return String((record as Record<string, unknown>)[titleDef] || 'Untitled');
-  }, [schema.display.title, record]);
+  }, [schema.display, record]);
 
   const subtitle = React.useMemo(() => {
     const subtitleDef = schema.display.subtitle;
@@ -85,12 +84,12 @@ export function DetailLayout<T extends object>({
       return subtitleDef(record);
     }
     return String((record as Record<string, unknown>)[subtitleDef] || '');
-  }, [schema.display.subtitle, record]);
+  }, [schema.display, record]);
 
   const badge = React.useMemo(() => {
     if (!schema.display.badge) return null;
     return schema.display.badge(record);
-  }, [schema.display.badge, record]);
+  }, [schema.display, record]);
 
   const imageUrl = React.useMemo(() => {
     const imageDef = schema.display.image;
@@ -99,7 +98,7 @@ export function DetailLayout<T extends object>({
       return imageDef(record) || '';
     }
     return String((record as Record<string, unknown>)[imageDef] || '');
-  }, [schema.display.image, record]);
+  }, [schema.display, record]);
 
   const handleKeyDown = React.useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '9') {
@@ -226,17 +225,9 @@ export function DetailLayout<T extends object>({
         {detailConfig.tabs.length > 1 && (
           <div className="px-6 border-t bg-muted/30">
             <Tabs value={activeTab} onValueChange={onTabChange}>
-              <TabsList className="h-12 bg-transparent p-0 gap-0">
+              <TabsList variant="underline">
                 {detailConfig.tabs.map((tab) => (
-                  <TabsTrigger
-                    key={tab.key}
-                    value={tab.key}
-                    className={cn(
-                      "relative h-12 px-4 rounded-none border-b-2 border-transparent",
-                      "data-[state=active]:border-primary data-[state=active]:bg-transparent",
-                      "hover:bg-accent/50 transition-colors"
-                    )}
-                  >
+                  <TabsTrigger key={tab.key} value={tab.key}>
                     <div className="flex items-center gap-2">
                       {tab.icon && <span className="text-sm">{tab.icon}</span>}
                       <span>{tab.label}</span>
