@@ -179,7 +179,7 @@ export function WorkforceAnalytics({
         </div>
         <div className="flex items-center gap-3">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-40 bg-zinc-800/50 border-white/10">
+            <SelectTrigger className="w-40 bg-zinc-800/50 border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -209,7 +209,7 @@ export function WorkforceAnalytics({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card className="bg-zinc-900/60 border-white/10 h-full">
+            <Card className="bg-zinc-900/60 border-border h-full">
               <CardContent className="pt-4">
                 <p className="text-xs text-zinc-500 uppercase tracking-wide">{metric.title}</p>
                 <p className="text-2xl font-bold text-white mt-1">{metric.value}</p>
@@ -263,7 +263,7 @@ export function WorkforceAnalytics({
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className={cn(
-                    "bg-zinc-900/60 border-white/10 h-full",
+                    "bg-zinc-900/60 border-border h-full",
                     insight.priority === 'high' && "border-l-2 border-l-rose-500"
                   )}>
                     <CardHeader className="pb-2">
@@ -313,7 +313,7 @@ export function WorkforceAnalytics({
         </TabsContent>
 
         <TabsContent value="departments" className="mt-6">
-          <Card className="bg-zinc-900/60 border-white/10">
+          <Card className="bg-zinc-900/60 border-border">
             <CardHeader>
               <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
                 <PieChart className="w-5 h-5" />
@@ -327,7 +327,7 @@ export function WorkforceAnalytics({
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/10">
+                    <tr className="border-b border-border">
                       <th className="text-left py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Department</th>
                       <th className="text-right py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Headcount</th>
                       <th className="text-right py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Turnover</th>
@@ -343,7 +343,7 @@ export function WorkforceAnalytics({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        className="border-b border-white/5 hover:bg-zinc-800/30"
+                        className="border-b border-border hover:bg-zinc-800/30"
                       >
                         <td className="py-3 px-4">
                           <span className="font-medium text-white">{dept.department}</span>
@@ -382,7 +382,7 @@ export function WorkforceAnalytics({
 
         <TabsContent value="trends" className="mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-zinc-900/60 border-white/10">
+            <Card className="bg-zinc-900/60 border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-emerald-400" />
@@ -414,7 +414,7 @@ export function WorkforceAnalytics({
               </CardContent>
             </Card>
 
-            <Card className="bg-zinc-900/60 border-white/10">
+            <Card className="bg-zinc-900/60 border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
                   <TrendingDown className="w-5 h-5 text-rose-400" />
@@ -449,7 +449,7 @@ export function WorkforceAnalytics({
         </TabsContent>
 
         <TabsContent value="predictions" className="mt-6">
-          <Card className="bg-zinc-900/60 border-white/10">
+          <Card className="bg-zinc-900/60 border-border">
             <CardHeader>
               <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
                 <Brain className="w-5 h-5 text-purple-400" />
@@ -504,7 +504,7 @@ export function WorkforceAnalytics({
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg bg-zinc-800/50 border border-white/5">
+              <div className="p-4 rounded-lg bg-zinc-800/50 border border-border">
                 <div className="flex items-start gap-3">
                   <div className="p-2 rounded-lg bg-purple-500/20">
                     <Sparkles className="w-5 h-5 text-purple-400" />

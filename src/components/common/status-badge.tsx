@@ -11,19 +11,19 @@ interface StatusBadgeProps {
 
 const defaultColorMap: Record<string, string> = {
   // General statuses
-  draft: "bg-white/5 text-muted-foreground border-white/10",
+  draft: "bg-muted text-muted-foreground border-border",
   pending: "bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]",
   active: "bg-green-500/10 text-green-500 border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.2)]",
   completed: "bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.2)]",
   cancelled: "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]",
-  archived: "bg-white/5 text-muted-foreground border-white/10 opacity-60",
+  archived: "bg-muted text-muted-foreground border-border opacity-60",
 
   // Project statuses
   planning: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.2)]",
   on_hold: "bg-amber-500/10 text-amber-500 border-amber-500/20",
 
   // Task statuses
-  backlog: "bg-white/5 text-muted-foreground/40 border-white/10",
+  backlog: "bg-muted text-muted-foreground/40 border-border",
   todo: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   in_progress: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   in_review: "bg-purple-500/10 text-purple-500 border-purple-500/20",
@@ -35,7 +35,7 @@ const defaultColorMap: Record<string, string> = {
   in_use: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   maintenance: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   reserved: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  retired: "bg-white/5 text-muted-foreground border-white/10",
+  retired: "bg-muted text-muted-foreground border-border",
   lost: "bg-red-500/10 text-red-500 border-red-500/20",
   damaged: "bg-orange-500/10 text-orange-500 border-orange-500/20",
 
@@ -48,7 +48,7 @@ const defaultColorMap: Record<string, string> = {
   disputed: "bg-orange-500/10 text-orange-500 border-orange-500/20",
 
   // Event phases
-  concept: "bg-white/5 text-muted-foreground border-white/10",
+  concept: "bg-muted text-muted-foreground border-border",
   pre_production: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   setup: "bg-orange-500/10 text-orange-500 border-orange-500/20",
   live: "bg-red-500/10 text-red-500 border-red-500/20 font-black tracking-[0.3em]",
@@ -56,7 +56,7 @@ const defaultColorMap: Record<string, string> = {
   post_mortem: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
 
   // Deal stages
-  lead: "bg-white/5 text-muted-foreground border-white/10",
+  lead: "bg-muted text-muted-foreground border-border",
   qualified: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   proposal: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   negotiation: "bg-purple-500/10 text-purple-500 border-purple-500/20",
@@ -98,7 +98,7 @@ const priorityColorMap: Record<string, string> = {
   high: "bg-orange-500/10 text-orange-500 border-orange-500/20",
   medium: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   low: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  none: "bg-white/5 text-muted-foreground border-white/10",
+  none: "bg-muted text-muted-foreground border-border",
 };
 
 export function PriorityBadge({ priority, className }: PriorityBadgeProps) {

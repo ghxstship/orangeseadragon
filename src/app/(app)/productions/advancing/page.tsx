@@ -24,58 +24,62 @@ const categories: AdvancingCategory[] = [
   { id: 'compliance', title: 'Safety & Permits', href: '/productions/advancing/compliance', icon: <ShieldCheck className="w-5 h-5" />, status: 'pending', completed: 0, total: 3 },
 ];
 
+const statusConfig: Record<string, { color: string; text: string }> = {
+  complete: { color: 'bg-primary', text: 'Ready' },
+  'in-progress': { color: 'bg-primary/60', text: 'In Progress' },
+  pending: { color: 'bg-muted-foreground', text: 'Pending' },
+  attention: { color: 'bg-destructive', text: 'Action Required' },
+};
+
 export default function AdvancingPage() {
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Advancing & Logistics</h1>
-          <p className="text-muted-foreground">Pre-production readiness tracker</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="h-8 px-3 border-emerald-500/30 text-emerald-500 bg-emerald-500/10">
+    <div className="flex flex-col h-full bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <div className="flex justify-between items-center px-6 py-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Advancing & Logistics</h1>
+            <p className="text-muted-foreground">Pre-production readiness tracker</p>
+          </div>
+          <Badge variant="secondary" className="h-8 px-3">
             Overall Readiness: 65%
           </Badge>
         </div>
-      </div>
+      </header>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => {
-          const progress = (category.completed / category.total) * 100;
-          let statusColor = 'bg-status-pending';
-          let statusText = 'Pending';
+      <div className="flex-1 overflow-auto p-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {categories.map((category) => {
+            const progress = (category.completed / category.total) * 100;
+            const { color, text } = statusConfig[category.status];
 
-          if (category.status === 'complete') { statusColor = 'bg-status-completed'; statusText = 'Ready'; }
-          if (category.status === 'in-progress') { statusColor = 'bg-status-on-track'; statusText = 'In Progress'; }
-          if (category.status === 'attention') { statusColor = 'bg-status-at-risk'; statusText = 'Action Required'; }
-
-          return (
-            <Link key={category.id} href={category.href}>
-              <Card className="h-full hover:bg-zinc-900/50 transition-colors cursor-pointer border-zinc-800">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-lg font-medium flex items-center gap-2">
-                    <div className="p-2 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400">
-                      {category.icon}
+            return (
+              <Link key={category.id} href={category.href}>
+                <Card className="h-full hover:bg-accent/50 transition-colors cursor-pointer">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-lg font-medium flex items-center gap-2">
+                      <div className="p-2 rounded-md bg-muted border text-muted-foreground">
+                        {category.icon}
+                      </div>
+                      {category.title}
+                    </CardTitle>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className={color.replace('bg-', 'text-')}>{text}</span>
+                        <span className="text-muted-foreground">{category.completed}/{category.total}</span>
+                      </div>
+                      <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                        <div className={`h-full ${color}`} style={{ width: `${progress}%` }} />
+                      </div>
                     </div>
-                    {category.title}
-                  </CardTitle>
-                  <ArrowRight className="w-4 h-4 text-zinc-600" />
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className={statusColor.replace('bg-', 'text-')}>{statusText}</span>
-                      <span className="text-zinc-500">{category.completed}/{category.total}</span>
-                    </div>
-                    <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden">
-                      <div className={`h-full ${statusColor}`} style={{ width: `${progress}%` }} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

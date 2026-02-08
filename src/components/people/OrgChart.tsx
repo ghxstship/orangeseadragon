@@ -151,7 +151,7 @@ function OrgNodeCard({
         onClick={() => onClick(node)}
       >
         <div className="flex items-center gap-3 min-w-[180px]">
-          <Avatar className="h-10 w-10 border border-white/10">
+          <Avatar className="h-10 w-10 border border-border">
             {node.avatarUrl ? (
               <AvatarImage src={node.avatarUrl} alt={node.name} />
             ) : (
@@ -169,7 +169,7 @@ function OrgNodeCard({
         {node.department && (
           <Badge 
             variant="outline" 
-            className="mt-2 text-xs w-full justify-center border-white/10"
+            className="mt-2 text-xs w-full justify-center border-border"
           >
             {node.department}
           </Badge>
@@ -183,9 +183,9 @@ function OrgNodeCard({
             }}
             className={cn(
               "absolute -bottom-3 left-1/2 -translate-x-1/2",
-              "w-6 h-6 rounded-full bg-zinc-800 border border-white/20",
+              "w-6 h-6 rounded-full bg-zinc-800 border border-border",
               "flex items-center justify-center",
-              "hover:bg-zinc-700 transition-colors"
+              "hover:bg-accent transition-colors"
             )}
           >
             {node.isExpanded ? (
@@ -199,11 +199,11 @@ function OrgNodeCard({
 
       {hasChildren && node.isExpanded && (
         <>
-          <div className="w-px h-6 bg-white/20" />
+          <div className="w-px h-6 bg-muted" />
           <div className="relative flex gap-8">
             {node.children!.length > 1 && (
               <div 
-                className="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-white/20"
+                className="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-muted"
                 style={{ 
                   width: `calc(100% - 180px)`,
                 }}
@@ -211,7 +211,7 @@ function OrgNodeCard({
             )}
             {node.children!.map((child) => (
               <div key={child.id} className="flex flex-col items-center">
-                <div className="w-px h-6 bg-white/20" />
+                <div className="w-px h-6 bg-muted" />
                 <OrgNodeCard 
                   node={child} 
                   onToggle={onToggle} 
@@ -271,8 +271,8 @@ export function OrgChart({
   }, [orgData]);
 
   return (
-    <Card className="bg-zinc-900/60 border-white/10 overflow-hidden">
-      <CardHeader className="border-b border-white/5">
+    <Card className="bg-zinc-900/60 border-border overflow-hidden">
+      <CardHeader className="border-b border-border">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
             <Building2 className="w-5 h-5" />
@@ -290,11 +290,11 @@ export function OrgChart({
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-48 h-8 bg-zinc-800/50 border-white/10"
+                className="pl-9 w-48 h-8 bg-zinc-800/50 border-border"
               />
             </div>
             
-            <div className="flex items-center gap-1 border-l border-white/10 pl-2 ml-2">
+            <div className="flex items-center gap-1 border-l border-border pl-2 ml-2">
               <Button 
                 variant="ghost" 
                 size="icon" 

@@ -54,7 +54,7 @@ export function PageSection({
   return (
     <section className={cn("space-y-6", className)}>
       {(title || description || actions) && (
-        <div className="flex items-center justify-between border-b border-white/5 pb-4">
+        <div className="flex items-center justify-between border-b border-border pb-4">
           <div>
             {title && <h2 className="text-xs font-black uppercase tracking-[0.3em] opacity-40">{title}</h2>}
             {description && (

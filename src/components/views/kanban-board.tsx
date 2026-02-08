@@ -243,7 +243,7 @@ export function KanbanBoard<T extends { id: string }>({
             key={column.id}
             className="flex-shrink-0 w-[340px]"
           >
-            <div className="flex flex-col h-full bg-muted/30 dark:bg-muted/10 rounded-2xl border border-white/5 shadow-inner p-4 space-y-4">
+            <div className="flex flex-col h-full bg-muted/30 dark:bg-muted/10 rounded-2xl border border-border shadow-inner p-4 space-y-4">
               <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-3">
                   {column.color && (
@@ -255,7 +255,7 @@ export function KanbanBoard<T extends { id: string }>({
                   <h3 className="text-[11px] font-black uppercase tracking-[0.15em] opacity-60">
                     {column.title}
                   </h3>
-                  <Badge variant="secondary" className="bg-white/5 backdrop-blur-md border-none text-[10px] font-bold h-5 px-1.5 translate-y-[-1px]">
+                  <Badge variant="secondary" className="bg-muted backdrop-blur-md border-none text-[10px] font-bold h-5 px-1.5 translate-y-[-1px]">
                     {column.items.length}
                   </Badge>
                 </div>
@@ -264,7 +264,7 @@ export function KanbanBoard<T extends { id: string }>({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 opacity-50 hover:opacity-100 hover:bg-white/10"
+                      className="h-7 w-7 opacity-50 hover:opacity-100 hover:bg-accent"
                       onClick={() => onAddItem(column.id)}
                     >
                       <Plus className="h-3.5 w-3.5" />
@@ -273,11 +273,11 @@ export function KanbanBoard<T extends { id: string }>({
                   {columnActions && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 opacity-50 hover:opacity-100 hover:bg-white/10">
+                        <Button variant="ghost" size="icon" className="h-7 w-7 opacity-50 hover:opacity-100 hover:bg-accent">
                           <MoreHorizontal className="h-3.5 w-3.5" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="glass-morphism border-white/10">
+                      <DropdownMenuContent align="end" className="glass-morphism border-border">
                         {columnActions(column)}
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -302,8 +302,8 @@ export function KanbanBoard<T extends { id: string }>({
                       ))}
                     </AnimatePresence>
                     {column.items.length === 0 && (
-                      <div className="group flex flex-col items-center justify-center p-12 border-2 border-dashed border-white/5 rounded-xl transition-colors hover:border-primary/20 hover:bg-primary/[0.02]">
-                        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                      <div className="group flex flex-col items-center justify-center p-12 border-2 border-dashed border-border rounded-xl transition-colors hover:border-primary/20 hover:bg-primary/[0.02]">
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                           <Plus className="h-4 w-4 opacity-20 group-hover:opacity-50" />
                         </div>
                         <p className="text-[10px] font-black uppercase tracking-widest opacity-20 group-hover:opacity-40">No Items</p>
@@ -347,7 +347,7 @@ export function KanbanCard({
 }: KanbanCardProps) {
   return (
     <Card className={cn(
-      "cursor-pointer overflow-hidden border-white/5 glass-morphism hover:border-primary/30 hover:shadow-[0_8px_32px_-12px_rgba(0,0,0,0.5)] transition-all group",
+      "cursor-pointer overflow-hidden border-border glass-morphism hover:border-primary/30 hover:shadow-[0_8px_32px_-12px_rgba(0,0,0,0.5)] transition-all group",
       className
     )}>
       <CardContent className="p-4">
@@ -385,7 +385,7 @@ export function KanbanCard({
           )}
 
           {footer && (
-            <div className="pt-3 mt-1 border-t border-white/5 flex items-center justify-between group-hover:border-primary/10 transition-colors">
+            <div className="pt-3 mt-1 border-t border-border flex items-center justify-between group-hover:border-primary/10 transition-colors">
               {footer}
             </div>
           )}

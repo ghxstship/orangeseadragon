@@ -169,7 +169,7 @@ export function DocumentManager({
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-zinc-900/60 border-white/10">
+        <Card className="bg-zinc-900/60 border-border">
           <CardContent className="pt-4">
             <p className="text-sm text-zinc-400">Total Documents</p>
             <p className="text-2xl font-bold text-white">{documents.length}</p>
@@ -198,12 +198,12 @@ export function DocumentManager({
       </div>
 
       {/* Upload Area */}
-      <Card className="bg-zinc-900/60 border-white/10">
+      <Card className="bg-zinc-900/60 border-border">
         <CardContent className="pt-6">
           <div
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
-            className="border-2 border-dashed border-white/10 rounded-lg p-8 text-center hover:border-white/20 transition-colors cursor-pointer"
+            className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-border transition-colors cursor-pointer"
           >
             <Upload className="w-10 h-10 text-zinc-500 mx-auto mb-3" />
             <p className="text-zinc-300 mb-1">Drag and drop files here</p>
@@ -228,7 +228,7 @@ export function DocumentManager({
       </Card>
 
       {/* Filters */}
-      <Card className="bg-zinc-900/60 border-white/10">
+      <Card className="bg-zinc-900/60 border-border">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg text-zinc-300">All Documents</CardTitle>
@@ -239,11 +239,11 @@ export function DocumentManager({
                   placeholder="Search documents..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-64 bg-zinc-800/50 border-white/10"
+                  className="pl-9 w-64 bg-zinc-800/50 border-border"
                 />
               </div>
               <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v as typeof categoryFilter)}>
-                <SelectTrigger className="w-40 bg-zinc-800/50 border-white/10">
+                <SelectTrigger className="w-40 bg-zinc-800/50 border-border">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
@@ -255,7 +255,7 @@ export function DocumentManager({
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
-                <SelectTrigger className="w-40 bg-zinc-800/50 border-white/10">
+                <SelectTrigger className="w-40 bg-zinc-800/50 border-border">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -282,7 +282,7 @@ export function DocumentManager({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="flex items-center gap-4 p-4 rounded-lg bg-zinc-800/30 border border-white/5 hover:bg-zinc-800/50 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-lg bg-zinc-800/30 border border-border hover:bg-zinc-800/50 transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-zinc-700/50">
                     <FileIcon className="w-6 h-6 text-zinc-400" />

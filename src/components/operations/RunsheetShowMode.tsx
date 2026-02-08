@@ -185,7 +185,7 @@ export function RunsheetShowMode({
       isFullscreen && "fixed inset-0 z-50"
     )}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div className="flex items-center gap-4">
           <Badge variant="destructive" className="animate-pulse text-sm px-3 py-1">
             🔴 LIVE
@@ -203,7 +203,7 @@ export function RunsheetShowMode({
             variant="ghost"
             size="icon"
             onClick={toggleFullscreen}
-            className="text-white hover:bg-white/10"
+            className="text-white hover:bg-accent"
           >
             {isFullscreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
           </Button>
@@ -237,7 +237,7 @@ export function RunsheetShowMode({
                 "h-full p-8 border-2 transition-all duration-300",
                 isRunning 
                   ? "border-emerald-500 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
-                  : "border-white/20 bg-white/5",
+                  : "border-border bg-muted",
                 isOvertime && "border-rose-500 bg-rose-500/10 shadow-[0_0_30px_rgba(244,63,94,0.3)]"
               )}>
                 <div className="flex flex-col h-full">
@@ -287,7 +287,7 @@ export function RunsheetShowMode({
                       
                       {/* Progress Bar */}
                       {currentCue.duration_seconds > 0 && (
-                        <div className="w-96 h-2 bg-white/10 rounded-full mt-6 mx-auto overflow-hidden">
+                        <div className="w-96 h-2 bg-accent rounded-full mt-6 mx-auto overflow-hidden">
                           <motion.div
                             className={cn(
                               "h-full rounded-full",
@@ -323,8 +323,8 @@ export function RunsheetShowMode({
               className={cn(
                 "flex items-center gap-4 px-4 py-3 rounded-lg transition-all",
                 index === 0 
-                  ? "bg-white/10 border border-white/20" 
-                  : "bg-white/5 text-neutral-400"
+                  ? "bg-accent border border-border" 
+                  : "bg-muted text-neutral-400"
               )}
             >
               <ChevronDown className="h-4 w-4" />
@@ -345,7 +345,7 @@ export function RunsheetShowMode({
       </div>
 
       {/* Control Bar */}
-      <div className="px-6 py-4 border-t border-white/10 bg-white/5">
+      <div className="px-6 py-4 border-t border-border bg-muted">
         <div className="flex items-center justify-center gap-4">
           <Button
             variant="outline"
@@ -385,10 +385,10 @@ export function RunsheetShowMode({
 
         {/* Keyboard Hints */}
         <div className="flex items-center justify-center gap-6 mt-4 text-xs text-neutral-500">
-          <span><kbd className="px-2 py-1 bg-white/10 rounded">SPACE</kbd> Go</span>
-          <span><kbd className="px-2 py-1 bg-white/10 rounded">ENTER</kbd> Next</span>
-          <span><kbd className="px-2 py-1 bg-white/10 rounded">S</kbd> Skip</span>
-          <span><kbd className="px-2 py-1 bg-white/10 rounded">F11</kbd> Fullscreen</span>
+          <span><kbd className="px-2 py-1 bg-accent rounded">SPACE</kbd> Go</span>
+          <span><kbd className="px-2 py-1 bg-accent rounded">ENTER</kbd> Next</span>
+          <span><kbd className="px-2 py-1 bg-accent rounded">S</kbd> Skip</span>
+          <span><kbd className="px-2 py-1 bg-accent rounded">F11</kbd> Fullscreen</span>
         </div>
       </div>
     </div>

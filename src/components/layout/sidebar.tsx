@@ -30,7 +30,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         initial={false}
         animate={{ width: collapsed ? 64 : 256 }}
         className={cn(
-          "fixed left-0 top-14 z-30 flex h-[calc(100vh-3.5rem)] flex-col border-r border-white/5 bg-background/5 backdrop-blur-3xl transition-all duration-500 shadow-2xl overflow-hidden",
+          "fixed left-0 top-14 z-30 flex h-[calc(100vh-3.5rem)] flex-col border-r border-border bg-background/5 backdrop-blur-3xl transition-all duration-500 shadow-2xl overflow-hidden",
           collapsed ? "w-16" : "w-64"
         )}
       >
@@ -47,11 +47,11 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             ))}
           </nav>
         </ScrollArea>
-        <div className="border-t border-white/5 p-3">
+        <div className="border-t border-border p-3">
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-center h-10 hover:bg-white/5 transition-colors rounded-xl"
+            className="w-full justify-center h-10 hover:bg-muted transition-colors rounded-xl"
             onClick={onToggle}
           >
             {collapsed ? (
@@ -137,7 +137,7 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
             "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
             isActive
               ? "bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]"
-              : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
         >
           <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive && "text-primary")} />
@@ -154,7 +154,7 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="ml-5 space-y-0.5 border-l border-white/5 pl-3 overflow-hidden"
+              className="ml-5 space-y-0.5 border-l border-border pl-3 overflow-hidden"
             >
               {item.subpages!.map((subpage) => {
                 const isSubActive = pathname === subpage.path;
@@ -187,7 +187,7 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
         "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
         isActive
           ? "bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]"
-          : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
     >
       <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive && "text-primary")} />

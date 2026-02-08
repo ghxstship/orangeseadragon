@@ -149,7 +149,7 @@ export function LeaveRequestForm({
   };
 
   return (
-    <Card className="bg-zinc-900/60 border-white/10 max-w-2xl mx-auto">
+    <Card className="bg-zinc-900/60 border-border max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="text-xl text-white flex items-center gap-2">
           <Calendar className="w-5 h-5" />
@@ -177,7 +177,7 @@ export function LeaveRequestForm({
                     "p-3 rounded-lg border text-left transition-colors",
                     isSelected 
                       ? "border-primary bg-primary/10" 
-                      : "border-white/10 bg-zinc-800/50 hover:bg-zinc-800"
+                      : "border-border bg-zinc-800/50 hover:bg-zinc-800"
                   )}
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -205,7 +205,7 @@ export function LeaveRequestForm({
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className={cn(
-                "bg-zinc-800/50 border-white/10",
+                "bg-zinc-800/50 border-border",
                 errors.startDate && "border-rose-500"
               )}
             />
@@ -213,7 +213,7 @@ export function LeaveRequestForm({
               <p className="text-xs text-rose-400">{errors.startDate}</p>
             )}
             <Select value={startHalfDay} onValueChange={(v) => setStartHalfDay(v as typeof startHalfDay)}>
-              <SelectTrigger className="bg-zinc-800/50 border-white/10">
+              <SelectTrigger className="bg-zinc-800/50 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -232,7 +232,7 @@ export function LeaveRequestForm({
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className={cn(
-                "bg-zinc-800/50 border-white/10",
+                "bg-zinc-800/50 border-border",
                 errors.endDate && "border-rose-500"
               )}
             />
@@ -240,7 +240,7 @@ export function LeaveRequestForm({
               <p className="text-xs text-rose-400">{errors.endDate}</p>
             )}
             <Select value={endHalfDay} onValueChange={(v) => setEndHalfDay(v as typeof endHalfDay)}>
-              <SelectTrigger className="bg-zinc-800/50 border-white/10">
+              <SelectTrigger className="bg-zinc-800/50 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -258,7 +258,7 @@ export function LeaveRequestForm({
             "p-4 rounded-lg border",
             hasInsufficientBalance 
               ? "bg-rose-500/10 border-rose-500/20" 
-              : "bg-zinc-800/50 border-white/10"
+              : "bg-zinc-800/50 border-border"
           )}>
             <div className="flex items-center justify-between">
               <div>
@@ -294,7 +294,7 @@ export function LeaveRequestForm({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Add any notes or details about your leave request..."
-            className="bg-zinc-800/50 border-white/10 min-h-[100px]"
+            className="bg-zinc-800/50 border-border min-h-[100px]"
           />
         </div>
 
@@ -306,7 +306,7 @@ export function LeaveRequestForm({
           </p>
           
           {attachment ? (
-            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg border border-white/10">
+            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg border border-border">
               <div className="flex-1 truncate">
                 <p className="text-sm text-white truncate">{attachment.name}</p>
                 <p className="text-xs text-zinc-500">
@@ -323,7 +323,7 @@ export function LeaveRequestForm({
               </Button>
             </div>
           ) : (
-            <label className="flex items-center justify-center gap-2 p-6 border-2 border-dashed border-white/10 rounded-lg cursor-pointer hover:border-white/20 transition-colors">
+            <label className="flex items-center justify-center gap-2 p-6 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-border transition-colors">
               <Upload className="w-5 h-5 text-zinc-500" />
               <span className="text-sm text-zinc-400">Click to upload</span>
               <input
@@ -337,7 +337,7 @@ export function LeaveRequestForm({
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-end gap-3 border-t border-white/5 pt-6">
+      <CardFooter className="flex justify-end gap-3 border-t border-border pt-6">
         <Button variant="outline" onClick={onCancel}>
           Cancel
         </Button>

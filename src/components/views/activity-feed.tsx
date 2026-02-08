@@ -269,8 +269,8 @@ export function ActivityFeed({
   }, [filteredActivities]);
 
   return (
-    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
-      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+    <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-border bg-background/5">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80 flex items-center gap-3">
             <Clock className="h-5 w-5 text-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
@@ -278,10 +278,10 @@ export function ActivityFeed({
           </CardTitle>
           {showFilters && (
             <Select value={filter} onValueChange={(v) => setFilter(v as ActivityType | "all")}>
-              <SelectTrigger className="w-[160px] h-8 glass-morphism border-white/10 text-[10px] font-black uppercase tracking-widest">
+              <SelectTrigger className="w-[160px] h-8 glass-morphism border-border text-[10px] font-black uppercase tracking-widest">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
-              <SelectContent className="glass-morphism border-white/10">
+              <SelectContent className="glass-morphism border-border">
                 <SelectItem value="all" className="text-[10px] font-bold uppercase">All Activity</SelectItem>
                 <SelectItem value="created" className="text-[10px] font-bold uppercase">Created</SelectItem>
                 <SelectItem value="updated" className="text-[10px] font-bold uppercase">Updated</SelectItem>
@@ -306,13 +306,13 @@ export function ActivityFeed({
                   transition={{ delay: groupIdx * 0.1 }}
                   className="mb-8 last:mb-0"
                 >
-                  <div className="sticky top-0 bg-background/80 backdrop-blur-xl py-3 z-10 -mx-4 px-4 border-y border-white/5 mb-4">
+                  <div className="sticky top-0 bg-background/80 backdrop-blur-xl py-3 z-10 -mx-4 px-4 border-y border-border mb-4">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">
                       {date}
                     </span>
                   </div>
                   <div className="space-y-6 relative">
-                    <div className="absolute top-0 bottom-0 left-[15px] w-px bg-white/10" />
+                    <div className="absolute top-0 bottom-0 left-[15px] w-px bg-accent" />
                     {items.map((activity, _index) => (
                       <motion.div
                         key={activity.id}
@@ -322,12 +322,12 @@ export function ActivityFeed({
                         whileHover={{ x: 4 }}
                         className={cn(
                           "flex gap-4 group cursor-pointer relative z-10",
-                          onActivityClick && "hover:bg-white/5 -mx-2 px-2 py-3 rounded-xl transition-all duration-300"
+                          onActivityClick && "hover:bg-muted -mx-2 px-2 py-3 rounded-xl transition-all duration-300"
                         )}
                         onClick={() => onActivityClick?.(activity)}
                       >
                         <div className="relative">
-                          <Avatar className="h-8 w-8 ring-2 ring-background border border-white/10">
+                          <Avatar className="h-8 w-8 ring-2 ring-background border border-border">
                             <AvatarImage src={activity.user.avatar} />
                             <AvatarFallback className="text-[10px] font-black uppercase">
                               {activity.user.name
@@ -351,7 +351,7 @@ export function ActivityFeed({
                             {getActivityDescription(activity)}
                           </div>
                           {activity.metadata?.comment && (
-                            <div className="mt-2 p-4 bg-white/5 border border-white/10 rounded-2xl text-[12px] leading-relaxed italic opacity-80 backdrop-blur-sm">
+                            <div className="mt-2 p-4 bg-muted border border-border rounded-2xl text-[12px] leading-relaxed italic opacity-80 backdrop-blur-sm">
                               &quot;{activity.metadata.comment}&quot;
                             </div>
                           )}

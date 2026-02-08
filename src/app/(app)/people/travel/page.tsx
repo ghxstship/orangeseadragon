@@ -44,15 +44,15 @@ const STAFF_LOCATIONS: MapMarker[] = [
 
 export default function TravelPage() {
   return (
-    <div className="h-[calc(100vh-140px)] flex flex-col space-y-4">
-      <div className="flex items-center justify-between px-4">
+    <div className="flex flex-col h-full bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">Global Mobility</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Global Mobility</h2>
           <p className="text-muted-foreground">Real-time staff location and travel tracking</p>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 rounded-xl overflow-hidden border border-white/10">
+      <div className="flex-1 rounded-xl overflow-hidden border m-6">
         <MapView
           markers={STAFF_LOCATIONS}
           title="Global Workforce"

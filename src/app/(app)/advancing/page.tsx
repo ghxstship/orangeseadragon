@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { DashboardTemplate, DashboardSection } from '@/components/templates/DashboardTemplate';
+import { StatCard, StatGrid } from '@/components/common/stat-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -88,187 +88,126 @@ export default function AdvancingDashboardPage() {
   const completionRate = metrics ? Math.round((metrics.completedItems / Math.max(metrics.totalItems, 1)) * 100) : 0;
   const budgetConfirmedRate = metrics ? Math.round((metrics.confirmedBudget / Math.max(metrics.totalBudget, 1)) * 100) : 0;
 
-  const dashboardSections: DashboardSection[] = [
-    {
-      id: 'metrics',
-      widgets: [
-        {
-          id: 'total-items',
-          title: 'Total Items',
-          type: 'metric',
-          size: 'small',
-          value: metrics?.totalItems || 0,
-        },
-        {
-          id: 'completed',
-          title: 'Completed',
-          type: 'metric',
-          size: 'small',
-          value: `${completionRate}%`,
-          change: metrics?.completedItems,
-          changeLabel: 'items done'
-        },
-        {
-          id: 'critical',
-          title: 'Critical Pending',
-          type: 'metric',
-          size: 'small',
-          value: metrics?.criticalPending || 0,
-        },
-        {
-          id: 'budget',
-          title: 'Budget Confirmed',
-          type: 'metric',
-          size: 'small',
-          value: `${budgetConfirmedRate}%`,
-          change: metrics?.confirmedBudget ? Math.round(metrics.confirmedBudget / 1000) : 0,
-          changeLabel: 'confirmed'
-        },
-      ],
-    },
-    {
-      id: 'navigation',
-      title: 'Quick Access',
-      widgets: [
-        { id: 'advances-nav', title: 'Advances', description: 'Production advances by event', type: 'custom', size: 'medium' },
-        { id: 'items-nav', title: 'Items', description: 'All advance items by category', type: 'custom', size: 'medium' },
-        { id: 'catalog-nav', title: 'Catalog', description: 'Uber Eats style advancing storefront', type: 'custom', size: 'medium' },
-        { id: 'fulfillment-nav', title: 'Fulfillment', description: 'Delivery & installation tracking', type: 'custom', size: 'medium' },
-        { id: 'vendors-nav', title: 'Vendors', description: 'Vendor coordination & performance', type: 'custom', size: 'medium' },
-      ],
-    },
-  ];
-
   const blockingConflicts = conflicts.filter(c => c.severity === 'blocking');
 
   return (
-    <div className="space-y-6">
-      {/* Action Bar */}
-      <div className="px-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold">Advancing</h1>
-          {blockingConflicts.length > 0 && (
-            <ConflictBadge 
-              count={blockingConflicts.length} 
-              severity="blocking"
-              onClick={() => setConflictPanelOpen(true)}
-            />
-          )}
+    <div className="flex flex-col h-full bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Advancing</h1>
+              <p className="text-muted-foreground">Production advance coordination</p>
+            </div>
+            {blockingConflicts.length > 0 && (
+              <ConflictBadge
+                count={blockingConflicts.length}
+                severity="blocking"
+                onClick={() => setConflictPanelOpen(true)}
+              />
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setConflictPanelOpen(true)}>
+              <AlertCircle className="h-4 w-4 mr-2" />
+              Conflicts
+              {conflicts.length > 0 && (
+                <Badge variant="secondary" className="ml-2">{conflicts.length}</Badge>
+              )}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setScannerOpen(true)}>
+              <QrCode className="h-4 w-4 mr-2" />
+              Scan
+            </Button>
+            <Button variant="ghost" size="icon" onClick={() => { fetchDashboard(); fetchConflicts(); }}>
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setConflictPanelOpen(true)}
-          >
-            <AlertCircle className="h-4 w-4 mr-2" />
-            Conflicts
-            {conflicts.length > 0 && (
-              <Badge variant="secondary" className="ml-2">{conflicts.length}</Badge>
-            )}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setScannerOpen(true)}
-          >
-            <QrCode className="h-4 w-4 mr-2" />
-            Scan
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => { fetchDashboard(); fetchConflicts(); }}
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      </header>
 
-      <DashboardTemplate
-        title=""
-        subtitle="Production advance coordination"
-        sections={dashboardSections}
-      />
+      <div className="flex-1 overflow-auto p-6 space-y-6">
+        <StatGrid columns={4}>
+          <StatCard title="Total Items" value={String(metrics?.totalItems || 0)} icon={CheckCircle2} />
+          <StatCard title="Completed" value={`${completionRate}%`} icon={TrendingUp} description={`${metrics?.completedItems || 0} items done`} />
+          <StatCard title="Critical Pending" value={String(metrics?.criticalPending || 0)} icon={AlertTriangle} />
+          <StatCard title="Budget Confirmed" value={`${budgetConfirmedRate}%`} icon={TrendingUp} />
+        </StatGrid>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 px-6">
-        {/* Critical Path Items */}
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-red-500" />
-            <CardTitle className="text-lg">Critical Path Items</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-muted-foreground">Loading...</div>
-            ) : criticalItems.length === 0 ? (
-              <div className="flex items-center gap-2 text-green-600">
-                <CheckCircle2 className="h-4 w-4" />
-                <span>No critical items pending</span>
-              </div>
-            ) : (
-              <ul className="space-y-3">
-                {criticalItems.map((item) => (
-                  <li key={item.id} className="flex items-center justify-between border-b pb-2 last:border-0">
-                    <div>
-                      <div className="font-medium">{item.item_name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {item.vendor?.name || 'No vendor'} • {item.location || 'TBD'}
-                      </div>
-                    </div>
-                    <Badge variant={item.status === 'pending' ? 'secondary' : 'outline'}>
-                      {item.status}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Upcoming Deliveries */}
-        <Card>
-          <CardHeader className="flex flex-row items-center gap-2">
-            <Clock className="h-5 w-5 text-blue-500" />
-            <CardTitle className="text-lg">Upcoming Deliveries (48h)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-muted-foreground">Loading...</div>
-            ) : upcomingDeliveries.length === 0 ? (
-              <div className="text-muted-foreground">No deliveries in next 48 hours</div>
-            ) : (
-              <ul className="space-y-3">
-                {upcomingDeliveries.map((item) => (
-                  <li key={item.id} className="flex items-center justify-between border-b pb-2 last:border-0">
-                    <div>
-                      <div className="font-medium">{item.item_name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {item.vendor?.name || 'No vendor'}
-                      </div>
-                    </div>
-                    <div className="text-sm text-right">
-                      <div className="font-medium">
-                        {new Date(item.scheduled_delivery).toLocaleDateString()}
-                      </div>
-                      <div className="text-muted-foreground">
-                        {new Date(item.scheduled_delivery).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Budget Overview */}
-      {metrics && metrics.totalBudget > 0 && (
-        <div className="px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              <CardTitle className="text-lg">Critical Path Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-muted-foreground">Loading...</div>
+              ) : criticalItems.length === 0 ? (
+                <div className="flex items-center gap-2 text-primary">
+                  <CheckCircle2 className="h-4 w-4" />
+                  <span>No critical items pending</span>
+                </div>
+              ) : (
+                <ul className="space-y-3">
+                  {criticalItems.map((item) => (
+                    <li key={item.id} className="flex items-center justify-between border-b pb-2 last:border-0">
+                      <div>
+                        <div className="font-medium">{item.item_name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {item.vendor?.name || 'No vendor'} • {item.location || 'TBD'}
+                        </div>
+                      </div>
+                      <Badge variant={item.status === 'pending' ? 'secondary' : 'outline'}>
+                        {item.status}
+                      </Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <Clock className="h-5 w-5 text-primary" />
+              <CardTitle className="text-lg">Upcoming Deliveries (48h)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-muted-foreground">Loading...</div>
+              ) : upcomingDeliveries.length === 0 ? (
+                <div className="text-muted-foreground">No deliveries in next 48 hours</div>
+              ) : (
+                <ul className="space-y-3">
+                  {upcomingDeliveries.map((item) => (
+                    <li key={item.id} className="flex items-center justify-between border-b pb-2 last:border-0">
+                      <div>
+                        <div className="font-medium">{item.item_name}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {item.vendor?.name || 'No vendor'}
+                        </div>
+                      </div>
+                      <div className="text-sm text-right">
+                        <div className="font-medium">
+                          {new Date(item.scheduled_delivery).toLocaleDateString()}
+                        </div>
+                        <div className="text-muted-foreground">
+                          {new Date(item.scheduled_delivery).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {metrics && metrics.totalBudget > 0 && (
+          <Card>
+            <CardHeader className="flex flex-row items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
               <CardTitle className="text-lg">Budget Overview</CardTitle>
             </CardHeader>
             <CardContent>
@@ -279,36 +218,32 @@ export default function AdvancingDashboardPage() {
                 </div>
                 <div className="flex-1">
                   <div className="text-sm text-muted-foreground mb-1">Confirmed</div>
-                  <div className="text-2xl font-bold text-green-600">${(metrics.confirmedBudget / 1000).toFixed(1)}K</div>
+                  <div className="text-2xl font-bold text-primary">${(metrics.confirmedBudget / 1000).toFixed(1)}K</div>
                 </div>
                 <div className="flex-1">
                   <div className="text-sm text-muted-foreground mb-1">Pending</div>
-                  <div className="text-2xl font-bold text-yellow-600">
+                  <div className="text-2xl font-bold text-warning">
                     ${((metrics.totalBudget - metrics.confirmedBudget) / 1000).toFixed(1)}K
                   </div>
                 </div>
               </div>
               <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-green-500 transition-all duration-500"
+                  className="h-full bg-primary transition-all duration-500"
                   style={{ width: `${budgetConfirmedRate}%` }}
                 />
               </div>
             </CardContent>
           </Card>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Scanner Modal */}
       <ScannerModal
         open={scannerOpen}
         onOpenChange={setScannerOpen}
-        onScanComplete={() => {
-          fetchDashboard();
-        }}
+        onScanComplete={() => { fetchDashboard(); }}
       />
 
-      {/* Conflict Panel */}
       <ConflictPanel
         open={conflictPanelOpen}
         onOpenChange={setConflictPanelOpen}

@@ -10,16 +10,16 @@ const badgeVariants = cva(
         default:
           "border-primary/20 bg-primary/10 text-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]",
         secondary:
-          "border-white/10 bg-white/5 text-muted-foreground",
+          "border-border bg-muted text-muted-foreground",
         destructive:
           "border-destructive/20 bg-destructive/10 text-destructive shadow-[0_0_10px_rgba(var(--destructive),0.2)]",
-        outline: "border-white/10 text-foreground",
+        outline: "border-border text-foreground",
         success:
           "border-green-500/20 bg-green-500/10 text-green-500 shadow-[0_0_10px_rgba(34,197,94,0.2)]",
         warning:
           "border-amber-500/20 bg-amber-500/10 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]",
         spatial:
-          "border-white/10 bg-white/5 backdrop-blur-xl text-foreground shadow-2xl hover:border-primary/30 transition-all",
+          "border-border bg-muted backdrop-blur-xl text-foreground shadow-2xl hover:border-primary/30 transition-all",
       },
     },
     defaultVariants: {

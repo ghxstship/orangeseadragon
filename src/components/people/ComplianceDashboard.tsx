@@ -206,7 +206,7 @@ export function ComplianceDashboard({
       </div>
 
       {/* Training Completion */}
-      <Card className="bg-zinc-900/60 border-white/10">
+      <Card className="bg-zinc-900/60 border-border">
         <CardHeader>
           <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
             <Users className="w-5 h-5" />
@@ -227,7 +227,7 @@ export function ComplianceDashboard({
       </Card>
 
       {/* Expiring/Expired Items */}
-      <Card className="bg-zinc-900/60 border-white/10">
+      <Card className="bg-zinc-900/60 border-border">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg text-zinc-300">
             Expiring Soon (Next 30 Days)
@@ -309,7 +309,7 @@ export function ComplianceDashboard({
 
       {/* Pending Acknowledgments */}
       {pendingItems.length > 0 && (
-        <Card className="bg-zinc-900/60 border-white/10">
+        <Card className="bg-zinc-900/60 border-border">
           <CardHeader>
             <CardTitle className="text-lg text-zinc-300">
               Pending Acknowledgments

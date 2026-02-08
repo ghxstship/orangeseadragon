@@ -35,9 +35,9 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                     }}
                     onClick={() => onSelectPerson(person.id)}
                     className={cn(
-                        "group relative cursor-pointer overflow-hidden rounded-2xl border border-white/10",
+                        "group relative cursor-pointer overflow-hidden rounded-2xl border border-border",
                         "bg-zinc-900/40 backdrop-blur-xl", // Liquid Glass effect
-                        "hover:border-white/20 hover:bg-zinc-800/50 transition-all duration-300"
+                        "hover:border-border hover:bg-zinc-800/50 transition-all duration-300"
                     )}
                 >
                     {/* Status Indicator Glow */}
@@ -52,14 +52,14 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                     <div className="p-6 relative z-10 flex flex-col h-full">
                         {/* Header */}
                         <div className="flex items-start justify-between mb-4">
-                            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center shadow-inner">
+                            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-border flex items-center justify-center shadow-inner">
                                 {person.avatar_url ? (
                                     <img src={person.avatar_url} alt={person.headline} className="h-full w-full rounded-full object-cover" />
                                 ) : (
                                     <User className="w-8 h-8 text-white/40" />
                                 )}
                             </div>
-                            <Badge variant={person.is_available_for_hire ? "default" : "secondary"} className="bg-white/5 border-white/10 hover:bg-white/10 text-xs">
+                            <Badge variant={person.is_available_for_hire ? "default" : "secondary"} className="bg-muted border-border hover:bg-accent text-xs">
                                 {person.is_available_for_hire ? 'Available' : 'Busy'}
                             </Badge>
                         </div>
@@ -87,7 +87,7 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                         </div>
 
                         {/* Footer Status */}
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs text-zinc-500">
+                        <div className="pt-4 border-t border-border flex items-center justify-between text-xs text-zinc-500">
                             <span className="flex items-center gap-2">
                                 <span className={cn(
                                     "w-2 h-2 rounded-full",

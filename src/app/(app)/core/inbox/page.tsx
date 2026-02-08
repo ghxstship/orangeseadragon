@@ -212,11 +212,12 @@ export default function InboxPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col h-full bg-background">
+      {/* Header — Layout A */}
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <div className="flex items-center justify-between px-6 py-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Inbox</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Inbox</h1>
           <p className="text-sm text-muted-foreground">
             Notifications, approvals & action items
           </p>
@@ -257,92 +258,96 @@ export default function InboxPage() {
             </>
           )}
         </div>
-      </div>
-
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList variant="underline">
-          <TabsTrigger value="all" className="gap-2">
-            All
-            {tabCounts.all > 0 && (
-              <Badge variant="secondary" className="text-xs">
-                {tabCounts.all}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="unread" className="gap-2">
-            Unread
-            {tabCounts.unread > 0 && (
-              <Badge variant="default" className="text-xs">
-                {tabCounts.unread}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="approvals" className="gap-2">
-            Approvals
-            {tabCounts.approvals > 0 && (
-              <Badge variant="warning" className="text-xs">
-                {tabCounts.approvals}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="mentions" className="gap-2">
-            Mentions
-          </TabsTrigger>
-          <TabsTrigger value="alerts" className="gap-2">
-            Alerts
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-
-      {/* Loading State */}
-      {loading && (
-        <div className="space-y-2">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-16 w-full" />
-          ))}
         </div>
-      )}
+      </header>
 
-      {/* Empty State */}
-      {!loading && items.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <Inbox className="h-12 w-12 text-muted-foreground/50 mb-4" />
-          <h3 className="text-lg font-medium">You&apos;re all caught up!</h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            New notifications will appear here.
-          </p>
-        </div>
-      )}
+      {/* Content */}
+      <div className="flex-1 overflow-auto p-6 space-y-6">
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList variant="underline">
+            <TabsTrigger value="all" className="gap-2">
+              All
+              {tabCounts.all > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  {tabCounts.all}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="unread" className="gap-2">
+              Unread
+              {tabCounts.unread > 0 && (
+                <Badge variant="default" className="text-xs">
+                  {tabCounts.unread}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="approvals" className="gap-2">
+              Approvals
+              {tabCounts.approvals > 0 && (
+                <Badge variant="warning" className="text-xs">
+                  {tabCounts.approvals}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="mentions" className="gap-2">
+              Mentions
+            </TabsTrigger>
+            <TabsTrigger value="alerts" className="gap-2">
+              Alerts
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
-      {/* Item List */}
-      {!loading && items.length > 0 && (
-        <div className="space-y-1">
-          {/* Select all header */}
-          <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
-            <Checkbox
-              checked={selectedIds.size === items.length && items.length > 0}
-              onCheckedChange={toggleSelectAll}
-            />
-            <span>Select all</span>
+        {/* Loading State */}
+        {loading && (
+          <div className="space-y-2">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
           </div>
+        )}
 
-          {/* Items */}
-          {items.map((item) => (
-            <InboxItemRow
-              key={item.id}
-              item={item}
-              isSelected={selectedIds.has(item.id)}
-              typeIcon={TYPE_ICONS[item.type]}
-              onToggleSelect={() => toggleSelect(item.id)}
-              onMarkRead={() => handleMarkRead([item.id])}
-              onDismiss={() => handleDismiss([item.id])}
-              onViewDetail={() => setDetailItem(item)}
-              onNavigate={() => handleNavigateToSource(item)}
-            />
-          ))}
-        </div>
-      )}
+        {/* Empty State */}
+        {!loading && items.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Inbox className="h-12 w-12 text-muted-foreground/50 mb-4" />
+            <h3 className="text-lg font-medium">You&apos;re all caught up!</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              New notifications will appear here.
+            </p>
+          </div>
+        )}
+
+        {/* Item List */}
+        {!loading && items.length > 0 && (
+          <div className="space-y-1">
+            {/* Select all header */}
+            <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
+              <Checkbox
+                checked={selectedIds.size === items.length && items.length > 0}
+                onCheckedChange={toggleSelectAll}
+              />
+              <span>Select all</span>
+            </div>
+
+            {/* Items */}
+            {items.map((item) => (
+              <InboxItemRow
+                key={item.id}
+                item={item}
+                isSelected={selectedIds.has(item.id)}
+                typeIcon={TYPE_ICONS[item.type]}
+                onToggleSelect={() => toggleSelect(item.id)}
+                onMarkRead={() => handleMarkRead([item.id])}
+                onDismiss={() => handleDismiss([item.id])}
+                onViewDetail={() => setDetailItem(item)}
+                onNavigate={() => handleNavigateToSource(item)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Detail Sheet */}
       <Sheet open={!!detailItem} onOpenChange={() => setDetailItem(null)}>

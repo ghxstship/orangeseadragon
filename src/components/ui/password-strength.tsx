@@ -136,7 +136,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           <input
             type={showPassword ? "text" : "password"}
             className={cn(
-              "flex h-11 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 pr-10 text-[13px] font-medium ring-offset-background backdrop-blur-3xl transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50 shadow-xl",
+              "flex h-11 w-full rounded-xl border border-border bg-muted px-4 py-2 pr-10 text-[13px] font-medium ring-offset-background backdrop-blur-3xl transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:border-primary/50 disabled:cursor-not-allowed disabled:opacity-50 shadow-xl",
               className
             )}
             ref={ref}

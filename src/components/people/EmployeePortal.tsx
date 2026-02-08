@@ -130,11 +130,11 @@ export function EmployeePortal({
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <Card className="bg-gradient-to-br from-zinc-900/80 to-zinc-800/40 border-white/10 overflow-hidden">
+      <Card className="bg-gradient-to-br from-zinc-900/80 to-zinc-800/40 border-border overflow-hidden">
         <CardContent className="pt-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <Avatar className="h-16 w-16 border-2 border-white/10">
+              <Avatar className="h-16 w-16 border-2 border-border">
                 {employee.avatarUrl ? (
                   <AvatarImage src={employee.avatarUrl} alt={employee.name} />
                 ) : (
@@ -176,7 +176,7 @@ export function EmployeePortal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0 }}
         >
-          <Card className="bg-zinc-900/60 border-white/10">
+          <Card className="bg-zinc-900/60 border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -196,7 +196,7 @@ export function EmployeePortal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="bg-zinc-900/60 border-white/10">
+          <Card className="bg-zinc-900/60 border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -221,7 +221,7 @@ export function EmployeePortal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="bg-zinc-900/60 border-white/10">
+          <Card className="bg-zinc-900/60 border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -239,7 +239,7 @@ export function EmployeePortal({
       </div>
 
       {/* Quick Actions */}
-      <Card className="bg-zinc-900/60 border-white/10">
+      <Card className="bg-zinc-900/60 border-border">
         <CardHeader>
           <CardTitle className="text-lg text-zinc-300">Quick Actions</CardTitle>
         </CardHeader>
@@ -251,7 +251,7 @@ export function EmployeePortal({
                 <Button
                   key={action.id}
                   variant="outline"
-                  className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-white/10 hover:bg-zinc-700/50"
+                  className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border hover:bg-zinc-700/50"
                   onClick={() => {
                     if (action.id === 'pto') onRequestTimeOff?.();
                     if (action.id === 'schedule') onViewSchedule?.();
@@ -270,7 +270,7 @@ export function EmployeePortal({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Leave Balances */}
-        <Card className="bg-zinc-900/60 border-white/10">
+        <Card className="bg-zinc-900/60 border-border">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg text-zinc-300">Leave Balances</CardTitle>
             <Button variant="ghost" size="sm" className="text-primary">
@@ -296,7 +296,7 @@ export function EmployeePortal({
         </Card>
 
         {/* Recent Activity / Pending Items */}
-        <Card className="bg-zinc-900/60 border-white/10">
+        <Card className="bg-zinc-900/60 border-border">
           <CardHeader>
             <CardTitle className="text-lg text-zinc-300">Recent Activity</CardTitle>
           </CardHeader>
@@ -329,7 +329,7 @@ export function EmployeePortal({
       </div>
 
       {/* Certifications & Training */}
-      <Card className="bg-zinc-900/60 border-white/10">
+      <Card className="bg-zinc-900/60 border-border">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
             <Award className="w-5 h-5" />

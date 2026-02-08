@@ -329,7 +329,7 @@ export function ScannerModal({
                     
                     {/* Scan overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-48 h-48 border-2 border-white/50 rounded-lg relative">
+                      <div className="w-48 h-48 border-2 border-border rounded-lg relative">
                         <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-primary rounded-tl" />
                         <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-primary rounded-tr" />
                         <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-primary rounded-bl" />

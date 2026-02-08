@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PageHeader } from '@/components/common/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -146,13 +145,22 @@ export default function ExpenseApprovalsPage() {
   const pendingCount = approvals.filter((a) => a.status === 'pending').length;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Expense Approvals"
-        description="Review and approve expense submissions"
-        badge={pendingCount > 0 ? `${pendingCount} pending` : undefined}
-      />
+    <div className="flex flex-col h-full bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Expense Approvals</h1>
+              <p className="text-muted-foreground">Review and approve expense submissions</p>
+            </div>
+            {pendingCount > 0 && (
+              <Badge variant="secondary">{pendingCount} pending</Badge>
+            )}
+          </div>
+        </div>
+      </header>
 
+      <div className="flex-1 overflow-auto p-6 space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -226,6 +234,7 @@ export default function ExpenseApprovalsPage() {
           )}
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }

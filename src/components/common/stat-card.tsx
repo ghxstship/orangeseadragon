@@ -34,7 +34,7 @@ export function StatCard({
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="h-full"
     >
-      <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-xl h-full relative group transition-all duration-500", className)}>
+      <Card className={cn("border-border overflow-hidden shadow-xl h-full relative group transition-all duration-500", className)}>
         <div className={cn(
           "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br",
           trend?.isPositive ? "from-green-500/5 to-transparent" : "from-red-500/5 to-transparent"
@@ -44,7 +44,7 @@ export function StatCard({
           <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-60 transition-opacity">
             {title}
           </CardTitle>
-          <div className="p-2 rounded-xl bg-white/5 border border-white/5 text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-all duration-500">
+          <div className="p-2 rounded-xl bg-muted border border-border text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-all duration-500">
             {Icon && <Icon className="h-4 w-4" />}
           </div>
         </CardHeader>

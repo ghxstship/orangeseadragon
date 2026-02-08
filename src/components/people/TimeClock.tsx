@@ -141,7 +141,7 @@ export function TimeClock({
 
   return (
     <Card className={cn(
-      "bg-zinc-900/60 backdrop-blur-xl border-white/10 overflow-hidden transition-shadow duration-500",
+      "bg-zinc-900/60 backdrop-blur-xl border-border overflow-hidden transition-shadow duration-500",
       statusConfig[status].glow
     )}>
       <CardHeader className="pb-2">
@@ -186,7 +186,7 @@ export function TimeClock({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="bg-zinc-800/50 rounded-xl p-4 border border-white/5"
+              className="bg-zinc-800/50 rounded-xl p-4 border border-border"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -277,7 +277,7 @@ export function TimeClock({
         </div>
 
         {/* Employee Info */}
-        <div className="pt-4 border-t border-white/5 text-center">
+        <div className="pt-4 border-t border-border text-center">
           <p className="text-sm text-zinc-400">{employeeName}</p>
           {employeeId && <p className="text-xs text-zinc-600">ID: {employeeId}</p>}
         </div>

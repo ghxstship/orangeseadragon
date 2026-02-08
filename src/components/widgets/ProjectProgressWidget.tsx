@@ -73,7 +73,7 @@ export function ProjectProgressWidget() {
 
   if (projectsWithProgress.length === 0) {
     return (
-      <Card className="spatial-card bg-card/50 backdrop-blur-xl border-white/5">
+      <Card className="spatial-card bg-card/50 backdrop-blur-xl border-border">
         <CardHeader className="pb-2">
           <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-50">
             Project Progress
@@ -90,7 +90,7 @@ export function ProjectProgressWidget() {
   }
 
   return (
-    <Card className="spatial-card bg-card/50 backdrop-blur-xl border-white/5">
+    <Card className="spatial-card bg-card/50 backdrop-blur-xl border-border">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-50">

@@ -46,9 +46,9 @@ export function MatrixView({ items, config, onItemClick }: MatrixViewProps) {
                 return (
                     <Card
                         key={quadrant.id}
-                        className={cn("flex flex-col border-white/5 glass-morphism overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-primary/5", colorClass.bg)}
+                        className={cn("flex flex-col border-border glass-morphism overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-primary/5", colorClass.bg)}
                     >
-                        <CardHeader className={cn("py-6 px-8 flex flex-row items-center justify-between space-y-0 border-b border-white/5 bg-background/10")}>
+                        <CardHeader className={cn("py-6 px-8 flex flex-row items-center justify-between space-y-0 border-b border-border bg-background/10")}>
                             <div>
                                 <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 mb-1">
                                     {quadrant.label}
@@ -57,7 +57,7 @@ export function MatrixView({ items, config, onItemClick }: MatrixViewProps) {
                                     {quadrant.description}
                                 </p>
                             </div>
-                            <Badge variant="secondary" className="bg-white/5 backdrop-blur-xl border border-white/10 text-[10px] font-black px-3 py-1">
+                            <Badge variant="secondary" className="bg-muted backdrop-blur-xl border border-border text-[10px] font-black px-3 py-1">
                                 {quadrantItems.length} ITEMS
                             </Badge>
                         </CardHeader>
@@ -75,7 +75,7 @@ export function MatrixView({ items, config, onItemClick }: MatrixViewProps) {
                                             whileHover={{ scale: 1.01, y: -2, rotate: 0.5 }}
                                             whileTap={{ scale: 0.99 }}
                                             onClick={() => onItemClick?.(item.data)}
-                                            className="p-5 bg-white/[0.03] backdrop-blur-md hover:bg-white/[0.07] border border-white/10 rounded-2xl cursor-pointer shadow-xl transition-all duration-300 group relative overflow-hidden"
+                                            className="p-5 bg-white/[0.03] backdrop-blur-md hover:bg-white/[0.07] border border-border rounded-2xl cursor-pointer shadow-xl transition-all duration-300 group relative overflow-hidden"
                                         >
                                             <div className="absolute top-0 left-0 w-1 h-full bg-primary/20 group-hover:bg-primary transition-colors" />
                                             <p className="text-xs font-black uppercase tracking-wider group-hover:text-primary transition-colors">
@@ -87,11 +87,11 @@ export function MatrixView({ items, config, onItemClick }: MatrixViewProps) {
                                                 </p>
                                             )}
                                             <div className="flex gap-2 mt-4">
-                                                <div className="flex items-center gap-1.5 text-[9px] font-black tracking-tighter text-muted-foreground/50 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5 shadow-inner">
+                                                <div className="flex items-center gap-1.5 text-[9px] font-black tracking-tighter text-muted-foreground/50 bg-muted px-2.5 py-1 rounded-lg border border-border shadow-inner">
                                                     <span className="opacity-40">U</span>
                                                     <span className="text-primary font-black opacity-100">{item.xValue}</span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 text-[9px] font-black tracking-tighter text-muted-foreground/50 bg-white/5 px-2.5 py-1 rounded-lg border border-white/5 shadow-inner">
+                                                <div className="flex items-center gap-1.5 text-[9px] font-black tracking-tighter text-muted-foreground/50 bg-muted px-2.5 py-1 rounded-lg border border-border shadow-inner">
                                                     <span className="opacity-40">I</span>
                                                     <span className="text-primary font-black opacity-100">{item.yValue}</span>
                                                 </div>
@@ -100,7 +100,7 @@ export function MatrixView({ items, config, onItemClick }: MatrixViewProps) {
                                     ))}
                                 </AnimatePresence>
                                 {quadrantItems.length === 0 && (
-                                    <div className="h-40 flex flex-col items-center justify-center p-8 text-muted-foreground/20 text-[10px] font-black tracking-[0.3em] uppercase opacity-50 border-2 border-dashed border-white/5 rounded-3xl">
+                                    <div className="h-40 flex flex-col items-center justify-center p-8 text-muted-foreground/20 text-[10px] font-black tracking-[0.3em] uppercase opacity-50 border-2 border-dashed border-border rounded-3xl">
                                         Empty Quadrant
                                     </div>
                                 )}
@@ -122,8 +122,8 @@ function getQuadrantColor(color?: string) {
         case 'yellow':
             return { border: 'border-yellow-500/10', bg: 'bg-yellow-500/[0.02] shadow-[inner_0_0_50px_rgba(234,179,8,0.03)]' };
         case 'gray':
-            return { border: 'border-white/5', bg: 'bg-white/[0.01] shadow-[inner_0_0_50px_rgba(255,255,255,0.01)]' };
+            return { border: 'border-border', bg: 'bg-white/[0.01] shadow-[inner_0_0_50px_rgba(255,255,255,0.01)]' };
         default:
-            return { border: 'border-white/5', bg: 'bg-white/[0.01]' };
+            return { border: 'border-border', bg: 'bg-white/[0.01]' };
     }
 }

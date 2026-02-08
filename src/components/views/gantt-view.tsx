@@ -287,21 +287,21 @@ export function GanttView<T extends GanttTask>({
   const flatTasks = flattenTasks(tasks);
 
   return (
-    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+    <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
       {title && (
-        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+        <CardHeader className="pb-4 border-b border-border bg-background/5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">{title}</CardTitle>
-              <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-white/5">
-                <Button variant="ghost" size="sm" onClick={goToToday} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-white/10">
+              <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-border">
+                <Button variant="ghost" size="sm" onClick={goToToday} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-accent">
                   Today
                 </Button>
-                <div className="flex items-center gap-1 border-l border-white/10 pl-1">
+                <div className="flex items-center gap-1 border-l border-border pl-1">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 hover:bg-white/10"
+                    className="h-7 w-7 hover:bg-accent"
                     onClick={() => navigate("prev")}
                   >
                     <ChevronLeft className="h-4 w-4" />
@@ -309,7 +309,7 @@ export function GanttView<T extends GanttTask>({
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 hover:bg-white/10"
+                    className="h-7 w-7 hover:bg-accent"
                     onClick={() => navigate("next")}
                   >
                     <ChevronRight className="h-4 w-4" />
@@ -318,22 +318,22 @@ export function GanttView<T extends GanttTask>({
               </div>
             </div>
 
-            <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-xl border border-white/5">
+            <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-xl border border-border">
               <Select value={zoomLevel} onValueChange={(v) => setZoomLevel(v as ZoomLevel)}>
-                <SelectTrigger className="w-[110px] h-8 glass-morphism border-white/10 text-[10px] font-black uppercase tracking-widest">
+                <SelectTrigger className="w-[110px] h-8 glass-morphism border-border text-[10px] font-black uppercase tracking-widest">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="glass-morphism border-white/10">
+                <SelectContent className="glass-morphism border-border">
                   <SelectItem value="day" className="text-[10px] font-bold uppercase">Day</SelectItem>
                   <SelectItem value="week" className="text-[10px] font-bold uppercase">Week</SelectItem>
                   <SelectItem value="month" className="text-[10px] font-bold uppercase">Month</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="flex items-center gap-1 border-l border-white/10 pl-1">
+              <div className="flex items-center gap-1 border-l border-border pl-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-white/10"
+                  className="h-8 w-8 hover:bg-accent"
                   onClick={() => setZoomLevel(zoomLevel === "month" ? "week" : "day")}
                 >
                   <ZoomIn className="h-4 w-4" />
@@ -341,7 +341,7 @@ export function GanttView<T extends GanttTask>({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 hover:bg-white/10"
+                  className="h-8 w-8 hover:bg-accent"
                   onClick={() => setZoomLevel(zoomLevel === "day" ? "week" : "month")}
                 >
                   <ZoomOut className="h-4 w-4" />
@@ -355,16 +355,16 @@ export function GanttView<T extends GanttTask>({
         <div className="flex border-t">
           {/* Task list */}
           {/* Task list */}
-          <div className="w-80 flex-shrink-0 border-r border-white/5 bg-background/20">
-            <div className="h-12 border-b border-white/5 bg-white/5 px-6 flex items-center">
+          <div className="w-80 flex-shrink-0 border-r border-border bg-background/20">
+            <div className="h-12 border-b border-border bg-muted px-6 flex items-center">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Task Breakdown</span>
             </div>
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-border">
               {flatTasks.map((task) => (
                 <div
                   key={task.id}
                   className={cn(
-                    "h-12 px-6 flex items-center gap-3 hover:bg-white/5 cursor-pointer transition-colors group/task",
+                    "h-12 px-6 flex items-center gap-3 hover:bg-muted cursor-pointer transition-colors group/task",
                     task.isCriticalPath && showCriticalPath && "bg-status-critical-path/5"
                   )}
                   style={{ paddingLeft: `${24 + task.depth * 16}px` }}
@@ -380,7 +380,7 @@ export function GanttView<T extends GanttTask>({
                         <AlertTriangle className="h-3 h-3 text-status-critical-path" />
                       </div>
                     ) : (
-                      <div className="h-2 w-2 rounded-full border border-white/20 group-hover/task:border-primary transition-colors shrink-0" />
+                      <div className="h-2 w-2 rounded-full border border-border group-hover/task:border-primary transition-colors shrink-0" />
                     )}
                     <span className="text-[11px] font-bold truncate group-hover/task:text-primary transition-colors">{task.name}</span>
                   </div>
@@ -395,11 +395,11 @@ export function GanttView<T extends GanttTask>({
           {/* Timeline */}
           <div className="flex-1 overflow-x-auto" ref={containerRef}>
             {/* Timeline Header */}
-            <div className="h-12 border-b border-white/5 bg-white/5 flex sticky top-0 z-30">
+            <div className="h-12 border-b border-border bg-muted flex sticky top-0 z-30">
               {timeUnits.map((unit, i) => (
                 <div
                   key={i}
-                  className="flex-shrink-0 border-r border-white/5 px-2 flex flex-col items-center justify-center gap-0.5"
+                  className="flex-shrink-0 border-r border-border px-2 flex flex-col items-center justify-center gap-0.5"
                   style={{ width: `${100 / timeUnits.length}%`, minWidth: zoomLevel === "day" ? 40 : 80 }}
                 >
                   <span className="text-[9px] font-black uppercase tracking-widest opacity-30">
@@ -423,7 +423,7 @@ export function GanttView<T extends GanttTask>({
                 {timeUnits.map((_, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 border-r border-white/5"
+                    className="flex-shrink-0 border-r border-border"
                     style={{ width: `${100 / timeUnits.length}%` }}
                   />
                 ))}
@@ -444,14 +444,14 @@ export function GanttView<T extends GanttTask>({
                 {flatTasks.map((task) => {
                   if (!isTaskVisible(task)) {
                     return (
-                      <div key={task.id} className="h-12 border-b border-white/5" />
+                      <div key={task.id} className="h-12 border-b border-border" />
                     );
                   }
 
                   const position = getTaskPosition(task);
 
                   return (
-                    <div key={task.id} className="h-12 border-b border-white/5 relative group/row">
+                    <div key={task.id} className="h-12 border-b border-border relative group/row">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -461,7 +461,7 @@ export function GanttView<T extends GanttTask>({
                               animate={{ opacity: 1, scale: 1, x: 0 }}
                               whileHover={{ scale: 1.01, zIndex: 30, y: -1 }}
                               className={cn(
-                                "absolute top-3 h-6 rounded-full cursor-pointer shadow-lg border border-white/10 glass-morphism transition-all duration-300",
+                                "absolute top-3 h-6 rounded-full cursor-pointer shadow-lg border border-border glass-morphism transition-all duration-300",
                                 task.isMilestone
                                   ? "w-4 h-4 top-4 rotate-45 bg-status-milestone shadow-lg border-status-milestone/60"
                                   : task.isCriticalPath && showCriticalPath
@@ -488,15 +488,15 @@ export function GanttView<T extends GanttTask>({
                               )}
                             </motion.div>
                           </TooltipTrigger>
-                          <TooltipContent className="glass-morphism border-white/10 p-4 shadow-2xl">
+                          <TooltipContent className="glass-morphism border-border p-4 shadow-2xl">
                             <div className="space-y-2">
                               <p className="font-black uppercase tracking-widest text-xs opacity-80">{task.name}</p>
                               <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-                                <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                <div className="bg-accent px-2 py-0.5 rounded uppercase">
                                   {format(typeof task.startDate === "string" ? parseISO(task.startDate) : task.startDate, "MMM d")}
                                 </div>
                                 <span className="opacity-30">—</span>
-                                <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                <div className="bg-accent px-2 py-0.5 rounded uppercase">
                                   {format(typeof task.endDate === "string" ? parseISO(task.endDate) : task.endDate, "MMM d, yyyy")}
                                 </div>
                               </div>
@@ -506,7 +506,7 @@ export function GanttView<T extends GanttTask>({
                                     <span>Progress</span>
                                     <span>{task.progress}%</span>
                                   </div>
-                                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                  <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
                                     <div className="h-full bg-primary" style={{ width: `${task.progress}%` }} />
                                   </div>
                                 </div>
@@ -524,7 +524,7 @@ export function GanttView<T extends GanttTask>({
         </div>
 
         {/* Legend */}
-        <div className="border-t border-white/5 p-4 bg-white/5 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest opacity-60">
+        <div className="border-t border-border p-4 bg-muted flex items-center gap-6 text-[10px] font-black uppercase tracking-widest opacity-60">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-status-on-track rounded-full shadow-lg" />
             <span>On Track</span>

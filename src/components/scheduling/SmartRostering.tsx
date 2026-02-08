@@ -32,7 +32,7 @@ export function SmartRostering() {
     // Simplified Dnd implementation placeholder - full implementation would handle coordinate mapping
 
     return (
-        <Card className="border-white/10 bg-zinc-900/40 backdrop-blur-xl overflow-hidden">
+        <Card className="border-border bg-zinc-900/40 backdrop-blur-xl overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-xl">Smart Rostering</CardTitle>
                 <div className="flex gap-2">
@@ -43,11 +43,11 @@ export function SmartRostering() {
             <CardContent className="p-0 overflow-x-auto">
                 <div className="min-w-[800px]">
                     {/* Timeline Header */}
-                    <div className="flex border-b border-white/5">
+                    <div className="flex border-b border-border">
                         <div className="w-48 p-4 shrink-0 font-medium text-zinc-400">Resource</div>
                         <div className="flex-1 flex">
                             {HOURS.map(h => (
-                                <div key={h} className="flex-1 px-1 py-4 text-xs text-zinc-500 border-l border-white/5 text-center">
+                                <div key={h} className="flex-1 px-1 py-4 text-xs text-zinc-500 border-l border-border text-center">
                                     {h}:00
                                 </div>
                             ))}
@@ -56,7 +56,7 @@ export function SmartRostering() {
 
                     {/* Resources Rows */}
                     <DndContext>
-                        <div className="divide-y divide-white/5">
+                        <div className="divide-y divide-border">
                             {RESOURCES.map(resource => (
                                 <div key={resource.id} className="flex group bg-zinc-900/20 hover:bg-zinc-800/30 transition-colors">
                                     {/* Resource Info */}
@@ -75,7 +75,7 @@ export function SmartRostering() {
                                         {/* Grid Lines */}
                                         <div className="absolute inset-0 flex pointer-events-none">
                                             {HOURS.map(h => (
-                                                <div key={h} className="flex-1 border-l border-white/5 h-full" />
+                                                <div key={h} className="flex-1 border-l border-border h-full" />
                                             ))}
                                         </div>
 

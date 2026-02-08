@@ -171,7 +171,7 @@ export function PerformanceReviewDashboard({
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-zinc-900/60 border-white/10">
+        <Card className="bg-zinc-900/60 border-border">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -210,7 +210,7 @@ export function PerformanceReviewDashboard({
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-800/50 border-white/10">
+        <Card className="bg-zinc-800/50 border-border">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
@@ -232,7 +232,7 @@ export function PerformanceReviewDashboard({
 
         <TabsContent value="overview" className="mt-6 space-y-6">
           {/* My Review Status (for non-managers or self) */}
-          <Card className="bg-zinc-900/60 border-white/10">
+          <Card className="bg-zinc-900/60 border-border">
             <CardHeader>
               <CardTitle className="text-lg text-zinc-300">My Review Status</CardTitle>
             </CardHeader>
@@ -288,15 +288,15 @@ export function PerformanceReviewDashboard({
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-white/10">
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border">
               <Target className="w-6 h-6 text-blue-400" />
               <span>Update Goals</span>
             </Button>
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-white/10">
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border">
               <MessageSquare className="w-6 h-6 text-purple-400" />
               <span>Request Feedback</span>
             </Button>
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-white/10">
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border">
               <Award className="w-6 h-6 text-amber-400" />
               <span>View Achievements</span>
             </Button>
@@ -304,7 +304,7 @@ export function PerformanceReviewDashboard({
         </TabsContent>
 
         <TabsContent value="goals" className="mt-6">
-          <Card className="bg-zinc-900/60 border-white/10">
+          <Card className="bg-zinc-900/60 border-border">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg text-zinc-300">Goals & Key Results</CardTitle>
               <Button size="sm">Add Goal</Button>
@@ -318,7 +318,7 @@ export function PerformanceReviewDashboard({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="p-4 rounded-lg bg-zinc-800/30 border border-white/5"
+                    className="p-4 rounded-lg bg-zinc-800/30 border border-border"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
@@ -342,7 +342,7 @@ export function PerformanceReviewDashboard({
                       <Progress value={goal.progress} className="h-2" />
                     </div>
                     {goal.keyResults && goal.keyResults.length > 0 && (
-                      <div className="mt-3 pt-3 border-t border-white/5 space-y-2">
+                      <div className="mt-3 pt-3 border-t border-border space-y-2">
                         {goal.keyResults.map((kr, i) => (
                           <div key={i} className="flex items-center justify-between text-sm">
                             <span className="text-zinc-500">{kr.title}</span>
@@ -360,7 +360,7 @@ export function PerformanceReviewDashboard({
 
         {isManager && (
           <TabsContent value="team" className="mt-6">
-            <Card className="bg-zinc-900/60 border-white/10">
+            <Card className="bg-zinc-900/60 border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-zinc-300">Team Reviews</CardTitle>
               </CardHeader>
@@ -373,7 +373,7 @@ export function PerformanceReviewDashboard({
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-zinc-800/30 border border-white/5 hover:bg-zinc-800/50 cursor-pointer transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-zinc-800/30 border border-border hover:bg-zinc-800/50 cursor-pointer transition-colors"
                       onClick={() => onViewReview?.(review.id)}
                     >
                       <Avatar className="h-10 w-10">

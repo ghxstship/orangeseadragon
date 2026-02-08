@@ -246,22 +246,22 @@ export function TimelineView({
   }, [viewStart, viewEnd, totalWidth]);
 
   return (
-    <Card className={cn("w-full border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
-      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+    <Card className={cn("w-full border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-border bg-background/5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">
               {format(viewStart, "MMMM d")} — {format(viewEnd, "MMMM d, yyyy")}
             </CardTitle>
-            <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-white/5">
-              <Button variant="ghost" size="sm" onClick={() => handleNavigate("today")} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-white/10">
+            <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-border">
+              <Button variant="ghost" size="sm" onClick={() => handleNavigate("today")} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-accent">
                 Today
               </Button>
-              <div className="flex items-center gap-1 border-l border-white/10 pl-1">
+              <div className="flex items-center gap-1 border-l border-border pl-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 hover:bg-white/10"
+                  className="h-7 w-7 hover:bg-accent"
                   onClick={() => handleNavigate("prev")}
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -269,7 +269,7 @@ export function TimelineView({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 hover:bg-white/10"
+                  className="h-7 w-7 hover:bg-accent"
                   onClick={() => handleNavigate("next")}
                 >
                   <ChevronRight className="h-4 w-4" />
@@ -278,11 +278,11 @@ export function TimelineView({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-xl border border-white/5">
+          <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-xl border border-border">
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-white/10"
+              className="h-8 w-8 hover:bg-accent"
               onClick={() => {
                 const zoomLevels: TimelineZoom[] = ["hours", "days", "weeks", "months"];
                 const currentIndex = zoomLevels.indexOf(currentZoom);
@@ -294,13 +294,13 @@ export function TimelineView({
             >
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <div className="px-3 h-8 flex items-center justify-center bg-white/5 rounded-lg border border-white/5">
+            <div className="px-3 h-8 flex items-center justify-center bg-muted rounded-lg border border-border">
               <span className="text-[10px] font-black uppercase tracking-widest opacity-60">{currentZoom}</span>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-white/10"
+              className="h-8 w-8 hover:bg-accent"
               onClick={() => {
                 const zoomLevels: TimelineZoom[] = ["hours", "days", "weeks", "months"];
                 const currentIndex = zoomLevels.indexOf(currentZoom);
@@ -318,9 +318,9 @@ export function TimelineView({
       <CardContent className="p-0">
         <div className="flex">
           {showGroups && groups.length > 0 && (
-            <div className="flex-shrink-0 border-r border-white/5 bg-background/20" style={{ width: GROUP_WIDTH_VAR }}>
+            <div className="flex-shrink-0 border-r border-border bg-background/20" style={{ width: GROUP_WIDTH_VAR }}>
               <div
-                className="border-b border-white/5 bg-white/5 px-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
+                className="border-b border-border bg-muted px-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
                 style={{ height: HEADER_HEIGHT_VAR }}
               >
                 Groups
@@ -328,7 +328,7 @@ export function TimelineView({
               {groupedItems.map(({ group }, index) => (
                 <div
                   key={group?.id || `ungrouped-${index}`}
-                  className="border-b border-white/5 px-6 flex items-center text-xs font-bold transition-colors hover:bg-white/5"
+                  className="border-b border-border px-6 flex items-center text-xs font-bold transition-colors hover:bg-muted"
                   style={{ height: ROW_HEIGHT_VAR }}
                 >
                   {group ? (
@@ -353,14 +353,14 @@ export function TimelineView({
             <div style={{ width: totalWidth, minWidth: "100%" }}>
               {/* Header */}
               <div
-                className="flex border-b border-white/5 bg-white/5 sticky top-0 z-30"
+                className="flex border-b border-border bg-muted sticky top-0 z-30"
                 style={{ height: HEADER_HEIGHT_VAR }}
               >
                 {timeUnits.map((unit, index) => (
                   <div
                     key={index}
                     className={cn(
-                      "flex-shrink-0 border-r border-white/5 flex flex-col items-center justify-center gap-0.5",
+                      "flex-shrink-0 border-r border-border flex flex-col items-center justify-center gap-0.5",
                       showToday && isSameDay(unit, new Date()) && "bg-primary/10 shadow-[inner_0_0_20px_rgba(var(--primary),0.1)]"
                     )}
                     style={{ width: cellWidth }}
@@ -381,7 +381,7 @@ export function TimelineView({
                     <div
                       key={index}
                       className={cn(
-                        "flex-shrink-0 border-r border-white/5",
+                        "flex-shrink-0 border-r border-border",
                         showToday && isSameDay(unit, new Date()) && "bg-primary/[0.03]"
                       )}
                       style={{ width: cellWidth }}
@@ -402,7 +402,7 @@ export function TimelineView({
                   {groupedItems.map(({ group, items: groupItems }, groupIndex) => (
                     <div
                       key={group?.id || `ungrouped-${groupIndex}`}
-                      className="relative border-b border-white/5 group/row"
+                      className="relative border-b border-border group/row"
                       style={{ height: ROW_HEIGHT_VAR }}
                     >
                       <TooltipProvider>
@@ -420,7 +420,7 @@ export function TimelineView({
                                   whileHover={{ scale: 1.02, zIndex: 50, y: -2 }}
                                   className={cn(
                                     "absolute top-2 h-9 rounded-xl px-4 flex items-center cursor-pointer",
-                                    "text-[11px] font-black uppercase tracking-wider truncate shadow-xl border border-white/10",
+                                    "text-[11px] font-black uppercase tracking-wider truncate shadow-xl border border-border",
                                     "glass-morphism transition-all duration-300",
                                     !item.color && "bg-primary/20 text-primary-foreground border-primary/30"
                                   )}
@@ -437,15 +437,15 @@ export function TimelineView({
                                   {item.title}
                                 </motion.div>
                               </TooltipTrigger>
-                              <TooltipContent className="glass-morphism border-white/10 p-4 shadow-2xl">
+                              <TooltipContent className="glass-morphism border-border p-4 shadow-2xl">
                                 <div className="space-y-2">
                                   <div className="font-black uppercase tracking-widest text-xs opacity-80">{item.title}</div>
                                   <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-                                    <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                    <div className="bg-accent px-2 py-0.5 rounded uppercase">
                                       {format(typeof item.start === "string" ? parseISO(item.start) : item.start, "MMM d")}
                                     </div>
                                     <span className="opacity-30">—</span>
-                                    <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                    <div className="bg-accent px-2 py-0.5 rounded uppercase">
                                       {format(typeof item.end === "string" ? parseISO(item.end) : item.end, "MMM d, yyyy")}
                                     </div>
                                   </div>

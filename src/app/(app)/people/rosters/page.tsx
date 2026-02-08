@@ -18,14 +18,15 @@ export default function RostersPage() {
   const selectedPerson = people.find((p: any) => p.id === selectedPersonId);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between px-4">
+    <div className="flex flex-col h-full bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">Live Roster</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Live Roster</h2>
           <p className="text-muted-foreground">Real-time workforce directory</p>
         </div>
-        {/* Add spatial filters here later if needed */}
-      </div>
+      </header>
+
+      <div className="flex-1 overflow-auto p-6">
 
       {loading ? (
         <div className="flex items-center justify-center h-64">
@@ -44,10 +45,10 @@ export default function RostersPage() {
       )}
 
       <Sheet open={!!selectedPersonId} onOpenChange={(open) => !open && setSelectedPersonId(null)}>
-        <SheetContent side="right" className="w-[90%] sm:w-[600px] xl:w-[800px] overflow-y-auto bg-zinc-950/95 backdrop-blur-xl border-l border-white/10 p-0">
+        <SheetContent side="right" className="w-[90%] sm:w-[600px] xl:w-[800px] overflow-y-auto p-0">
           {selectedPerson && (
             <div className="h-full flex flex-col">
-              <div className="p-6 border-b border-white/10">
+              <div className="p-6 border-b">
                 <SheetHeader>
                   <SheetTitle className="text-2xl">{selectedPerson.headline}</SheetTitle>
                   <SheetDescription>{selectedPerson.location || 'No location set'}</SheetDescription>
@@ -60,6 +61,7 @@ export default function RostersPage() {
           )}
         </SheetContent>
       </Sheet>
+      </div>
     </div>
   );
 }

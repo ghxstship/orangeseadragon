@@ -135,9 +135,9 @@ export function ListView<T extends ListItem>({
   }
 
   return (
-    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+    <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
       {title && (
-        <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-white/5 bg-background/5">
+        <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-border bg-background/5">
           <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">{title}</CardTitle>
           {selectable && (
             <div className="flex items-center gap-2">
@@ -160,7 +160,7 @@ export function ListView<T extends ListItem>({
         </CardHeader>
       )}
       <CardContent className="p-0">
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-border">
           <AnimatePresence mode="popLayout">
             {items.map((item) => {
               if (renderItem) {
@@ -181,7 +181,7 @@ export function ListView<T extends ListItem>({
                   animate={{ opacity: 1, x: 0 }}
                   whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.05)", x: 4 }}
                   className={cn(
-                    "flex items-center gap-4 p-5 transition-all duration-300 border-b border-white/5 last:border-b-0",
+                    "flex items-center gap-4 p-5 transition-all duration-300 border-b border-border last:border-b-0",
                     onItemClick && "cursor-pointer",
                     isSelected && "bg-primary/10 shadow-[inner_0_0_20px_rgba(var(--primary),0.05)]"
                   )}
@@ -220,12 +220,12 @@ export function ListView<T extends ListItem>({
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-black tracking-tight group-hover:text-primary transition-colors">{item.title}</span>
                       {item.badge && (
-                        <Badge variant={item.badge.variant || "secondary"} className="bg-white/5 border-white/10 text-[10px] font-black uppercase tracking-widest px-2 py-0.5">
+                        <Badge variant={item.badge.variant || "secondary"} className="bg-muted border-border text-[10px] font-black uppercase tracking-widest px-2 py-0.5">
                           {item.badge.label}
                         </Badge>
                       )}
                       {item.status && (
-                        <div className="flex items-center gap-1.5 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+                        <div className="flex items-center gap-1.5 bg-muted px-2 py-0.5 rounded-full border border-border">
                           <div
                             className="h-1.5 w-1.5 rounded-full shadow-lg"
                             style={{ "--status-indicator": item.status.color || "hsl(var(--muted-foreground))", backgroundColor: "var(--status-indicator)" } as React.CSSProperties}
@@ -249,7 +249,7 @@ export function ListView<T extends ListItem>({
                     {item.meta && item.meta.length > 0 && (
                       <div className="flex flex-wrap gap-3 mt-3">
                         {item.meta.map((m, i) => (
-                          <div key={i} className="text-[9px] font-black uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded border border-white/5">
+                          <div key={i} className="text-[9px] font-black uppercase tracking-widest bg-muted px-2 py-0.5 rounded border border-border">
                             <span className="opacity-30">{m.label}:</span>{" "}
                             <span className="opacity-80">{m.value}</span>
                           </div>
@@ -261,11 +261,11 @@ export function ListView<T extends ListItem>({
                   {item.actions && item.actions.length > 0 && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="glass-morphism border-white/10">
+                      <DropdownMenuContent align="end" className="glass-morphism border-border">
                         {item.actions.map((action, i) => (
                           <DropdownMenuItem
                             key={i}

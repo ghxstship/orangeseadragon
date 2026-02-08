@@ -16,16 +16,16 @@ export default function LeavePage() {
   const [showRequestForm, setShowRequestForm] = useState(false);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between px-4">
+    <div className="flex flex-col h-full bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">Leave Management</h2>
+          <h2 className="text-2xl font-bold tracking-tight">Leave Management</h2>
           <p className="text-muted-foreground">Request time off and view team availability</p>
         </div>
-      </div>
+      </header>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="px-4">
-        <TabsList className="bg-zinc-800/50">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-auto px-6 pt-6">
+        <TabsList>
           <TabsTrigger value="calendar">Calendar View</TabsTrigger>
           <TabsTrigger value="requests">All Requests</TabsTrigger>
           <TabsTrigger value="balances">My Balances</TabsTrigger>
@@ -45,27 +45,27 @@ export default function LeavePage() {
 
         <TabsContent value="balances" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-              <p className="text-sm text-emerald-300/70">Annual Leave</p>
-              <p className="text-3xl font-bold text-emerald-400 mt-1">12 days</p>
-              <p className="text-xs text-zinc-500 mt-2">of 20 days remaining</p>
+            <div className="p-6 rounded-xl bg-primary/10 border border-primary/20">
+              <p className="text-sm text-muted-foreground">Annual Leave</p>
+              <p className="text-3xl font-bold text-primary mt-1">12 days</p>
+              <p className="text-xs text-muted-foreground mt-2">of 20 days remaining</p>
             </div>
-            <div className="p-6 rounded-xl bg-rose-500/10 border border-rose-500/20">
-              <p className="text-sm text-rose-300/70">Sick Leave</p>
-              <p className="text-3xl font-bold text-rose-400 mt-1">8 days</p>
-              <p className="text-xs text-zinc-500 mt-2">of 10 days remaining</p>
+            <div className="p-6 rounded-xl bg-destructive/10 border border-destructive/20">
+              <p className="text-sm text-muted-foreground">Sick Leave</p>
+              <p className="text-3xl font-bold text-destructive mt-1">8 days</p>
+              <p className="text-xs text-muted-foreground mt-2">of 10 days remaining</p>
             </div>
-            <div className="p-6 rounded-xl bg-blue-500/10 border border-blue-500/20">
-              <p className="text-sm text-blue-300/70">Personal Days</p>
-              <p className="text-3xl font-bold text-blue-400 mt-1">2 days</p>
-              <p className="text-xs text-zinc-500 mt-2">of 3 days remaining</p>
+            <div className="p-6 rounded-xl bg-accent border">
+              <p className="text-sm text-muted-foreground">Personal Days</p>
+              <p className="text-3xl font-bold mt-1">2 days</p>
+              <p className="text-xs text-muted-foreground mt-2">of 3 days remaining</p>
             </div>
           </div>
         </TabsContent>
       </Tabs>
 
       <Dialog open={showRequestForm} onOpenChange={setShowRequestForm}>
-        <DialogContent className="max-w-2xl bg-zinc-900 border-white/10">
+        <DialogContent className="max-w-2xl">
           <LeaveRequestForm 
             onSubmit={(data) => {
               console.log('Submit leave request:', data);

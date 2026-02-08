@@ -262,7 +262,7 @@ export function CrewCheckinKiosk() {
       isFullscreen && "fixed inset-0 z-50"
     )}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/50">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-black/50">
         <div>
           <h1 className="text-xl font-bold">{config.event_name}</h1>
           <div className="flex items-center gap-2 text-sm text-neutral-400">
@@ -297,7 +297,7 @@ export function CrewCheckinKiosk() {
             variant="ghost"
             size="icon"
             onClick={toggleFullscreen}
-            className="text-white hover:bg-white/10"
+            className="text-white hover:bg-accent"
           >
             {isFullscreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
           </Button>
@@ -319,7 +319,7 @@ export function CrewCheckinKiosk() {
               >
                 <div 
                   onClick={simulateScan}
-                  className="w-80 h-80 mx-auto mb-8 rounded-3xl border-4 border-dashed border-white/20 flex items-center justify-center cursor-pointer hover:border-emerald-500/50 transition-colors group"
+                  className="w-80 h-80 mx-auto mb-8 rounded-3xl border-4 border-dashed border-border flex items-center justify-center cursor-pointer hover:border-emerald-500/50 transition-colors group"
                 >
                   <div className="text-center">
                     <QrCode className="h-24 w-24 mx-auto mb-4 text-neutral-600 group-hover:text-emerald-400 transition-colors" />
@@ -377,7 +377,7 @@ export function CrewCheckinKiosk() {
                 exit={{ opacity: 0, y: -20 }}
                 className="w-full max-w-md"
               >
-                <Card className="bg-white/5 border-white/10 p-8">
+                <Card className="bg-muted border-border p-8">
                   <div className="text-center mb-6">
                     <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
                       <UserCheck className="h-10 w-10 text-emerald-400" />
@@ -419,7 +419,7 @@ export function CrewCheckinKiosk() {
                         <Button
                           onClick={handleCheckOut}
                           variant="outline"
-                          className="w-full h-14 text-lg border-white/20"
+                          className="w-full h-14 text-lg border-border"
                         >
                           <LogOut className="h-6 w-6 mr-2" />
                           Check Out
@@ -499,8 +499,8 @@ export function CrewCheckinKiosk() {
         </div>
 
         {/* Recent Check-ins Sidebar */}
-        <div className="w-80 border-l border-white/10 flex flex-col">
-          <div className="px-4 py-3 border-b border-white/10">
+        <div className="w-80 border-l border-border flex flex-col">
+          <div className="px-4 py-3 border-b border-border">
             <h3 className="font-semibold">Recent Activity</h3>
           </div>
           
@@ -508,7 +508,7 @@ export function CrewCheckinKiosk() {
             {recentCheckins.map((checkin) => (
               <div
                 key={checkin.id}
-                className="px-4 py-3 border-b border-white/5 hover:bg-white/5"
+                className="px-4 py-3 border-b border-border hover:bg-muted"
               >
                 <div className="flex items-center gap-3">
                   <div className={cn(
@@ -554,7 +554,7 @@ export function CrewCheckinKiosk() {
           </div>
 
           {/* Stats Footer */}
-          <div className="px-4 py-3 border-t border-white/10 bg-white/5">
+          <div className="px-4 py-3 border-t border-border bg-muted">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
                 <p className="text-2xl font-bold text-emerald-400">

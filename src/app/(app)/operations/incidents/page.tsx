@@ -1,6 +1,5 @@
 'use client';
 
-import { PageHeader } from "@/components/common/page-header";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -48,91 +47,97 @@ const mockIncidents: Incident[] = [
   }
 ];
 
+const severityIndicator: Record<string, string> = {
+  critical: "bg-destructive animate-pulse",
+  major: "bg-warning",
+  minor: "bg-primary",
+};
+
+const statusBadgeVariant: Record<string, 'destructive' | 'warning' | 'default'> = {
+  open: 'destructive',
+  investigating: 'warning',
+  resolved: 'default',
+};
+
 export default function IncidentsPage() {
   return (
-    <div className="space-y-6 max-w-[1600px] mx-auto p-6">
-      <PageHeader
-        title="Incident Log"
-        description="Track and resolve operational issues"
-        actions={
+    <div className="flex flex-col h-full bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Incident Log</h1>
+            <p className="text-muted-foreground">Track and resolve operational issues</p>
+          </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="gap-2 border-white/10 bg-white/5 hover:bg-white/10 text-white">
+            <Button variant="outline" className="gap-2">
               <Filter className="h-4 w-4" />
               Filter
             </Button>
-            <Button className="bg-rose-500 hover:bg-rose-600 text-white gap-2 shadow-lg shadow-rose-500/20">
+            <Button variant="destructive" className="gap-2">
               <AlertCircle className="h-4 w-4" />
               Log Incident
             </Button>
           </div>
-        }
-      />
+        </div>
+      </header>
 
-      <div className="grid gap-4">
-        {mockIncidents.map((incident, index) => (
-          <motion.div
-            key={incident.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <Card className={cn(
-              "p-4 group transition-all duration-300 border-white/5",
-              incident.status === 'open'
-                ? "bg-gradient-to-r from-rose-500/10 to-transparent border-rose-500/20 shadow-lg shadow-rose-500/5"
-                : incident.status === 'investigating'
-                  ? "bg-gradient-to-r from-amber-500/10 to-transparent border-amber-500/20 shadow-lg shadow-amber-500/5"
-                  : "bg-white/5 hover:bg-white/10"
-            )}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={cn(
-                    "h-2 w-2 rounded-full shadow-[0_0_10px_currentColor]",
-                    incident.severity === 'critical' ? "bg-rose-500 text-rose-500 animate-pulse" :
-                      incident.severity === 'major' ? "bg-amber-500 text-amber-500" :
-                        "bg-blue-500 text-blue-500"
-                  )} />
+      <div className="flex-1 overflow-auto p-6">
+        <div className="grid gap-4">
+          {mockIncidents.map((incident, index) => (
+            <motion.div
+              key={incident.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card className={cn(
+                "p-4 group transition-all duration-300",
+                incident.status === 'open' && "border-destructive/30",
+                incident.status === 'investigating' && "border-warning/30",
+              )}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className={cn(
+                      "h-2 w-2 rounded-full",
+                      severityIndicator[incident.severity]
+                    )} />
 
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-3">
-                      <h3 className="font-semibold text-white group-hover:text-rose-400 transition-colors">
-                        {incident.title}
-                      </h3>
-                      <Badge variant="outline" className={cn(
-                        "uppercase text-[10px] tracking-wider font-bold border-0 px-2 py-0.5",
-                        incident.status === 'open' ? "bg-rose-500/20 text-rose-400" :
-                          incident.status === 'investigating' ? "bg-amber-500/20 text-amber-400" :
-                            "bg-emerald-500/20 text-emerald-400"
-                      )}>
-                        {incident.status}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-neutral-400">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" /> {incident.time}
-                      </span>
-                      <span className="w-1 h-1 rounded-full bg-neutral-700" />
-                      <span>{incident.location}</span>
-                      <span className="w-1 h-1 rounded-full bg-neutral-700" />
-                      <span>by {incident.reporter}</span>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-semibold group-hover:text-primary transition-colors">
+                          {incident.title}
+                        </h3>
+                        <Badge variant={statusBadgeVariant[incident.status]} className="uppercase text-[10px] tracking-wider font-bold">
+                          {incident.status}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" /> {incident.time}
+                        </span>
+                        <span className="w-1 h-1 rounded-full bg-border" />
+                        <span>{incident.location}</span>
+                        <span className="w-1 h-1 rounded-full bg-border" />
+                        <span>by {incident.reporter}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-4">
-                  {incident.status !== 'resolved' && (
-                    <Button size="sm" variant="ghost" className="text-xs hover:bg-white/10 hover:text-white text-neutral-400">
-                      Update Status
+                  <div className="flex items-center gap-4">
+                    {incident.status !== 'resolved' && (
+                      <Button size="sm" variant="ghost" className="text-xs">
+                        Update Status
+                      </Button>
+                    )}
+                    <Button size="icon" variant="ghost" className="h-8 w-8">
+                      <MoreHorizontal className="h-4 w-4" />
                     </Button>
-                  )}
-                  <Button size="icon" variant="ghost" className="h-8 w-8 text-neutral-400 hover:text-white hover:bg-white/10">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
+              </Card>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );

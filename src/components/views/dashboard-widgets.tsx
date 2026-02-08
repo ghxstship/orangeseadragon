@@ -52,7 +52,7 @@ export function MetricWidget({
       className="h-full"
     >
       <Card
-        className={cn("h-full cursor-pointer border-white/5 glass-morphism overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-primary/10", className)}
+        className={cn("h-full cursor-pointer border-border glass-morphism overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-primary/10", className)}
         onClick={onClick}
       >
         <CardHeader className="flex flex-row items-center justify-between pb-2 bg-background/5">
@@ -71,7 +71,7 @@ export function MetricWidget({
                     "flex items-center text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border",
                     trend.direction === "up" && "text-green-400 border-green-500/20 bg-green-500/10 shadow-[0_0_8px_rgba(34,197,94,0.2)]",
                     trend.direction === "down" && "text-red-400 border-red-500/20 bg-red-500/10 shadow-[0_0_8px_rgba(239,68,68,0.2)]",
-                    trend.direction === "neutral" && "text-muted-foreground border-white/10 bg-white/5"
+                    trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                   )}
                 >
                   {trend.direction === "up" && <TrendingUp className="h-3 w-3 mr-1" />}
@@ -132,8 +132,8 @@ export function ProgressWidget({
       animate={{ opacity: 1, y: 0 }}
       className="h-full"
     >
-      <Card className={cn("h-full border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
-        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+      <Card className={cn("h-full border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+        <CardHeader className="pb-4 border-b border-border bg-background/5">
           <div className="flex items-center justify-between">
             <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">{title}</CardTitle>
             {showPercentage && (
@@ -145,7 +145,7 @@ export function ProgressWidget({
           )}
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="relative h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+          <div className="relative h-2 w-full bg-muted rounded-full overflow-hidden border border-border">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${percentage}%` }}
@@ -195,8 +195,8 @@ export function ListWidget({
   const displayItems = items.slice(0, maxItems);
 
   return (
-    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
-      <CardHeader className="pb-3 border-b border-white/5 bg-background/5">
+    <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-3 border-b border-border bg-background/5">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">{title}</CardTitle>
@@ -206,11 +206,11 @@ export function ListWidget({
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10 rounded-full">
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent rounded-full">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="glass-morphism border-white/10">
+            <DropdownMenuContent align="end" className="glass-morphism border-border">
               <DropdownMenuItem className="text-[10px] font-bold uppercase tracking-wider" onClick={onViewAll}>View All</DropdownMenuItem>
               <DropdownMenuItem className="text-[10px] font-bold uppercase tracking-wider">Export</DropdownMenuItem>
             </DropdownMenuContent>
@@ -218,7 +218,7 @@ export function ListWidget({
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-border">
           <AnimatePresence mode="popLayout">
             {displayItems.map((item, idx) => (
               <motion.div
@@ -246,7 +246,7 @@ export function ListWidget({
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                   {item.badge && (
-                    <Badge variant={item.badge.variant || "secondary"} className="bg-white/5 border-white/10 text-[9px] font-black uppercase tracking-[0.1em] px-2 py-0.5">
+                    <Badge variant={item.badge.variant || "secondary"} className="bg-muted border-border text-[9px] font-black uppercase tracking-[0.1em] px-2 py-0.5">
                       {item.badge.label}
                     </Badge>
                   )}
@@ -261,8 +261,8 @@ export function ListWidget({
           </AnimatePresence>
         </div>
         {items.length > maxItems && onViewAll && (
-          <div className="p-3 border-t border-white/5 bg-background/5">
-            <Button variant="ghost" size="sm" className="w-full text-[10px] font-black uppercase tracking-widest hover:bg-white/5" onClick={onViewAll}>
+          <div className="p-3 border-t border-border bg-background/5">
+            <Button variant="ghost" size="sm" className="w-full text-[10px] font-black uppercase tracking-widest hover:bg-muted" onClick={onViewAll}>
               View All ({items.length})
             </Button>
           </div>
@@ -340,8 +340,8 @@ export function DonutWidget({
   };
 
   return (
-    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
-      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+    <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-border bg-background/5">
         <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">{title}</CardTitle>
         {description && (
           <CardDescription className="text-[9px] font-bold uppercase opacity-30 mt-1">{description}</CardDescription>
@@ -435,8 +435,8 @@ export function SparklineWidget({
     .join(" ");
 
   return (
-    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
-      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+    <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-border bg-background/5">
         <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 text-muted-foreground">
           {title}
         </CardTitle>
@@ -451,7 +451,7 @@ export function SparklineWidget({
                   "flex items-center text-[10px] font-black uppercase tracking-wider mt-3 px-2 py-0.5 rounded-full border w-fit",
                   trend.direction === "up" && "text-green-400 border-green-500/20 bg-green-500/10 shadow-[0_0_8px_rgba(34,197,94,0.1)]",
                   trend.direction === "down" && "text-red-400 border-red-500/20 bg-red-500/10 shadow-[0_0_8px_rgba(239,68,68,0.1)]",
-                  trend.direction === "neutral" && "text-muted-foreground border-white/10 bg-white/5"
+                  trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                 )}
               >
                 {trend.direction === "up" && <TrendingUp className="h-2.5 w-2.5 mr-1" />}

@@ -174,7 +174,7 @@ export function IncidentControlRoom() {
       isFullscreen && "fixed inset-0 z-50"
     )}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/50">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-black/50">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Activity className="h-6 w-6 text-emerald-400" />
@@ -195,7 +195,7 @@ export function IncidentControlRoom() {
               variant="ghost"
               size="icon"
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-accent"
             >
               {soundEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
             </Button>
@@ -203,7 +203,7 @@ export function IncidentControlRoom() {
               variant="ghost"
               size="icon"
               onClick={toggleFullscreen}
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-accent"
             >
               {isFullscreen ? <Minimize2 className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
             </Button>
@@ -212,8 +212,8 @@ export function IncidentControlRoom() {
       </div>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-4 gap-4 px-6 py-4 border-b border-white/10">
-        <Card className="bg-white/5 border-white/10 p-4">
+      <div className="grid grid-cols-4 gap-4 px-6 py-4 border-b border-border">
+        <Card className="bg-muted border-border p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-neutral-400 uppercase tracking-wider">Active Incidents</p>
@@ -227,7 +227,7 @@ export function IncidentControlRoom() {
           "border p-4",
           stats.critical_count > 0 
             ? "bg-red-500/10 border-red-500/30 animate-pulse" 
-            : "bg-white/5 border-white/10"
+            : "bg-muted border-border"
         )}>
           <div className="flex items-center justify-between">
             <div>
@@ -246,7 +246,7 @@ export function IncidentControlRoom() {
           </div>
         </Card>
         
-        <Card className="bg-white/5 border-white/10 p-4">
+        <Card className="bg-muted border-border p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-neutral-400 uppercase tracking-wider">Avg Response</p>
@@ -256,7 +256,7 @@ export function IncidentControlRoom() {
           </div>
         </Card>
         
-        <Card className="bg-white/5 border-white/10 p-4">
+        <Card className="bg-muted border-border p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-neutral-400 uppercase tracking-wider">Teams Deployed</p>
@@ -270,15 +270,15 @@ export function IncidentControlRoom() {
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Incident List */}
-        <div className="w-1/2 border-r border-white/10 flex flex-col">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <div className="w-1/2 border-r border-border flex flex-col">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
             <h2 className="font-semibold">Active Incidents</h2>
             <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setFilterSeverity(null)}
-                className={cn(!filterSeverity && "bg-white/10")}
+                className={cn(!filterSeverity && "bg-accent")}
               >
                 All
               </Button>
@@ -288,7 +288,7 @@ export function IncidentControlRoom() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setFilterSeverity(sev)}
-                  className={cn(filterSeverity === sev && "bg-white/10")}
+                  className={cn(filterSeverity === sev && "bg-accent")}
                 >
                   <div className={cn("w-2 h-2 rounded-full mr-1", SEVERITY_COLORS[sev])} />
                   {sev.charAt(0).toUpperCase()}
@@ -307,10 +307,10 @@ export function IncidentControlRoom() {
                   exit={{ opacity: 0, x: 20 }}
                   onClick={() => setSelectedIncident(incident)}
                   className={cn(
-                    "p-4 border-b border-white/5 cursor-pointer transition-all",
+                    "p-4 border-b border-border cursor-pointer transition-all",
                     selectedIncident?.id === incident.id 
-                      ? "bg-white/10" 
-                      : "hover:bg-white/5",
+                      ? "bg-accent" 
+                      : "hover:bg-muted",
                     incident.severity === 'critical' && "bg-red-500/5 border-l-4 border-l-red-500"
                   )}
                 >
@@ -381,19 +381,19 @@ export function IncidentControlRoom() {
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <Card className="bg-white/5 border-white/10 p-4">
+                <Card className="bg-muted border-border p-4">
                   <p className="text-xs text-neutral-400 mb-1">Location</p>
                   <p className="font-medium">{selectedIncident.location}</p>
                 </Card>
-                <Card className="bg-white/5 border-white/10 p-4">
+                <Card className="bg-muted border-border p-4">
                   <p className="text-xs text-neutral-400 mb-1">Reported</p>
                   <p className="font-medium">{formatTimeAgo(selectedIncident.reported_at)}</p>
                 </Card>
-                <Card className="bg-white/5 border-white/10 p-4">
+                <Card className="bg-muted border-border p-4">
                   <p className="text-xs text-neutral-400 mb-1">Type</p>
                   <p className="font-medium capitalize">{selectedIncident.type}</p>
                 </Card>
-                <Card className="bg-white/5 border-white/10 p-4">
+                <Card className="bg-muted border-border p-4">
                   <p className="text-xs text-neutral-400 mb-1">Status</p>
                   <p className="font-medium capitalize">{selectedIncident.status}</p>
                 </Card>
@@ -425,7 +425,7 @@ export function IncidentControlRoom() {
                 )}
                 {['dispatched', 'on-scene', 'in-progress'].includes(selectedIncident.status) && (
                   <>
-                    <Button variant="outline" className="flex-1 border-white/20">
+                    <Button variant="outline" className="flex-1 border-border">
                       <Phone className="h-4 w-4 mr-2" />
                       Contact Team
                     </Button>

@@ -149,8 +149,8 @@ export function LeaveCalendar({
   };
 
   return (
-    <Card className="bg-zinc-900/60 border-white/10">
-      <CardHeader className="border-b border-white/5">
+    <Card className="bg-zinc-900/60 border-border">
+      <CardHeader className="border-b border-border">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
             <CalendarIcon className="w-5 h-5" />
@@ -193,7 +193,7 @@ export function LeaveCalendar({
       </CardHeader>
 
       <CardContent className="p-4">
-        <div className="grid grid-cols-7 gap-px bg-white/5 rounded-lg overflow-hidden">
+        <div className="grid grid-cols-7 gap-px bg-muted rounded-lg overflow-hidden">
           {DAYS.map(day => (
             <div 
               key={day} 
@@ -261,7 +261,7 @@ export function LeaveCalendar({
                               </span>
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent side="right" className="bg-zinc-800 border-white/10">
+                          <TooltipContent side="right" className="bg-zinc-800 border-border">
                             <div className="space-y-2">
                               <div className="flex items-center gap-2">
                                 <Avatar className="h-6 w-6">

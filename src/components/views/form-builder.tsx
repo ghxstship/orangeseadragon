@@ -212,8 +212,8 @@ export function FormBuilder({
   return (
     <div className={cn("grid grid-cols-1 lg:grid-cols-4 gap-6", className)}>
       {/* Field Palette */}
-      <Card className="lg:col-span-1 border-white/5 glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
-        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+      <Card className="lg:col-span-1 border-border glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
+        <CardHeader className="pb-4 border-b border-border bg-background/5">
           <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Add Fields</CardTitle>
         </CardHeader>
         <CardContent className="p-3">
@@ -228,7 +228,7 @@ export function FormBuilder({
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full justify-start h-10 px-4 glass-morphism border-white/5 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+                  className="w-full justify-start h-10 px-4 glass-morphism border-border hover:border-primary/30 hover:bg-primary/5 transition-all group"
                   onClick={() => addField(type)}
                   disabled={readOnly}
                 >
@@ -242,8 +242,8 @@ export function FormBuilder({
       </Card>
 
       {/* Form Preview */}
-      <Card className="lg:col-span-2 border-white/5 glass-morphism overflow-hidden shadow-2xl">
-        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+      <Card className="lg:col-span-2 border-border glass-morphism overflow-hidden shadow-2xl">
+        <CardHeader className="pb-4 border-b border-border bg-background/5">
           <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">{title}</CardTitle>
           {description && <CardDescription className="text-[10px] font-bold uppercase opacity-30 mt-1 tracking-wider">{description}</CardDescription>}
         </CardHeader>
@@ -252,7 +252,7 @@ export function FormBuilder({
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-center py-20 text-muted-foreground border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.02]"
+              className="text-center py-20 text-muted-foreground border-2 border-dashed border-border rounded-3xl bg-muted/30"
             >
               <Plus className="h-10 w-10 mx-auto mb-4 opacity-20" />
               <p className="text-[11px] font-black uppercase tracking-widest opacity-40">Add fields from the palette</p>
@@ -272,10 +272,10 @@ export function FormBuilder({
                     onDragOver={(e: any) => handleDragOver(e, field.id)}
                     onDragEnd={handleDragEnd}
                     className={cn(
-                      "group relative p-5 border border-white/5 rounded-2xl cursor-pointer transition-all duration-300",
+                      "group relative p-5 border border-border rounded-2xl cursor-pointer transition-all duration-300",
                       selectedFieldId === field.id
                         ? "bg-primary/[0.03] border-primary/30 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.05)]"
-                        : "hover:border-white/10 hover:bg-white/[0.02]",
+                        : "hover:border-border hover:bg-accent/30",
                       draggedFieldId === field.id && "opacity-50 scale-95",
                       field.width === "half" && "w-[calc(50%-8px)] inline-block mr-4",
                       field.width === "third" && "w-[calc(33.33%-11px)] inline-block mr-4"
@@ -301,7 +301,7 @@ export function FormBuilder({
                     ) : field.type === "paragraph" ? (
                       <p className="text-sm font-medium text-muted-foreground opacity-60">{field.description || "Paragraph text"}</p>
                     ) : (
-                      <div className="glass-morphism bg-white/[0.03] border-white/5 rounded-xl h-10 flex items-center px-4 opacity-40">
+                      <div className="glass-morphism bg-muted/30 border-border rounded-xl h-10 flex items-center px-4 opacity-40">
                         <span className="text-[10px] font-bold uppercase tracking-widest italic">{field.placeholder || `Enter ${field.label.toLowerCase()}...`}</span>
                       </div>
                     )}
@@ -311,7 +311,7 @@ export function FormBuilder({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 hover:bg-white/10 rounded-full"
+                          className="h-7 w-7 hover:bg-accent rounded-full"
                           onClick={(e) => {
                             e.stopPropagation();
                             duplicateField(field.id);
@@ -341,8 +341,8 @@ export function FormBuilder({
       </Card>
 
       {/* Field Settings */}
-      <Card className="lg:col-span-1 border-white/5 glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
-        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+      <Card className="lg:col-span-1 border-border glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
+        <CardHeader className="pb-4 border-b border-border bg-background/5">
           <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 flex items-center gap-3">
             <Settings className="h-4 w-4 text-primary" />
             Field Settings
@@ -364,7 +364,7 @@ export function FormBuilder({
                     value={selectedField.label}
                     onChange={(e) => updateField(selectedField.id, { label: e.target.value })}
                     disabled={readOnly}
-                    className="h-9 glass-morphism border-white/10 text-sm font-medium"
+                    className="h-9 glass-morphism border-border text-sm font-medium"
                   />
                 </div>
 
@@ -376,7 +376,7 @@ export function FormBuilder({
                         value={selectedField.placeholder || ""}
                         onChange={(e) => updateField(selectedField.id, { placeholder: e.target.value })}
                         disabled={readOnly}
-                        className="h-9 glass-morphism border-white/10 text-sm font-medium"
+                        className="h-9 glass-morphism border-border text-sm font-medium"
                       />
                     </div>
 
@@ -386,11 +386,11 @@ export function FormBuilder({
                         value={selectedField.description || ""}
                         onChange={(e) => updateField(selectedField.id, { description: e.target.value })}
                         disabled={readOnly}
-                        className="min-h-[100px] glass-morphism border-white/10 text-sm font-medium resize-none"
+                        className="min-h-[100px] glass-morphism border-border text-sm font-medium resize-none"
                       />
                     </div>
 
-                    <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-muted border border-border">
                       <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 cursor-pointer">Required Field</Label>
                       <Switch
                         checked={selectedField.required}
@@ -406,10 +406,10 @@ export function FormBuilder({
                         onValueChange={(v) => updateField(selectedField.id, { width: v as FormField["width"] })}
                         disabled={readOnly}
                       >
-                        <SelectTrigger className="h-9 glass-morphism border-white/10 text-sm font-medium">
+                        <SelectTrigger className="h-9 glass-morphism border-border text-sm font-medium">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="glass-morphism border-white/10">
+                        <SelectContent className="glass-morphism border-border">
                           <SelectItem value="full" className="text-xs font-bold uppercase">Full Width (1/1)</SelectItem>
                           <SelectItem value="half" className="text-xs font-bold uppercase">Half Width (1/2)</SelectItem>
                           <SelectItem value="third" className="text-xs font-bold uppercase">Third Width (1/3)</SelectItem>
@@ -443,7 +443,7 @@ export function FormBuilder({
                                   updateField(selectedField.id, { options: newOptions });
                                 }}
                                 disabled={readOnly}
-                                className="h-9 glass-morphism border-white/10 text-sm font-medium"
+                                className="h-9 glass-morphism border-border text-sm font-medium"
                               />
                               {!readOnly && (
                                 <Button
@@ -465,7 +465,7 @@ export function FormBuilder({
                           <Button
                             variant="outline"
                             size="sm"
-                            className="w-full glass-morphism border-white/10 border-dashed hover:border-primary/50 text-[10px] font-black uppercase tracking-widest py-4"
+                            className="w-full glass-morphism border-border border-dashed hover:border-primary/50 text-[10px] font-black uppercase tracking-widest py-4"
                             onClick={() => {
                               const newOptions = [
                                 ...(selectedField.options || []),
@@ -482,7 +482,7 @@ export function FormBuilder({
                     </div>
                   )}
 
-                <div className="pt-4 border-t border-white/5">
+                <div className="pt-4 border-t border-border">
                   <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-3 py-1">
                     {fieldTypeLabels[selectedField.type]}
                   </Badge>

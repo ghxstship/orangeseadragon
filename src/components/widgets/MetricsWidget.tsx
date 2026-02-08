@@ -61,7 +61,7 @@ export function MetricsWidget({ title = "Key Metrics", metrics }: MetricsWidgetP
   }
 
   return (
-    <Card className="spatial-card bg-card/50 backdrop-blur-xl border-white/5 overflow-hidden">
+    <Card className="spatial-card bg-card/50 backdrop-blur-xl border-border overflow-hidden">
       <CardHeader className="pb-2">
         <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-50">{title}</CardTitle>
       </CardHeader>
