@@ -289,7 +289,7 @@ export function CanvasLayout({
         {config.sidebar?.position === 'left' && config.sidebar.enabled && sidebarContent && (
           <aside
             className="border-r bg-muted/30 flex-shrink-0 overflow-auto"
-            style={{ width: config.sidebar.width || 240 }}
+            style={{ width: config.sidebar.width || 'var(--sidebar-width-sm, 240px)' }}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>
@@ -320,7 +320,7 @@ export function CanvasLayout({
         {config.sidebar?.position === 'right' && config.sidebar.enabled && sidebarContent && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 overflow-auto"
-            style={{ width: config.sidebar.width || 240 }}
+            style={{ width: config.sidebar.width || 'var(--sidebar-width-sm, 240px)' }}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>

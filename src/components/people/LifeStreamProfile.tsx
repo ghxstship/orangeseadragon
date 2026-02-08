@@ -64,15 +64,15 @@ export function LifeStreamProfile({ person }: LifeStreamProfileProps) {
                 <CardContent className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={SKILL_DATA}>
-                            <PolarGrid stroke="#333" />
-                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#888', fontSize: 12 }} />
+                            <PolarGrid stroke="hsl(var(--chart-tooltip-border))" />
+                            <PolarAngleAxis dataKey="subject" tick={{ fill: 'hsl(var(--chart-axis))', fontSize: 12 }} />
                             <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
                             <Radar
                                 name="Skills"
                                 dataKey="A"
-                                stroke="#10b981"
+                                stroke="hsl(var(--chart-income))"
                                 strokeWidth={2}
-                                fill="#10b981"
+                                fill="hsl(var(--chart-income))"
                                 fillOpacity={0.3}
                             />
                         </RadarChart>

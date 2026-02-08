@@ -204,7 +204,7 @@ export function DocumentLayout({
         {config.sidebar?.enabled && sidebarOpen && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 flex flex-col"
-            style={{ width: config.sidebar.width || 300 }}
+            style={{ width: config.sidebar.width || 'var(--sidebar-width-md, 300px)' }}
           >
             {/* Sidebar Tabs */}
             <div className="flex border-b">

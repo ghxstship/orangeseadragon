@@ -60,10 +60,10 @@ export interface MapViewProps {
 }
 
 const defaultMarkerTypes = [
-  { type: "venue", label: "Venues", color: "#0066FF", icon: <Building2 className="h-4 w-4" /> },
-  { type: "asset", label: "Assets", color: "#10B981", icon: <Package className="h-4 w-4" /> },
-  { type: "person", label: "People", color: "#8B5CF6", icon: <Users className="h-4 w-4" /> },
-  { type: "event", label: "Events", color: "#F59E0B", icon: <Calendar className="h-4 w-4" /> },
+  { type: "venue", label: "Venues", color: "hsl(var(--marker-venue))", icon: <Building2 className="h-4 w-4" /> },
+  { type: "asset", label: "Assets", color: "hsl(var(--marker-asset))", icon: <Package className="h-4 w-4" /> },
+  { type: "person", label: "People", color: "hsl(var(--marker-person))", icon: <Users className="h-4 w-4" /> },
+  { type: "event", label: "Events", color: "hsl(var(--marker-event))", icon: <Calendar className="h-4 w-4" /> },
 ];
 
 export function MapView({
@@ -165,7 +165,7 @@ export function MapView({
   const getMarkerColor = (marker: MapMarker) => {
     if (marker.color) return marker.color;
     const typeConfig = markerTypes.find((t) => t.type === marker.type);
-    return typeConfig?.color || "#0066FF";
+    return typeConfig?.color || "hsl(var(--marker-default))";
   };
 
   const getMarkerIcon = (marker: MapMarker) => {

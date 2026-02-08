@@ -74,9 +74,13 @@ const CELL_WIDTH = {
   months: 150,
 };
 
-const ROW_HEIGHT = 48;
-const HEADER_HEIGHT = 60;
-const GROUP_WIDTH = 200;
+const _ROW_HEIGHT = 48;
+const _HEADER_HEIGHT = 60;
+const _GROUP_WIDTH = 200;
+
+const ROW_HEIGHT_VAR = 'var(--timeline-row-height, 48px)';
+const HEADER_HEIGHT_VAR = 'var(--timeline-header-height, 60px)';
+const GROUP_WIDTH_VAR = 'var(--timeline-group-width, 200px)';
 
 export function TimelineView({
   items,
@@ -314,10 +318,10 @@ export function TimelineView({
       <CardContent className="p-0">
         <div className="flex">
           {showGroups && groups.length > 0 && (
-            <div className="flex-shrink-0 border-r border-white/5 bg-background/20" style={{ width: GROUP_WIDTH }}>
+            <div className="flex-shrink-0 border-r border-white/5 bg-background/20" style={{ width: GROUP_WIDTH_VAR }}>
               <div
                 className="border-b border-white/5 bg-white/5 px-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
-                style={{ height: HEADER_HEIGHT }}
+                style={{ height: HEADER_HEIGHT_VAR }}
               >
                 Groups
               </div>
@@ -325,7 +329,7 @@ export function TimelineView({
                 <div
                   key={group?.id || `ungrouped-${index}`}
                   className="border-b border-white/5 px-6 flex items-center text-xs font-bold transition-colors hover:bg-white/5"
-                  style={{ height: ROW_HEIGHT }}
+                  style={{ height: ROW_HEIGHT_VAR }}
                 >
                   {group ? (
                     <div className="flex items-center gap-3">
@@ -350,7 +354,7 @@ export function TimelineView({
               {/* Header */}
               <div
                 className="flex border-b border-white/5 bg-white/5 sticky top-0 z-30"
-                style={{ height: HEADER_HEIGHT }}
+                style={{ height: HEADER_HEIGHT_VAR }}
               >
                 {timeUnits.map((unit, index) => (
                   <div
@@ -399,7 +403,7 @@ export function TimelineView({
                     <div
                       key={group?.id || `ungrouped-${groupIndex}`}
                       className="relative border-b border-white/5 group/row"
-                      style={{ height: ROW_HEIGHT }}
+                      style={{ height: ROW_HEIGHT_VAR }}
                     >
                       <TooltipProvider>
                         {groupItems.map((item) => {

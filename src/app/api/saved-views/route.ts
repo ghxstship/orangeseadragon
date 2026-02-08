@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
   let query = supabase
     .from("saved_views")
     .select("*")
+    .is("deleted_at", null)
     .or(`user_id.eq.${user.id},is_shared.eq.true`)
     .order("name", { ascending: true });
 

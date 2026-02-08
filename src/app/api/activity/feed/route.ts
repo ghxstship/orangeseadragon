@@ -45,12 +45,12 @@ export type ActivityCategory =
   | 'system';
 
 const CATEGORY_CONFIG: Record<ActivityCategory, { label: string; color: string }> = {
-  crm: { label: 'CRM', color: '#3b82f6' },
-  task: { label: 'Tasks', color: '#f59e0b' },
-  document: { label: 'Documents', color: '#8b5cf6' },
-  workflow: { label: 'Workflows', color: '#10b981' },
-  support: { label: 'Support', color: '#ec4899' },
-  system: { label: 'System', color: '#6b7280' },
+  crm: { label: 'CRM', color: 'hsl(var(--primary))' },
+  task: { label: 'Tasks', color: 'hsl(var(--chart-4))' },
+  document: { label: 'Documents', color: 'hsl(var(--chart-5))' },
+  workflow: { label: 'Workflows', color: 'hsl(var(--chart-income))' },
+  support: { label: 'Support', color: 'hsl(var(--chart-3))' },
+  system: { label: 'System', color: 'hsl(var(--muted-foreground))' },
 };
 
 const TYPE_CONFIG: Record<ActivityType, { label: string; icon: string }> = {
@@ -192,7 +192,7 @@ export async function GET(request: NextRequest) {
         createdAt: item.created_at,
         // UI helpers
         categoryLabel: CATEGORY_CONFIG[category]?.label || category,
-        categoryColor: CATEGORY_CONFIG[category]?.color || '#6b7280',
+        categoryColor: CATEGORY_CONFIG[category]?.color || 'hsl(var(--muted-foreground))',
         typeLabel: TYPE_CONFIG[type]?.label || type,
         typeIcon: TYPE_CONFIG[type]?.icon || 'activity',
       };

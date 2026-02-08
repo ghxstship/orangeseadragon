@@ -222,11 +222,11 @@ export const supportTicketSchema = defineSchema({
     kanban: {
       columnField: 'status',
       columns: [
-        { value: 'new', label: 'New', color: '#3b82f6' },
-        { value: 'open', label: 'Open', color: '#22c55e' },
-        { value: 'pending', label: 'Pending', color: '#f59e0b' },
-        { value: 'on_hold', label: 'On Hold', color: '#6b7280' },
-        { value: 'resolved', label: 'Resolved', color: '#8b5cf6' },
+        { value: 'new', label: 'New', color: 'hsl(var(--primary))' },
+        { value: 'open', label: 'Open', color: 'hsl(var(--chart-income))' },
+        { value: 'pending', label: 'Pending', color: 'hsl(var(--chart-4))' },
+        { value: 'on_hold', label: 'On Hold', color: 'hsl(var(--muted-foreground))' },
+        { value: 'resolved', label: 'Resolved', color: 'hsl(var(--chart-5))' },
       ],
       card: {
         title: 'subject',

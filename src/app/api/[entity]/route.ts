@@ -20,10 +20,15 @@ export async function GET(
     const { entity } = await params;
     const tableName = normalizeEntity(entity);
 
-    // Use the entity name as the table name
-    let query = supabase.from(tableName).select('*', { count: 'exact' });
-
     const searchParams = request.nextUrl.searchParams;
+
+    // Use the entity name as the table name
+    // Filter out soft-deleted records by default
+    const includeDeleted = searchParams.get('include_deleted') === 'true';
+    let query = supabase.from(tableName).select('*', { count: 'exact' });
+    if (!includeDeleted) {
+        query = query.is('deleted_at', null);
+    }
     const where = searchParams.get('where');
     const orderBy = searchParams.get('orderBy');
     const page = searchParams.get('page');

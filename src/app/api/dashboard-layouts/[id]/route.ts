@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { requireAuth } from "@/lib/api/guard";
-import { apiSuccess, apiNoContent, badRequest, notFound, supabaseError, serverError } from "@/lib/api/response";
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from "@/lib/api/response";
 
 export async function GET(
   request: NextRequest,
@@ -100,15 +100,17 @@ export async function DELETE(
 
   const { id } = await params;
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("dashboard_layouts")
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq("id", id)
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select()
+    .single();
 
   if (error) {
     return supabaseError(error);
   }
 
-  return apiNoContent();
+  return apiSuccess(data, { message: 'Layout archived' });
 }

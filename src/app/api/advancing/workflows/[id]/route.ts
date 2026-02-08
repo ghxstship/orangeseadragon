@@ -97,14 +97,16 @@ export async function DELETE(
   const { supabase } = auth;
   const { id } = await params;
   
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('workflows')
-    .delete()
-    .eq('id', id);
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
   
   if (error) {
     return supabaseError(error);
   }
   
-  return apiSuccess({ deleted: true });
+  return apiSuccess(data, { message: 'Workflow archived' });
 }

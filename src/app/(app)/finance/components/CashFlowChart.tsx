@@ -47,38 +47,38 @@ export function CashFlowChart() {
                         <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="hsl(var(--chart-income))" stopOpacity={0.1} />
+                                    <stop offset="95%" stopColor="hsl(var(--chart-income))" stopOpacity={0} />
                                 </linearGradient>
                                 <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.1} />
-                                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                    <stop offset="5%" stopColor="hsl(var(--chart-expense))" stopOpacity={0.1} />
+                                    <stop offset="95%" stopColor="hsl(var(--chart-expense))" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <XAxis
                                 dataKey="name"
-                                stroke="#888888"
+                                stroke="hsl(var(--chart-axis))"
                                 fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
                             />
                             <YAxis
-                                stroke="#888888"
+                                stroke="hsl(var(--chart-axis))"
                                 fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
                                 tickFormatter={(value) => `$${value / 1000}k`}
                             />
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--chart-grid) / 0.05)" />
                             <Tooltip
-                                contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', borderColor: '#333', borderRadius: '8px' }}
-                                itemStyle={{ color: '#fff' }}
+                                contentStyle={{ backgroundColor: 'hsl(var(--chart-tooltip-bg) / 0.8)', borderColor: 'hsl(var(--chart-tooltip-border))', borderRadius: '8px' }}
+                                itemStyle={{ color: 'hsl(var(--chart-tooltip-text))' }}
                                 formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
                             />
                             <Area
                                 type="monotone"
                                 dataKey="income"
-                                stroke="#10b981"
+                                stroke="hsl(var(--chart-income))"
                                 strokeWidth={2}
                                 fillOpacity={1}
                                 fill="url(#colorIncome)"
@@ -87,7 +87,7 @@ export function CashFlowChart() {
                             <Area
                                 type="monotone"
                                 dataKey="expense"
-                                stroke="#ef4444"
+                                stroke="hsl(var(--chart-expense))"
                                 strokeWidth={2}
                                 fillOpacity={1}
                                 fill="url(#colorExpense)"

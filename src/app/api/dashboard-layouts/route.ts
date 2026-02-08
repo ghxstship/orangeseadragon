@@ -21,6 +21,7 @@ export async function GET(_request: NextRequest) {
   const { data, error } = await supabase
     .from("dashboard_layouts")
     .select("*")
+    .is("deleted_at", null)
     .or(`user_id.eq.${user.id},and(is_shared.eq.true,organization_id.eq.${organizationId})`)
     .order("is_default", { ascending: false })
     .order("name", { ascending: true });

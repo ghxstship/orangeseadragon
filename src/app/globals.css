@@ -45,6 +45,35 @@
     --priority-high: 25 95% 53%;
     --priority-urgent: 0 84% 60%;
 
+    /* Chart Colors */
+    --chart-1: 142 71% 45%;
+    --chart-2: 0 84% 60%;
+    --chart-3: 217 91% 60%;
+    --chart-4: 45 93% 47%;
+    --chart-5: 270 67% 47%;
+    --chart-income: 160 84% 39%;
+    --chart-expense: 0 84% 60%;
+    --chart-axis: 215 14% 34%;
+    --chart-grid: 0 0% 100%;
+    --chart-tooltip-bg: 0 0% 0%;
+    --chart-tooltip-border: 0 0% 20%;
+    --chart-tooltip-text: 0 0% 100%;
+
+    /* Map Marker Colors */
+    --marker-venue: 217 100% 50%;
+    --marker-asset: 160 84% 39%;
+    --marker-person: 258 90% 66%;
+    --marker-event: 38 92% 50%;
+    --marker-default: 217 100% 50%;
+
+    /* Timeline/Gantt Layout Dimensions */
+    --timeline-row-height: 48px;
+    --timeline-header-height: 60px;
+    --timeline-group-width: 200px;
+    --sidebar-width-sm: 240px;
+    --sidebar-width-md: 300px;
+    --sidebar-width-lg: 320px;
+
     /* Spatial Shadows */
     --shadow-spatial: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
     --shadow-ambient: 0 0 20px rgba(var(--primary), 0.05);
@@ -88,6 +117,27 @@
     --priority-medium: 217 91% 60%;
     --priority-high: 25 95% 53%;
     --priority-urgent: 0 62% 31%;
+
+    /* Chart Colors - Dark */
+    --chart-1: 142 71% 45%;
+    --chart-2: 0 62% 31%;
+    --chart-3: 217 91% 60%;
+    --chart-4: 45 93% 47%;
+    --chart-5: 270 67% 47%;
+    --chart-income: 160 84% 39%;
+    --chart-expense: 0 62% 31%;
+    --chart-axis: 215 20% 65%;
+    --chart-grid: 0 0% 100%;
+    --chart-tooltip-bg: 0 0% 0%;
+    --chart-tooltip-border: 0 0% 20%;
+    --chart-tooltip-text: 0 0% 100%;
+
+    /* Map Marker Colors - Dark */
+    --marker-venue: 217 100% 50%;
+    --marker-asset: 160 84% 39%;
+    --marker-person: 258 90% 66%;
+    --marker-event: 38 92% 50%;
+    --marker-default: 217 100% 50%;
 
     /* Spatial Shadows - Dark */
     --shadow-spatial: 0 10px 40px -10px rgba(0, 0, 0, 0.5);

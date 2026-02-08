@@ -38,6 +38,7 @@ import {
   eachDayOfInterval,
   eachWeekOfInterval,
   isWithinInterval,
+  isWeekend,
   parseISO,
   isBefore,
   isAfter,
@@ -67,25 +68,136 @@ export interface GanttViewProps<T extends GanttTask> {
   className?: string;
   onTaskClick?: (task: T) => void;
   onTaskUpdate?: (task: T, updates: { startDate: Date; endDate: Date }) => void;
+  onDependencyShift?: (shifts: Array<{ taskId: string; newStart: Date; newEnd: Date }>) => void;
   showDependencies?: boolean;
   showCriticalPath?: boolean;
   showBaseline?: boolean;
   baselineTasks?: T[];
+  skipWeekends?: boolean;
 }
 
 type ZoomLevel = "day" | "week" | "month";
+
+/**
+ * Add business days (skipping weekends) to a date.
+ */
+function addBusinessDays(date: Date, days: number): Date {
+  let result = new Date(date);
+  let remaining = Math.abs(days);
+  const direction = days >= 0 ? 1 : -1;
+
+  while (remaining > 0) {
+    result = addDays(result, direction);
+    if (!isWeekend(result)) {
+      remaining--;
+    }
+  }
+  return result;
+}
+
+/**
+ * Count business days between two dates.
+ */
+function businessDaysBetween(start: Date, end: Date): number {
+  let count = 0;
+  let current = new Date(start);
+  while (isBefore(current, end)) {
+    current = addDays(current, 1);
+    if (!isWeekend(current)) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/**
+ * Recalculate dependent task dates when a predecessor shifts.
+ * Uses topological ordering to cascade changes through the dependency graph.
+ */
+function recalculateDependencies(
+  allTasks: GanttTask[],
+  changedTaskId: string,
+  newEnd: Date,
+  skipWeekends: boolean
+): Array<{ taskId: string; newStart: Date; newEnd: Date }> {
+  const shifts: Array<{ taskId: string; newStart: Date; newEnd: Date }> = [];
+  const _taskMap = new Map(allTasks.map(t => [t.id, t]));
+
+  // BFS through dependents
+  const queue = [changedTaskId];
+  const visited = new Set<string>();
+
+  while (queue.length > 0) {
+    const currentId = queue.shift()!;
+    if (visited.has(currentId)) continue;
+    visited.add(currentId);
+
+    const predecessorEnd = currentId === changedTaskId
+      ? newEnd
+      : (() => {
+          const shift = shifts.find(s => s.taskId === currentId);
+          return shift ? shift.newEnd : null;
+        })();
+
+    if (!predecessorEnd) continue;
+
+    // Find all tasks that depend on this one
+    for (const task of allTasks) {
+      if (!task.dependencies?.includes(currentId)) continue;
+
+      const taskStart = typeof task.startDate === "string" ? parseISO(task.startDate) : new Date(task.startDate);
+      const taskEnd = typeof task.endDate === "string" ? parseISO(task.endDate) : new Date(task.endDate);
+      const duration = skipWeekends
+        ? businessDaysBetween(taskStart, taskEnd)
+        : differenceInDays(taskEnd, taskStart);
+
+      // New start = predecessor end + 1 (business) day
+      const candidateStart = skipWeekends
+        ? addBusinessDays(predecessorEnd, 1)
+        : addDays(predecessorEnd, 1);
+
+      // Only shift if the new start is later than current start
+      if (isAfter(candidateStart, taskStart)) {
+        const candidateEnd = skipWeekends
+          ? addBusinessDays(candidateStart, duration)
+          : addDays(candidateStart, duration);
+
+        shifts.push({
+          taskId: task.id,
+          newStart: candidateStart,
+          newEnd: candidateEnd,
+        });
+
+        queue.push(task.id);
+      }
+    }
+  }
+
+  return shifts;
+}
 
 export function GanttView<T extends GanttTask>({
   tasks,
   title,
   className,
   onTaskClick,
+  onDependencyShift,
   showDependencies = true,
   showCriticalPath = false,
+  skipWeekends: _skipWeekends = false,
 }: GanttViewProps<T>) {
   const [zoomLevel, setZoomLevel] = React.useState<ZoomLevel>("week");
   const [viewStart, setViewStart] = React.useState(() => startOfWeek(new Date()));
   const containerRef = React.useRef<HTMLDivElement>(null);
+
+  // Expose dependency recalculation via onDependencyShift callback
+  const _handleTaskDateChange = React.useCallback((task: GanttTask, newEnd: Date) => {
+    if (!onDependencyShift) return;
+    const shifts = recalculateDependencies(tasks, task.id, newEnd, _skipWeekends);
+    if (shifts.length > 0) {
+      onDependencyShift(shifts);
+    }
+  }, [tasks, onDependencyShift, _skipWeekends]);
 
   const getViewEnd = React.useCallback(() => {
     switch (zoomLevel) {

@@ -296,7 +296,7 @@ export function WorkspaceLayout({
         {config.sidebar?.enabled && sidebarContent && sidebarOpen && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 overflow-auto"
-            style={{ width: config.sidebar.width || 320 }}
+            style={{ width: config.sidebar.width || 'var(--sidebar-width-lg, 320px)' }}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>

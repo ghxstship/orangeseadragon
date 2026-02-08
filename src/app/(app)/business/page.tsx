@@ -3,37 +3,9 @@
 import { PipelineStats } from '@/components/modules/business/PipelineStats';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Building2, FileCheck, Handshake, Send } from 'lucide-react';
+import { QuickAccessCard } from '@/components/common/quick-access-card';
+import { Building2, FileCheck, Handshake, Send } from 'lucide-react';
 import Link from 'next/link';
-
-function QuickAccessCard({ 
-  title, 
-  description, 
-  href, 
-  icon: Icon 
-}: { 
-  title: string; 
-  description: string; 
-  href: string; 
-  icon: React.ElementType;
-}) {
-  return (
-    <Link href={href}>
-      <Card className="hover:shadow-md transition-all hover:border-primary/50 cursor-pointer h-full">
-        <CardContent className="p-4 flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-primary/10 text-primary">
-            <Icon className="w-5 h-5" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium text-sm">{title}</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-muted-foreground" />
-        </CardContent>
-      </Card>
-    </Link>
-  );
-}
 
 export default function BusinessPage() {
   return (

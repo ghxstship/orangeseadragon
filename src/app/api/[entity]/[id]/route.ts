@@ -24,6 +24,7 @@ export async function GET(
         .from(tableName)
         .select('*')
         .eq('id', id)
+        .is('deleted_at', null)
         .single();
 
     if (error) {
@@ -73,14 +74,29 @@ export async function DELETE(
     const { entity, id } = await params;
     const tableName = normalizeEntity(entity);
 
-    const { error } = await supabase
+    // Soft delete: set deleted_at timestamp instead of hard delete
+    const { data, error } = await supabase
         .from(tableName)
-        .delete()
-        .eq('id', id);
+        .update({ deleted_at: new Date().toISOString() })
+        .eq('id', id)
+        .select()
+        .single();
 
     if (error) {
+        // Fallback to hard delete for tables without deleted_at column
+        if (error.message?.includes('deleted_at')) {
+            const { error: hardDeleteError } = await supabase
+                .from(tableName)
+                .delete()
+                .eq('id', id);
+
+            if (hardDeleteError) {
+                return supabaseError(hardDeleteError);
+            }
+            return apiNoContent();
+        }
         return supabaseError(error);
     }
 
-    return apiNoContent();
+    return apiSuccess(data, { message: 'Record archived' });
 }

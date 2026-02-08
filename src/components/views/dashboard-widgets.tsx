@@ -285,6 +285,7 @@ export interface DonutWidgetProps {
   centerValue?: string | number;
   description?: string;
   className?: string;
+  onSegmentClick?: (segment: ChartDataPoint) => void;
 }
 
 export function DonutWidget({
@@ -294,15 +295,16 @@ export function DonutWidget({
   centerValue,
   description,
   className,
+  onSegmentClick,
 }: DonutWidgetProps) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
   const defaultColors = [
     "hsl(var(--primary))",
     "hsl(var(--secondary))",
-    "#10B981",
-    "#F59E0B",
-    "#EF4444",
-    "#8B5CF6",
+    "hsl(var(--chart-income))",
+    "hsl(var(--chart-4))",
+    "hsl(var(--chart-expense))",
+    "hsl(var(--chart-5))",
   ];
 
   let currentAngle = 0;
@@ -358,6 +360,7 @@ export function DonutWidget({
                   d={createArcPath(segment.startAngle, segment.angle, 45, 30)}
                   fill={segment.color}
                   className="transition-opacity hover:opacity-80 cursor-pointer"
+                  onClick={() => onSegmentClick?.({ label: segment.label, value: segment.value, color: segment.color })}
                 />
               ))}
             </svg>
@@ -374,7 +377,14 @@ export function DonutWidget({
           </div>
           <div className="flex-1 space-y-3">
             {data.map((d, i) => (
-              <div key={i} className="flex items-center justify-between group">
+              <div
+                key={i}
+                className={cn(
+                  "flex items-center justify-between group",
+                  onSegmentClick && "cursor-pointer"
+                )}
+                onClick={() => onSegmentClick?.(d)}
+              >
                 <div className="flex items-center gap-3">
                   <div
                     className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.2)]"

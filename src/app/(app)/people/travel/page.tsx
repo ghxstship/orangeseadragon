@@ -11,7 +11,7 @@ const STAFF_LOCATIONS: MapMarker[] = [
     title: 'New York Office',
     description: 'Headquarters - 45 Active Staff',
     type: 'person',
-    color: '#10b981'
+    color: 'hsl(var(--marker-asset))'
   },
   {
     id: 'm2',
@@ -20,7 +20,7 @@ const STAFF_LOCATIONS: MapMarker[] = [
     title: 'London Hub',
     description: 'EMEA Operations - 12 Active Staff',
     type: 'person',
-    color: '#8b5cf6'
+    color: 'hsl(var(--marker-person))'
   },
   {
     id: 'm3',
@@ -29,7 +29,7 @@ const STAFF_LOCATIONS: MapMarker[] = [
     title: 'Tokyo Team',
     description: 'APAC Expansion - 8 Active Staff',
     type: 'person',
-    color: '#f59e0b'
+    color: 'hsl(var(--marker-event))'
   },
   {
     id: 'm4',
@@ -38,7 +38,7 @@ const STAFF_LOCATIONS: MapMarker[] = [
     title: 'LA Production Site',
     description: 'On-location filming crew - 28 Staff',
     type: 'event', // Using event type for site
-    color: '#ef4444'
+    color: 'hsl(var(--chart-expense))'
   }
 ];
 

@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
           is_lost
         )
       `)
+      .is('deleted_at', null)
       .order('name', { ascending: true });
 
     if (isActive === 'true') {
@@ -97,12 +98,12 @@ export async function POST(request: NextRequest) {
     // Create default stages if this is a new pipeline
     if (pipeline && body.create_default_stages !== false) {
       const defaultStages = [
-        { name: 'Prospecting', slug: 'prospecting', position: 1, probability: 10, color: '#94a3b8' },
-        { name: 'Qualification', slug: 'qualification', position: 2, probability: 25, color: '#3b82f6' },
-        { name: 'Proposal', slug: 'proposal', position: 3, probability: 50, color: '#eab308' },
-        { name: 'Negotiation', slug: 'negotiation', position: 4, probability: 75, color: '#f97316' },
-        { name: 'Closed Won', slug: 'closed-won', position: 5, probability: 100, color: '#22c55e', is_won: true },
-        { name: 'Closed Lost', slug: 'closed-lost', position: 6, probability: 0, color: '#ef4444', is_lost: true },
+        { name: 'Prospecting', slug: 'prospecting', position: 1, probability: 10, color: 'hsl(var(--muted-foreground))' },
+        { name: 'Qualification', slug: 'qualification', position: 2, probability: 25, color: 'hsl(var(--primary))' },
+        { name: 'Proposal', slug: 'proposal', position: 3, probability: 50, color: 'hsl(var(--chart-4))' },
+        { name: 'Negotiation', slug: 'negotiation', position: 4, probability: 75, color: 'hsl(var(--chart-expense))' },
+        { name: 'Closed Won', slug: 'closed-won', position: 5, probability: 100, color: 'hsl(var(--chart-income))', is_won: true },
+        { name: 'Closed Lost', slug: 'closed-lost', position: 6, probability: 0, color: 'hsl(var(--destructive))', is_lost: true },
       ];
 
       await supabase.from('pipeline_stages').insert(

@@ -29,14 +29,14 @@ export type CalendarSourceType =
   | 'calendar_event';
 
 const SOURCE_CONFIG: Record<CalendarSourceType, { label: string; color: string; basePath: string }> = {
-  event: { label: 'Events', color: '#3b82f6', basePath: '/productions/events' },
-  production: { label: 'Productions', color: '#8b5cf6', basePath: '/productions' },
-  task: { label: 'Tasks', color: '#f59e0b', basePath: '/core/tasks' },
-  contract: { label: 'Contracts', color: '#10b981', basePath: '/business/contracts' },
-  activation: { label: 'Activations', color: '#ec4899', basePath: '/productions/activations' },
-  shift: { label: 'Shifts', color: '#14b8a6', basePath: '/people/scheduling' },
-  maintenance: { label: 'Maintenance', color: '#f97316', basePath: '/assets/maintenance' },
-  calendar_event: { label: 'Calendar', color: '#6366f1', basePath: '/core/calendar' },
+  event: { label: 'Events', color: 'hsl(var(--primary))', basePath: '/productions/events' },
+  production: { label: 'Productions', color: 'hsl(var(--chart-5))', basePath: '/productions' },
+  task: { label: 'Tasks', color: 'hsl(var(--chart-4))', basePath: '/core/tasks' },
+  contract: { label: 'Contracts', color: 'hsl(var(--chart-income))', basePath: '/business/contracts' },
+  activation: { label: 'Activations', color: 'hsl(var(--chart-3))', basePath: '/productions/activations' },
+  shift: { label: 'Shifts', color: 'hsl(var(--chart-1))', basePath: '/people/scheduling' },
+  maintenance: { label: 'Maintenance', color: 'hsl(var(--chart-expense))', basePath: '/assets/maintenance' },
+  calendar_event: { label: 'Calendar', color: 'hsl(var(--secondary))', basePath: '/core/calendar' },
 };
 
 export async function GET(request: NextRequest) {
@@ -130,7 +130,7 @@ export async function GET(request: NextRequest) {
       type,
       count: sourceCounts.get(type) || 0,
       label: SOURCE_CONFIG[type]?.label || type,
-      color: SOURCE_CONFIG[type]?.color || '#6366f1',
+      color: SOURCE_CONFIG[type]?.color || 'hsl(var(--primary))',
     }));
 
     return apiSuccess({ items, sources: sourcesResult });

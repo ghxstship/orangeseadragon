@@ -109,14 +109,16 @@ export async function DELETE(request: NextRequest) {
     return badRequest('id is required');
   }
   
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('crew_availability')
-    .delete()
-    .eq('id', id);
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
   
   if (error) {
     return supabaseError(error);
   }
   
-  return apiSuccess({ deleted: true });
+  return apiSuccess(data, { message: 'Availability record archived' });
 }
