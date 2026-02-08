@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * POST /api/registrations/[id]/cancel
@@ -9,7 +10,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createServiceClient();
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
   const { id } = await params;
 
   try {
@@ -24,15 +27,12 @@ export async function POST(
       .single();
 
     if (fetchError || !registration) {
-      return NextResponse.json({ error: 'Registration not found' }, { status: 404 });
+      return notFound('Registration');
     }
 
     // Check if already cancelled
     if (registration.cancelled_at) {
-      return NextResponse.json({ 
-        error: 'Already cancelled',
-        cancelled_at: registration.cancelled_at 
-      }, { status: 400 });
+      return badRequest('Already cancelled');
     }
 
     // Get cancelled status
@@ -56,16 +56,12 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json({
-      success: true,
-      registration: data,
-      message: 'Registration cancelled'
-    });
+    return apiSuccess(data, { message: 'Registration cancelled' });
   } catch (e) {
     console.error('[API] Cancel error:', e);
-    return NextResponse.json({ error: 'Cancellation failed' }, { status: 500 });
+    return serverError('Cancellation failed');
   }
 }

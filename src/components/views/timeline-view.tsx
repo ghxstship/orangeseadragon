@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Tooltip,
@@ -18,6 +17,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   format,
   addDays,
@@ -159,7 +159,7 @@ export function TimelineView({
     }
   };
 
-  const formatTimeUnit = (date: Date): string => {
+  const _formatTimeUnit = (date: Date): string => {
     switch (currentZoom) {
       case "hours":
         return format(date, "MMM d");
@@ -242,41 +242,43 @@ export function TimelineView({
   }, [viewStart, viewEnd, totalWidth]);
 
   return (
-    <Card className={cn("w-full", className)}>
-      <CardHeader className="pb-4">
+    <Card className={cn("w-full border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => handleNavigate("today")}>
-              Today
-            </Button>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => handleNavigate("prev")}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => handleNavigate("next")}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-            <CardTitle className="text-lg font-semibold">
-              {format(viewStart, "MMM d")} - {format(viewEnd, "MMM d, yyyy")}
+          <div className="flex items-center gap-6">
+            <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">
+              {format(viewStart, "MMMM d")} — {format(viewEnd, "MMMM d, yyyy")}
             </CardTitle>
+            <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-white/5">
+              <Button variant="ghost" size="sm" onClick={() => handleNavigate("today")} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-white/10">
+                Today
+              </Button>
+              <div className="flex items-center gap-1 border-l border-white/10 pl-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 hover:bg-white/10"
+                  onClick={() => handleNavigate("prev")}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 hover:bg-white/10"
+                  onClick={() => handleNavigate("next")}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-xl border border-white/5">
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-8 w-8 hover:bg-white/10"
               onClick={() => {
                 const zoomLevels: TimelineZoom[] = ["hours", "days", "weeks", "months"];
                 const currentIndex = zoomLevels.indexOf(currentZoom);
@@ -288,11 +290,13 @@ export function TimelineView({
             >
               <ZoomIn className="h-4 w-4" />
             </Button>
-            <Badge variant="secondary">{currentZoom}</Badge>
+            <div className="px-3 h-8 flex items-center justify-center bg-white/5 rounded-lg border border-white/5">
+              <span className="text-[10px] font-black uppercase tracking-widest opacity-60">{currentZoom}</span>
+            </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8"
+              className="h-8 w-8 hover:bg-white/10"
               onClick={() => {
                 const zoomLevels: TimelineZoom[] = ["hours", "days", "weeks", "months"];
                 const currentIndex = zoomLevels.indexOf(currentZoom);
@@ -310,9 +314,9 @@ export function TimelineView({
       <CardContent className="p-0">
         <div className="flex">
           {showGroups && groups.length > 0 && (
-            <div className="flex-shrink-0 border-r" style={{ width: GROUP_WIDTH }}>
+            <div className="flex-shrink-0 border-r border-white/5 bg-background/20" style={{ width: GROUP_WIDTH }}>
               <div
-                className="border-b bg-muted/50 px-4 flex items-center font-medium text-sm"
+                className="border-b border-white/5 bg-white/5 px-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
                 style={{ height: HEADER_HEIGHT }}
               >
                 Groups
@@ -320,21 +324,21 @@ export function TimelineView({
               {groupedItems.map(({ group }, index) => (
                 <div
                   key={group?.id || `ungrouped-${index}`}
-                  className="border-b px-4 flex items-center text-sm"
+                  className="border-b border-white/5 px-6 flex items-center text-xs font-bold transition-colors hover:bg-white/5"
                   style={{ height: ROW_HEIGHT }}
                 >
                   {group ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {group.color && (
                         <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: group.color }}
+                          className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]"
+                          style={{ backgroundColor: group.color, color: group.color }}
                         />
                       )}
-                      <span className="truncate">{group.title}</span>
+                      <span className="truncate tracking-tight">{group.title}</span>
                     </div>
                   ) : (
-                    <span className="text-muted-foreground">Ungrouped</span>
+                    <span className="text-muted-foreground/50 italic font-medium uppercase tracking-[0.05em] text-[10px]">Ungrouped</span>
                   )}
                 </div>
               ))}
@@ -345,19 +349,22 @@ export function TimelineView({
             <div style={{ width: totalWidth, minWidth: "100%" }}>
               {/* Header */}
               <div
-                className="flex border-b bg-muted/50 sticky top-0 z-10"
+                className="flex border-b border-white/5 bg-white/5 sticky top-0 z-30"
                 style={{ height: HEADER_HEIGHT }}
               >
                 {timeUnits.map((unit, index) => (
                   <div
                     key={index}
                     className={cn(
-                      "flex-shrink-0 border-r flex items-center justify-center text-sm font-medium",
-                      showToday && isSameDay(unit, new Date()) && "bg-primary/10"
+                      "flex-shrink-0 border-r border-white/5 flex flex-col items-center justify-center gap-0.5",
+                      showToday && isSameDay(unit, new Date()) && "bg-primary/10 shadow-[inner_0_0_20px_rgba(var(--primary),0.1)]"
                     )}
                     style={{ width: cellWidth }}
                   >
-                    {formatTimeUnit(unit)}
+                    <span className="text-[10px] font-black uppercase tracking-[0.1em] opacity-30">{format(unit, "EEE")}</span>
+                    <span className={cn("text-sm font-black tracking-tight", showToday && isSameDay(unit, new Date()) && "text-primary")}>
+                      {format(unit, "d")}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -365,13 +372,13 @@ export function TimelineView({
               {/* Rows */}
               <div className="relative">
                 {/* Grid lines */}
-                <div className="absolute inset-0 flex pointer-events-none">
+                <div className="absolute inset-0 flex pointer-events-none z-0">
                   {timeUnits.map((unit, index) => (
                     <div
                       key={index}
                       className={cn(
-                        "flex-shrink-0 border-r",
-                        showToday && isSameDay(unit, new Date()) && "bg-primary/5"
+                        "flex-shrink-0 border-r border-white/5",
+                        showToday && isSameDay(unit, new Date()) && "bg-primary/[0.03]"
                       )}
                       style={{ width: cellWidth }}
                     />
@@ -381,66 +388,72 @@ export function TimelineView({
                 {/* Today line */}
                 {showToday && todayPosition !== null && (
                   <div
-                    className="absolute top-0 bottom-0 w-0.5 bg-primary z-20"
+                    className="absolute top-0 bottom-0 w-[2px] bg-primary z-40 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
                     style={{ left: todayPosition }}
                   />
                 )}
 
                 {/* Items */}
-                {groupedItems.map(({ group, items: groupItems }, groupIndex) => (
-                  <div
-                    key={group?.id || `ungrouped-${groupIndex}`}
-                    className="relative border-b"
-                    style={{ height: ROW_HEIGHT }}
-                  >
-                    <TooltipProvider>
-                      {groupItems.map((item) => {
-                        const position = getItemPosition(item);
-                        if (!position) return null;
+                <AnimatePresence mode="popLayout">
+                  {groupedItems.map(({ group, items: groupItems }, groupIndex) => (
+                    <div
+                      key={group?.id || `ungrouped-${groupIndex}`}
+                      className="relative border-b border-white/5 group/row"
+                      style={{ height: ROW_HEIGHT }}
+                    >
+                      <TooltipProvider>
+                        {groupItems.map((item) => {
+                          const position = getItemPosition(item);
+                          if (!position) return null;
 
-                        return (
-                          <Tooltip key={item.id}>
-                            <TooltipTrigger asChild>
-                              <div
-                                className={cn(
-                                  "absolute top-2 h-8 rounded px-2 flex items-center cursor-pointer",
-                                  "text-xs font-medium truncate shadow-sm",
-                                  "hover:shadow-md transition-shadow",
-                                  item.color ? "" : "bg-primary text-primary-foreground"
-                                )}
-                                style={{
-                                  left: position.left,
-                                  width: position.width,
-                                  backgroundColor: item.color || undefined,
-                                  color: item.color ? "#fff" : undefined,
-                                }}
-                                onClick={() => onItemClick?.(item)}
-                              >
-                                {item.title}
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <div className="space-y-1">
-                                <div className="font-medium">{item.title}</div>
-                                <div className="text-xs text-muted-foreground">
-                                  {format(
-                                    typeof item.start === "string" ? parseISO(item.start) : item.start,
-                                    "MMM d, yyyy"
-                                  )}{" "}
-                                  -{" "}
-                                  {format(
-                                    typeof item.end === "string" ? parseISO(item.end) : item.end,
-                                    "MMM d, yyyy"
+                          return (
+                            <Tooltip key={item.id}>
+                              <TooltipTrigger asChild>
+                                <motion.div
+                                  layoutId={item.id}
+                                  initial={{ opacity: 0, scale: 0.9, y: 5 }}
+                                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                                  whileHover={{ scale: 1.02, zIndex: 50, y: -2 }}
+                                  className={cn(
+                                    "absolute top-2 h-9 rounded-xl px-4 flex items-center cursor-pointer",
+                                    "text-[11px] font-black uppercase tracking-wider truncate shadow-xl border border-white/10",
+                                    "glass-morphism transition-all duration-300",
+                                    !item.color && "bg-primary/20 text-primary-foreground border-primary/30"
                                   )}
+                                  style={{
+                                    left: position.left + 4,
+                                    width: position.width - 8,
+                                    backgroundColor: item.color ? `${item.color}20` : undefined,
+                                    color: item.color || undefined,
+                                    borderColor: item.color ? `${item.color}40` : undefined,
+                                    boxShadow: item.color ? `0 4px 20px -5px ${item.color}40` : undefined
+                                  }}
+                                  onClick={() => onItemClick?.(item)}
+                                >
+                                  {item.title}
+                                </motion.div>
+                              </TooltipTrigger>
+                              <TooltipContent className="glass-morphism border-white/10 p-4 shadow-2xl">
+                                <div className="space-y-2">
+                                  <div className="font-black uppercase tracking-widest text-xs opacity-80">{item.title}</div>
+                                  <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
+                                    <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                      {format(typeof item.start === "string" ? parseISO(item.start) : item.start, "MMM d")}
+                                    </div>
+                                    <span className="opacity-30">—</span>
+                                    <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                      {format(typeof item.end === "string" ? parseISO(item.end) : item.end, "MMM d, yyyy")}
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </TooltipContent>
-                          </Tooltip>
-                        );
-                      })}
-                    </TooltipProvider>
-                  </div>
-                ))}
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        })}
+                      </TooltipProvider>
+                    </div>
+                  ))}
+                </AnimatePresence>
               </div>
             </div>
             <ScrollBar orientation="horizontal" />

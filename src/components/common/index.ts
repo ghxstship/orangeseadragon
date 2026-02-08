@@ -27,3 +27,11 @@ export {
   NoPermissionEmptyState,
   FirstTimeEmptyState,
 } from "./contextual-empty-state";
+export { SubtaskList } from "./subtask-list";
+export type { Subtask } from "./subtask-list";
+export { ChecklistWidget } from "./checklist-widget";
+export type { ChecklistItem } from "./checklist-widget";
+export { DependencyPicker } from "./dependency-picker";
+export type { TaskDependency, TaskOption, DependencyType } from "./dependency-picker";
+export { SavedViewSelector } from "./saved-view-selector";
+export type { SavedView, ViewConfig } from "./saved-view-selector";

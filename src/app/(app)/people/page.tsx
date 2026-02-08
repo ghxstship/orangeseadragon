@@ -16,8 +16,15 @@ const peopleDashboardSections: DashboardSection[] = [
     id: 'navigation',
     title: 'Quick Access',
     widgets: [
-      { id: 'rosters-nav', title: 'Rosters', description: 'Staff, crew, contractors & talent', type: 'custom', size: 'medium' },
-      { id: 'scheduling-nav', title: 'Scheduling', description: 'Person schedule assignments', type: 'custom', size: 'medium' },
+      { id: 'portal-nav', title: 'My Portal', description: 'Self-service employee portal', type: 'custom', size: 'medium', href: '/people/portal' },
+      { id: 'rosters-nav', title: 'Rosters', description: 'Staff, crew, contractors & talent', type: 'custom', size: 'medium', href: '/people/rosters' },
+      { id: 'scheduling-nav', title: 'Scheduling', description: 'Person schedule assignments', type: 'custom', size: 'medium', href: '/people/scheduling' },
+      { id: 'timekeeping-nav', title: 'Time & Attendance', description: 'Clock in/out and timesheets', type: 'custom', size: 'medium', href: '/people/timekeeping' },
+      { id: 'org-nav', title: 'Org Chart', description: 'Organization structure', type: 'custom', size: 'medium', href: '/people/org' },
+      { id: 'compliance-nav', title: 'Compliance', description: 'Certifications & training status', type: 'custom', size: 'medium', href: '/people/compliance' },
+      { id: 'leave-nav', title: 'Leave Management', description: 'Request time off and view calendar', type: 'custom', size: 'medium', href: '/people/leave' },
+      { id: 'documents-nav', title: 'Documents', description: 'Employee documents and files', type: 'custom', size: 'medium', href: '/people/documents' },
+      { id: 'analytics-nav', title: 'Workforce Analytics', description: 'AI-powered insights and predictions', type: 'custom', size: 'medium', href: '/people/analytics' },
     ],
   },
 ];

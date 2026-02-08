@@ -237,3 +237,4 @@ export {
 export { TreeView, type TreeViewRef, type TreeNode } from "./tree-view";
 export { ColorPicker, ColorSwatch } from "./color-picker";
 export { RichTextEditor, RichTextViewer } from "./rich-text-editor";
+export { PasswordStrength, PasswordInput } from "./password-strength";

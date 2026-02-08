@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * ═══════════════════════════════════════════════════════════════════════════
  * MASTER SCHEMA TYPE DEFINITIONS
  * ═══════════════════════════════════════════════════════════════════════════
  *
- * This is the SINGLE SOURCE OF TRUTH for all entity configuration.
+ * Schema Type System - the SINGLE SOURCE OF TRUTH for all entity configuration.
  * Every layout, view, and component reads from this schema.
  *
  * NEVER duplicate these definitions elsewhere.
@@ -70,7 +71,9 @@ export interface FieldDefinition {
   required?: boolean;
   disabled?: boolean | ((context: FieldContext) => boolean);
   hidden?: boolean | ((context: FieldContext) => boolean);
-  default?: any | ((context: FieldContext) => any);
+  default?: unknown | ((context: FieldContext) => unknown);
+  readOnly?: boolean;
+
 
   // ─────────────────────────────────────────────────────────────
   // VISIBILITY (where this field appears)
@@ -115,7 +118,7 @@ export interface FieldDefinition {
     pattern?: RegExp | string;
   };
 
-  validate?: (value: any, context: FieldContext) => string | undefined;
+  validate?: (value: unknown, context: FieldContext) => string | undefined;
 
   // ─────────────────────────────────────────────────────────────
   // SELECT/MULTISELECT OPTIONS
@@ -128,12 +131,12 @@ export interface FieldDefinition {
   // ─────────────────────────────────────────────────────────────
   relation?: {
     entity: string;            // Related schema name
-    display: string | ((item: any) => string);
+    display: string | ((item: Record<string, unknown>) => string);
     searchable?: boolean;
     multiple?: boolean;
     createInline?: boolean;    // Allow creating new related record inline
     preload?: boolean;         // Preload options
-    filter?: Record<string, any>;
+    filter?: Record<string, unknown>;
     options?: Array<{ value: string; label: string }>; // Static options
     optionsEndpoint?: string;  // Dynamic options from API
   };
@@ -141,9 +144,9 @@ export interface FieldDefinition {
   // ─────────────────────────────────────────────────────────────
   // DISPLAY FORMATTING
   // ─────────────────────────────────────────────────────────────
-  format?: (value: any, record: any) => string | React.ReactNode;
-  formatTable?: (value: any, record: any) => React.ReactNode;
-  formatDetail?: (value: any, record: any) => React.ReactNode;
+  format?: (value: unknown, record: Record<string, unknown>) => string | React.ReactNode;
+  formatTable?: (value: unknown, record: Record<string, unknown>) => React.ReactNode;
+  formatDetail?: (value: unknown, record: Record<string, unknown>) => React.ReactNode;
 
   // ─────────────────────────────────────────────────────────────
   // CUSTOM RENDERING (escape hatch - use sparingly)
@@ -161,11 +164,17 @@ interface FieldOption {
   disabled?: boolean;
 }
 
-interface FieldContext {
+interface FieldContext<T = EntityRecord> {
   mode: 'create' | 'edit' | 'table' | 'detail' | 'filter';
-  record?: any;
-  user?: any;
-  formData?: any;
+  record?: T;
+  user?: Record<string, unknown>;
+  formData?: Record<string, unknown>;
+}
+
+export interface EntityRecord {
+  id: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -176,12 +185,12 @@ export interface ComputedFieldDefinition {
   label: string;
 
   computation:
-    | { type: 'derived'; compute: (record: any) => any }
-    | { type: 'relation-count'; entity: string; foreignKey: string; filter?: Record<string, any> }
-    | { type: 'relation-sum'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> }
-    | { type: 'relation-avg'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> }
-    | { type: 'relation-min'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> }
-    | { type: 'relation-max'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> };
+  | { type: 'derived'; compute: (record: EntityRecord) => any }
+  | { type: 'relation-count'; entity: string; foreignKey: string; filter?: Record<string, any> }
+  | { type: 'relation-sum'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> }
+  | { type: 'relation-avg'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> }
+  | { type: 'relation-min'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> }
+  | { type: 'relation-max'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> };
 
   format?: 'number' | 'currency' | 'percentage' | 'duration' | 'date' | 'relative';
 
@@ -194,7 +203,7 @@ export interface ComputedFieldDefinition {
 // ENTITY SCHEMA
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface EntitySchema<T = any> {
+export interface EntitySchema<T = EntityRecord> {
   // ═══════════════════════════════════════════════════════════════
   // IDENTITY
   // ═══════════════════════════════════════════════════════════════
@@ -299,6 +308,7 @@ export interface EntitySchema<T = any> {
     gantt?: GanttViewConfig;
     gallery?: GalleryViewConfig;
     map?: MapViewConfig;
+    matrix?: MatrixViewConfig;
   };
 
   // ═══════════════════════════════════════════════════════════════
@@ -314,10 +324,10 @@ export interface EntitySchema<T = any> {
   // PERMISSIONS
   // ═══════════════════════════════════════════════════════════════
   permissions: {
-    create?: boolean | ((user: any) => boolean);
-    read?: boolean | ((user: any, record?: T) => boolean);
-    update?: boolean | ((user: any, record: T) => boolean);
-    delete?: boolean | ((user: any, record: T) => boolean);
+    create?: boolean | ((user: Record<string, unknown>) => boolean);
+    read?: boolean | ((user: Record<string, unknown>, record?: T) => boolean);
+    update?: boolean | ((user: Record<string, unknown>, record: T) => boolean);
+    delete?: boolean | ((user: Record<string, unknown>, record: T) => boolean);
   };
 
   // ═══════════════════════════════════════════════════════════════
@@ -405,13 +415,13 @@ export interface DetailTabDefinition {
   icon?: string;
 
   content:
-    | { type: 'overview' }
-    | { type: 'related'; entity: string; foreignKey: string; defaultView?: string; allowCreate?: boolean }
-    | { type: 'activity' }
-    | { type: 'comments' }
-    | { type: 'files' }
-    | { type: 'fields'; fields: string[]; editable?: boolean }
-    | { type: 'custom'; component: string };
+  | { type: 'overview' }
+  | { type: 'related'; entity: string; foreignKey: string; defaultView?: string; allowCreate?: boolean }
+  | { type: 'activity' }
+  | { type: 'comments' }
+  | { type: 'files' }
+  | { type: 'fields'; fields: string[]; editable?: boolean }
+  | { type: 'custom'; component: string };
 
   badge?: 'count' | 'status' | { compute: (record: any) => string | number };
   lazy?: boolean;
@@ -616,17 +626,30 @@ export interface MapViewConfig {
   };
 }
 
+export interface MatrixViewConfig {
+  type: 'eisenhower' | 'custom';
+  xAxis: string; // field name
+  yAxis: string; // field name
+  quadrants: Array<{
+    id: number;
+    label: string;
+    description?: string;
+    color?: string;
+  }>;
+}
+
+
 // ─────────────────────────────────────────────────────────────────────────────
 // ACTION DEFINITIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type BuiltInAction = 
-  | 'view' 
-  | 'edit' 
-  | 'duplicate' 
-  | 'archive' 
+export type BuiltInAction =
+  | 'view'
+  | 'edit'
+  | 'duplicate'
+  | 'archive'
   | 'restore'
-  | 'delete' 
+  | 'delete'
   | 'export';
 
 export interface ActionDefinition {
@@ -634,11 +657,11 @@ export interface ActionDefinition {
   label: string;
   icon?: string;
   variant?: 'default' | 'primary' | 'secondary' | 'destructive' | 'warning';
-  
+
   // When to show
   condition?: (record: any, context: ActionContext) => boolean;
   permission?: string;
-  
+
   // Confirmation
   confirm?: {
     title: string;
@@ -647,15 +670,15 @@ export interface ActionDefinition {
     cancelLabel?: string;
     requireInput?: string;  // Require typing specific text
   };
-  
+
   // Action handler
-  handler: 
-    | { type: 'navigate'; path: string | ((record: any) => string) }
-    | { type: 'modal'; component: string }
-    | { type: 'api'; endpoint: string; method: string }
-    | { type: 'function'; fn: (record: any, context: ActionContext) => void | Promise<void> }
-    | { type: 'external'; url: string | ((record: any) => string) };
-  
+  handler:
+  | { type: 'navigate'; path: string | ((record: any) => string) }
+  | { type: 'modal'; component: string }
+  | { type: 'api'; endpoint: string; method: string }
+  | { type: 'function'; fn: (record: any, context: ActionContext) => void | Promise<void> }
+  | { type: 'external'; url: string | ((record: any) => string) };
+
   // Feedback
   successMessage?: string;
   errorMessage?: string;
@@ -675,9 +698,9 @@ export interface QuickFilterDefinition {
   key: string;
   label: string;
   icon?: string;
-  
+
   query: Record<string, any>;
-  
+
   // Badge showing count
   count?: boolean;
 }
@@ -696,23 +719,23 @@ export interface FilterPresetDefinition {
 export interface QuickStatDefinition {
   key: string;
   label: string;
-  
+
   value:
-    | { type: 'field'; field: string }
-    | { type: 'computed'; compute: (record: any) => number | string }
-    | { type: 'relation-count'; entity: string; foreignKey: string; filter?: Record<string, any> }
-    | { type: 'relation-sum'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> };
-  
+  | { type: 'field'; field: string }
+  | { type: 'computed'; compute: (record: any) => number | string }
+  | { type: 'relation-count'; entity: string; foreignKey: string; filter?: Record<string, any> }
+  | { type: 'relation-sum'; entity: string; foreignKey: string; field: string; filter?: Record<string, any> };
+
   format?: 'number' | 'currency' | 'percentage' | 'duration' | 'date' | 'relative';
   prefix?: string;
   suffix?: string;
-  
+
   trend?: {
     compare: 'previous-period' | 'target' | { field: string };
     direction?: boolean;
     percentage?: boolean;
   };
-  
+
   onClick?: { tab: string } | { navigate: string };
 }
 
@@ -720,12 +743,12 @@ export interface OverviewBlockDefinition {
   key: string;
   span?: number;
   title?: string;
-  
-  content: 
-    | { type: 'fields'; fields: string[]; editable?: boolean }
-    | { type: 'stats'; stats: string[] }
-    | { type: 'chart'; chartType: string; data: any }
-    | { type: 'custom'; component: string; props?: any };
+
+  content:
+  | { type: 'fields'; fields: string[]; editable?: boolean }
+  | { type: 'stats'; stats: string[] }
+  | { type: 'chart'; chartType: string; data: any }
+  | { type: 'custom'; component: string; props?: any };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -761,7 +784,7 @@ export interface SidebarConfig {
   width?: number;
   collapsible?: boolean;
   defaultState?: 'open' | 'collapsed';
-  
+
   sections: SidebarSectionDefinition[];
 }
 
@@ -770,13 +793,13 @@ export interface SidebarSectionDefinition {
   title?: string;
   collapsible?: boolean;
   defaultCollapsed?: boolean;
-  
+
   content:
-    | { type: 'presence' }
-    | { type: 'ai-suggestions' }
-    | { type: 'quick-actions'; actions: string[] }
-    | { type: 'stats'; stats: string[] }
-    | { type: 'related'; entity: string; foreignKey: string; limit?: number }
-    | { type: 'activity'; limit?: number }
-    | { type: 'custom'; component: string };
+  | { type: 'presence' }
+  | { type: 'ai-suggestions' }
+  | { type: 'quick-actions'; actions: string[] }
+  | { type: 'stats'; stats: string[] }
+  | { type: 'related'; entity: string; foreignKey: string; limit?: number }
+  | { type: 'activity'; limit?: number }
+  | { type: 'custom'; component: string };
 }

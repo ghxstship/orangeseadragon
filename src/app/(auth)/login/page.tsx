@@ -1,11 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { LogIn, Mail, Lock } from 'lucide-react';
+import { LogIn, Mail, Lock, Sparkles } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { createClient } from '@/lib/supabase/client';
 import { AuthTemplate, AuthField } from '@/components/templates/AuthTemplate';
-import { Metadata } from 'next';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const loginFields: AuthField[] = [
   { key: 'email', label: 'Email', type: 'email', placeholder: 'name@company.com', icon: Mail, required: true },
@@ -56,6 +57,13 @@ export default function LoginPage() {
       secondaryLink={{ label: 'Forgot password?', href: '/forgot-password' }}
       footerLink={{ text: "Don't have an account?", label: 'Create one', href: '/register' }}
       onSubmit={handleSubmit}
-    />
+    >
+      <Link href="/magic-link" className="block">
+        <Button variant="outline" className="w-full">
+          <Sparkles className="mr-2 h-4 w-4" />
+          Email me a login link
+        </Button>
+      </Link>
+    </AuthTemplate>
   );
 }

@@ -8,6 +8,7 @@ import { FieldRenderProps } from './index';
  *
  * Renders a tags input field.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function TagsField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   const [inputValue, setInputValue] = useState('');
   const tags = Array.isArray(value) ? value : [];

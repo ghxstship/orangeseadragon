@@ -1,17 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createServiceClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
 
     const { id } = params;
 
@@ -23,14 +21,11 @@ export async function POST(
       .single();
 
     if (fetchError || !review) {
-      return NextResponse.json({ error: 'Performance review not found' }, { status: 404 });
+      return notFound('Performance review');
     }
 
     if (review.status !== 'draft' && review.status !== 'in_progress') {
-      return NextResponse.json(
-        { error: 'Review cannot be submitted in current status' },
-        { status: 400 }
-      );
+      return badRequest('Review cannot be submitted in current status');
     }
 
     // Update review status
@@ -45,12 +40,12 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json({ success: true, data });
+    return apiSuccess(data);
   } catch (error) {
     console.error('Error submitting performance review:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return serverError();
   }
 }

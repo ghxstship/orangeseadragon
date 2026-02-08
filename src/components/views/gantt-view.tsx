@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -27,6 +26,7 @@ import {
   Link2,
   AlertTriangle,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   format,
   addDays,
@@ -153,13 +153,13 @@ export function GanttView<T extends GanttTask>({
   const getStatusColor = (status?: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-500";
+        return "bg-status-completed";
       case "on-track":
-        return "bg-blue-500";
+        return "bg-status-on-track";
       case "at-risk":
-        return "bg-yellow-500";
+        return "bg-status-at-risk";
       case "delayed":
-        return "bg-red-500";
+        return "bg-status-delayed";
       default:
         return "bg-primary";
     }
@@ -175,38 +175,53 @@ export function GanttView<T extends GanttTask>({
   const flatTasks = flattenTasks(tasks);
 
   return (
-    <Card className={className}>
+    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
       {title && (
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
           <div className="flex items-center justify-between">
-            <CardTitle>{title}</CardTitle>
-            <div className="flex items-center gap-2">
-              <Select value={zoomLevel} onValueChange={(v) => setZoomLevel(v as ZoomLevel)}>
-                <SelectTrigger className="w-[100px] h-8">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="day">Day</SelectItem>
-                  <SelectItem value="week">Week</SelectItem>
-                  <SelectItem value="month">Month</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="flex items-center border rounded-md">
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate("prev")}>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" className="h-8 px-2" onClick={goToToday}>
+            <div className="flex items-center gap-6">
+              <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">{title}</CardTitle>
+              <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-white/5">
+                <Button variant="ghost" size="sm" onClick={goToToday} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-white/10">
                   Today
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate("next")}>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-1 border-l border-white/10 pl-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 hover:bg-white/10"
+                    onClick={() => navigate("prev")}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 hover:bg-white/10"
+                    onClick={() => navigate("next")}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center border rounded-md">
+            </div>
+
+            <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-xl border border-white/5">
+              <Select value={zoomLevel} onValueChange={(v) => setZoomLevel(v as ZoomLevel)}>
+                <SelectTrigger className="w-[110px] h-8 glass-morphism border-white/10 text-[10px] font-black uppercase tracking-widest">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="glass-morphism border-white/10">
+                  <SelectItem value="day" className="text-[10px] font-bold uppercase">Day</SelectItem>
+                  <SelectItem value="week" className="text-[10px] font-bold uppercase">Week</SelectItem>
+                  <SelectItem value="month" className="text-[10px] font-bold uppercase">Month</SelectItem>
+                </SelectContent>
+              </Select>
+              <div className="flex items-center gap-1 border-l border-white/10 pl-1">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 hover:bg-white/10"
                   onClick={() => setZoomLevel(zoomLevel === "month" ? "week" : "day")}
                 >
                   <ZoomIn className="h-4 w-4" />
@@ -214,7 +229,7 @@ export function GanttView<T extends GanttTask>({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 hover:bg-white/10"
                   onClick={() => setZoomLevel(zoomLevel === "day" ? "week" : "month")}
                 >
                   <ZoomOut className="h-4 w-4" />
@@ -227,29 +242,38 @@ export function GanttView<T extends GanttTask>({
       <CardContent className="p-0">
         <div className="flex border-t">
           {/* Task list */}
-          <div className="w-64 flex-shrink-0 border-r">
-            <div className="h-10 border-b bg-muted/50 px-3 flex items-center">
-              <span className="text-sm font-medium">Task Name</span>
+          {/* Task list */}
+          <div className="w-80 flex-shrink-0 border-r border-white/5 bg-background/20">
+            <div className="h-12 border-b border-white/5 bg-white/5 px-6 flex items-center">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Task Breakdown</span>
             </div>
-            <div className="divide-y">
+            <div className="divide-y divide-white/5">
               {flatTasks.map((task) => (
                 <div
                   key={task.id}
                   className={cn(
-                    "h-10 px-3 flex items-center gap-2 hover:bg-muted/50 cursor-pointer",
-                    task.isCriticalPath && showCriticalPath && "bg-red-50 dark:bg-red-950/20"
+                    "h-12 px-6 flex items-center gap-3 hover:bg-white/5 cursor-pointer transition-colors group/task",
+                    task.isCriticalPath && showCriticalPath && "bg-status-critical-path/5"
                   )}
-                  style={{ paddingLeft: `${12 + task.depth * 16}px` }}
+                  style={{ paddingLeft: `${24 + task.depth * 16}px` }}
                   onClick={() => onTaskClick?.(task as unknown as T)}
                 >
-                  {task.isMilestone ? (
-                    <Milestone className="h-4 w-4 text-purple-500 flex-shrink-0" />
-                  ) : task.isCriticalPath && showCriticalPath ? (
-                    <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0" />
-                  ) : null}
-                  <span className="text-sm truncate flex-1">{task.name}</span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    {task.isMilestone ? (
+                      <div className="h-6 w-6 rounded-lg bg-status-milestone/10 flex items-center justify-center shrink-0">
+                        <Milestone className="h-3 h-3 text-status-milestone" />
+                      </div>
+                    ) : task.isCriticalPath && showCriticalPath ? (
+                      <div className="h-6 w-6 rounded-lg bg-status-critical-path/10 flex items-center justify-center shrink-0">
+                        <AlertTriangle className="h-3 h-3 text-status-critical-path" />
+                      </div>
+                    ) : (
+                      <div className="h-2 w-2 rounded-full border border-white/20 group-hover/task:border-primary transition-colors shrink-0" />
+                    )}
+                    <span className="text-[11px] font-bold truncate group-hover/task:text-primary transition-colors">{task.name}</span>
+                  </div>
                   {task.dependencies && task.dependencies.length > 0 && showDependencies && (
-                    <Link2 className="h-3 w-3 text-muted-foreground" />
+                    <Link2 className="h-3 w-3 text-muted-foreground/30 ml-auto" />
                   )}
                 </div>
               ))}
@@ -258,20 +282,23 @@ export function GanttView<T extends GanttTask>({
 
           {/* Timeline */}
           <div className="flex-1 overflow-x-auto" ref={containerRef}>
-            {/* Header */}
-            <div className="h-10 border-b bg-muted/50 flex">
+            {/* Timeline Header */}
+            <div className="h-12 border-b border-white/5 bg-white/5 flex sticky top-0 z-30">
               {timeUnits.map((unit, i) => (
                 <div
                   key={i}
-                  className="flex-shrink-0 border-r px-2 flex items-center justify-center"
+                  className="flex-shrink-0 border-r border-white/5 px-2 flex flex-col items-center justify-center gap-0.5"
                   style={{ width: `${100 / timeUnits.length}%`, minWidth: zoomLevel === "day" ? 40 : 80 }}
                 >
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[9px] font-black uppercase tracking-widest opacity-30">
+                    {zoomLevel === "day" ? format(unit, "EEE") : zoomLevel === "month" ? format(unit, "yyyy") : ""}
+                  </span>
+                  <span className="text-[10px] font-black tracking-tight">
                     {zoomLevel === "day"
                       ? format(unit, "d")
                       : zoomLevel === "week"
-                      ? format(unit, "MMM d")
-                      : format(unit, "MMM yyyy")}
+                        ? format(unit, "MMM d")
+                        : format(unit, "MMM")}
                   </span>
                 </div>
               ))}
@@ -280,11 +307,11 @@ export function GanttView<T extends GanttTask>({
             {/* Task bars */}
             <div className="relative">
               {/* Grid lines */}
-              <div className="absolute inset-0 flex pointer-events-none">
+              <div className="absolute inset-0 flex pointer-events-none z-0">
                 {timeUnits.map((_, i) => (
                   <div
                     key={i}
-                    className="flex-shrink-0 border-r border-dashed border-muted"
+                    className="flex-shrink-0 border-r border-white/5"
                     style={{ width: `${100 / timeUnits.length}%` }}
                   />
                 ))}
@@ -293,7 +320,7 @@ export function GanttView<T extends GanttTask>({
               {/* Today line */}
               {isWithinInterval(new Date(), { start: viewStart, end: viewEnd }) && (
                 <div
-                  className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-10"
+                  className="absolute top-0 bottom-0 w-[2px] bg-primary z-20 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
                   style={{
                     left: `${(differenceInDays(new Date(), viewStart) / totalDays) * 100}%`,
                   }}
@@ -301,98 +328,115 @@ export function GanttView<T extends GanttTask>({
               )}
 
               {/* Tasks */}
-              {flatTasks.map((task) => {
-                if (!isTaskVisible(task)) {
+              <AnimatePresence mode="popLayout">
+                {flatTasks.map((task) => {
+                  if (!isTaskVisible(task)) {
+                    return (
+                      <div key={task.id} className="h-12 border-b border-white/5" />
+                    );
+                  }
+
+                  const position = getTaskPosition(task);
+
                   return (
-                    <div key={task.id} className="h-10 border-b" />
-                  );
-                }
-
-                const position = getTaskPosition(task);
-
-                return (
-                  <div key={task.id} className="h-10 border-b relative">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div
-                            className={cn(
-                              "absolute top-2 h-6 rounded cursor-pointer transition-all hover:opacity-80",
-                              task.isMilestone
-                                ? "w-4 h-4 top-3 rotate-45 bg-purple-500"
-                                : getStatusColor(task.status),
-                              task.isCriticalPath && showCriticalPath && "ring-2 ring-red-500 ring-offset-1"
-                            )}
-                            style={task.isMilestone ? { left: position.left } : position}
-                            onClick={() => onTaskClick?.(task as unknown as T)}
-                          >
-                            {!task.isMilestone && task.progress !== undefined && (
-                              <div
-                                className="absolute inset-0 bg-black/20 rounded-l"
-                                style={{ width: `${task.progress}%` }}
-                              />
-                            )}
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <div className="space-y-1">
-                            <p className="font-medium">{task.name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {format(
-                                typeof task.startDate === "string" ? parseISO(task.startDate) : task.startDate,
-                                "MMM d"
-                              )}{" "}
-                              -{" "}
-                              {format(
-                                typeof task.endDate === "string" ? parseISO(task.endDate) : task.endDate,
-                                "MMM d, yyyy"
+                    <div key={task.id} className="h-12 border-b border-white/5 relative group/row">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <motion.div
+                              layoutId={task.id}
+                              initial={{ opacity: 0, scale: 0.95, x: -20 }}
+                              animate={{ opacity: 1, scale: 1, x: 0 }}
+                              whileHover={{ scale: 1.01, zIndex: 30, y: -1 }}
+                              className={cn(
+                                "absolute top-3 h-6 rounded-full cursor-pointer shadow-lg border border-white/10 glass-morphism transition-all duration-300",
+                                task.isMilestone
+                                  ? "w-4 h-4 top-4 rotate-45 bg-status-milestone shadow-lg border-status-milestone/60"
+                                  : task.isCriticalPath && showCriticalPath
+                                    ? cn(getStatusColor(task.status), "ring-2 ring-status-critical-path/50 ring-offset-2 ring-offset-background")
+                                    : getStatusColor(task.status)
                               )}
-                            </p>
-                            {task.progress !== undefined && (
-                              <p className="text-xs">{task.progress}% complete</p>
-                            )}
-                            {task.status && (
-                              <Badge variant="secondary" className="text-xs">
-                                {task.status}
-                              </Badge>
-                            )}
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                );
-              })}
+                              style={task.isMilestone ? { left: position.left } : position}
+                              onClick={() => onTaskClick?.(task as unknown as T)}
+                            >
+                              {!task.isMilestone && (
+                                <div
+                                  className={cn(
+                                    "absolute inset-0 rounded-full opacity-40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]",
+                                    getStatusColor(task.status)
+                                  )}
+                                />
+                              )}
+                              {!task.isMilestone && task.progress !== undefined && (
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${task.progress}%` }}
+                                  className="absolute inset-y-0 left-0 bg-white/30 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                                />
+                              )}
+                            </motion.div>
+                          </TooltipTrigger>
+                          <TooltipContent className="glass-morphism border-white/10 p-4 shadow-2xl">
+                            <div className="space-y-2">
+                              <p className="font-black uppercase tracking-widest text-xs opacity-80">{task.name}</p>
+                              <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
+                                <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                  {format(typeof task.startDate === "string" ? parseISO(task.startDate) : task.startDate, "MMM d")}
+                                </div>
+                                <span className="opacity-30">—</span>
+                                <div className="bg-white/10 px-2 py-0.5 rounded uppercase">
+                                  {format(typeof task.endDate === "string" ? parseISO(task.endDate) : task.endDate, "MMM d, yyyy")}
+                                </div>
+                              </div>
+                              {task.progress !== undefined && (
+                                <div className="space-y-1 mt-2">
+                                  <div className="flex justify-between text-[9px] font-black uppercase tracking-tighter">
+                                    <span>Progress</span>
+                                    <span>{task.progress}%</span>
+                                  </div>
+                                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-full bg-primary" style={{ width: `${task.progress}%` }} />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="border-t p-3 flex items-center gap-4 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-blue-500 rounded" />
+        <div className="border-t border-white/5 p-4 bg-white/5 flex items-center gap-6 text-[10px] font-black uppercase tracking-widest opacity-60">
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-status-on-track rounded-full shadow-lg" />
             <span>On Track</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-yellow-500 rounded" />
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-status-at-risk rounded-full shadow-lg" />
             <span>At Risk</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-red-500 rounded" />
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-status-delayed rounded-full shadow-lg" />
             <span>Delayed</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 bg-green-500 rounded" />
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 bg-status-completed rounded-full shadow-lg" />
             <span>Completed</span>
           </div>
-          <div className="flex items-center gap-1">
-            <Milestone className="w-3 h-3 text-purple-500" />
+          <div className="flex items-center gap-2">
+            <Milestone className="w-3 h-3 text-status-milestone" />
             <span>Milestone</span>
           </div>
           {showCriticalPath && (
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-primary rounded ring-2 ring-red-500 ring-offset-1" />
-              <span>Critical Path</span>
+            <div className="flex items-center gap-2">
+              <div className="w-2.5 h-2.5 bg-primary rounded-full ring-2 ring-status-critical-path/50 ring-offset-2 ring-offset-background shadow-lg" />
+              <span className="text-status-critical-path">Critical Path</span>
             </div>
           )}
         </div>

@@ -15,6 +15,7 @@ import { FieldRenderProps } from '@/lib/schema/types';
  */
 export function SelectField({
   field,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   fieldKey,
   value,
   onChange,

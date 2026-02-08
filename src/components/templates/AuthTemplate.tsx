@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
+import { PasswordStrength } from '@/components/ui/password-strength';
 import { LucideIcon } from 'lucide-react';
 
 export interface AuthField {
@@ -19,6 +20,7 @@ export interface AuthField {
   required?: boolean;
   helperText?: string;
   minLength?: number;
+  showPasswordStrength?: boolean;
 }
 
 export interface AuthLink {
@@ -233,8 +235,11 @@ export function AuthTemplate({
                     </button>
                   )}
                 </div>
-                {field.helperText && (
+                {field.helperText && !field.showPasswordStrength && (
                   <p className="text-xs text-muted-foreground">{field.helperText}</p>
+                )}
+                {field.showPasswordStrength && isPassword && (
+                  <PasswordStrength password={formData[field.key] as string} />
                 )}
               </div>
             );

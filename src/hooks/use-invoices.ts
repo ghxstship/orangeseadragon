@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useSupabase } from "./use-supabase";
 import type { Database } from "@/types/database";
 
-type Invoice = Database["public"]["Tables"]["invoices"]["Row"];
+type _Invoice = Database["public"]["Tables"]["invoices"]["Row"];
 
 export function useInvoices(organizationId: string | null) {
     const supabase = useSupabase();

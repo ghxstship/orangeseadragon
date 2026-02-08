@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { defineSchema } from '../schema/defineSchema';
 
 export const productionAdvanceSchema = defineSchema({
@@ -862,6 +863,140 @@ export const advanceCategorySchema = defineSchema({
     global: [
       { key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => console.log('New Category') } },
     ],
+  },
+
+  permissions: {
+    create: true,
+    read: true,
+    update: true,
+    delete: true,
+  },
+});
+
+export const advancingCatalogItemSchema = defineSchema({
+  identity: {
+    name: 'advancingCatalogItem',
+    namePlural: 'Catalog Items',
+    slug: 'advancing/catalog',
+    icon: 'Store',
+    description: 'Standard advance items available for selection',
+  },
+
+  data: {
+    endpoint: '/api/advancing/catalog',
+    primaryKey: 'id',
+    fields: {
+      name: {
+        type: 'text',
+        label: 'Item Name',
+        required: true,
+        inTable: true,
+        inForm: true,
+        searchable: true,
+      },
+      description: {
+        type: 'textarea',
+        label: 'Description',
+        inForm: true,
+        inDetail: true,
+      },
+      category_id: {
+        type: 'relation',
+        label: 'Category',
+        inTable: true,
+        inForm: true,
+        relation: {
+          entity: 'advanceCategory',
+          display: 'name',
+        }
+      },
+      base_unit_cost: {
+        type: 'currency',
+        label: 'Base Cost',
+        inTable: true,
+        inForm: true,
+      },
+      image_url: {
+        type: 'image',
+        label: 'Image',
+        inTable: true,
+        inForm: true,
+      },
+      is_available: {
+        type: 'checkbox',
+        label: 'Available',
+        inTable: true,
+        inForm: true,
+        default: true,
+      },
+      specifications_template: {
+        type: 'json',
+        label: 'Specs Template',
+        inForm: true,
+      },
+    },
+  },
+
+  display: {
+    title: (record: any) => record.name || 'Untitled Item',
+    subtitle: (record: any) => record.base_unit_cost ? `$${record.base_unit_cost}` : '',
+    image: (record: any) => record.image_url,
+    defaultSort: { field: 'name', direction: 'asc' },
+  },
+
+  search: {
+    enabled: true,
+    fields: ['name', 'description'],
+    placeholder: 'Search catalog...',
+  },
+
+  filters: {
+    quick: [
+      { key: 'available', label: 'Available', query: { is_available: true } },
+    ],
+    advanced: ['category_id', 'is_available'],
+  },
+
+  layouts: {
+    list: {
+      subpages: [
+        { key: 'all', label: 'All Items', query: { where: {} }, count: true },
+        { key: 'available', label: 'Available', query: { where: { is_available: true } }, count: true },
+      ],
+      defaultView: 'grid',
+      availableViews: ['grid', 'table', 'list'],
+    },
+    detail: {
+      tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }],
+      overview: {
+        stats: [],
+        blocks: [{ key: 'details', title: 'Details', content: { type: 'fields', fields: ['description', 'base_unit_cost'] } }],
+      }
+    },
+    form: {
+      sections: [
+        { key: 'basic', title: 'Item Info', fields: ['name', 'category_id', 'description', 'base_unit_cost'] },
+        { key: 'media', title: 'Media & Inventory', fields: ['image_url', 'is_available'] },
+      ]
+    }
+  },
+
+  views: {
+    grid: {
+      titleField: 'name',
+      subtitleField: 'base_unit_cost',
+      imageField: 'image_url',
+      cardFields: ['category_id'],
+    },
+    table: {
+      columns: ['name', 'category_id', 'base_unit_cost', 'is_available'],
+    }
+  },
+
+  actions: {
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/catalog/${r.id}` } }],
+    bulk: [],
+    global: [{ key: 'create', label: 'Add to Catalog', variant: 'primary', handler: { type: 'navigate', path: () => '/advancing/catalog/new' } }],
   },
 
   permissions: {

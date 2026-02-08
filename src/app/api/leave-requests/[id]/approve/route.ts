@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * POST /api/leave-requests/[id]/approve
@@ -9,15 +10,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createServiceClient();
   const { id } = await params;
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { user, supabase } = auth;
 
     // Get the leave request
     const { data: leaveRequest, error: fetchError } = await supabase
@@ -27,14 +25,12 @@ export async function POST(
       .single();
 
     if (fetchError || !leaveRequest) {
-      return NextResponse.json({ error: 'Leave request not found' }, { status: 404 });
+      return notFound('Leave request');
     }
 
     // Check if already processed
     if (leaveRequest.status !== 'pending') {
-      return NextResponse.json({ 
-        error: `Leave request is already ${leaveRequest.status}` 
-      }, { status: 400 });
+      return badRequest(`Leave request is already ${leaveRequest.status}`);
     }
 
     // Get approver's staff member record
@@ -57,7 +53,7 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
     // Update leave balance (deduct from available)
@@ -73,13 +69,9 @@ export async function POST(
       p_action: 'approve'
     });
 
-    return NextResponse.json({
-      success: true,
-      leave_request: data,
-      message: 'Leave request approved'
-    });
+    return apiSuccess(data, { message: 'Leave request approved' });
   } catch (e) {
     console.error('[API] Leave approval error:', e);
-    return NextResponse.json({ error: 'Approval failed' }, { status: 500 });
+    return serverError('Approval failed');
   }
 }

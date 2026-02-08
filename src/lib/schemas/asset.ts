@@ -55,12 +55,41 @@ export const assetSchema = defineSchema({
           { label: 'Retired', value: 'retired' },
         ],
       },
+      condition: {
+        type: 'select',
+        label: 'Condition',
+        required: true,
+        inForm: true,
+        inDetail: true,
+        options: [
+          { label: 'New', value: 'new' },
+          { label: 'Good', value: 'good' },
+          { label: 'Fair', value: 'fair' },
+          { label: 'Poor', value: 'poor' },
+          { label: 'Broken', value: 'broken' },
+        ],
+      },
       serial_number: {
         type: 'text',
         label: 'Serial Number',
         inTable: true,
         inForm: true,
         inDetail: true,
+      },
+      barcode: {
+        type: 'text',
+        label: 'Barcode',
+        inTable: true,
+        inForm: true,
+        inDetail: true,
+        searchable: true,
+        placeholder: 'Scan or enter barcode',
+      },
+      qr_code_url: {
+        type: 'text',
+        label: 'QR Code',
+        inDetail: true,
+        readOnly: true,
       },
       purchase_date: {
         type: 'date',
@@ -80,11 +109,85 @@ export const assetSchema = defineSchema({
         inTable: true,
         inDetail: true,
       },
+      depreciation_method: {
+        type: 'select',
+        label: 'Depreciation Method',
+        inForm: true,
+        inDetail: true,
+        options: [
+          { label: 'Straight Line', value: 'straight_line' },
+          { label: 'Declining Balance', value: 'declining_balance' },
+          { label: 'Sum of Years', value: 'sum_of_years' },
+          { label: 'Units of Production', value: 'units_of_production' },
+        ],
+      },
+      useful_life_months: {
+        type: 'number',
+        label: 'Useful Life (months)',
+        inForm: true,
+        inDetail: true,
+      },
+      salvage_value: {
+        type: 'currency',
+        label: 'Salvage Value',
+        inForm: true,
+        inDetail: true,
+      },
+      book_value: {
+        type: 'currency',
+        label: 'Book Value',
+        inTable: true,
+        inDetail: true,
+        readOnly: true,
+      },
+      accumulated_depreciation: {
+        type: 'currency',
+        label: 'Accumulated Depreciation',
+        inDetail: true,
+        readOnly: true,
+      },
+      warranty_expiry: {
+        type: 'date',
+        label: 'Warranty Expiry',
+        inForm: true,
+        inDetail: true,
+      },
+      warranty_provider: {
+        type: 'text',
+        label: 'Warranty Provider',
+        inForm: true,
+        inDetail: true,
+      },
+      warranty_terms: {
+        type: 'textarea',
+        label: 'Warranty Terms',
+        inForm: true,
+        inDetail: true,
+      },
+      insurance_policy_id: {
+        type: 'relation',
+        label: 'Insurance Policy',
+        inForm: true,
+        inDetail: true,
+      },
+      insured_value: {
+        type: 'currency',
+        label: 'Insured Value',
+        inForm: true,
+        inDetail: true,
+      },
       location: {
         type: 'text',
         label: 'Location',
         inTable: true,
         inForm: true,
+      },
+      warehouse_location_id: {
+        type: 'relation',
+        label: 'Warehouse Bin',
+        inTable: true,
+        inForm: true,
+        inDetail: true,
       },
       assigned_to: {
         type: 'relation',
@@ -95,6 +198,20 @@ export const assetSchema = defineSchema({
       notes: {
         type: 'textarea',
         label: 'Notes',
+        inForm: true,
+        inDetail: true,
+      },
+      images: {
+        type: 'image',
+        label: 'Images',
+        required: false,
+        inForm: true,
+        inDetail: true,
+        inTable: false,
+      },
+      specifications: {
+        type: 'json',
+        label: 'Specifications',
         inForm: true,
         inDetail: true,
       },
@@ -115,8 +232,8 @@ export const assetSchema = defineSchema({
 
   search: {
     enabled: true,
-    fields: ['name', 'serial_number', 'location'],
-    placeholder: 'Search assets...',
+    fields: ['name', 'serial_number', 'barcode', 'location'],
+    placeholder: 'Search or scan barcode...',
   },
 
   filters: {
@@ -157,7 +274,7 @@ export const assetSchema = defineSchema({
         {
           key: 'basic',
           title: 'Basic Information',
-          fields: ['name', 'asset_type', 'status', 'serial_number'],
+          fields: ['name', 'asset_type', 'status', 'condition', 'serial_number', 'barcode'],
         },
         {
           key: 'financial',
@@ -165,9 +282,24 @@ export const assetSchema = defineSchema({
           fields: ['purchase_date', 'purchase_price', 'current_value'],
         },
         {
+          key: 'depreciation',
+          title: 'Depreciation',
+          fields: ['depreciation_method', 'useful_life_months', 'salvage_value', 'book_value', 'accumulated_depreciation'],
+        },
+        {
+          key: 'warranty',
+          title: 'Warranty & Insurance',
+          fields: ['warranty_expiry', 'warranty_provider', 'warranty_terms', 'insurance_policy_id', 'insured_value'],
+        },
+        {
           key: 'assignment',
           title: 'Assignment',
           fields: ['location', 'assigned_to'],
+        },
+        {
+          key: 'specs',
+          title: 'Specifications',
+          fields: ['specifications'],
         },
         {
           key: 'notes',

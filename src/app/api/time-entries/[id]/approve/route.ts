@@ -1,17 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createServiceClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { user, supabase } = auth;
 
     const { id } = params;
 
@@ -23,14 +21,11 @@ export async function POST(
       .single();
 
     if (fetchError || !timeEntry) {
-      return NextResponse.json({ error: 'Time entry not found' }, { status: 404 });
+      return notFound('Time entry');
     }
 
     if (timeEntry.status !== 'submitted') {
-      return NextResponse.json(
-        { error: 'Time entry is not submitted for approval' },
-        { status: 400 }
-      );
+      return badRequest('Time entry is not submitted for approval');
     }
 
     // Get approver contact ID
@@ -54,12 +49,12 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json({ success: true, data });
+    return apiSuccess(data);
   } catch (error) {
     console.error('Error approving time entry:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return serverError();
   }
 }

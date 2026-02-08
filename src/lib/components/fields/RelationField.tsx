@@ -8,14 +8,15 @@ import { FieldRenderProps } from './index';
  *
  * Renders a relation field for selecting related entities.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function RelationField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   const [options, setOptions] = useState<Array<{ value: string; label: string }>>([]);
   const [loading, setLoading] = useState(false);
 
   const relation = field.relation;
-  if (!relation) return null;
 
   useEffect(() => {
+    if (!relation) return;
     const loadOptions = async () => {
       if (relation.optionsEndpoint) {
         setLoading(true);
@@ -24,15 +25,15 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
           // const response = await fetch(relation.optionsEndpoint);
           // const data = await response.json();
           // setOptions(data);
-        } catch (error) {
-          console.error('Failed to load relation options:', error);
+        } catch (err) {
+          console.error('Failed to load relation options:', err);
         } finally {
           setLoading(false);
         }
       } else {
         // Use static options if provided
         const staticOptions = Array.isArray(relation.options)
-          ? relation.options.map((opt: any) => ({
+          ? relation.options.map((opt: Record<string, string>) => ({
               value: typeof opt === 'string' ? opt : opt.value,
               label: typeof opt === 'string' ? opt : opt.label
             }))
@@ -44,11 +45,11 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
     loadOptions();
   }, [relation]);
 
+  if (!relation) return null;
+
   const handleChange = (selectedValue: string) => {
     onChange(selectedValue);
   };
-
-  const selectedOption = options.find(opt => opt.value === value);
 
   return (
     <div className="space-y-1">

@@ -6,6 +6,7 @@ import { FieldRenderProps } from './index';
  *
  * Renders an image upload field with preview.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ImageField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

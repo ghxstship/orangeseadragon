@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiPaginated, apiCreated, badRequest, supabaseError } from '@/lib/api/response';
 
 const normalizeEntity = (entity: string) => entity.replace(/-/g, '_');
 
@@ -13,7 +14,9 @@ export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string }> }
 ) {
-    const supabase = await createServiceClient();
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
     const { entity } = await params;
     const tableName = normalizeEntity(entity);
 
@@ -71,14 +74,16 @@ export async function GET(
     const { data, error, count } = await query;
 
     if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return supabaseError(error);
     }
 
-    return NextResponse.json({
-        records: data,
+    const p = page ? parseInt(page) : 1;
+    const ps = pageSize ? parseInt(pageSize) : (data?.length || 0);
+
+    return apiPaginated(data || [], {
+        page: p,
+        limit: ps,
         total: count || 0,
-        page: page ? parseInt(page) : 1,
-        pageSize: pageSize ? parseInt(pageSize) : (data?.length || 0)
     });
 }
 
@@ -86,7 +91,9 @@ export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string }> }
 ) {
-    const supabase = await createServiceClient();
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
     const { entity } = await params;
     const tableName = normalizeEntity(entity);
 
@@ -98,12 +105,12 @@ export async function POST(
 
         if (error) {
             console.error(`[API POST] Supabase error for ${entity}:`, error);
-            return NextResponse.json({ error: error.message, details: error }, { status: 500 });
+            return supabaseError(error);
         }
 
-        return NextResponse.json(data);
+        return apiCreated(data);
     } catch (e) {
         console.error(`[API POST] Exception for ${entity}:`, e);
-        return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+        return badRequest('Invalid request body');
     }
 }

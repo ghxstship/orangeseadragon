@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EntitySchema } from '@/lib/schema/types';
+import { EntitySchema, EntityRecord } from '@/lib/schema/types';
 import { useCrud } from '../hooks/useCrud';
 import { FormLayout } from '@/lib/layouts';
 import { DynamicForm } from './DynamicForm';
 import { useToast } from '@/components/ui/use-toast';
 
-interface CrudFormProps<T = Record<string, unknown>> {
+interface CrudFormProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
   mode: 'create' | 'edit';
   id?: string;
@@ -20,10 +20,10 @@ interface CrudFormProps<T = Record<string, unknown>> {
  * Renders ANY entity create/edit form based on schema configuration.
  * Uses the unified FormLayout which accepts EntitySchema directly.
  */
-export function CrudForm<T extends Record<string, unknown>>({ 
-  schema, 
-  mode, 
-  id 
+export function CrudForm<T extends EntityRecord>({
+  schema,
+  mode,
+  id
 }: CrudFormProps<T>) {
   const crud = useCrud(schema);
   const router = useRouter();
@@ -84,9 +84,9 @@ export function CrudForm<T extends Record<string, unknown>>({
       onCancel={handleCancel}
     >
       <DynamicForm
-        schema={schema}
+        schema={schema as unknown as EntitySchema<EntityRecord>}
         mode={mode}
-        initialData={record}
+        initialData={record as T}
         onSubmit={handleSubmit}
         autosave={schema.layouts.form.autosave}
       />

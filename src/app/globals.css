@@ -4,12 +4,13 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 20% 98%;
+    /* Warm Neutral */
+    --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 224 71.4% 4.1%;
     --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
@@ -23,15 +24,38 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    /* Slightly larger for modern feel */
+
+    /* Semantic Status Colors */
+    --status-on-track: 217 91% 60%;
+    --status-at-risk: 45 93% 47%;
+    --status-delayed: 0 84% 60%;
+    --status-completed: 142 71% 45%;
+    --status-blocked: 0 84% 60%;
+    --status-todo: 215 14% 34%;
+    --status-in-review: 45 93% 47%;
+    --status-milestone: 270 67% 47%;
+    --status-critical-path: 0 84% 60%;
+    --status-dependency: 215 14% 64%;
+
+    /* Priority Colors */
+    --priority-low: 215 14% 64%;
+    --priority-medium: 217 91% 60%;
+    --priority-high: 25 95% 53%;
+    --priority-urgent: 0 84% 60%;
+
+    /* Spatial Shadows */
+    --shadow-spatial: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+    --shadow-ambient: 0 0 20px rgba(var(--primary), 0.05);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 224 71.4% 4.1%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 224 71.4% 4.1%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 40% 98%;
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
@@ -46,6 +70,27 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+
+    /* Semantic Status Colors - Dark */
+    --status-on-track: 217 91% 60%;
+    --status-at-risk: 45 93% 47%;
+    --status-delayed: 0 62% 31%;
+    --status-completed: 142 71% 45%;
+    --status-blocked: 0 62% 31%;
+    --status-todo: 215 20% 65%;
+    --status-in-review: 45 93% 47%;
+    --status-milestone: 270 67% 47%;
+    --status-critical-path: 0 62% 31%;
+    --status-dependency: 215 20% 65%;
+
+    /* Priority Colors - Dark */
+    --priority-low: 215 20% 65%;
+    --priority-medium: 217 91% 60%;
+    --priority-high: 25 95% 53%;
+    --priority-urgent: 0 62% 31%;
+
+    /* Spatial Shadows - Dark */
+    --shadow-spatial: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -53,7 +98,20 @@
   * {
     @apply border-border;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer utilities {
+  .glass-morphism {
+    @apply backdrop-blur-3xl bg-background/5 border border-white/10 shadow-2xl;
+  }
+
+  .spatial-card {
+    box-shadow: var(--shadow-spatial);
+    @apply border-white/5 transition-all duration-300 hover:translate-y-[-2px] hover:shadow-2xl;
   }
 }

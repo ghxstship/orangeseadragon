@@ -74,7 +74,7 @@ export function PermissionReview({ accountType, onNext }: PermissionReviewProps)
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Review Permissions</CardTitle>
         <p className="text-muted-foreground">
-          These are the permissions you'll have based on your {accountType} account type.
+          These are the permissions you&apos;ll have based on your {accountType} account type.
           Please review and confirm.
         </p>
       </CardHeader>

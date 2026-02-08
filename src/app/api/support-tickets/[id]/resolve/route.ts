@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * POST /api/support-tickets/[id]/resolve
@@ -9,15 +10,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createServiceClient();
   const { id } = await params;
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { user, supabase } = auth;
 
     const body = await request.json().catch(() => ({}));
     const { resolution_note } = body;
@@ -30,14 +28,12 @@ export async function POST(
       .single();
 
     if (fetchError || !ticket) {
-      return NextResponse.json({ error: 'Ticket not found' }, { status: 404 });
+      return notFound('Ticket');
     }
 
     // Check if already resolved/closed
     if (ticket.status === 'resolved' || ticket.status === 'closed') {
-      return NextResponse.json({ 
-        error: `Ticket is already ${ticket.status}` 
-      }, { status: 400 });
+      return badRequest(`Ticket is already ${ticket.status}`);
     }
 
     // Update the ticket
@@ -52,7 +48,7 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
     // Add resolution comment if provided
@@ -67,13 +63,9 @@ export async function POST(
         });
     }
 
-    return NextResponse.json({
-      success: true,
-      ticket: data,
-      message: 'Ticket resolved'
-    });
+    return apiSuccess(data, { message: 'Ticket resolved' });
   } catch (e) {
     console.error('[API] Ticket resolve error:', e);
-    return NextResponse.json({ error: 'Resolution failed' }, { status: 500 });
+    return serverError('Resolution failed');
   }
 }

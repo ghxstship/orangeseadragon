@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, ArrowRight, Check, X, SkipForward } from "lucide-react";
-import type { WizardLayoutConfig, WizardStepConfig } from "./types";
+import type { WizardLayoutConfig } from "./types";
 
 /**
  * WIZARD LAYOUT

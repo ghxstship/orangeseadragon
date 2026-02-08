@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EntitySchema } from '@/lib/schema/types';
+import { EntitySchema, EntityRecord } from '@/lib/schema/types';
 import { useCrud } from '../hooks/useCrud';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { useColumnPreference } from '../hooks/useColumnPreference';
@@ -10,7 +10,7 @@ import { ListLayout } from '@/lib/layouts';
 import { ViewRenderer } from '@/lib/views/components/ViewRenderer';
 import type { ViewType } from '@/lib/data-view-engine/hooks/use-data-view';
 
-interface CrudListProps<T = Record<string, unknown>> {
+interface CrudListProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
   initialSubpage?: string;
   filter?: Record<string, unknown>;
@@ -22,10 +22,10 @@ interface CrudListProps<T = Record<string, unknown>> {
  * Renders ANY entity list based on schema configuration.
  * Uses the unified ListLayout which accepts EntitySchema directly.
  */
-export function CrudList<T extends Record<string, unknown>>({ 
-  schema, 
-  initialSubpage, 
-  filter 
+export function CrudList<T extends EntityRecord>({
+  schema,
+  initialSubpage,
+  filter
 }: CrudListProps<T>) {
   const router = useRouter();
   const [currentSubpage, setCurrentSubpage] = useState(
@@ -90,10 +90,10 @@ export function CrudList<T extends Record<string, unknown>>({
       <ViewRenderer
         schema={schema}
         viewType={currentView}
-        viewConfig={(schema.views as Record<string, unknown>)[currentView]}
-        data={crud.data}
+        viewConfig={(schema.views as Record<string, any>)[currentView] as Record<string, unknown>}
+        data={crud.data as T[]}
         loading={crud.loading}
-        error={crud.error}
+        error={crud.error || undefined}
         selection={crud.selection}
         onSelectionChange={crud.setSelection}
         pagination={crud.pagination}

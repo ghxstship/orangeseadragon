@@ -1,18 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { NextRequest } from "next/server";
+import { requireAuth } from "@/lib/api/guard";
+import { apiSuccess, supabaseError } from "@/lib/api/response";
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
-
-  // Check authentication
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
 
   // Parse query parameters
   const searchParams = request.nextUrl.searchParams;
@@ -82,10 +75,7 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     console.error("Error fetching financial ledger:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch financial data" },
-      { status: 500 }
-    );
+    return supabaseError(error);
   }
 
   // Calculate totals
@@ -129,7 +119,7 @@ export async function GET(request: NextRequest) {
     createdAt: txn.created_at,
   }));
 
-  return NextResponse.json({
+  return apiSuccess({
     items,
     totals: {
       inflow: totals.totalInflow,

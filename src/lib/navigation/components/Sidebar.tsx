@@ -7,7 +7,7 @@ import { informationArchitecture, SidebarGroupDefinition, PageDefinition } from 
 import { cn } from '@/lib/utils';
 
 // Mock hooks - replace with actual implementations when available
-const usePermissions = () => ({ hasPermission: (permission?: string) => true });
+const usePermissions = () => ({ hasPermission: (_permission?: string) => true });
 const useSWR = () => ({ data: null });
 
 /**

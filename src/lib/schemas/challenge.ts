@@ -135,8 +135,10 @@ export const challengeSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'participants', label: 'Participants', content: { type: 'related', entity: 'challenge_participants', foreignKey: 'challenge_id' } },
-        { key: 'submissions', label: 'Submissions', content: { type: 'related', entity: 'challenge_submissions', foreignKey: 'challenge_id' } },
+        { key: 'milestones', label: 'Milestones', content: { type: 'related', entity: 'challengeMilestone', foreignKey: 'challenge_id' } },
+        { key: 'participants', label: 'Participants', content: { type: 'related', entity: 'challengeParticipant', foreignKey: 'challenge_id' } },
+        { key: 'submissions', label: 'Submissions', content: { type: 'related', entity: 'challengeSubmission', foreignKey: 'challenge_id' } },
+        { key: 'leaderboard', label: 'Leaderboard', content: { type: 'custom', component: 'ChallengeLeaderboard' } },
       ],
       overview: {
         stats: [
@@ -178,6 +180,7 @@ export const challengeSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (record) => `/network/challenges/${record.id}` } },
+      { key: 'join', label: 'Join Challenge', variant: 'primary', condition: (record) => record.status === 'active', handler: { type: 'api', endpoint: '/api/challenges/{id}/join', method: 'POST' }, successMessage: 'You have joined the challenge!' },
     ],
     bulk: [],
     global: [

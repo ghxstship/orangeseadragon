@@ -1,8 +1,11 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, apiCreated, badRequest, supabaseError } from '@/lib/api/response';
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
   const searchParams = request.nextUrl.searchParams;
 
   const parentCode = searchParams.get('parentCode');
@@ -30,7 +33,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await query;
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return supabaseError(error);
   }
 
   // Build hierarchical structure if requested
@@ -45,21 +48,16 @@ export async function GET(request: NextRequest) {
         }));
     };
     
-    return NextResponse.json({
-      records: buildTree(data, null),
-      flat: data,
-      topLevel,
-    });
+    return apiSuccess(buildTree(data, null), { flat: data, topLevel });
   }
 
-  return NextResponse.json({
-    records: data,
-    total: data?.length || 0,
-  });
+  return apiSuccess(data, { total: data?.length || 0 });
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createServiceClient();
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
 
   try {
     const body = await request.json();
@@ -77,11 +75,11 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json(data, { status: 201 });
+    return apiCreated(data);
   } catch {
-    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+    return badRequest('Invalid request body');
   }
 }

@@ -6,6 +6,7 @@ import { FieldRenderProps } from './index';
  *
  * Renders a color picker field.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ColorField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   return (
     <div className="space-y-1">

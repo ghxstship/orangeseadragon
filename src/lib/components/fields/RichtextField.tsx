@@ -6,6 +6,7 @@ import { FieldRenderProps } from './index';
  *
  * Renders a rich text editor field.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function RichtextField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   return (
     <div className="space-y-1">

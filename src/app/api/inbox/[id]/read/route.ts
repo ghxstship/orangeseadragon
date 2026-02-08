@@ -1,25 +1,25 @@
-import { createServiceClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/api/guard";
+import { apiSuccess, supabaseError, serverError } from "@/lib/api/response";
 
 export async function POST(_request: Request, { params }: { params: { id: string } }) {
-  const supabase = await createServiceClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { user, supabase } = auth;
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const { error } = await supabase
+      .from("notifications")
+      .update({ is_read: true, read_at: new Date().toISOString() })
+      .eq("id", params.id)
+      .eq("user_id", user.id);
+
+    if (error) {
+      return supabaseError(error);
+    }
+
+    return apiSuccess(null);
+  } catch (e) {
+    console.error("[API] Mark read error:", e);
+    return serverError();
   }
-
-  const { error } = await supabase
-    .from("notifications")
-    .update({ is_read: true, read_at: new Date().toISOString() })
-    .eq("id", params.id)
-    .eq("user_id", user.id);
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ success: true });
 }

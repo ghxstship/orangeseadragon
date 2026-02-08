@@ -9,6 +9,7 @@ import { CalendarView, CalendarEvent } from "./calendar-view";
 import { TimelineView, TimelineItem, TimelineGroup } from "./timeline-view";
 import { GanttView, GanttTask } from "./gantt-view";
 import { MapView, MapMarker } from "./map-view";
+import { MatrixView } from "./matrix-view";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 /* eslint-disable @next/next/no-img-element */
@@ -21,6 +22,7 @@ import type {
   CalendarViewConfig,
   TimelineViewConfig,
   MapViewConfig,
+  MatrixViewConfig,
   ActionDefinition,
   ListViewConfig,
   GridViewConfig,
@@ -35,11 +37,11 @@ function normalizeColumn(col: string | TableColumnDefinition): TableColumnDefini
   if (typeof col === 'string') {
     return { field: col, label: col, sortable: true, visible: true };
   }
-  return { 
-    ...col, 
-    label: col.field, 
-    sortable: true, 
-    visible: true 
+  return {
+    ...col,
+    label: col.field,
+    sortable: true,
+    visible: true
   };
 }
 
@@ -55,6 +57,7 @@ export interface DataViewProps<T extends object> {
     timeline?: TimelineViewConfig;
     gantt?: GanttViewConfig;
     map?: MapViewConfig;
+    matrix?: MatrixViewConfig;
   };
   state: DataViewState;
   onStateChange: (updates: Partial<DataViewState>) => void;
@@ -195,6 +198,15 @@ export function DataView<T extends object>({
           getRowId={typedGetRowId}
         />
       );
+    case "matrix":
+      return (
+        <MatrixRenderer
+          data={typedData}
+          config={config.matrix}
+          onRowClick={typedOnRowClick}
+          getRowId={typedGetRowId}
+        />
+      );
 
     default:
       return (
@@ -205,55 +217,91 @@ export function DataView<T extends object>({
   }
 }
 
-function formatValue(value: unknown, format?: ColumnFormat): React.ReactNode {
-  if (value === null || value === undefined) return "-";
+function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string): React.ReactNode {
+  if (value === null || value === undefined) return <span className="opacity-20">-</span>;
 
-  if (!format) return String(value);
+  if (!format) {
+    if (typeof value === 'boolean') {
+      return value ? <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20">TRUE</Badge> : <Badge variant="outline" className="opacity-50">FALSE</Badge>;
+    }
+    return <span className="text-sm font-medium">{String(value)}</span>;
+  }
 
   switch (format.type) {
     case "number":
-      return new Intl.NumberFormat("en-US", {
-        minimumFractionDigits: format.decimals ?? 0,
-        maximumFractionDigits: format.decimals ?? 0,
-      }).format(value as number);
+      return (
+        <span className="font-mono text-xs font-bold tracking-tight">
+          {new Intl.NumberFormat("en-US", {
+            minimumFractionDigits: format.decimals ?? 0,
+            maximumFractionDigits: format.decimals ?? 0,
+          }).format(value as number)}
+        </span>
+      );
 
     case "currency":
-      return new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: format.currency ?? "USD",
-      }).format(value as number);
+      return (
+        <span className="font-mono text-xs font-black text-emerald-600 dark:text-emerald-400">
+          {new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: format.currency ?? "USD",
+          }).format(value as number)}
+        </span>
+      );
 
     case "percentage":
-      return new Intl.NumberFormat("en-US", {
-        style: "percent",
-        minimumFractionDigits: format.decimals ?? 0,
-        maximumFractionDigits: format.decimals ?? 0,
-      }).format((value as number) / 100);
+      const pct = (value as number);
+      return (
+        <div className="flex items-center gap-2 w-full min-w-[100px]">
+          <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+            <div
+              className={cn(
+                "h-full transition-all duration-500",
+                pct > 80 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" :
+                  pct > 40 ? "bg-amber-500" : "bg-rose-500"
+              )}
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <span className="text-[10px] font-black w-8 text-right">{pct}%</span>
+        </div>
+      );
 
     case "date":
-      return new Date(value as string).toLocaleDateString();
-
     case "datetime":
-      return new Date(value as string).toLocaleString();
+      const date = new Date(value as string);
+      const isToday = new Date().toDateString() === date.toDateString();
+      return (
+        <span className={cn("text-xs font-medium", isToday && "text-primary font-bold")}>
+          {isToday ? "Today" : format.type === "date" ? date.toLocaleDateString() : date.toLocaleString()}
+        </span>
+      );
 
     case "boolean":
       return (value as boolean)
-        ? format.trueLabel ?? "Yes"
-        : format.falseLabel ?? "No";
+        ? <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">{format.trueLabel ?? "Yes"}</Badge>
+        : <Badge variant="outline" className="opacity-40">{format.falseLabel ?? "No"}</Badge>;
 
     case "badge":
       const badgeColor = format.colorMap?.[String(value)];
+      const isStatus = ["status", "state", "stage"].includes(fieldName?.toLowerCase() || "");
+
       return (
         <Badge
           variant="secondary"
-          style={badgeColor ? { backgroundColor: badgeColor } : undefined}
+          className="relative pl-5 py-0.5 border-none font-bold uppercase text-[9px] tracking-wider bg-muted/50 hover:bg-muted"
         >
+          {isStatus && (
+            <div
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full animate-pulse"
+              style={{ backgroundColor: badgeColor || 'currentColor' }}
+            />
+          )}
           {String(value)}
         </Badge>
       );
 
     default:
-      return String(value);
+      return <span className="text-sm font-medium">{String(value)}</span>;
   }
 }
 
@@ -285,7 +333,7 @@ function TableRenderer<T extends Record<string, unknown>>({
 
     // Get all normalized columns
     const allColumns = config.columns.map((col) => normalizeColumn(col));
-    
+
     // Filter by visibility
     const visibleCols = allColumns
       .filter((col) => col.visible !== false)
@@ -297,10 +345,10 @@ function TableRenderer<T extends Record<string, unknown>>({
     // Sort by order in visibleColumns if provided
     const orderedCols = state.visibleColumns.length > 0
       ? visibleCols.sort((a, b) => {
-          const aIndex = state.visibleColumns.indexOf(a.field);
-          const bIndex = state.visibleColumns.indexOf(b.field);
-          return aIndex - bIndex;
-        })
+        const aIndex = state.visibleColumns.indexOf(a.field);
+        const bIndex = state.visibleColumns.indexOf(b.field);
+        return aIndex - bIndex;
+      })
       : visibleCols;
 
     return orderedCols.map((col) => ({
@@ -308,7 +356,7 @@ function TableRenderer<T extends Record<string, unknown>>({
       header: col.label,
       cell: ({ row }) => {
         const value = row.getValue(col.field);
-        return formatValue(value, col.format);
+        return formatValue(value, col.format, col.field);
       },
       enableSorting: col.sortable !== false,
     }));
@@ -331,7 +379,7 @@ function TableRenderer<T extends Record<string, unknown>>({
     <DataTable
       columns={columns}
       data={data}
-      pageSize={10}
+      pageSize={state.pageSize}
       pageSizeOptions={[10, 20, 50, 100]}
       selectable={config?.features?.selection ?? false}
       onSelectionChange={onSelectionChange}
@@ -342,6 +390,8 @@ function TableRenderer<T extends Record<string, unknown>>({
       emptyMessage={emptyMessage}
       showSearch={false}
       showColumnToggle={false}
+      density={state.density}
+      grouping={state.grouping}
     />
   );
 }
@@ -495,7 +545,7 @@ function GridRenderer<T extends Record<string, unknown>>({
         config?.columns === 2 && "grid-cols-1 sm:grid-cols-2",
         config?.columns === 3 && "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
         (!config?.columns || config.columns >= 4) &&
-          "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
       )}
     >
       {data.map((item) => (
@@ -602,8 +652,8 @@ function KanbanRenderer<T extends Record<string, unknown>>({
       renderCard={(item) => (
         <Card className="p-3">
           <p className="font-medium text-sm">
-            {typeof cardTitle === 'function' 
-              ? cardTitle(item) 
+            {typeof cardTitle === 'function'
+              ? cardTitle(item)
               : String(item[cardTitle as string] ?? "")}
           </p>
           {cardSubtitle && (
@@ -815,6 +865,48 @@ function MapRenderer<T extends Record<string, unknown>>({
         const original = data.find((d) => getRowId(d) === marker.id);
         if (original && onRowClick) onRowClick(original);
       }}
+    />
+  );
+}
+
+interface MatrixRendererProps<T extends Record<string, unknown>> {
+  data: T[];
+  config?: MatrixViewConfig;
+  onRowClick?: (item: T) => void;
+  getRowId: (item: T) => string;
+}
+
+function MatrixRenderer<T extends Record<string, unknown>>({
+  data,
+  config,
+  onRowClick,
+  getRowId,
+}: MatrixRendererProps<T>) {
+  const items = React.useMemo(() => {
+    if (!config) return [];
+    return data.map((item) => ({
+      id: getRowId(item),
+      title: String(item.title || item.name || item.item_name || "Untitled"),
+      subtitle: String(item.status || ""),
+      xValue: Number(item[config.xAxis] ?? 5),
+      yValue: Number(item[config.yAxis] ?? 5),
+      data: item,
+    }));
+  }, [data, config, getRowId]);
+
+  if (!config) {
+    return (
+      <div className="p-8 text-center text-muted-foreground">
+        Matrix view configuration is required.
+      </div>
+    );
+  }
+
+  return (
+    <MatrixView
+      items={items}
+      config={config}
+      onItemClick={onRowClick}
     />
   );
 }

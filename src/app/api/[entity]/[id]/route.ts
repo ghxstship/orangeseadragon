@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, apiNoContent, notFound, badRequest, supabaseError } from '@/lib/api/response';
 
 const normalizeEntity = (entity: string) => entity.replace(/-/g, '_');
 
@@ -13,7 +14,9 @@ export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string; id: string }> }
 ) {
-    const supabase = await createServiceClient();
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
     const { entity, id } = await params;
     const tableName = normalizeEntity(entity);
 
@@ -24,17 +27,19 @@ export async function GET(
         .single();
 
     if (error) {
-        return NextResponse.json({ error: error.message }, { status: error.code === 'PGRST116' ? 404 : 500 });
+        return error.code === 'PGRST116' ? notFound(tableName) : supabaseError(error);
     }
 
-    return NextResponse.json(data);
+    return apiSuccess(data);
 }
 
 export async function PATCH(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string; id: string }> }
 ) {
-    const supabase = await createServiceClient();
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
     const { entity, id } = await params;
     const tableName = normalizeEntity(entity);
 
@@ -48,13 +53,13 @@ export async function PATCH(
             .single();
 
         if (error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
+            return supabaseError(error);
         }
 
-        return NextResponse.json(data);
+        return apiSuccess(data);
     } catch (error) {
         console.error('Invalid request body', error);
-        return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
+        return badRequest('Invalid request body');
     }
 }
 
@@ -62,7 +67,9 @@ export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string; id: string }> }
 ) {
-    const supabase = await createServiceClient();
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
     const { entity, id } = await params;
     const tableName = normalizeEntity(entity);
 
@@ -72,8 +79,8 @@ export async function DELETE(
         .eq('id', id);
 
     if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return supabaseError(error);
     }
 
-    return NextResponse.json({ success: true });
+    return apiNoContent();
 }

@@ -12,7 +12,7 @@ export interface LookupTable {
     table_name: string;
     key: string;
     value: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     is_active: boolean;
     position: number;
     created_at?: string;
@@ -28,8 +28,8 @@ export interface PageLayout {
     layout_type: string;
     is_default: boolean;
     is_active: boolean;
-    component_config: any;
-    theme_config?: any;
+    component_config: Record<string, unknown>;
+    theme_config?: Record<string, unknown>;
     applicable_account_types: string[];
     applicable_subscription_tiers: string[];
     permissions: string[];
@@ -42,7 +42,7 @@ export interface TenantConfig {
     id: string;
     organization_id: string;
     config_key: string;
-    config_value: any;
+    config_value: unknown;
     config_type: string;
     environment: string;
     status?: string;
@@ -56,7 +56,7 @@ export interface TenantFeature {
     organization_id: string;
     feature_slug: string;
     is_enabled: boolean;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     rollout_percentage: number;
     allowed_users: string[];
     created_at?: string;

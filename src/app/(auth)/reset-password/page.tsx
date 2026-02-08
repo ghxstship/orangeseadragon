@@ -4,7 +4,7 @@ import { Lock } from 'lucide-react';
 import { AuthTemplate, AuthField } from '@/components/templates/AuthTemplate';
 
 const resetPasswordFields: AuthField[] = [
-  { key: 'password', label: 'New password', type: 'password', placeholder: '••••••••', icon: Lock, required: true, minLength: 8, helperText: 'Must be at least 8 characters' },
+  { key: 'password', label: 'New password', type: 'password', placeholder: '••••••••', icon: Lock, required: true, minLength: 8, showPasswordStrength: true },
   { key: 'confirmPassword', label: 'Confirm password', type: 'password', placeholder: '••••••••', icon: Lock, required: true },
 ];
 

@@ -3,7 +3,7 @@
 import * as React from "react";
 import type { FilterGroup, SortDefinition } from "../types";
 
-export type ViewType = "table" | "list" | "grid" | "kanban" | "calendar" | "timeline" | "gantt" | "map" | "workload";
+export type ViewType = "table" | "list" | "grid" | "kanban" | "calendar" | "timeline" | "gantt" | "map" | "workload" | "matrix";
 
 export interface DataViewState {
   search: string;
@@ -14,6 +14,8 @@ export interface DataViewState {
   selectedIds: string[];
   page: number;
   pageSize: number;
+  density: "comfortable" | "compact";
+  grouping: string[];
 }
 
 export interface DataViewActions {
@@ -28,6 +30,8 @@ export interface DataViewActions {
   clearSelection: () => void;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
+  setDensity: (density: "comfortable" | "compact") => void;
+  setGrouping: (grouping: string[]) => void;
   reset: () => void;
 }
 
@@ -48,6 +52,8 @@ const DEFAULT_STATE: DataViewState = {
   selectedIds: [],
   page: 1,
   pageSize: 10,
+  density: "comfortable",
+  grouping: [],
 };
 
 export function useDataView(options: UseDataViewOptions = {}): {
@@ -123,6 +129,12 @@ export function useDataView(options: UseDataViewOptions = {}): {
       setPageSize: (pageSize: number) => {
         updateState({ pageSize, page: 1 });
       },
+      setDensity: (density: "comfortable" | "compact") => {
+        updateState({ density });
+      },
+      setGrouping: (grouping: string[]) => {
+        updateState({ grouping });
+      },
       reset: () => {
         setState({
           ...DEFAULT_STATE,
@@ -169,6 +181,27 @@ export function useFilteredData<T>({
           return String(value).toLowerCase().includes(searchLower);
         })
       );
+    }
+
+    if (state.filters?.filters && state.filters.filters.length > 0) {
+      const { logic, filters } = state.filters;
+      result = result.filter((item: any) => {
+        const results = filters.map((f: any) => {
+          const value = item[f.field];
+          const filterValue = f.value;
+
+          switch (f.operator) {
+            case "eq": return String(value) === String(filterValue);
+            case "ne": return String(value) !== String(filterValue);
+            case "contains": return String(value).toLowerCase().includes(String(filterValue).toLowerCase());
+            case "startsWith": return String(value).toLowerCase().startsWith(String(filterValue).toLowerCase());
+            case "isNull": return value === null || value === undefined || value === "";
+            default: return true;
+          }
+        });
+
+        return logic === "or" ? results.some(r => r) : results.every(r => r);
+      });
     }
 
     return result;

@@ -81,6 +81,18 @@ export const discussionSchema = defineSchema({
         label: 'Views',
         inTable: true,
       },
+      reaction_count: {
+        type: 'number',
+        label: 'Reactions',
+        inTable: true,
+        default: 0,
+      },
+      is_answered: {
+        type: 'switch',
+        label: 'Answered',
+        inTable: true,
+        default: false,
+      },
     },
   },
 
@@ -117,12 +129,13 @@ export const discussionSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'discussion', label: 'Discussion', content: { type: 'overview' } },
-        { key: 'replies', label: 'Replies', content: { type: 'related', entity: 'replies', foreignKey: 'discussion_id' } },
+        { key: 'replies', label: 'Replies', content: { type: 'related', entity: 'discussionReply', foreignKey: 'discussion_id' } },
       ],
       overview: {
         stats: [
           { key: 'replies', label: 'Replies', value: { type: 'field', field: 'reply_count' }, format: 'number' },
           { key: 'views', label: 'Views', value: { type: 'field', field: 'view_count' }, format: 'number' },
+          { key: 'reactions', label: 'Reactions', value: { type: 'field', field: 'reaction_count' }, format: 'number' },
         ],
         blocks: [
           { key: 'content', title: 'Content', content: { type: 'fields', fields: ['content'] } },

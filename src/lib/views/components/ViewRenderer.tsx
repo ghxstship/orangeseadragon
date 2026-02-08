@@ -2,30 +2,31 @@
 
 import React from 'react';
 import { DataTable } from '@/components/views/data-table';
-import { EntitySchema } from '@/lib/schema/types';
+import { EntitySchema, EntityRecord } from '@/lib/schema/types';
 import { ColumnDef } from '@tanstack/react-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
-interface ViewRendererProps {
-  schema: EntitySchema;
+interface ViewRendererProps<T extends EntityRecord = EntityRecord> {
+  schema: EntitySchema<T>;
   viewType: string;
-  viewConfig?: any;
-  data: any[];
+  viewConfig?: Record<string, unknown>;
+  data: T[];
   loading?: boolean;
-  error?: any;
+  error?: Error | { message: string };
   selection?: string[];
   onSelectionChange?: (ids: string[]) => void;
   pagination?: {
     page: number;
     pageSize: number;
   };
-  onPaginationChange?: (pagination: any) => void;
+  onPaginationChange?: (pagination: { page: number; pageSize: number }) => void;
   sort?: { field: string; direction: 'asc' | 'desc' };
-  onSortChange?: (sort: any) => void;
-  onRowClick?: (record: any) => void;
+  onSortChange?: (sort: { field: string; direction: 'asc' | 'desc' }) => void;
+  onRowClick?: (record: T) => void;
   visibleColumns?: string[];
 }
 
@@ -35,36 +36,27 @@ interface ViewRendererProps {
  * Dynamically renders the appropriate view component based on viewType.
  * Supports table, kanban, calendar, and other view types.
  */
-export function ViewRenderer({
+export function ViewRenderer<T extends EntityRecord = EntityRecord>({
   schema,
   viewType,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   viewConfig,
   data,
   loading = false,
   error,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  selection = [],
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onSelectionChange,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  pagination,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onPaginationChange,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  sort,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onSortChange,
   onRowClick,
   visibleColumns,
-}: ViewRendererProps) {
+  // selection, onSelectionChange, pagination, onPaginationChange, sort, onSortChange
+  // are accepted via props interface but not yet consumed — reserved for future use
+  ...rest
+}: ViewRendererProps<T>) {
+  void rest; // Suppress unused variable warning for reserved props
   // Map schema to columns for DataTable, filtering by visibleColumns if provided
-  const columns = React.useMemo<ColumnDef<any>[]>(() => {
+  const columns = React.useMemo<ColumnDef<T>[]>(() => {
     const tableConfig = schema.views.table;
     if (!tableConfig) return [];
 
     return tableConfig.columns
-      .map((col: any) => {
+      .map((col: string | { field: string }) => {
         const fieldKey = typeof col === 'string' ? col : col.field;
         return fieldKey;
       })
@@ -82,7 +74,7 @@ export function ViewRenderer({
           id: fieldKey,
           accessorKey: fieldKey,
           header: field?.label || fieldKey,
-          cell: ({ getValue }: any) => {
+          cell: ({ getValue }: { getValue: () => unknown }) => {
             const value = getValue();
             if (value === null || value === undefined) return '-';
             return String(value);
@@ -113,21 +105,21 @@ export function ViewRenderer({
   }
 
   // Get display functions from schema
-  const getTitle = (record: Record<string, unknown>) => {
+  const getTitle = (record: T) => {
     if (typeof schema.display.title === 'function') {
       return schema.display.title(record);
     }
     return record.name || record.title || 'Untitled';
   };
 
-  const getSubtitle = (record: Record<string, unknown>) => {
+  const getSubtitle = (record: T) => {
     if (typeof schema.display.subtitle === 'function') {
       return schema.display.subtitle(record);
     }
     return '';
   };
 
-  const getBadge = (record: Record<string, unknown>) => {
+  const getBadge = (record: T) => {
     if (typeof schema.display.badge === 'function') {
       return schema.display.badge(record);
     }
@@ -144,16 +136,39 @@ export function ViewRenderer({
       );
     }
 
+    const imageField = (viewConfig as Record<string, unknown> | undefined)?.imageField as string | undefined;
+    const cardFields = ((viewConfig as Record<string, unknown> | undefined)?.cardFields as string[]) || [];
+
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {data.map((record, index) => {
           const badge = getBadge(record);
+          const imageUrl = imageField ? (record[imageField] as string) : null;
+
           return (
             <Card
               key={record.id || index}
-              className="cursor-pointer hover:shadow-md transition-shadow"
+              className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden group"
               onClick={() => onRowClick?.(record)}
             >
+              {imageUrl ? (
+                <div className="aspect-video w-full overflow-hidden bg-muted relative">
+                  <Image
+                    src={imageUrl}
+                    alt={String(getTitle(record))}
+                    fill
+                    className="object-cover transition-transform group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
+                </div>
+              ) : (
+                // Fallback placeholder if image field exists but no value
+                imageField && (
+                  <div className="aspect-video w-full bg-muted/50 flex items-center justify-center text-muted-foreground/30">
+                    <span className="text-4xl">📷</span>
+                  </div>
+                )
+              )}
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-sm font-medium line-clamp-2">
@@ -166,10 +181,29 @@ export function ViewRenderer({
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="pt-0">
+              <CardContent className="pt-0 space-y-2">
                 <p className="text-xs text-muted-foreground line-clamp-1">
                   {String(getSubtitle(record))}
                 </p>
+                {cardFields.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t mt-2">
+                    {cardFields.map(fieldKey => {
+                      const fieldDef = schema.data.fields[fieldKey];
+                      const value = record[fieldKey];
+                      if (!value) return null;
+                      return (
+                        <div key={fieldKey}>
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">
+                            {fieldDef?.label || fieldKey}
+                          </span>
+                          <span className="text-xs font-medium truncate block">
+                            {String(value)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </CardContent>
             </Card>
           );

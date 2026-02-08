@@ -1,8 +1,11 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, supabaseError } from '@/lib/api/response';
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
   const searchParams = request.nextUrl.searchParams;
 
   const search = searchParams.get('search');
@@ -26,7 +29,7 @@ export async function GET(request: NextRequest) {
   const { data: vendors, error, count } = await query;
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return supabaseError(error);
   }
 
   // Get performance summary for each vendor
@@ -50,7 +53,7 @@ export async function GET(request: NextRequest) {
     };
   });
 
-  return NextResponse.json({
+  return apiSuccess({
     records: vendorsWithPerformance,
     total: count || 0,
     page,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { defineSchema } from '../schema/defineSchema';
 
 export const productionSchema = defineSchema({

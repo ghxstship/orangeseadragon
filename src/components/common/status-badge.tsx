@@ -11,65 +11,65 @@ interface StatusBadgeProps {
 
 const defaultColorMap: Record<string, string> = {
   // General statuses
-  draft: "bg-gray-500",
-  pending: "bg-yellow-500",
-  active: "bg-green-500",
-  completed: "bg-blue-500",
-  cancelled: "bg-red-500",
-  archived: "bg-gray-400",
+  draft: "bg-white/5 text-muted-foreground border-white/10",
+  pending: "bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]",
+  active: "bg-green-500/10 text-green-500 border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.2)]",
+  completed: "bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.2)]",
+  cancelled: "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]",
+  archived: "bg-white/5 text-muted-foreground border-white/10 opacity-60",
 
   // Project statuses
-  planning: "bg-blue-500",
-  on_hold: "bg-yellow-500",
+  planning: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.2)]",
+  on_hold: "bg-amber-500/10 text-amber-500 border-amber-500/20",
 
   // Task statuses
-  backlog: "bg-gray-500",
-  todo: "bg-blue-500",
-  in_progress: "bg-yellow-500",
-  in_review: "bg-purple-500",
-  blocked: "bg-red-500",
-  done: "bg-green-500",
+  backlog: "bg-white/5 text-muted-foreground/40 border-white/10",
+  todo: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  in_progress: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  in_review: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  blocked: "bg-red-500/10 text-red-500 border-red-500/20",
+  done: "bg-green-500/10 text-green-500 border-green-500/20",
 
   // Asset statuses
-  available: "bg-green-500",
-  in_use: "bg-blue-500",
-  maintenance: "bg-yellow-500",
-  reserved: "bg-purple-500",
-  retired: "bg-gray-500",
-  lost: "bg-red-500",
-  damaged: "bg-orange-500",
+  available: "bg-green-500/10 text-green-500 border-green-500/20",
+  in_use: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  maintenance: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  reserved: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  retired: "bg-white/5 text-muted-foreground border-white/10",
+  lost: "bg-red-500/10 text-red-500 border-red-500/20",
+  damaged: "bg-orange-500/10 text-orange-500 border-orange-500/20",
 
   // Invoice statuses
-  sent: "bg-blue-500",
-  viewed: "bg-cyan-500",
-  partially_paid: "bg-yellow-500",
-  paid: "bg-green-500",
-  overdue: "bg-red-500",
-  disputed: "bg-orange-500",
+  sent: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  viewed: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+  partially_paid: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  paid: "bg-green-500/10 text-green-500 border-green-500/20",
+  overdue: "bg-red-500/10 text-red-500 border-red-500/20",
+  disputed: "bg-orange-500/10 text-orange-500 border-orange-500/20",
 
   // Event phases
-  concept: "bg-gray-500",
-  pre_production: "bg-yellow-500",
-  setup: "bg-orange-500",
-  live: "bg-red-500",
-  teardown: "bg-purple-500",
-  post_mortem: "bg-indigo-500",
+  concept: "bg-white/5 text-muted-foreground border-white/10",
+  pre_production: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  setup: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+  live: "bg-red-500/10 text-red-500 border-red-500/20 font-black tracking-[0.3em]",
+  teardown: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  post_mortem: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
 
   // Deal stages
-  lead: "bg-gray-500",
-  qualified: "bg-blue-500",
-  proposal: "bg-yellow-500",
-  negotiation: "bg-purple-500",
-  won: "bg-green-500",
+  lead: "bg-white/5 text-muted-foreground border-white/10",
+  qualified: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  proposal: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  negotiation: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  won: "bg-green-500/10 text-green-500 border-green-500/20",
 
   // Booking status
-  confirmed: "bg-green-500",
-  tentative: "bg-yellow-500",
+  confirmed: "bg-green-500/10 text-green-500 border-green-500/20",
+  tentative: "bg-amber-500/10 text-amber-500 border-amber-500/20",
 
   // Approval status
-  approved: "bg-green-500",
-  rejected: "bg-red-500",
-  review: "bg-yellow-500",
+  approved: "bg-green-500/10 text-green-500 border-green-500/20",
+  rejected: "bg-red-500/10 text-red-500 border-red-500/20",
+  review: "bg-amber-500/10 text-amber-500 border-amber-500/20",
 };
 
 export function StatusBadge({
@@ -81,7 +81,7 @@ export function StatusBadge({
   const colorClass = mergedColorMap[status.toLowerCase()] || "bg-gray-500";
 
   return (
-    <Badge className={cn(colorClass, "text-white", className)}>
+    <Badge className={cn(colorClass, "text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-lg border shadow-lg", className)}>
       {formatStatus(status)}
     </Badge>
   );
@@ -93,19 +93,19 @@ interface PriorityBadgeProps {
 }
 
 const priorityColorMap: Record<string, string> = {
-  urgent: "bg-red-500",
-  critical: "bg-red-500",
-  high: "bg-orange-500",
-  medium: "bg-yellow-500",
-  low: "bg-blue-500",
-  none: "bg-gray-500",
+  urgent: "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
+  critical: "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
+  high: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+  medium: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  low: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  none: "bg-white/5 text-muted-foreground border-white/10",
 };
 
 export function PriorityBadge({ priority, className }: PriorityBadgeProps) {
   const colorClass = priorityColorMap[priority.toLowerCase()] || "bg-gray-500";
 
   return (
-    <Badge className={cn(colorClass, "text-white", className)}>
+    <Badge className={cn(colorClass, "text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-lg border shadow-lg", className)}>
       {formatStatus(priority)}
     </Badge>
   );

@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * POST /api/purchase-orders/[id]/submit
@@ -9,7 +10,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createServiceClient();
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
   const { id } = await params;
 
   try {
@@ -21,21 +24,17 @@ export async function POST(
       .single();
 
     if (fetchError || !po) {
-      return NextResponse.json({ error: 'Purchase order not found' }, { status: 404 });
+      return notFound('Purchase order');
     }
 
     // Check if in correct status
     if (po.status !== 'draft') {
-      return NextResponse.json({ 
-        error: `Cannot submit PO with status: ${po.status}` 
-      }, { status: 400 });
+      return badRequest(`Cannot submit PO with status: ${po.status}`);
     }
 
     // Validate PO has items
     if (!po.items || po.items.length === 0) {
-      return NextResponse.json({ 
-        error: 'Cannot submit PO without line items' 
-      }, { status: 400 });
+      return badRequest('Cannot submit PO without line items');
     }
 
     // Update the purchase order
@@ -49,16 +48,12 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json({
-      success: true,
-      purchase_order: data,
-      message: 'Purchase order submitted for approval'
-    });
+    return apiSuccess(data, { message: 'Purchase order submitted for approval' });
   } catch (e) {
     console.error('[API] PO submit error:', e);
-    return NextResponse.json({ error: 'Submission failed' }, { status: 500 });
+    return serverError('Submission failed');
   }
 }

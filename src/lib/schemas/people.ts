@@ -1,7 +1,6 @@
 // /lib/schemas/people.ts
 
 import { defineSchema } from '../schema/defineSchema';
-import type { EntitySchema } from '../schema/types';
 
 /**
  * PEOPLE/USER ENTITY SCHEMA (SSOT)
@@ -90,8 +89,8 @@ export const peopleSchema = defineSchema({
     title: (record: Record<string, unknown>) => String(record.headline || 'Untitled Profile'),
     subtitle: (record: Record<string, unknown>) => String(record.location || ''),
     badge: (record: Record<string, unknown>) => {
-      return record.is_available_for_hire 
-        ? { label: 'Available', variant: 'success' } 
+      return record.is_available_for_hire
+        ? { label: 'Available', variant: 'success' }
         : { label: 'Not Available', variant: 'secondary' };
     },
     defaultSort: { field: 'created_at', direction: 'desc' },
@@ -168,7 +167,7 @@ export const peopleSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Person', variant: 'primary', handler: { type: 'function', fn: () => {} } }
+      { key: 'create', label: 'Add Person', variant: 'primary', handler: { type: 'function', fn: () => { } } }
     ]
   },
 

@@ -36,6 +36,7 @@ import {
   ToggleLeft,
   AlignLeft,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export type FieldType =
   | "text"
@@ -209,283 +210,295 @@ export function FormBuilder({
   };
 
   return (
-    <div className={cn("grid grid-cols-1 lg:grid-cols-3 gap-6", className)}>
+    <div className={cn("grid grid-cols-1 lg:grid-cols-4 gap-6", className)}>
       {/* Field Palette */}
-      <Card className="lg:col-span-1">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">Add Fields</CardTitle>
+      <Card className="lg:col-span-1 border-white/5 glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
+        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+          <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Add Fields</CardTitle>
         </CardHeader>
         <CardContent className="p-3">
-          <div className="grid grid-cols-2 gap-2">
-            {(Object.keys(fieldTypeLabels) as FieldType[]).map((type) => (
-              <Button
+          <div className="grid grid-cols-1 gap-2">
+            {(Object.keys(fieldTypeLabels) as FieldType[]).map((type, idx) => (
+              <motion.div
                 key={type}
-                variant="outline"
-                size="sm"
-                className="justify-start h-auto py-2 px-3"
-                onClick={() => addField(type)}
-                disabled={readOnly}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.02 }}
               >
-                <span className="mr-2">{fieldTypeIcons[type]}</span>
-                <span className="text-xs">{fieldTypeLabels[type]}</span>
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start h-10 px-4 glass-morphism border-white/5 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+                  onClick={() => addField(type)}
+                  disabled={readOnly}
+                >
+                  <span className="mr-3 text-primary/60 group-hover:text-primary group-hover:scale-110 transition-all">{fieldTypeIcons[type]}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider">{fieldTypeLabels[type]}</span>
+                </Button>
+              </motion.div>
             ))}
           </div>
         </CardContent>
       </Card>
 
       {/* Form Preview */}
-      <Card className="lg:col-span-1">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm">{title}</CardTitle>
-          {description && <CardDescription className="text-xs">{description}</CardDescription>}
+      <Card className="lg:col-span-2 border-white/5 glass-morphism overflow-hidden shadow-2xl">
+        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+          <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">{title}</CardTitle>
+          {description && <CardDescription className="text-[10px] font-bold uppercase opacity-30 mt-1 tracking-wider">{description}</CardDescription>}
         </CardHeader>
-        <CardContent className="p-3">
+        <CardContent className="p-6">
           {fields.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
-              <p className="text-sm">Add fields from the palette</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-20 text-muted-foreground border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.02]"
+            >
+              <Plus className="h-10 w-10 mx-auto mb-4 opacity-20" />
+              <p className="text-[11px] font-black uppercase tracking-widest opacity-40">Add fields from the palette</p>
+            </motion.div>
           ) : (
-            <div className="space-y-3">
-              {fields.map((field) => (
-                <div
-                  key={field.id}
-                  draggable={!readOnly}
-                  onDragStart={(e) => handleDragStart(e, field.id)}
-                  onDragOver={(e) => handleDragOver(e, field.id)}
-                  onDragEnd={handleDragEnd}
-                  className={cn(
-                    "group relative p-3 border rounded-lg cursor-pointer transition-all",
-                    selectedFieldId === field.id
-                      ? "border-primary ring-1 ring-primary"
-                      : "hover:border-primary/50",
-                    draggedFieldId === field.id && "opacity-50",
-                    field.width === "half" && "w-1/2 inline-block",
-                    field.width === "third" && "w-1/3 inline-block"
-                  )}
-                  onClick={() => setSelectedFieldId(field.id)}
-                >
-                  {!readOnly && (
-                    <div className="absolute -left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab">
-                      <GripVertical className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  )}
+            <div className="space-y-4">
+              <AnimatePresence mode="popLayout">
+                {fields.map((field) => (
+                  <motion.div
+                    key={field.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    draggable={!readOnly}
+                    onDragStart={(e: any) => handleDragStart(e, field.id)}
+                    onDragOver={(e: any) => handleDragOver(e, field.id)}
+                    onDragEnd={handleDragEnd}
+                    className={cn(
+                      "group relative p-5 border border-white/5 rounded-2xl cursor-pointer transition-all duration-300",
+                      selectedFieldId === field.id
+                        ? "bg-primary/[0.03] border-primary/30 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.05)]"
+                        : "hover:border-white/10 hover:bg-white/[0.02]",
+                      draggedFieldId === field.id && "opacity-50 scale-95",
+                      field.width === "half" && "w-[calc(50%-8px)] inline-block mr-4",
+                      field.width === "third" && "w-[calc(33.33%-11px)] inline-block mr-4"
+                    )}
+                    onClick={() => setSelectedFieldId(field.id)}
+                  >
+                    {!readOnly && (
+                      <div className="absolute -left-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-grab p-1 hover:text-primary">
+                        <GripVertical className="h-5 w-5" />
+                      </div>
+                    )}
 
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-muted-foreground">{fieldTypeIcons[field.type]}</span>
-                    <Label className="text-sm">
-                      {field.label}
-                      {field.required && <span className="text-red-500 ml-1">*</span>}
-                    </Label>
-                  </div>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-primary/60 group-hover:scale-110 transition-transform">{fieldTypeIcons[field.type]}</span>
+                      <Label className="text-[11px] font-black uppercase tracking-wider cursor-pointer">
+                        {field.label}
+                        {field.required && <span className="text-red-500 ml-1">*</span>}
+                      </Label>
+                    </div>
 
-                  {field.type === "heading" ? (
-                    <h3 className="text-lg font-semibold">{field.label}</h3>
-                  ) : field.type === "paragraph" ? (
-                    <p className="text-sm text-muted-foreground">{field.description || "Paragraph text"}</p>
-                  ) : field.type === "textarea" ? (
-                    <Textarea placeholder={field.placeholder} disabled className="h-16 text-xs" />
-                  ) : field.type === "select" || field.type === "multiselect" ? (
-                    <Select disabled>
-                      <SelectTrigger className="h-8 text-xs">
-                        <SelectValue placeholder={field.placeholder || "Select..."} />
-                      </SelectTrigger>
-                    </Select>
-                  ) : field.type === "checkbox" || field.type === "radio" ? (
-                    <div className="space-y-1">
-                      {field.options?.slice(0, 2).map((opt) => (
-                        <div key={opt.value} className="flex items-center gap-2">
-                          <Checkbox disabled />
-                          <span className="text-xs">{opt.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : field.type === "toggle" ? (
-                    <Switch disabled />
-                  ) : field.type === "file" ? (
-                    <div className="border-2 border-dashed rounded p-2 text-center text-xs text-muted-foreground">
-                      Drop files here
-                    </div>
-                  ) : (
-                    <Input
-                      type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
-                      placeholder={field.placeholder}
-                      disabled
-                      className="h-8 text-xs"
-                    />
-                  )}
+                    {field.type === "heading" ? (
+                      <h3 className="text-2xl font-black tracking-tight">{field.label}</h3>
+                    ) : field.type === "paragraph" ? (
+                      <p className="text-sm font-medium text-muted-foreground opacity-60">{field.description || "Paragraph text"}</p>
+                    ) : (
+                      <div className="glass-morphism bg-white/[0.03] border-white/5 rounded-xl h-10 flex items-center px-4 opacity-40">
+                        <span className="text-[10px] font-bold uppercase tracking-widest italic">{field.placeholder || `Enter ${field.label.toLowerCase()}...`}</span>
+                      </div>
+                    )}
 
-                  {!readOnly && (
-                    <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          duplicateField(field.id);
-                        }}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-red-500 hover:text-red-600"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteField(field.id);
-                        }}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    {!readOnly && (
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 hover:bg-white/10 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            duplicateField(field.id);
+                          }}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteField(field.id);
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </CardContent>
       </Card>
 
       {/* Field Settings */}
-      <Card className="lg:col-span-1">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Settings className="h-4 w-4" />
+      <Card className="lg:col-span-1 border-white/5 glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
+        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+          <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 flex items-center gap-3">
+            <Settings className="h-4 w-4 text-primary" />
             Field Settings
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-3">
-          {selectedField ? (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-xs">Label</Label>
-                <Input
-                  value={selectedField.label}
-                  onChange={(e) => updateField(selectedField.id, { label: e.target.value })}
-                  disabled={readOnly}
-                  className="h-8 text-sm"
-                />
-              </div>
+        <CardContent className="p-6">
+          <AnimatePresence mode="wait">
+            {selectedField ? (
+              <motion.div
+                key={selectedField.id}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="space-y-6"
+              >
+                <div className="space-y-3">
+                  <Label className="text-[10px] font-black uppercase tracking-widest opacity-40">Label</Label>
+                  <Input
+                    value={selectedField.label}
+                    onChange={(e) => updateField(selectedField.id, { label: e.target.value })}
+                    disabled={readOnly}
+                    className="h-9 glass-morphism border-white/10 text-sm font-medium"
+                  />
+                </div>
 
-              {selectedField.type !== "heading" && selectedField.type !== "paragraph" && (
-                <>
-                  <div className="space-y-2">
-                    <Label className="text-xs">Placeholder</Label>
-                    <Input
-                      value={selectedField.placeholder || ""}
-                      onChange={(e) => updateField(selectedField.id, { placeholder: e.target.value })}
-                      disabled={readOnly}
-                      className="h-8 text-sm"
-                    />
-                  </div>
+                {selectedField.type !== "heading" && selectedField.type !== "paragraph" && (
+                  <>
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-widest opacity-40">Placeholder</Label>
+                      <Input
+                        value={selectedField.placeholder || ""}
+                        onChange={(e) => updateField(selectedField.id, { placeholder: e.target.value })}
+                        disabled={readOnly}
+                        className="h-9 glass-morphism border-white/10 text-sm font-medium"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-xs">Description</Label>
-                    <Textarea
-                      value={selectedField.description || ""}
-                      onChange={(e) => updateField(selectedField.id, { description: e.target.value })}
-                      disabled={readOnly}
-                      className="h-16 text-sm"
-                    />
-                  </div>
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-widest opacity-40">Description</Label>
+                      <Textarea
+                        value={selectedField.description || ""}
+                        onChange={(e) => updateField(selectedField.id, { description: e.target.value })}
+                        disabled={readOnly}
+                        className="min-h-[100px] glass-morphism border-white/10 text-sm font-medium resize-none"
+                      />
+                    </div>
 
-                  <div className="flex items-center justify-between">
-                    <Label className="text-xs">Required</Label>
-                    <Switch
-                      checked={selectedField.required}
-                      onCheckedChange={(checked) => updateField(selectedField.id, { required: checked })}
-                      disabled={readOnly}
-                    />
-                  </div>
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5">
+                      <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 cursor-pointer">Required Field</Label>
+                      <Switch
+                        checked={selectedField.required}
+                        onCheckedChange={(checked) => updateField(selectedField.id, { required: checked })}
+                        disabled={readOnly}
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-xs">Width</Label>
-                    <Select
-                      value={selectedField.width || "full"}
-                      onValueChange={(v) => updateField(selectedField.id, { width: v as FormField["width"] })}
-                      disabled={readOnly}
-                    >
-                      <SelectTrigger className="h-8 text-sm">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="full">Full Width</SelectItem>
-                        <SelectItem value="half">Half Width</SelectItem>
-                        <SelectItem value="third">Third Width</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </>
-              )}
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-widest opacity-40">Display Width</Label>
+                      <Select
+                        value={selectedField.width || "full"}
+                        onValueChange={(v) => updateField(selectedField.id, { width: v as FormField["width"] })}
+                        disabled={readOnly}
+                      >
+                        <SelectTrigger className="h-9 glass-morphism border-white/10 text-sm font-medium">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="glass-morphism border-white/10">
+                          <SelectItem value="full" className="text-xs font-bold uppercase">Full Width (1/1)</SelectItem>
+                          <SelectItem value="half" className="text-xs font-bold uppercase">Half Width (1/2)</SelectItem>
+                          <SelectItem value="third" className="text-xs font-bold uppercase">Third Width (1/3)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
 
-              {(selectedField.type === "select" ||
-                selectedField.type === "multiselect" ||
-                selectedField.type === "radio" ||
-                selectedField.type === "checkbox") && (
-                <div className="space-y-2">
-                  <Label className="text-xs">Options</Label>
-                  <div className="space-y-2">
-                    {selectedField.options?.map((opt, i) => (
-                      <div key={i} className="flex gap-2">
-                        <Input
-                          value={opt.label}
-                          onChange={(e) => {
-                            const newOptions = [...(selectedField.options || [])];
-                            newOptions[i] = { ...opt, label: e.target.value, value: e.target.value.toLowerCase().replace(/\s+/g, "_") };
-                            updateField(selectedField.id, { options: newOptions });
-                          }}
-                          disabled={readOnly}
-                          className="h-8 text-sm"
-                        />
+                {(selectedField.type === "select" ||
+                  selectedField.type === "multiselect" ||
+                  selectedField.type === "radio" ||
+                  selectedField.type === "checkbox") && (
+                    <div className="space-y-4">
+                      <Label className="text-[10px] font-black uppercase tracking-widest opacity-40">Options</Label>
+                      <div className="space-y-3">
+                        <AnimatePresence mode="popLayout">
+                          {selectedField.options?.map((opt, i) => (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.9 }}
+                              className="flex gap-2"
+                            >
+                              <Input
+                                value={opt.label}
+                                onChange={(e) => {
+                                  const newOptions = [...(selectedField.options || [])];
+                                  newOptions[i] = { ...opt, label: e.target.value, value: e.target.value.toLowerCase().replace(/\s+/g, "_") };
+                                  updateField(selectedField.id, { options: newOptions });
+                                }}
+                                disabled={readOnly}
+                                className="h-9 glass-morphism border-white/10 text-sm font-medium"
+                              />
+                              {!readOnly && (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9 flex-shrink-0 hover:bg-red-500/10 text-red-400 rounded-full"
+                                  onClick={() => {
+                                    const newOptions = selectedField.options?.filter((_, idx) => idx !== i);
+                                    updateField(selectedField.id, { options: newOptions });
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
                         {!readOnly && (
                           <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 flex-shrink-0"
+                            variant="outline"
+                            size="sm"
+                            className="w-full glass-morphism border-white/10 border-dashed hover:border-primary/50 text-[10px] font-black uppercase tracking-widest py-4"
                             onClick={() => {
-                              const newOptions = selectedField.options?.filter((_, idx) => idx !== i);
+                              const newOptions = [
+                                ...(selectedField.options || []),
+                                { label: `Option ${(selectedField.options?.length || 0) + 1}`, value: `option_${(selectedField.options?.length || 0) + 1}` },
+                              ];
                               updateField(selectedField.id, { options: newOptions });
                             }}
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Plus className="h-3 w-3 mr-2" />
+                            Add Option
                           </Button>
                         )}
                       </div>
-                    ))}
-                    {!readOnly && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => {
-                          const newOptions = [
-                            ...(selectedField.options || []),
-                            { label: `Option ${(selectedField.options?.length || 0) + 1}`, value: `option_${(selectedField.options?.length || 0) + 1}` },
-                          ];
-                          updateField(selectedField.id, { options: newOptions });
-                        }}
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Add Option
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
+                    </div>
+                  )}
 
-              <div className="pt-2">
-                <Badge variant="secondary" className="text-xs">
-                  {fieldTypeLabels[selectedField.type]}
-                </Badge>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <p className="text-sm">Select a field to edit</p>
-            </div>
-          )}
+                <div className="pt-4 border-t border-white/5">
+                  <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-3 py-1">
+                    {fieldTypeLabels[selectedField.type]}
+                  </Badge>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-20 text-muted-foreground opacity-30"
+              >
+                <Settings className="h-10 w-10 mx-auto mb-4 animate-[spin_10s_linear_infinite]" />
+                <p className="text-[10px] font-black uppercase tracking-widest">Select a field to configure</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </CardContent>
       </Card>
     </div>
@@ -618,12 +631,12 @@ export function FormRenderer({
                     field.type === "number"
                       ? "number"
                       : field.type === "email"
-                      ? "email"
-                      : field.type === "date"
-                      ? "date"
-                      : field.type === "datetime"
-                      ? "datetime-local"
-                      : "text"
+                        ? "email"
+                        : field.type === "date"
+                          ? "date"
+                          : field.type === "datetime"
+                            ? "datetime-local"
+                            : "text"
                   }
                   value={(values[field.id] as string) || ""}
                   onChange={(e) => updateValue(field.id, e.target.value)}

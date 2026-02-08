@@ -9,7 +9,7 @@ import { AuthTemplate, AuthField } from '@/components/templates/AuthTemplate';
 const registerFields: AuthField[] = [
   { key: 'name', label: 'Full name', type: 'text', placeholder: 'John Doe', icon: User, required: true },
   { key: 'email', label: 'Email', type: 'email', placeholder: 'name@company.com', icon: Mail, required: true },
-  { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••', icon: Lock, required: true, minLength: 8, helperText: 'Must be at least 8 characters' },
+  { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••', icon: Lock, required: true, minLength: 8, showPasswordStrength: true },
   { key: 'acceptTerms', label: 'I agree to the Terms of Service and Privacy Policy', type: 'checkbox' },
 ];
 

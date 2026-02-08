@@ -22,7 +22,6 @@ import { taskListSchema } from './taskList';
 import { workflowRunSchema } from './workflowRun';
 import { folderSchema } from './folder';
 
-
 // Core exports
 export { eventSchema } from './event';
 export { projectSchema } from './project';
@@ -43,6 +42,18 @@ export { taskListSchema } from './taskList';
 export { workflowRunSchema } from './workflowRun';
 export { folderSchema } from './folder';
 
+// Network module enhancement exports
+export { messageSchema } from './message';
+export { conversationSchema } from './conversation';
+export { reactionSchema } from './reaction';
+export { discussionReplySchema } from './discussionReply';
+export { activityFeedSchema } from './activityFeed';
+export { userFollowSchema } from './userFollow';
+export { challengeParticipantSchema } from './challengeParticipant';
+export { challengeSubmissionSchema } from './challengeSubmission';
+export { challengeMilestoneSchema } from './challengeMilestone';
+export { userPointsSchema, badgeSchema, userBadgeSchema } from './gamification';
+
 // Projects module exports
 export { sprintSchema } from './sprint';
 export { backlogSchema } from './backlog';
@@ -53,8 +64,10 @@ export { teamSchema } from './team';
 // Production module exports
 export { showSchema } from './show';
 export { runsheetSchema } from './runsheet';
+export { runsheetCueSchema } from './runsheetCue';
 export { departmentSchema } from './department';
-export { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema } from './advancing';
+export { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema, advancingCatalogItemSchema } from './advancing';
+export { publicProfileSchema } from './publicProfile';
 export { techSpecSchema } from './techSpec';
 export { riderSchema } from './rider';
 
@@ -64,6 +77,10 @@ export { zoneSchema } from './zone';
 export { checkpointSchema } from './checkpoint';
 export { incidentSchema } from './incident';
 export { radioChannelSchema } from './radioChannel';
+export { crewCheckinSchema } from './crewCheckin';
+export { escalationChainSchema } from './escalationChain';
+export { equipmentTrackingSchema, equipmentScanSchema } from './equipmentTracking';
+export { vendorPortalAccessSchema, vendorDocumentSchema } from './vendorPortal';
 
 // Workforce module exports
 export { scheduleSchema } from './schedule';
@@ -83,11 +100,50 @@ export { vendorSchema } from './vendor';
 
 // Finance module exports
 export { budgetSchema } from './budget';
+export { budgetPhaseSchema } from './budgetPhase';
+export { budgetTemplateSchema } from './budgetTemplate';
+export { paymentMilestoneSchema } from './paymentMilestone';
 export { invoiceSchema } from './invoice';
+export { invoiceLineItemSchema } from './invoiceLineItem';
 export { expenseSchema } from './expense';
 export { paymentSchema } from './payment';
 export { settlementSchema } from './settlement';
 export { accountSchema } from './account';
+export { recurringInvoiceSchema } from './recurringInvoice';
+export { quoteSchema } from './quote';
+export { reminderTemplateSchema } from './reminderTemplate';
+export { bankConnectionSchema } from './bankConnection';
+export { receiptScanSchema } from './receiptScan';
+
+// Time & Labor module exports
+export { timerSessionSchema } from './timerSession';
+export { laborRuleSetSchema } from './laborRuleSet';
+
+// Operations module exports
+export { resourceBookingSchema } from './resourceBooking';
+export { automationRuleSchema } from './automationRule';
+export { projectTemplateSchema } from './projectTemplate';
+export { customFieldDefinitionSchema } from './customFieldDefinition';
+
+// Analytics module exports
+export { reportDefinitionSchema } from './reportDefinition';
+export { dashboardSchema } from './dashboard';
+
+// Phase 3 module exports
+export { crewRateCardSchema } from './crewRateCard';
+
+// Phase 5 module exports
+export { crewGigRatingSchema } from './crewGigRating';
+export { projectPostMortemSchema } from './projectPostMortem';
+export { rfpResponseSchema } from './rfpResponse';
+
+// Phase 6 module exports
+export { mediaAssetSchema } from './mediaAsset';
+
+// Ecosystem module exports
+export { clientPortalAccessSchema } from './clientPortalAccess';
+export { webhookEndpointSchema } from './webhookEndpoint';
+export { oauthConnectionSchema } from './oauthConnection';
 
 // Business module exports
 export { contactSchema } from './contact';
@@ -187,8 +243,10 @@ import { roadmapSchema } from './roadmap';
 import { teamSchema } from './team';
 import { showSchema } from './show';
 import { runsheetSchema } from './runsheet';
+import { runsheetCueSchema } from './runsheetCue';
 import { departmentSchema } from './department';
-import { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema } from './advancing';
+import { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema, advancingCatalogItemSchema } from './advancing';
+import { publicProfileSchema } from './publicProfile';
 import { techSpecSchema } from './techSpec';
 import { riderSchema } from './rider';
 import { floorPlanSchema } from './floorPlan';
@@ -209,11 +267,28 @@ import { maintenanceSchema } from './maintenance';
 import { checkInOutSchema } from './checkInOut';
 import { vendorSchema } from './vendor';
 import { budgetSchema } from './budget';
+import { budgetPhaseSchema } from './budgetPhase';
+import { budgetTemplateSchema } from './budgetTemplate';
+import { paymentMilestoneSchema } from './paymentMilestone';
 import { invoiceSchema } from './invoice';
+import { invoiceLineItemSchema } from './invoiceLineItem';
 import { expenseSchema } from './expense';
 import { paymentSchema } from './payment';
 import { settlementSchema } from './settlement';
 import { accountSchema } from './account';
+import { recurringInvoiceSchema } from './recurringInvoice';
+import { quoteSchema } from './quote';
+import { reminderTemplateSchema } from './reminderTemplate';
+import { bankConnectionSchema } from './bankConnection';
+import { receiptScanSchema } from './receiptScan';
+import { timerSessionSchema } from './timerSession';
+import { laborRuleSetSchema } from './laborRuleSet';
+import { resourceBookingSchema } from './resourceBooking';
+import { automationRuleSchema } from './automationRule';
+import { projectTemplateSchema } from './projectTemplate';
+import { customFieldDefinitionSchema } from './customFieldDefinition';
+import { reportDefinitionSchema } from './reportDefinition';
+import { dashboardSchema } from './dashboard';
 import { contactSchema } from './contact';
 import { companySchema } from './company';
 import { leadSchema } from './lead';
@@ -297,6 +372,26 @@ import { emailTemplateSchema } from './emailTemplate';
 import { brandAssetSchema } from './brandAsset';
 import { creditNoteSchema } from './creditNote';
 
+// Network module enhancement schemas
+import { messageSchema } from './message';
+import { conversationSchema } from './conversation';
+import { reactionSchema } from './reaction';
+import { discussionReplySchema } from './discussionReply';
+import { activityFeedSchema } from './activityFeed';
+import { userFollowSchema } from './userFollow';
+import { challengeParticipantSchema } from './challengeParticipant';
+import { challengeSubmissionSchema } from './challengeSubmission';
+import { challengeMilestoneSchema } from './challengeMilestone';
+import { userPointsSchema, badgeSchema, userBadgeSchema } from './gamification';
+import { crewRateCardSchema } from './crewRateCard';
+import { crewGigRatingSchema } from './crewGigRating';
+import { projectPostMortemSchema } from './projectPostMortem';
+import { rfpResponseSchema } from './rfpResponse';
+import { mediaAssetSchema } from './mediaAsset';
+import { clientPortalAccessSchema } from './clientPortalAccess';
+import { webhookEndpointSchema } from './webhookEndpoint';
+import { oauthConnectionSchema } from './oauthConnection';
+
 // Helper functions for schema operations
 export function getSchema(entityName: string) {
   const schemas: SchemaRegistry = {
@@ -352,6 +447,11 @@ export function getSchema(entityName: string) {
     'show_calls': showSchema,
     runsheet: runsheetSchema,
     runsheets: runsheetSchema,
+    runsheetCue: runsheetCueSchema,
+    'runsheet-cues': runsheetCueSchema,
+    runsheet_cues: runsheetCueSchema,
+    cue: runsheetCueSchema,
+    cues: runsheetCueSchema,
     department: departmentSchema,
     departments: departmentSchema,
     advancing: productionAdvanceSchema,
@@ -365,6 +465,11 @@ export function getSchema(entityName: string) {
     'vendor-ratings': vendorRatingSchema,
     advanceCategory: advanceCategorySchema,
     'advance-categories': advanceCategorySchema,
+    advancingCatalogItem: advancingCatalogItemSchema,
+    'advancing-catalog': advancingCatalogItemSchema,
+    publicProfile: publicProfileSchema,
+    'public-profiles': publicProfileSchema,
+    profiles: publicProfileSchema,
     techSpec: techSpecSchema,
     'tech-specs': techSpecSchema,
     rider: riderSchema,
@@ -418,8 +523,75 @@ export function getSchema(entityName: string) {
     // Finance module
     budget: budgetSchema,
     budgets: budgetSchema,
+    'budget-phase': budgetPhaseSchema,
+    'budget-phases': budgetPhaseSchema,
+    budget_phases: budgetPhaseSchema,
+    'budget-template': budgetTemplateSchema,
+    'budget-templates': budgetTemplateSchema,
+    budget_templates: budgetTemplateSchema,
+    'payment-milestone': paymentMilestoneSchema,
+    'payment-milestones': paymentMilestoneSchema,
+    payment_milestones: paymentMilestoneSchema,
     invoice: invoiceSchema,
     invoices: invoiceSchema,
+    'invoice-line-item': invoiceLineItemSchema,
+    'invoice-line-items': invoiceLineItemSchema,
+    invoice_line_items: invoiceLineItemSchema,
+    'timer-session': timerSessionSchema,
+    'timer-sessions': timerSessionSchema,
+    timer_sessions: timerSessionSchema,
+    'labor-rule-set': laborRuleSetSchema,
+    'labor-rule-sets': laborRuleSetSchema,
+    labor_rule_sets: laborRuleSetSchema,
+    'resource-booking': resourceBookingSchema,
+    'resource-bookings': resourceBookingSchema,
+    resource_bookings: resourceBookingSchema,
+    'automation-rule': automationRuleSchema,
+    'automation-rules': automationRuleSchema,
+    automation_rules: automationRuleSchema,
+    'project-template': projectTemplateSchema,
+    'project-templates': projectTemplateSchema,
+    project_templates: projectTemplateSchema,
+    'custom-field-definition': customFieldDefinitionSchema,
+    'custom-field-definitions': customFieldDefinitionSchema,
+    custom_field_definitions: customFieldDefinitionSchema,
+    'report-definition': reportDefinitionSchema,
+    'report-definitions': reportDefinitionSchema,
+    report_definitions: reportDefinitionSchema,
+    reports: reportDefinitionSchema,
+    dashboard: dashboardSchema,
+    dashboards: dashboardSchema,
+    'client-portal-access': clientPortalAccessSchema,
+    'client-portal': clientPortalAccessSchema,
+    client_portal_access: clientPortalAccessSchema,
+    'webhook-endpoint': webhookEndpointSchema,
+    'webhook-endpoints': webhookEndpointSchema,
+    webhook_endpoints: webhookEndpointSchema,
+    webhooks: webhookEndpointSchema,
+    'oauth-connection': oauthConnectionSchema,
+    'oauth-connections': oauthConnectionSchema,
+    oauth_connections: oauthConnectionSchema,
+    integrations: oauthConnectionSchema,
+    'crew-rate-card': crewRateCardSchema,
+    'crew-rate-cards': crewRateCardSchema,
+    crew_rate_cards: crewRateCardSchema,
+    'rate-cards': crewRateCardSchema,
+    'crew-gig-rating': crewGigRatingSchema,
+    'crew-gig-ratings': crewGigRatingSchema,
+    crew_gig_ratings: crewGigRatingSchema,
+    'crew-ratings': crewGigRatingSchema,
+    'project-post-mortem': projectPostMortemSchema,
+    'project-post-mortems': projectPostMortemSchema,
+    project_post_mortems: projectPostMortemSchema,
+    'post-mortems': projectPostMortemSchema,
+    'rfp-response': rfpResponseSchema,
+    'rfp-responses': rfpResponseSchema,
+    rfp_responses: rfpResponseSchema,
+    rfps: rfpResponseSchema,
+    'media-asset': mediaAssetSchema,
+    'media-assets': mediaAssetSchema,
+    media_assets: mediaAssetSchema,
+    media: mediaAssetSchema,
     expense: expenseSchema,
     expenses: expenseSchema,
     payment: paymentSchema,
@@ -428,6 +600,20 @@ export function getSchema(entityName: string) {
     settlements: settlementSchema,
     account: accountSchema,
     accounts: accountSchema,
+    recurringInvoice: recurringInvoiceSchema,
+    'recurring-invoices': recurringInvoiceSchema,
+    'recurring-invoice': recurringInvoiceSchema,
+    quote: quoteSchema,
+    quotes: quoteSchema,
+    estimate: quoteSchema,
+    estimates: quoteSchema,
+    reminderTemplate: reminderTemplateSchema,
+    'reminder-templates': reminderTemplateSchema,
+    bankConnection: bankConnectionSchema,
+    'bank-connections': bankConnectionSchema,
+    receiptScan: receiptScanSchema,
+    'receipt-scans': receiptScanSchema,
+    receipts: receiptScanSchema,
     // Business module
     contact: contactSchema,
     contacts: contactSchema,
@@ -617,6 +803,39 @@ export function getSchema(entityName: string) {
     'brand-assets': brandAssetSchema,
     creditNote: creditNoteSchema,
     'credit-notes': creditNoteSchema,
+    // Network module enhancement schemas
+    message: messageSchema,
+    messages: messageSchema,
+    conversation: conversationSchema,
+    conversations: conversationSchema,
+    reaction: reactionSchema,
+    reactions: reactionSchema,
+    discussionReply: discussionReplySchema,
+    'discussion-replies': discussionReplySchema,
+    replies: discussionReplySchema,
+    activityFeed: activityFeedSchema,
+    'activity-feed': activityFeedSchema,
+    feed: activityFeedSchema,
+    userFollow: userFollowSchema,
+    'user-follows': userFollowSchema,
+    follows: userFollowSchema,
+    challengeParticipant: challengeParticipantSchema,
+    'challenge-participants': challengeParticipantSchema,
+    participants: challengeParticipantSchema,
+    challengeSubmission: challengeSubmissionSchema,
+    'challenge-submissions': challengeSubmissionSchema,
+    submissions: challengeSubmissionSchema,
+    challengeMilestone: challengeMilestoneSchema,
+    'challenge-milestones': challengeMilestoneSchema,
+    milestones: challengeMilestoneSchema,
+    userPoints: userPointsSchema,
+    'user-points': userPointsSchema,
+    points: userPointsSchema,
+    badge: badgeSchema,
+    badges: badgeSchema,
+    userBadge: userBadgeSchema,
+    'user-badges': userBadgeSchema,
+    'earned-badges': userBadgeSchema,
   };
 
   return schemas[entityName] || null;

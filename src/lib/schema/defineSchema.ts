@@ -1,9 +1,9 @@
-import type { EntitySchema } from './types';
+import type { EntitySchema, EntityRecord } from './types';
 
 /**
  * Schema definition helper with defaults and validation.
  */
-export function defineSchema<T = any>(config: EntitySchema<T>): EntitySchema<T> {
+export function defineSchema<T = EntityRecord>(config: EntitySchema<T>): EntitySchema<T> {
   // Apply defaults
   const schema: EntitySchema<T> = {
     ...config,
@@ -57,7 +57,7 @@ export function defineSchema<T = any>(config: EntitySchema<T>): EntitySchema<T> 
   return schema;
 }
 
-function validateSchema(schema: EntitySchema): void {
+function validateSchema<T = EntityRecord>(schema: EntitySchema<T>): void {
   // Ensure SSOT compliance
   const errors: string[] = [];
 

@@ -1,5 +1,6 @@
-import { createServiceClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { requireAuth } from "@/lib/api/guard";
+import { apiSuccess, supabaseError } from "@/lib/api/response";
 
 const parseNumber = (value: string | null, fallback: number) => {
   if (!value) return fallback;
@@ -8,14 +9,9 @@ const parseNumber = (value: string | null, fallback: number) => {
 };
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { user, supabase } = auth;
 
   const searchParams = request.nextUrl.searchParams;
   const page = parseNumber(searchParams.get("page"), 1);
@@ -70,7 +66,7 @@ export async function GET(request: NextRequest) {
   const { data, error, count } = await query;
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return supabaseError(error);
   }
 
   const logs = (data ?? []).map((entry) => ({
@@ -100,7 +96,7 @@ export async function GET(request: NextRequest) {
   const total = count ?? 0;
   const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
 
-  return NextResponse.json({
+  return apiSuccess({
     data: logs,
     meta: {
       page,

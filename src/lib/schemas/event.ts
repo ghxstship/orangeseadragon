@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // /lib/schemas/event.ts
 
 import { defineSchema } from '../schema/defineSchema';
-import type { EntitySchema } from '../schema/types';
 
 /**
  * EVENT ENTITY SCHEMA (SSOT)

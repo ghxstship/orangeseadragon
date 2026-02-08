@@ -1,7 +1,8 @@
 // /app/api/calendar/aggregated/route.ts
 
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * CALENDAR EVENTS API (SSOT)
@@ -39,13 +40,9 @@ const SOURCE_CONFIG: Record<CalendarSourceType, { label: string; color: string; 
 };
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
-  
-  // Auth check - RLS will handle the rest
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
 
   const searchParams = request.nextUrl.searchParams;
   
@@ -54,10 +51,7 @@ export async function GET(request: NextRequest) {
   const endDate = searchParams.get('endDate');
   
   if (!startDate || !endDate) {
-    return NextResponse.json(
-      { error: 'startDate and endDate are required' }, 
-      { status: 400 }
-    );
+    return badRequest('startDate and endDate are required');
   }
 
   // Parse optional filters
@@ -97,7 +91,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('[Calendar API] Query error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
     // Transform to unified format with source paths
@@ -139,15 +133,9 @@ export async function GET(request: NextRequest) {
       color: SOURCE_CONFIG[type]?.color || '#6366f1',
     }));
 
-    return NextResponse.json({
-      items,
-      sources: sourcesResult,
-    });
+    return apiSuccess({ items, sources: sourcesResult });
   } catch (error) {
     console.error('[Calendar API] Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch calendar data' }, 
-      { status: 500 }
-    );
+    return serverError('Failed to fetch calendar data');
   }
 }

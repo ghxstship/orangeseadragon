@@ -61,24 +61,31 @@ export function MetricsWidget({ title = "Key Metrics", metrics }: MetricsWidgetP
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+    <Card className="spatial-card bg-card/50 backdrop-blur-xl border-white/5 overflow-hidden">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-50">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-8">
           {defaultMetrics.map((metric, index) => (
-            <div key={index} className="text-center">
-              <div className="text-2xl font-bold">{metric.value}</div>
-              <div className="text-sm text-muted-foreground">{metric.label}</div>
+            <div key={index} className="relative group">
+              <div className="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/50 transition-all group-hover:to-primary">
+                {metric.value}
+              </div>
+              <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1 opacity-70">
+                {metric.label}
+              </div>
               {metric.change && (
                 <Badge
                   variant={metric.trend === 'up' ? 'default' : metric.trend === 'down' ? 'destructive' : 'secondary'}
-                  className="mt-1"
+                  className="mt-2 text-[9px] px-1.5 py-0 h-4 border-none font-bold"
                 >
-                  {metric.trend === 'up' ? '+' : metric.trend === 'down' ? '-' : ''}
+                  {metric.trend === 'up' ? '↑' : metric.trend === 'down' ? '↓' : ''}
                   {Math.abs(metric.change)}%
                 </Badge>
+              )}
+              {index < defaultMetrics.length - 1 && (
+                <div className="absolute right-[-1rem] top-1/2 -translate-y-1/2 h-8 w-[1px] bg-border/30 hidden md:block" />
               )}
             </div>
           ))}

@@ -1,17 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createServiceClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { user, supabase } = auth;
 
     const { id } = params;
     const body = await request.json().catch(() => ({}));
@@ -25,14 +23,11 @@ export async function POST(
       .single();
 
     if (fetchError || !ticket) {
-      return NextResponse.json({ error: 'Service ticket not found' }, { status: 404 });
+      return notFound('Service ticket');
     }
 
     if (ticket.status === 'resolved' || ticket.status === 'closed') {
-      return NextResponse.json(
-        { error: 'Ticket is already resolved or closed' },
-        { status: 400 }
-      );
+      return badRequest('Ticket is already resolved or closed');
     }
 
     // Update ticket status
@@ -48,7 +43,7 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
     // Add resolution message if provided
@@ -68,9 +63,9 @@ export async function POST(
       });
     }
 
-    return NextResponse.json({ success: true, data });
+    return apiSuccess(data);
   } catch (error) {
     console.error('Error resolving service ticket:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return serverError();
   }
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
+import { OnboardingProvider } from "@/components/onboarding/OnboardingProvider";
 
 const onboardingSteps = [
   { path: "/onboarding", label: "Welcome" },
@@ -82,7 +83,9 @@ export default function OnboardingLayout({ children }: OnboardingLayoutProps) {
       {/* Content */}
       <main className="container py-8 md:py-12">
         <div className="mx-auto max-w-2xl">
-          {children}
+          <OnboardingProvider>
+            {children}
+          </OnboardingProvider>
         </div>
       </main>
     </div>

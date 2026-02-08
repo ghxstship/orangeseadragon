@@ -1,0 +1,76 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e5]:
+      - link "A ATLVS" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e9]: A
+        - generic [ref=e10]: ATLVS
+      - generic [ref=e11]:
+        - blockquote [ref=e12]: “The platform that transformed how we manage productions. Everything in one place, finally.”
+        - generic [ref=e13]:
+          - paragraph [ref=e14]: Sarah Chen
+          - paragraph [ref=e15]: Production Director, LiveNation
+      - generic [ref=e16]: © 2026 ATLVS. All rights reserved.
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - heading "Create an account" [level=1] [ref=e24]
+        - paragraph [ref=e25]: Get started with your free account
+      - generic [ref=e26]:
+        - button "Google" [ref=e27] [cursor=pointer]:
+          - img
+          - text: Google
+        - button "GitHub" [ref=e28] [cursor=pointer]:
+          - img
+          - text: GitHub
+      - generic [ref=e32]: Or continue with email
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e36]: Full name
+          - generic [ref=e37]:
+            - img [ref=e38]
+            - textbox "Full name" [ref=e41]:
+              - /placeholder: John Doe
+              - text: Test User
+        - generic [ref=e42]:
+          - generic [ref=e44]: Email
+          - generic [ref=e45]:
+            - img [ref=e46]
+            - textbox "Email" [ref=e49]:
+              - /placeholder: name@company.com
+              - text: new_user_1770242770068_378@example.com
+        - generic [ref=e50]:
+          - generic [ref=e52]: Password
+          - generic [ref=e53]:
+            - img [ref=e54]
+            - textbox "Password" [ref=e57]:
+              - /placeholder: ••••••••
+              - text: password123
+            - button [ref=e58] [cursor=pointer]:
+              - img [ref=e59]
+          - paragraph [ref=e62]: Must be at least 8 characters
+        - generic [ref=e63]:
+          - checkbox "I agree to the Terms of Service and Privacy Policy" [checked] [ref=e64] [cursor=pointer]:
+            - generic:
+              - img
+          - checkbox [checked]
+          - generic [ref=e65]: I agree to the Terms of Service and Privacy Policy
+        - button "Create account" [ref=e66] [cursor=pointer]:
+          - img
+          - text: Create account
+      - paragraph [ref=e67]:
+        - text: Already have an account?
+        - link "Sign in" [ref=e68] [cursor=pointer]:
+          - /url: /login
+  - region "Notifications (F8)":
+    - list [ref=e70]:
+      - listitem [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]: Success
+          - generic [ref=e74]: Account created! Please check your email.
+        - button [ref=e75] [cursor=pointer]:
+          - img [ref=e76]
+  - alert [ref=e80]
+```

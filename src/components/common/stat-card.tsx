@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 interface StatCardProps {
   title: string;
@@ -26,37 +27,55 @@ export function StatCard({
   valueClassName,
 }: StatCardProps) {
   return (
-    <Card className={className}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-      </CardHeader>
-      <CardContent>
-        <div className={cn("text-2xl font-bold", valueClassName)}>{value}</div>
-        {(description || trend) && (
-          <div className="flex items-center gap-2 mt-1">
-            {trend && (
-              <span
-                className={cn(
-                  "text-xs font-medium",
-                  trend.isPositive ? "text-green-500" : "text-red-500"
-                )}
-              >
-                {trend.isPositive ? "+" : ""}
-                {trend.value}%
-              </span>
-            )}
-            {description && (
-              <span className="text-xs text-muted-foreground">
-                {description}
-              </span>
-            )}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5, scale: 1.02 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="h-full"
+    >
+      <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-xl h-full relative group transition-all duration-500", className)}>
+        <div className={cn(
+          "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br",
+          trend?.isPositive ? "from-green-500/5 to-transparent" : "from-red-500/5 to-transparent"
+        )} />
+
+        <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
+          <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 group-hover:opacity-60 transition-opacity">
+            {title}
+          </CardTitle>
+          <div className="p-2 rounded-xl bg-white/5 border border-white/5 text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-all duration-500">
+            {Icon && <Icon className="h-4 w-4" />}
           </div>
-        )}
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="relative z-10">
+          <div className={cn("text-3xl font-black tracking-tighter group-hover:scale-[1.02] origin-left transition-transform duration-500", valueClassName)}>{value}</div>
+          {(description || trend) && (
+            <div className="flex items-center gap-2 mt-4">
+              {trend && (
+                <div
+                  className={cn(
+                    "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg",
+                    trend.isPositive
+                      ? "bg-green-500/10 text-green-500 border border-green-500/20 shadow-green-500/10"
+                      : "bg-red-500/10 text-red-500 border border-red-500/20 shadow-red-500/10"
+                  )}
+                >
+                  {trend.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                  {trend.isPositive ? "+" : ""}
+                  {trend.value}%
+                </div>
+              )}
+              {description && (
+                <span className="text-[10px] font-bold uppercase tracking-widest opacity-30 mt-0.5">
+                  {description}
+                </span>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 

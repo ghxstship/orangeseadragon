@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, apiCreated, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * POST /api/check-in/scan
@@ -7,20 +8,17 @@ import { NextRequest, NextResponse } from 'next/server';
  * Accepts either a registration confirmation number or credential number
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createServiceClient();
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { user, supabase } = auth;
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
     const body = await request.json();
     const { code, event_id, checkpoint_id } = body;
 
     if (!code) {
-      return NextResponse.json({ error: 'Code is required' }, { status: 400 });
+      return badRequest('Code is required');
     }
 
     // Try to find by registration confirmation number first
@@ -38,16 +36,12 @@ export async function POST(request: NextRequest) {
     if (registration) {
       // Check if event matches (if event_id provided)
       if (event_id && registration.event_id !== event_id) {
-        return NextResponse.json({
-          error: 'Registration is for a different event',
-          registration_event: registration.event?.name
-        }, { status: 400 });
+        return badRequest('Registration is for a different event');
       }
 
       // Check if already checked in
       if (registration.checked_in_at) {
-        return NextResponse.json({
-          success: false,
+        return apiSuccess({
           already_checked_in: true,
           checked_in_at: registration.checked_in_at,
           registration,
@@ -72,11 +66,10 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return supabaseError(error);
       }
 
-      return NextResponse.json({
-        success: true,
+      return apiCreated({
         type: 'registration',
         registration: updated,
         message: `Welcome, ${updated?.contact?.first_name || 'Guest'}!`
@@ -98,45 +91,26 @@ export async function POST(request: NextRequest) {
     if (credential) {
       // Check if event matches (if event_id provided)
       if (event_id && credential.event_id !== event_id) {
-        return NextResponse.json({
-          error: 'Credential is for a different event',
-          credential_event: credential.event?.name
-        }, { status: 400 });
+        return badRequest('Credential is for a different event');
       }
 
       // Check credential status
       if (credential.revoked_at) {
-        return NextResponse.json({
-          success: false,
-          error: 'Credential has been revoked',
-          revoked_reason: credential.revoked_reason
-        }, { status: 400 });
+        return badRequest('Credential has been revoked');
       }
 
       if (credential.suspended_at) {
-        return NextResponse.json({
-          success: false,
-          error: 'Credential is suspended',
-          suspended_reason: credential.suspended_reason
-        }, { status: 400 });
+        return badRequest('Credential is suspended');
       }
 
       // Check validity period
       const now = new Date();
       if (credential.valid_from && new Date(credential.valid_from) > now) {
-        return NextResponse.json({
-          success: false,
-          error: 'Credential is not yet valid',
-          valid_from: credential.valid_from
-        }, { status: 400 });
+        return badRequest('Credential is not yet valid');
       }
 
       if (credential.valid_until && new Date(credential.valid_until) < now) {
-        return NextResponse.json({
-          success: false,
-          error: 'Credential has expired',
-          valid_until: credential.valid_until
-        }, { status: 400 });
+        return badRequest('Credential has expired');
       }
 
       // Log the access
@@ -157,8 +131,7 @@ export async function POST(request: NextRequest) {
           .eq('id', credential.id);
       }
 
-      return NextResponse.json({
-        success: true,
+      return apiSuccess({
         type: 'credential',
         credential,
         access_level: credential.credential_type?.access_level,
@@ -167,13 +140,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Not found
-    return NextResponse.json({
-      success: false,
-      error: 'Invalid code - no matching registration or credential found'
-    }, { status: 404 });
+    return notFound('Invalid code - no matching registration or credential found');
 
   } catch (e) {
     console.error('[API] Scan error:', e);
-    return NextResponse.json({ error: 'Scan processing failed' }, { status: 500 });
+    return serverError('Scan processing failed');
   }
 }

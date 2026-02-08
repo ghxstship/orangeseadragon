@@ -60,7 +60,7 @@ export function AccountTypeSelector({ onNext }: AccountTypeSelectorProps) {
                   <div>
                     <h3 className="font-semibold">{type.value}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {type.metadata?.description || 'Configure your account for this role'}
+                      {(type.metadata as any)?.description || 'Configure your account for this role'}
                     </p>
                   </div>
                   <Badge variant="outline" className="ml-2">

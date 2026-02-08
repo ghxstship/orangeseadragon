@@ -1,30 +1,32 @@
 import React from 'react';
 import { usePageLayout, usePageLayouts, useDefaultPageLayout } from '@/hooks/use-configuration';
-import { useSupabase } from '@/hooks/use-supabase';
 import { useUser } from '@/hooks/use-supabase';
 import { useOrganization } from '@/hooks/use-organization';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 // ============================================================================
 // COMPONENT REGISTRY
 // ============================================================================
 
 // Registry of available components that can be rendered from configuration
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const COMPONENT_REGISTRY: Record<string, React.ComponentType<any>> = {
-  // Layout Components
+  // ── Layout Components ────────────────────────────────────────────────
   'container': React.lazy(() => import('./layout/Container').then(m => ({ default: m.Container }))),
   'grid': React.lazy(() => import('./layout/Grid').then(m => ({ default: m.Grid }))),
   'section': React.lazy(() => import('./layout/Section').then(m => ({ default: m.Section }))),
 
-  // UI Components
+  // ── UI Primitives ────────────────────────────────────────────────────
   'card': React.lazy(() => import('./ui/card').then(m => ({ default: m.Card }))),
   'button': React.lazy(() => import('./ui/button').then(m => ({ default: m.Button }))),
   'input': React.lazy(() => import('./ui/input').then(m => ({ default: m.Input }))),
   'select': React.lazy(() => import('./ui/select').then(m => ({ default: m.Select }))),
   'table': React.lazy(() => import('./ui/table').then(m => ({ default: m.Table }))),
 
-  // Dashboard Widgets
+  // ── Dashboard Widgets ────────────────────────────────────────────────
   'metrics': React.lazy(() => import('./widgets/MetricsWidget').then(m => ({ default: m.MetricsWidget }))),
   'recent_activity': React.lazy(() => import('./widgets/RecentActivityWidget').then(m => ({ default: m.RecentActivityWidget }))),
   'quick_actions': React.lazy(() => import('./widgets/QuickActionsWidget').then(m => ({ default: m.QuickActionsWidget }))),
@@ -34,14 +36,154 @@ export const COMPONENT_REGISTRY: Record<string, React.ComponentType<any>> = {
   'today_schedule': React.lazy(() => import('./widgets/TodayScheduleWidget').then(m => ({ default: m.TodayScheduleWidget }))),
   'my_tasks': React.lazy(() => import('./widgets/MyTasksWidget').then(m => ({ default: m.MyTasksWidget }))),
   'quick_stats': React.lazy(() => import('./widgets/QuickStatsWidget').then(m => ({ default: m.QuickStatsWidget }))),
+  'inbox_summary': React.lazy(() => import('./widgets/InboxSummaryWidget').then(m => ({ default: m.InboxSummaryWidget }))),
+  'project_progress': React.lazy(() => import('./widgets/ProjectProgressWidget').then(m => ({ default: m.ProjectProgressWidget }))),
+  'setup_checklist': React.lazy(() => import('./widgets/SetupChecklistWidget').then(m => ({ default: m.SetupChecklistWidget }))),
+  'dashboard_grid': React.lazy(() => import('./dashboard/DashboardGrid').then(m => ({ default: m.DashboardGrid }))),
 
-  // Form Components
+  // ── Dashboard Chart Widgets ──────────────────────────────────────────
+  'metric_widget': React.lazy(() => import('./views/dashboard-widgets').then(m => ({ default: m.MetricWidget }))),
+  'progress_widget': React.lazy(() => import('./views/dashboard-widgets').then(m => ({ default: m.ProgressWidget }))),
+  'list_widget': React.lazy(() => import('./views/dashboard-widgets').then(m => ({ default: m.ListWidget }))),
+  'donut_widget': React.lazy(() => import('./views/dashboard-widgets').then(m => ({ default: m.DonutWidget }))),
+  'sparkline_widget': React.lazy(() => import('./views/dashboard-widgets').then(m => ({ default: m.SparklineWidget }))),
+
+  // ── View Components ──────────────────────────────────────────────────
+  'data_view': React.lazy(() => import('./views/data-view').then(m => ({ default: m.DataView }))),
+  'data_table': React.lazy(() => import('./views/data-table').then(m => ({ default: m.DataTable }))),
+  'kanban_board': React.lazy(() => import('./views/kanban-board').then(m => ({ default: m.KanbanBoard }))),
+  'calendar_view': React.lazy(() => import('./views/calendar-view').then(m => ({ default: m.CalendarView }))),
+  'gantt_view': React.lazy(() => import('./views/gantt-view').then(m => ({ default: m.GanttView }))),
+  'list_view': React.lazy(() => import('./views/list-view').then(m => ({ default: m.ListView }))),
+  'timeline_view': React.lazy(() => import('./views/timeline-view').then(m => ({ default: m.TimelineView }))),
+  'matrix_view': React.lazy(() => import('./views/matrix-view').then(m => ({ default: m.MatrixView }))),
+  'map_view': React.lazy(() => import('./views/map-view').then(m => ({ default: m.MapView }))),
+  'workload_view': React.lazy(() => import('./views/workload-view').then(m => ({ default: m.WorkloadView }))),
+  'activity_feed': React.lazy(() => import('./views/activity-feed').then(m => ({ default: m.ActivityFeed }))),
+  'master_calendar': React.lazy(() => import('./views/MasterCalendar').then(m => ({ default: m.MasterCalendar }))),
+  'toolbar': React.lazy(() => import('./views/toolbar').then(m => ({ default: m.Toolbar }))),
+  'form_builder': React.lazy(() => import('./views/form-builder').then(m => ({ default: m.FormBuilder }))),
+  'form_renderer': React.lazy(() => import('./views/form-builder').then(m => ({ default: m.FormRenderer }))),
+
+  // ── Common Components ────────────────────────────────────────────────
+  'page_header': React.lazy(() => import('./common/page-header').then(m => ({ default: m.PageHeader }))),
+  'stat_card': React.lazy(() => import('./common/stat-card').then(m => ({ default: m.StatCard }))),
+  'status_badge': React.lazy(() => import('./common/status-badge').then(m => ({ default: m.StatusBadge }))),
+  'filter_panel': React.lazy(() => import('./common/filter-panel').then(m => ({ default: m.FilterPanel }))),
+  'command_palette': React.lazy(() => import('./common/command-palette').then(m => ({ default: m.CommandPalette }))),
+  'notification_center': React.lazy(() => import('./common/notification-center').then(m => ({ default: m.NotificationCenter }))),
+  'file_upload': React.lazy(() => import('./common/file-upload').then(m => ({ default: m.FileUpload }))),
+  'tag_input': React.lazy(() => import('./common/tag-input').then(m => ({ default: m.TagInput }))),
+  'inline_edit': React.lazy(() => import('./common/inline-edit').then(m => ({ default: m.InlineEdit }))),
+  'confirm_dialog': React.lazy(() => import('./common/confirm-dialog').then(m => ({ default: m.ConfirmDialog }))),
+  'step_wizard': React.lazy(() => import('./common/step-wizard').then(m => ({ default: m.StepWizard }))),
+  'checklist_widget': React.lazy(() => import('./common/checklist-widget').then(m => ({ default: m.ChecklistWidget }))),
+  'subtask_list': React.lazy(() => import('./common/subtask-list').then(m => ({ default: m.SubtaskList }))),
+  'dependency_picker': React.lazy(() => import('./common/dependency-picker').then(m => ({ default: m.DependencyPicker }))),
+  'bulk_actions': React.lazy(() => import('./common/bulk-actions').then(m => ({ default: m.BulkActions }))),
+  'export_modal': React.lazy(() => import('./common/export-modal').then(m => ({ default: m.ExportModal }))),
+  'share_modal': React.lazy(() => import('./common/share-modal').then(m => ({ default: m.ShareModal }))),
+  'saved_view_selector': React.lazy(() => import('./common/saved-view-selector').then(m => ({ default: m.SavedViewSelector }))),
+
+  // ── Form Components ──────────────────────────────────────────────────
   'form_step': React.lazy(() => import('./forms/FormStep').then(m => ({ default: m.FormStep }))),
+  'form_field': React.lazy(() => import('./forms/FormField').then(m => ({ default: m.FormField }))),
+
+  // ── Onboarding Components ────────────────────────────────────────────
   'welcome_screen': React.lazy(() => import('./onboarding/WelcomeScreen').then(m => ({ default: m.WelcomeScreen }))),
   'account_type_selector': React.lazy(() => import('./onboarding/AccountTypeSelector').then(m => ({ default: m.AccountTypeSelector }))),
   'profile_form': React.lazy(() => import('./onboarding/ProfileForm').then(m => ({ default: m.ProfileForm }))),
   'permission_review': React.lazy(() => import('./onboarding/PermissionReview').then(m => ({ default: m.PermissionReview }))),
   'onboarding_complete': React.lazy(() => import('./onboarding/OnboardingComplete').then(m => ({ default: m.OnboardingComplete }))),
+
+  // ── Operations Components ────────────────────────────────────────────
+  'crew_checkin_kiosk': React.lazy(() => import('./operations/CrewCheckinKiosk').then(m => ({ default: m.CrewCheckinKiosk }))),
+  'incident_control_room': React.lazy(() => import('./operations/IncidentControlRoom').then(m => ({ default: m.IncidentControlRoom }))),
+  'runsheet_show_mode': React.lazy(() => import('./operations/RunsheetShowMode').then(m => ({ default: m.RunsheetShowMode }))),
+
+  // ── Productions Components ───────────────────────────────────────────
+  'run_of_show': React.lazy(() => import('./productions/RunOfShow').then(m => ({ default: m.RunOfShow }))),
+  'show_calling_view': React.lazy(() => import('./productions/runsheet/ShowCallingView').then(m => ({ default: m.ShowCallingView }))),
+  'active_production_card': React.lazy(() => import('./productions/widgets/ActiveProductionCard').then(m => ({ default: m.ActiveProductionCard }))),
+  'live_clock_widget': React.lazy(() => import('./productions/widgets/LiveClockWidget').then(m => ({ default: m.LiveClockWidget }))),
+  'weather_widget': React.lazy(() => import('./productions/widgets/WeatherWidget').then(m => ({ default: m.WeatherWidget }))),
+  'curfew_countdown': React.lazy(() => import('./productions/widgets/CurfewCountdownWidget').then(m => ({ default: m.CurfewCountdownWidget }))),
+
+  // ── Scheduling Components ────────────────────────────────────────────
+  'smart_rostering': React.lazy(() => import('./scheduling/SmartRostering').then(m => ({ default: m.SmartRostering }))),
+
+  // ── Advancing Module ─────────────────────────────────────────────────
+  'advancing_activity_feed': React.lazy(() => import('./modules/advancing/ActivityFeed').then(m => ({ default: m.ActivityFeed }))),
+  'availability_timeline': React.lazy(() => import('./modules/advancing/AvailabilityTimeline').then(m => ({ default: m.AvailabilityTimeline }))),
+  'conflict_panel': React.lazy(() => import('./modules/advancing/ConflictPanel').then(m => ({ default: m.ConflictPanel }))),
+  'crew_scheduler': React.lazy(() => import('./modules/advancing/CrewScheduler').then(m => ({ default: m.CrewScheduler }))),
+  'advancing_presence': React.lazy(() => import('./modules/advancing/PresenceIndicator').then(m => ({ default: m.PresenceIndicator }))),
+  'scanner_modal': React.lazy(() => import('./modules/advancing/ScannerModal').then(m => ({ default: m.ScannerModal }))),
+
+  // ── Business / CRM Module ────────────────────────────────────────────
+  'business_activity_timeline': React.lazy(() => import('./modules/business/ActivityTimeline').then(m => ({ default: m.ActivityTimeline }))),
+  'duplicate_detection_panel': React.lazy(() => import('./modules/business/DuplicateDetectionPanel').then(m => ({ default: m.DuplicateDetectionPanel }))),
+  'email_composer': React.lazy(() => import('./modules/business/EmailComposer').then(m => ({ default: m.EmailComposer }))),
+  'enrichment_panel': React.lazy(() => import('./modules/business/EnrichmentPanel').then(m => ({ default: m.EnrichmentPanel }))),
+  'entity_profile_layout': React.lazy(() => import('./modules/business/EntityProfileLayout').then(m => ({ default: m.EntityProfileLayout }))),
+  'forecast_dashboard': React.lazy(() => import('./modules/business/ForecastDashboard').then(m => ({ default: m.ForecastDashboard }))),
+  'lead_score_card': React.lazy(() => import('./modules/business/LeadScoreCard').then(m => ({ default: m.LeadScoreCard }))),
+  'pipeline_board': React.lazy(() => import('./modules/business/PipelineBoard').then(m => ({ default: m.PipelineBoard }))),
+  'pipeline_selector': React.lazy(() => import('./modules/business/PipelineSelector').then(m => ({ default: m.PipelineSelector }))),
+  'pipeline_stats': React.lazy(() => import('./modules/business/PipelineStats').then(m => ({ default: m.PipelineStats }))),
+  'workflow_builder': React.lazy(() => import('./modules/business/WorkflowBuilder').then(m => ({ default: m.WorkflowBuilder }))),
+
+  // ── People Module ────────────────────────────────────────────────────
+  'compliance_dashboard': React.lazy(() => import('./people/ComplianceDashboard').then(m => ({ default: m.ComplianceDashboard }))),
+  'document_manager': React.lazy(() => import('./people/DocumentManager').then(m => ({ default: m.DocumentManager }))),
+  'employee_portal': React.lazy(() => import('./people/EmployeePortal').then(m => ({ default: m.EmployeePortal }))),
+  'holographic_directory': React.lazy(() => import('./people/HolographicDirectory').then(m => ({ default: m.HolographicDirectory }))),
+  'leave_calendar': React.lazy(() => import('./people/LeaveCalendar').then(m => ({ default: m.LeaveCalendar }))),
+  'leave_request_form': React.lazy(() => import('./people/LeaveRequestForm').then(m => ({ default: m.LeaveRequestForm }))),
+  'life_stream_profile': React.lazy(() => import('./people/LifeStreamProfile').then(m => ({ default: m.LifeStreamProfile }))),
+  'org_chart': React.lazy(() => import('./people/OrgChart').then(m => ({ default: m.OrgChart }))),
+  'performance_review_dashboard': React.lazy(() => import('./people/PerformanceReviewDashboard').then(m => ({ default: m.PerformanceReviewDashboard }))),
+  'time_clock': React.lazy(() => import('./people/TimeClock').then(m => ({ default: m.TimeClock }))),
+  'workforce_analytics': React.lazy(() => import('./people/WorkforceAnalytics').then(m => ({ default: m.WorkforceAnalytics }))),
+
+  // ── Realtime Components ──────────────────────────────────────────────
+  'realtime_activity_feed': React.lazy(() => import('./realtime/ActivityFeed').then(m => ({ default: m.ActivityFeed }))),
+  'comment_thread': React.lazy(() => import('./realtime/CommentThread').then(m => ({ default: m.CommentThread }))),
+  'mention_input': React.lazy(() => import('./realtime/MentionInput').then(m => ({ default: m.MentionInput }))),
+  'presence_indicator': React.lazy(() => import('./realtime/PresenceIndicator').then(m => ({ default: m.PresenceIndicator }))),
+
+  // ── Workflow Components ──────────────────────────────────────────────
+  'workflow_execution_monitor': React.lazy(() => import('./workflows/WorkflowExecutionMonitor').then(m => ({ default: m.WorkflowExecutionMonitor }))),
+  'workflow_template_selector': React.lazy(() => import('./workflows/WorkflowTemplateSelector').then(m => ({ default: m.WorkflowTemplateSelector }))),
+  'workflow_builder_engine': React.lazy(() => import('./workflows/WorkflowBuilder').then(m => ({ default: m.WorkflowBuilder }))),
+
+  // ── Assets Module ────────────────────────────────────────────────────
+  'asset_utilization_dashboard': React.lazy(() => import('./assets/AssetUtilizationDashboard').then(m => ({ default: m.AssetUtilizationDashboard }))),
+
+  // ── Template Components ─────────────────────────────────────────────
+  'auth_template': React.lazy(() => import('./templates/AuthTemplate').then(m => ({ default: m.AuthTemplate }))),
+  'dashboard_template': React.lazy(() => import('./templates/DashboardTemplate').then(m => ({ default: m.DashboardTemplate }))),
+  'entity_list_template': React.lazy(() => import('./templates/EntityListTemplate').then(m => ({ default: m.EntityListTemplate }))),
+  'form_template': React.lazy(() => import('./templates/FormTemplate').then(m => ({ default: m.FormTemplate }))),
+  'reports_template': React.lazy(() => import('./templates/ReportsTemplate').then(m => ({ default: m.ReportsTemplate }))),
+  'settings_template': React.lazy(() => import('./templates/SettingsTemplate').then(m => ({ default: m.SettingsTemplate }))),
+  'wizard_template': React.lazy(() => import('./templates/WizardTemplate').then(m => ({ default: m.WizardTemplate }))),
+
+  // ── State Components ─────────────────────────────────────────────────
+  'loading_state': React.lazy(() => import('./states/AsyncStates').then(m => ({ default: m.LoadingState }))),
+  'empty_state': React.lazy(() => import('./states/AsyncStates').then(m => ({ default: m.EmptyState }))),
+  'error_state': React.lazy(() => import('./states/AsyncStates').then(m => ({ default: m.ErrorState }))),
+
+  // ── Error Handling ───────────────────────────────────────────────────
+  'error_boundary': React.lazy(() => import('./error/ErrorBoundary')),
+
+  // ── Additional Common Components ─────────────────────────────────────
+  'contextual_empty_state': React.lazy(() => import('./common/contextual-empty-state').then(m => ({ default: m.ContextualEmptyState }))),
+  'create_modal': React.lazy(() => import('./common/create-modal').then(m => ({ default: m.CreateModal }))),
+  'edit_modal': React.lazy(() => import('./common/edit-modal').then(m => ({ default: m.EditModal }))),
+  'preview_modal': React.lazy(() => import('./common/preview-modal').then(m => ({ default: m.PreviewModal }))),
+  'loading_spinner': React.lazy(() => import('./common/loading-spinner').then(m => ({ default: m.LoadingSpinner }))),
+  'quick_actions_editor': React.lazy(() => import('./widgets/QuickActionsEditor').then(m => ({ default: m.QuickActionsEditor }))),
 };
 
 // ============================================================================
@@ -50,8 +192,8 @@ export const COMPONENT_REGISTRY: Record<string, React.ComponentType<any>> = {
 
 interface ComponentRendererProps {
   componentType: string;
-  config?: Record<string, any>;
-  data?: Record<string, any>;
+  config?: Record<string, unknown>;
+  data?: Record<string, unknown>;
   className?: string;
 }
 
@@ -75,11 +217,19 @@ export function ComponentRenderer({
 
   return (
     <React.Suspense fallback={<Skeleton className={className} />}>
-      <Component
-        {...config}
-        {...data}
-        className={className}
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+        className="h-full w-full"
+      >
+        <Component
+          {...config}
+          {...data}
+          className={cn(className)}
+        />
+      </motion.div>
     </React.Suspense>
   );
 }
@@ -91,7 +241,7 @@ export function ComponentRenderer({
 interface PageLayoutRendererProps {
   layoutSlug?: string;
   layoutType?: string;
-  contextData?: Record<string, any>;
+  contextData?: Record<string, unknown>;
   className?: string;
 }
 
@@ -140,7 +290,7 @@ export function PageLayoutRenderer({
       return (
         <Alert className={className}>
           <AlertDescription>
-            You don't have permission to view this page.
+            You don&apos;t have permission to view this page.
           </AlertDescription>
         </Alert>
       );
@@ -186,8 +336,9 @@ export function PageLayoutRenderer({
 // ============================================================================
 
 function renderComponentConfig(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   config: any,
-  contextData: Record<string, any>
+  contextData: Record<string, unknown>
 ): React.ReactNode {
   if (!config) return null;
 
@@ -242,13 +393,13 @@ function renderComponentConfig(
         {config.widgets && (
           <main className="container mx-auto px-4 py-6">
             <div className="grid grid-cols-12 gap-6">
-              {config.widgets.map((widget: any, index: number) => (
+              {config.widgets.map((widget: Record<string, unknown>, index: number) => (
                 <div
                   key={index}
                   className={`col-span-${widget.span || 12} ${widget.position || ''}`}
                 >
                   <ComponentRenderer
-                    componentType={widget.type}
+                    componentType={String(widget.type)}
                     config={widget}
                     data={contextData}
                   />
@@ -260,10 +411,10 @@ function renderComponentConfig(
 
         {config.steps && (
           <main className="container mx-auto px-4 py-6">
-            {config.steps.map((step: any, index: number) => (
+            {config.steps.map((step: Record<string, unknown>, index: number) => (
               <ComponentRenderer
                 key={index}
-                componentType={step.component || 'form_step'}
+                componentType={String(step.component || 'form_step')}
                 config={step}
                 data={contextData}
               />
@@ -281,7 +432,7 @@ function renderComponentConfig(
 // THEME UTILITIES
 // ============================================================================
 
-function generateThemeClasses(themeConfig: Record<string, any>): string {
+function generateThemeClasses(themeConfig: Record<string, unknown>): string {
   const classes: string[] = [];
 
   if (themeConfig.colors) {
@@ -322,6 +473,7 @@ export function useDynamicPage(route: string) {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useDynamicComponent(componentType: string, props: Record<string, any> = {}) {
   const Component = COMPONENT_REGISTRY[componentType];
 
@@ -330,7 +482,7 @@ export function useDynamicComponent(componentType: string, props: Record<string,
       Component: () => (
         <Alert>
           <AlertDescription>
-            Component "{componentType}" not found in registry.
+            Component &quot;{componentType}&quot; not found in registry.
           </AlertDescription>
         </Alert>
       ),
@@ -339,6 +491,7 @@ export function useDynamicComponent(componentType: string, props: Record<string,
   }
 
   return {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Component: (additionalProps: Record<string, any> = {}) => (
       <React.Suspense fallback={<Skeleton />}>
         <Component {...props} {...additionalProps} />

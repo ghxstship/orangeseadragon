@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ChevronRight, PanelLeftClose, PanelLeft } from "lucide-react";
+import { ChevronDown, PanelLeftClose, PanelLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,12 +26,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
   return (
     <TooltipProvider delayDuration={0}>
-      <aside
+      <motion.aside
+        initial={false}
+        animate={{ width: collapsed ? 64 : 256 }}
         className={cn(
-          "fixed left-0 top-14 z-30 flex h-[calc(100vh-3.5rem)] flex-col border-r bg-background transition-all duration-300",
+          "fixed left-0 top-14 z-30 flex h-[calc(100vh-3.5rem)] flex-col border-r border-white/5 bg-background/5 backdrop-blur-3xl transition-all duration-500 shadow-2xl overflow-hidden",
           collapsed ? "w-16" : "w-64"
         )}
       >
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent pointer-events-none" />
         <ScrollArea className="flex-1 py-2">
           <nav className="space-y-1 px-2">
             {sidebarNavigation.map((section) => (
@@ -43,21 +47,21 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             ))}
           </nav>
         </ScrollArea>
-        <div className="border-t p-2">
+        <div className="border-t border-white/5 p-3">
           <Button
             variant="ghost"
             size="sm"
-            className="w-full justify-center"
+            className="w-full justify-center h-10 hover:bg-white/5 transition-colors rounded-xl"
             onClick={onToggle}
           >
             {collapsed ? (
-              <PanelLeft className="h-4 w-4" />
+              <PanelLeft className="h-4 w-4 opacity-70" />
             ) : (
-              <PanelLeftClose className="h-4 w-4" />
+              <PanelLeftClose className="h-4 w-4 opacity-70" />
             )}
           </Button>
         </div>
-      </aside>
+      </motion.aside>
     </TooltipProvider>
   );
 }
@@ -82,25 +86,33 @@ function SidebarSection({ section, collapsed, pathname }: SidebarSectionProps) {
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-1 mb-6">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground"
+        className="flex w-full items-center justify-between px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-primary transition-colors group"
       >
         {section.title}
-        {expanded ? (
-          <ChevronDown className="h-3 w-3" />
-        ) : (
-          <ChevronRight className="h-3 w-3" />
-        )}
+        <motion.div
+          animate={{ rotate: expanded ? 0 : -90 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+        </motion.div>
       </button>
-      {expanded && (
-        <div className="space-y-0.5">
-          {section.items.map((item) => (
-            <SidebarItem key={item.path} item={item} pathname={pathname} />
-          ))}
-        </div>
-      )}
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="space-y-0.5 overflow-hidden"
+          >
+            {section.items.map((item) => (
+              <SidebarItem key={item.path} item={item} pathname={pathname} />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -122,41 +134,48 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
         <button
           onClick={() => setExpanded(!expanded)}
           className={cn(
-            "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
             isActive
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              ? "bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]"
+              : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
           )}
         >
-          <Icon className="h-4 w-4 shrink-0" />
-          <span className="truncate flex-1 text-left">{item.title}</span>
-          {expanded ? (
-            <ChevronDown className="h-3 w-3 shrink-0" />
-          ) : (
-            <ChevronRight className="h-3 w-3 shrink-0" />
-          )}
+          <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive && "text-primary")} />
+          <span className="truncate flex-1 text-left tracking-tight">{item.title}</span>
+          <motion.div
+            animate={{ rotate: expanded ? 0 : -90 }}
+          >
+            <ChevronDown className="h-3 w-3 shrink-0 opacity-40" />
+          </motion.div>
         </button>
-        {expanded && (
-          <div className="ml-4 space-y-0.5 border-l pl-3">
-            {item.subpages!.map((subpage) => {
-              const isSubActive = pathname === subpage.path;
-              return (
-                <Link
-                  key={subpage.path}
-                  href={subpage.path}
-                  className={cn(
-                    "block rounded-md px-3 py-1.5 text-sm transition-colors",
-                    isSubActive
-                      ? "bg-primary/10 text-primary font-medium"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  {subpage.title}
-                </Link>
-              );
-            })}
-          </div>
-        )}
+        <AnimatePresence initial={false}>
+          {expanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="ml-5 space-y-0.5 border-l border-white/5 pl-3 overflow-hidden"
+            >
+              {item.subpages!.map((subpage) => {
+                const isSubActive = pathname === subpage.path;
+                return (
+                  <Link
+                    key={subpage.path}
+                    href={subpage.path}
+                    className={cn(
+                      "block rounded-lg px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-all",
+                      isSubActive
+                        ? "text-primary bg-primary/5"
+                        : "text-muted-foreground/60 hover:text-foreground hover:bg-white/[0.02]"
+                    )}
+                  >
+                    {subpage.title}
+                  </Link>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
@@ -165,16 +184,16 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
     <Link
       href={item.path}
       className={cn(
-        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
         isActive
-          ? "bg-primary/10 text-primary"
-          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+          ? "bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]"
+          : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
       )}
     >
-      <Icon className="h-4 w-4 shrink-0" />
-      <span className="truncate">{item.title}</span>
+      <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive && "text-primary")} />
+      <span className="truncate tracking-tight">{item.title}</span>
       {item.badge && (
-        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-medium text-primary-foreground">
+        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-lg bg-primary/20 border border-primary/30 px-1.5 text-[9px] font-black text-primary shadow-[0_0_10px_rgba(var(--primary),0.3)]">
           {item.badge}
         </span>
       )}

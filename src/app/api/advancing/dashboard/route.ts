@@ -1,8 +1,11 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, supabaseError } from '@/lib/api/response';
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
   const searchParams = request.nextUrl.searchParams;
 
   const eventId = searchParams.get('eventId');
@@ -19,7 +22,7 @@ export async function GET(request: NextRequest) {
   const { data: metrics, error: metricsError } = await metricsQuery;
 
   if (metricsError) {
-    return NextResponse.json({ error: metricsError.message }, { status: 500 });
+    return supabaseError(metricsError);
   }
 
   // Get critical path items that are not complete
@@ -107,7 +110,7 @@ export async function GET(request: NextRequest) {
     confirmedBudget: metrics?.reduce((sum, m) => sum + parseFloat(m.confirmed_budget || 0), 0) || 0,
   };
 
-  return NextResponse.json({
+  return apiSuccess({
     metrics: aggregatedMetrics,
     advances: metrics,
     criticalItems: criticalItems || [],

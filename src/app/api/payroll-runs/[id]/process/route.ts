@@ -1,17 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createServiceClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
 
     const { id } = params;
 
@@ -23,14 +21,11 @@ export async function POST(
       .single();
 
     if (fetchError || !payrollRun) {
-      return NextResponse.json({ error: 'Payroll run not found' }, { status: 404 });
+      return notFound('Payroll run');
     }
 
     if (payrollRun.status !== 'approved') {
-      return NextResponse.json(
-        { error: 'Payroll run must be approved before processing' },
-        { status: 400 }
-      );
+      return badRequest('Payroll run must be approved before processing');
     }
 
     // Update payroll run status to paid
@@ -45,7 +40,7 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
     // Update all payroll items to paid
@@ -54,9 +49,9 @@ export async function POST(
       .update({ status: 'paid' })
       .eq('payroll_run_id', id);
 
-    return NextResponse.json({ success: true, data });
+    return apiSuccess(data);
   } catch (error) {
     console.error('Error processing payroll run:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return serverError();
   }
 }

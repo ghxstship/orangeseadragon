@@ -31,6 +31,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { formatDistanceToNow, format, parseISO, isToday, isYesterday } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 
 export type ActivityType =
   | "created"
@@ -268,26 +269,26 @@ export function ActivityFeed({
   }, [filteredActivities]);
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-3">
+    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
+          <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80 flex items-center gap-3">
+            <Clock className="h-5 w-5 text-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
             {title}
           </CardTitle>
           {showFilters && (
             <Select value={filter} onValueChange={(v) => setFilter(v as ActivityType | "all")}>
-              <SelectTrigger className="w-[140px] h-8">
+              <SelectTrigger className="w-[160px] h-8 glass-morphism border-white/10 text-[10px] font-black uppercase tracking-widest">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Activity</SelectItem>
-                <SelectItem value="created">Created</SelectItem>
-                <SelectItem value="updated">Updated</SelectItem>
-                <SelectItem value="commented">Comments</SelectItem>
-                <SelectItem value="status_changed">Status Changes</SelectItem>
-                <SelectItem value="assigned">Assignments</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+              <SelectContent className="glass-morphism border-white/10">
+                <SelectItem value="all" className="text-[10px] font-bold uppercase">All Activity</SelectItem>
+                <SelectItem value="created" className="text-[10px] font-bold uppercase">Created</SelectItem>
+                <SelectItem value="updated" className="text-[10px] font-bold uppercase">Updated</SelectItem>
+                <SelectItem value="commented" className="text-[10px] font-bold uppercase">Comments</SelectItem>
+                <SelectItem value="status_changed" className="text-[10px] font-bold uppercase">Status Changes</SelectItem>
+                <SelectItem value="assigned" className="text-[10px] font-bold uppercase">Assignments</SelectItem>
+                <SelectItem value="completed" className="text-[10px] font-bold uppercase">Completed</SelectItem>
               </SelectContent>
             </Select>
           )}
@@ -296,64 +297,77 @@ export function ActivityFeed({
       <CardContent className="p-0">
         <ScrollArea style={{ maxHeight }}>
           <div className="px-4 pb-4">
-            {Object.entries(groupedActivities).map(([date, items]) => (
-              <div key={date} className="mb-6 last:mb-0">
-                <div className="sticky top-0 bg-background py-2 z-10">
-                  <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    {date}
-                  </span>
-                </div>
-                <div className="space-y-4">
-                  {items.map((activity, index) => (
-                    <div
-                      key={activity.id}
-                      className={cn(
-                        "flex gap-3 group cursor-pointer",
-                        onActivityClick && "hover:bg-muted/50 -mx-2 px-2 py-2 rounded-lg transition-colors"
-                      )}
-                      onClick={() => onActivityClick?.(activity)}
-                    >
-                      <div className="relative">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={activity.user.avatar} />
-                          <AvatarFallback className="text-xs">
-                            {activity.user.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div
-                          className={cn(
-                            "absolute -bottom-1 -right-1 rounded-full p-1",
-                            activityColors[activity.type]
-                          )}
-                        >
-                          {activityIcons[activity.type]}
-                        </div>
-                        {index < items.length - 1 && (
-                          <div className="absolute top-10 left-4 w-px h-6 bg-border" />
+            <AnimatePresence mode="popLayout">
+              {Object.entries(groupedActivities).map(([date, items], groupIdx) => (
+                <motion.div
+                  key={date}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: groupIdx * 0.1 }}
+                  className="mb-8 last:mb-0"
+                >
+                  <div className="sticky top-0 bg-background/80 backdrop-blur-xl py-3 z-10 -mx-4 px-4 border-y border-white/5 mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">
+                      {date}
+                    </span>
+                  </div>
+                  <div className="space-y-6 relative">
+                    <div className="absolute top-0 bottom-0 left-[15px] w-px bg-white/10" />
+                    {items.map((activity, _index) => (
+                      <motion.div
+                        key={activity.id}
+                        layout
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        whileHover={{ x: 4 }}
+                        className={cn(
+                          "flex gap-4 group cursor-pointer relative z-10",
+                          onActivityClick && "hover:bg-white/5 -mx-2 px-2 py-3 rounded-xl transition-all duration-300"
                         )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm leading-relaxed">
-                          {getActivityDescription(activity)}
-                        </p>
-                        {activity.metadata?.comment && (
-                          <div className="mt-2 p-3 bg-muted rounded-lg text-sm">
-                            {activity.metadata.comment}
+                        onClick={() => onActivityClick?.(activity)}
+                      >
+                        <div className="relative">
+                          <Avatar className="h-8 w-8 ring-2 ring-background border border-white/10">
+                            <AvatarImage src={activity.user.avatar} />
+                            <AvatarFallback className="text-[10px] font-black uppercase">
+                              {activity.user.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div
+                            className={cn(
+                              "absolute -bottom-1 -right-1 rounded-full p-1 shadow-lg ring-2 ring-background",
+                              activityColors[activity.type]
+                            )}
+                          >
+                            {activityIcons[activity.type]}
                           </div>
-                        )}
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {formatActivityTime(activity.timestamp)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[13px] leading-relaxed font-medium">
+                            {getActivityDescription(activity)}
+                          </div>
+                          {activity.metadata?.comment && (
+                            <div className="mt-2 p-4 bg-white/5 border border-white/10 rounded-2xl text-[12px] leading-relaxed italic opacity-80 backdrop-blur-sm">
+                              &quot;{activity.metadata.comment}&quot;
+                            </div>
+                          )}
+                          <div className="flex items-center gap-2 mt-2">
+                            <Clock className="h-3 w-3 opacity-30" />
+                            <span className="text-[10px] font-black uppercase tracking-wider opacity-30">
+                              {formatActivityTime(activity.timestamp)}
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
 
             {filteredActivities.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">

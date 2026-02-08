@@ -45,6 +45,7 @@ export async function middleware(request: NextRequest) {
     "/terms",
     "/privacy",
     "/",
+    "/p",
   ];
 
   // Check if current path is a public route

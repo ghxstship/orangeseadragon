@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * POST /api/support-tickets/[id]/assign
@@ -9,23 +10,18 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createServiceClient();
   const { id } = await params;
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { supabase } = auth;
 
     const body = await request.json();
     const { assigned_to_user_id, assigned_team_id } = body;
 
     if (!assigned_to_user_id && !assigned_team_id) {
-      return NextResponse.json({ 
-        error: 'Either assigned_to_user_id or assigned_team_id is required' 
-      }, { status: 400 });
+      return badRequest('Either assigned_to_user_id or assigned_team_id is required');
     }
 
     // Get the ticket
@@ -36,7 +32,7 @@ export async function POST(
       .single();
 
     if (fetchError || !ticket) {
-      return NextResponse.json({ error: 'Ticket not found' }, { status: 404 });
+      return notFound('Ticket');
     }
 
     // Update the ticket
@@ -57,16 +53,12 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json({
-      success: true,
-      ticket: data,
-      message: 'Ticket assigned'
-    });
+    return apiSuccess(data, { message: 'Ticket assigned' });
   } catch (e) {
     console.error('[API] Ticket assign error:', e);
-    return NextResponse.json({ error: 'Assignment failed' }, { status: 500 });
+    return serverError('Assignment failed');
   }
 }

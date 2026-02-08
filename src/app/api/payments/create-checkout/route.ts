@@ -1,7 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { stripeService } from '@/lib/integrations/stripe';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, serverError } from '@/lib/api/response';
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+
   try {
     const body = await request.json();
     const { lineItems, mode = 'payment', successUrl, cancelUrl, customerEmail } = body as {
@@ -13,11 +18,11 @@ export async function POST(request: NextRequest) {
     };
 
     if (!lineItems?.length) {
-      return NextResponse.json({ error: 'Line items required' }, { status: 400 });
+      return badRequest('Line items required');
     }
 
     if (!successUrl || !cancelUrl) {
-      return NextResponse.json({ error: 'Success and cancel URLs required' }, { status: 400 });
+      return badRequest('Success and cancel URLs required');
     }
 
     const session = await stripeService.createCheckoutSession(
@@ -28,15 +33,12 @@ export async function POST(request: NextRequest) {
       customerEmail
     );
 
-    return NextResponse.json({
+    return apiSuccess({
       sessionId: session.id,
       url: session.url,
     });
   } catch (error) {
     console.error('Create checkout session error:', error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to create checkout session' },
-      { status: 500 }
-    );
+    return serverError(error instanceof Error ? error.message : 'Failed to create checkout session');
   }
 }

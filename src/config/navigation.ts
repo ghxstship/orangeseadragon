@@ -340,6 +340,9 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Shifts", path: "/people/scheduling/shifts" },
           { title: "Crew Calls", path: "/people/scheduling/crew-calls" },
           { title: "Timekeeping", path: "/people/scheduling/timekeeping" },
+          { title: "Clock In/Out", path: "/people/scheduling/clock" },
+          { title: "Shift Swaps", path: "/people/scheduling/shift-swaps" },
+          { title: "Open Shifts", path: "/people/scheduling/open-shifts" },
         ],
       },
       {
@@ -351,6 +354,7 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Courses", path: "/people/training/courses" },
           { title: "Materials", path: "/people/training/materials" },
           { title: "Certifications", path: "/people/training/certifications" },
+          { title: "Compliance", path: "/people/training/compliance" },
           { title: "Enrollments", path: "/people/training/enrollments" },
         ],
       },
@@ -527,12 +531,14 @@ export const sidebarNavigation: NavSection[] = [
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // FINANCE - Money In/Out (5 pages)
+  // FINANCE - Money In/Out (7 pages)
   // Schema: budgets, budget_line_items, budget_categories, purchase_orders,
   //         invoices, invoice_line_items, payments, credit_notes, expenses,
   //         expense_receipts, reimbursements, payroll_batches, pay_stubs,
-  //         pay_rates, deductions, accounts, bank_accounts, transactions
-  // Ordered by: Budget → Invoice → Expense → Payroll → Accounts
+  //         pay_rates, deductions, accounts, bank_accounts, transactions,
+  //         quotes, recurring_invoices, reminder_templates, bank_connections,
+  //         imported_transactions, receipt_scans
+  // Ordered by: Budget → Invoice → Quote → Expense → Payroll → Banking → Accounts
   // ═══════════════════════════════════════════════════════════════════════════
   {
     title: "FINANCE",
@@ -558,7 +564,14 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Line Items", path: "/finance/invoices/line-items" },
           { title: "Payments", path: "/finance/invoices/payments" },
           { title: "Credit Notes", path: "/finance/invoices/credit-notes" },
+          { title: "Recurring", path: "/finance/recurring-invoices" },
         ],
+      },
+      {
+        title: "Quotes",
+        path: "/finance/quotes",
+        icon: FileText,
+        description: "Quotes & estimates",
       },
       {
         title: "Expenses",
@@ -566,8 +579,9 @@ export const sidebarNavigation: NavSection[] = [
         icon: Receipt,
         description: "Expense records",
         subpages: [
-          { title: "Receipts", path: "/finance/expenses/receipts" },
+          { title: "Receipts", path: "/finance/receipts" },
           { title: "Reimbursements", path: "/finance/expenses/reimbursements" },
+          { title: "Approvals", path: "/finance/expense-approvals" },
         ],
       },
       {
@@ -580,6 +594,12 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Pay Rates", path: "/finance/payroll/rates" },
           { title: "Deductions", path: "/finance/payroll/deductions" },
         ],
+      },
+      {
+        title: "Banking",
+        path: "/finance/banking",
+        icon: Building2,
+        description: "Bank connections & reconciliation",
       },
       {
         title: "Accounts",
@@ -603,10 +623,26 @@ export const sidebarNavigation: NavSection[] = [
  */
 export const networkNavigation: NavItem[] = [
   {
+    title: "Feed",
+    path: "/network/feed",
+    icon: LayoutDashboard,
+    description: "Activity feed and updates",
+  },
+  {
+    title: "Messages",
+    path: "/network/messages",
+    icon: MessageSquare,
+    description: "Direct and group messaging",
+  },
+  {
     title: "Connections",
     path: "/network/connections",
     icon: Link,
     description: "Professional networking",
+    subpages: [
+      { title: "Pending Requests", path: "/network/connections?tab=pending" },
+      { title: "Discover People", path: "/network/discover" },
+    ],
   },
   {
     title: "Discussions",
@@ -637,6 +673,10 @@ export const networkNavigation: NavItem[] = [
     path: "/network/challenges",
     icon: Trophy,
     description: "Competitions and challenges",
+    subpages: [
+      { title: "Leaderboard", path: "/network/leaderboard" },
+      { title: "Badges", path: "/network/badges" },
+    ],
   },
 ];
 

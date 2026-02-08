@@ -77,6 +77,30 @@ export const taskSchema = defineSchema({
         inTable: true,
         inForm: true,
       },
+      importance: {
+        type: 'number',
+        label: 'Importance',
+        inForm: true,
+        inDetail: true,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+      urgency: {
+        type: 'number',
+        label: 'Urgency',
+        inForm: true,
+        inDetail: true,
+        min: 1,
+        max: 10,
+        default: 5,
+      },
+      eisenhower_quadrant: {
+        type: 'number',
+        label: 'Quadrant',
+        inTable: true,
+        readOnly: true,
+      },
       list_id: {
         type: 'relation',
         label: 'List',
@@ -120,11 +144,12 @@ export const taskSchema = defineSchema({
         { key: 'done', label: 'Done', query: { where: { status: 'done' } } },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban', 'list', 'calendar'],
+      availableViews: ['table', 'kanban', 'list', 'calendar', 'matrix'],
     },
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
+        { key: 'subtasks', label: 'Subtasks', content: { type: 'related', entity: 'tasks', foreignKey: 'parent_id' } },
         { key: 'comments', label: 'Comments', content: { type: 'related', entity: 'comments', foreignKey: 'task_id' } },
         { key: 'activity', label: 'Activity', content: { type: 'activity' } },
       ],
@@ -132,6 +157,8 @@ export const taskSchema = defineSchema({
         stats: [],
         blocks: [
           { key: 'details', title: 'Task Details', content: { type: 'fields', fields: ['description', 'due_date', 'priority'] } },
+          { key: 'dependencies', title: 'Dependencies', content: { type: 'custom', component: 'TaskDependencies' } },
+          { key: 'checklists', title: 'Checklists', content: { type: 'custom', component: 'TaskChecklists' } },
         ]
       }
     },
@@ -179,6 +206,17 @@ export const taskSchema = defineSchema({
       startField: 'due_date',
       colorField: 'priority',
     },
+    matrix: {
+      type: 'eisenhower',
+      xAxis: 'urgency',
+      yAxis: 'importance',
+      quadrants: [
+        { id: 1, label: 'Do First', description: 'Urgent & Important', color: 'red' },
+        { id: 2, label: 'Schedule', description: 'Important but Not Urgent', color: 'blue' },
+        { id: 3, label: 'Delegate', description: 'Urgent but Not Important', color: 'yellow' },
+        { id: 4, label: 'Eliminate', description: 'Neither Urgent nor Important', color: 'gray' },
+      ]
+    },
   },
 
   actions: {
@@ -187,7 +225,7 @@ export const taskSchema = defineSchema({
       { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (record) => `/core/tasks/${record.id}/edit` } },
     ],
     bulk: [
-      { key: 'complete', label: 'Mark Complete', handler: { type: 'function', fn: () => {} } },
+      { key: 'complete', label: 'Mark Complete', handler: { type: 'function', fn: () => { } } },
     ],
     global: [
       { key: 'create', label: 'New Task', variant: 'primary', handler: { type: 'navigate', path: () => '/core/tasks/new' } }

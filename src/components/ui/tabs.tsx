@@ -5,7 +5,7 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 
 import { cn } from "@/lib/utils";
 
-type TabsVariant = "default" | "underline";
+type TabsVariant = "default" | "underline" | "spatial";
 
 const Tabs = TabsPrimitive.Root;
 
@@ -13,19 +13,23 @@ const TabsVariantContext = React.createContext<TabsVariant>("default");
 
 const tabsListStyles: Record<TabsVariant, string> = {
   default:
-    "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+    "inline-flex h-10 items-center justify-center rounded-xl bg-white/5 p-1 text-muted-foreground border border-white/5",
   underline:
     "inline-flex h-12 items-center gap-0 bg-transparent p-0 text-muted-foreground",
+  spatial:
+    "inline-flex h-11 items-center justify-center rounded-2xl bg-white/5 backdrop-blur-3xl p-1 text-muted-foreground border border-white/10 shadow-2xl",
 };
 
 const tabsTriggerBase =
-  "inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center whitespace-nowrap text-[10px] font-black uppercase tracking-[0.2em] ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50";
 
 const tabsTriggerStyles: Record<TabsVariant, string> = {
   default:
-    "rounded-sm px-3 py-1.5 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
+    "rounded-lg px-4 py-1.5 data-[state=active]:bg-white/10 data-[state=active]:text-primary data-[state=active]:shadow-xl",
   underline:
-    "relative h-12 rounded-none border-b-2 border-transparent px-4 transition-colors hover:bg-accent/50 data-[state=active]:border-primary data-[state=active]:bg-transparent",
+    "relative h-12 rounded-none border-b-2 border-transparent px-6 transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary",
+  spatial:
+    "rounded-xl px-6 py-2 transition-all duration-500 data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_20px_rgba(var(--primary),0.3)] data-[state=active]:border-primary/20 border border-transparent",
 };
 
 const TabsList = React.forwardRef<

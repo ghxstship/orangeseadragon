@@ -91,6 +91,48 @@ export const projectResourceSchema = defineSchema({
         ],
         default: 'planned',
       },
+      booking_type: {
+        type: 'select',
+        label: 'Booking Type',
+        inTable: true,
+        inForm: true,
+        options: [
+          { label: 'Confirmed', value: 'confirmed', color: 'green' },
+          { label: 'Tentative', value: 'tentative', color: 'yellow' },
+          { label: 'Placeholder', value: 'placeholder', color: 'blue' },
+          { label: 'Soft Hold', value: 'soft_hold', color: 'orange' },
+        ],
+        default: 'confirmed',
+      },
+      department: {
+        type: 'text',
+        label: 'Department',
+        inForm: true,
+        inDetail: true,
+      },
+      daily_rate: {
+        type: 'currency',
+        label: 'Daily Rate',
+        inForm: true,
+        inDetail: true,
+      },
+      estimated_cost: {
+        type: 'currency',
+        label: 'Estimated Cost',
+        inTable: true,
+        inDetail: true,
+      },
+      budget_id: {
+        type: 'relation',
+        label: 'Budget',
+        inForm: true,
+        relation: { entity: 'budget', display: 'name' },
+      },
+      confirmed_at: {
+        type: 'datetime',
+        label: 'Confirmed At',
+        inDetail: true,
+      },
       notes: {
         type: 'textarea',
         label: 'Notes',

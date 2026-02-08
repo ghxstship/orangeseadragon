@@ -1,20 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createServiceClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { user, supabase } = auth;
 
     const body = await request.json();
     const { ids } = body;
 
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return NextResponse.json({ error: 'No time entry IDs provided' }, { status: 400 });
+      return badRequest('No time entry IDs provided');
     }
 
     // Get approver contact ID
@@ -38,16 +36,12 @@ export async function POST(request: NextRequest) {
       .select();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      approved_count: data?.length || 0,
-      data 
-    });
+    return apiSuccess(data, { approved_count: data?.length || 0 });
   } catch (error) {
     console.error('Error bulk approving time entries:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return serverError();
   }
 }

@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // /lib/schemas/project.ts
 
 import { defineSchema } from '../schema/defineSchema';
-import type { EntitySchema } from '../schema/types';
 
 /**
  * PROJECT ENTITY SCHEMA (SSOT)
@@ -229,7 +229,7 @@ export const projectSchema = defineSchema({
         key: 'create',
         label: 'New Project',
         variant: 'primary',
-        handler: { type: 'function', fn: (record: any, context: any) => console.log('Create clicked') }
+        handler: { type: 'function', fn: () => console.log('Create clicked') }
       }
     ]
   },

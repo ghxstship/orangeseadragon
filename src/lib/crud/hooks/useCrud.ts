@@ -116,6 +116,7 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
       }
       return res.json();
     },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSuccess: async (record, { id, data }) => {
       // Invalidate queries
       queryClient.invalidateQueries({ queryKey: [schema.identity.slug] });

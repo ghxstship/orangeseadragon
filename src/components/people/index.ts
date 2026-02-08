@@ -1,0 +1,11 @@
+export { HolographicDirectory } from './HolographicDirectory';
+export { LifeStreamProfile } from './LifeStreamProfile';
+export { TimeClock } from './TimeClock';
+export { ComplianceDashboard } from './ComplianceDashboard';
+export { OrgChart } from './OrgChart';
+export { EmployeePortal } from './EmployeePortal';
+export { LeaveCalendar } from './LeaveCalendar';
+export { LeaveRequestForm } from './LeaveRequestForm';
+export { DocumentManager } from './DocumentManager';
+export { PerformanceReviewDashboard } from './PerformanceReviewDashboard';
+export { WorkforceAnalytics } from './WorkforceAnalytics';

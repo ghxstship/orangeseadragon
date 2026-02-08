@@ -44,7 +44,7 @@ export function WelcomeScreen({ onNext }: WelcomeScreenProps) {
         </div>
 
         <Button onClick={onNext} size="lg" className="w-full md:w-auto">
-          Let's Get Started
+          Let&apos;s Get Started
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </CardContent>

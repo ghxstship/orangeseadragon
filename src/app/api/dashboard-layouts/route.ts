@@ -1,0 +1,96 @@
+import { NextRequest } from "next/server";
+import { requireAuth } from "@/lib/api/guard";
+import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from "@/lib/api/response";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { user, supabase } = auth;
+
+  // Get user's organization
+  const { data: profile } = await supabase
+    .from("users")
+    .select("organization_id")
+    .eq("id", user.id)
+    .single();
+
+  const organizationId = profile?.organization_id;
+
+  // Fetch user's layouts and shared layouts
+  const { data, error } = await supabase
+    .from("dashboard_layouts")
+    .select("*")
+    .or(`user_id.eq.${user.id},and(is_shared.eq.true,organization_id.eq.${organizationId})`)
+    .order("is_default", { ascending: false })
+    .order("name", { ascending: true });
+
+  if (error) {
+    // Table might not exist yet, return default
+    if (error.code === "42P01") {
+      return apiSuccess([], { useDefault: true });
+    }
+    return supabaseError(error);
+  }
+
+  return apiSuccess(data);
+}
+
+export async function POST(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { user, supabase } = auth;
+
+  try {
+    const body = await request.json();
+    const { name, description, widgets, columns, is_shared, is_default } = body;
+
+    if (!name || !widgets) {
+      return badRequest('name and widgets are required');
+    }
+
+    // Get user's organization
+    const { data: profile } = await supabase
+      .from("users")
+      .select("organization_id")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.organization_id) {
+      return badRequest('User organization not found');
+    }
+
+    // If setting as default, unset other defaults
+    if (is_default) {
+      await supabase
+        .from("dashboard_layouts")
+        .update({ is_default: false })
+        .eq("user_id", user.id)
+        .eq("is_default", true);
+    }
+
+    const { data, error } = await supabase
+      .from("dashboard_layouts")
+      .insert({
+        name,
+        description: description || null,
+        widgets,
+        columns: columns || 12,
+        is_shared: is_shared || false,
+        is_default: is_default || false,
+        user_id: user.id,
+        organization_id: profile.organization_id,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return supabaseError(error);
+    }
+
+    return apiCreated(data);
+  } catch (error) {
+    console.error("Failed to create dashboard layout:", error);
+    return serverError('Failed to create dashboard layout');
+  }
+}

@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import {
   TrendingUp,
@@ -20,6 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface MetricWidgetProps {
   title: string;
@@ -45,44 +45,50 @@ export function MetricWidget({
   onClick,
 }: MetricWidgetProps) {
   return (
-    <Card
-      className={cn("cursor-pointer hover:shadow-md transition-shadow", className)}
-      onClick={onClick}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -4, scale: 1.01 }}
+      className="h-full"
     >
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
-          {title}
-        </CardTitle>
-        {icon && <div className="text-muted-foreground">{icon}</div>}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        {(description || trend) && (
-          <div className="flex items-center gap-2 mt-1">
-            {trend && (
-              <span
-                className={cn(
-                  "flex items-center text-xs font-medium",
-                  trend.direction === "up" && "text-green-600",
-                  trend.direction === "down" && "text-red-600",
-                  trend.direction === "neutral" && "text-muted-foreground"
-                )}
-              >
-                {trend.direction === "up" && <TrendingUp className="h-3 w-3 mr-1" />}
-                {trend.direction === "down" && <TrendingDown className="h-3 w-3 mr-1" />}
-                {trend.direction === "neutral" && <Minus className="h-3 w-3 mr-1" />}
-                {trend.value > 0 ? "+" : ""}
-                {trend.value}%
-                {trend.label && <span className="ml-1 text-muted-foreground">{trend.label}</span>}
-              </span>
-            )}
-            {description && (
-              <span className="text-xs text-muted-foreground">{description}</span>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      <Card
+        className={cn("h-full cursor-pointer border-white/5 glass-morphism overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-primary/10", className)}
+        onClick={onClick}
+      >
+        <CardHeader className="flex flex-row items-center justify-between pb-2 bg-background/5">
+          <CardTitle className="text-[10px] font-black uppercase tracking-widest opacity-60">
+            {title}
+          </CardTitle>
+          {icon && <div className="text-primary/60 shadow-[0_0_10px_rgba(var(--primary),0.3)]">{icon}</div>}
+        </CardHeader>
+        <CardContent className="pt-4">
+          <div className="text-3xl font-black tracking-tight">{value}</div>
+          {(description || trend) && (
+            <div className="flex items-center gap-2 mt-3">
+              {trend && (
+                <span
+                  className={cn(
+                    "flex items-center text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border",
+                    trend.direction === "up" && "text-green-400 border-green-500/20 bg-green-500/10 shadow-[0_0_8px_rgba(34,197,94,0.2)]",
+                    trend.direction === "down" && "text-red-400 border-red-500/20 bg-red-500/10 shadow-[0_0_8px_rgba(239,68,68,0.2)]",
+                    trend.direction === "neutral" && "text-muted-foreground border-white/10 bg-white/5"
+                  )}
+                >
+                  {trend.direction === "up" && <TrendingUp className="h-3 w-3 mr-1" />}
+                  {trend.direction === "down" && <TrendingDown className="h-3 w-3 mr-1" />}
+                  {trend.direction === "neutral" && <Minus className="h-3 w-3 mr-1" />}
+                  {trend.value > 0 ? "+" : ""}
+                  {trend.value}%
+                </span>
+              )}
+              {description && (
+                <span className="text-[10px] font-bold uppercase tracking-tight opacity-40">{description}</span>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -121,26 +127,39 @@ export function ProgressWidget({
   };
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          {showPercentage && (
-            <span className="text-sm font-medium">{percentage}%</span>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="h-full"
+    >
+      <Card className={cn("h-full border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+        <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">{title}</CardTitle>
+            {showPercentage && (
+              <span className="text-[10px] font-black text-primary shadow-sm">{percentage}%</span>
+            )}
+          </div>
+          {description && (
+            <CardDescription className="text-[9px] font-bold uppercase opacity-30 mt-1">{description}</CardDescription>
           )}
-        </div>
-        {description && (
-          <CardDescription className="text-xs">{description}</CardDescription>
-        )}
-      </CardHeader>
-      <CardContent>
-        <Progress value={percentage} className={cn("h-2", getStatusColor())} />
-        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-          <span>{value.toLocaleString()}</span>
-          <span>{max.toLocaleString()}</span>
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <div className="relative h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${percentage}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className={cn("absolute top-0 bottom-0 rounded-full shadow-[0_0_10px_rgba(var(--primary),0.3)]", getStatusColor())}
+            />
+          </div>
+          <div className="flex justify-between mt-3 text-[9px] font-black uppercase tracking-widest opacity-40">
+            <span>{value.toLocaleString()}</span>
+            <span>{max.toLocaleString()}</span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -176,68 +195,74 @@ export function ListWidget({
   const displayItems = items.slice(0, maxItems);
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-2">
+    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-3 border-b border-white/5 bg-background/5">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-sm font-medium">{title}</CardTitle>
+            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">{title}</CardTitle>
             {description && (
-              <CardDescription className="text-xs">{description}</CardDescription>
+              <CardDescription className="text-[9px] font-bold uppercase opacity-30 mt-1">{description}</CardDescription>
             )}
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10 rounded-full">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onViewAll}>View All</DropdownMenuItem>
-              <DropdownMenuItem>Export</DropdownMenuItem>
+            <DropdownMenuContent align="end" className="glass-morphism border-white/10">
+              <DropdownMenuItem className="text-[10px] font-bold uppercase tracking-wider" onClick={onViewAll}>View All</DropdownMenuItem>
+              <DropdownMenuItem className="text-[10px] font-bold uppercase tracking-wider">Export</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="divide-y">
-          {displayItems.map((item) => (
-            <div
-              key={item.id}
-              className={cn(
-                "flex items-center justify-between px-4 py-3",
-                onItemClick && "cursor-pointer hover:bg-muted/50 transition-colors"
-              )}
-              onClick={() => onItemClick?.(item)}
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                {item.icon && (
-                  <div className="flex-shrink-0 text-muted-foreground">{item.icon}</div>
+        <div className="divide-y divide-white/5">
+          <AnimatePresence mode="popLayout">
+            {displayItems.map((item, idx) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.03)", x: 4 }}
+                className={cn(
+                  "flex items-center justify-between px-5 py-4 transition-all duration-300",
+                  onItemClick && "cursor-pointer"
                 )}
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{item.label}</p>
-                  {item.subLabel && (
-                    <p className="text-xs text-muted-foreground truncate">{item.subLabel}</p>
+                onClick={() => onItemClick?.(item)}
+              >
+                <div className="flex items-center gap-4 min-w-0 font-medium">
+                  {item.icon && (
+                    <div className="flex-shrink-0 text-primary/60 group-hover:text-primary transition-colors">{item.icon}</div>
                   )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-black tracking-tight truncate">{item.label}</p>
+                    {item.subLabel && (
+                      <p className="text-[10px] font-bold uppercase tracking-wider opacity-30 truncate mt-0.5">{item.subLabel}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {item.badge && (
-                  <Badge variant={item.badge.variant || "secondary"} className="text-xs">
-                    {item.badge.label}
-                  </Badge>
-                )}
-                <span className="text-sm font-medium flex items-center gap-1">
-                  {item.trend === "up" && <ArrowUpRight className="h-3 w-3 text-green-500" />}
-                  {item.trend === "down" && <ArrowDownRight className="h-3 w-3 text-red-500" />}
-                  {item.value}
-                </span>
-              </div>
-            </div>
-          ))}
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  {item.badge && (
+                    <Badge variant={item.badge.variant || "secondary"} className="bg-white/5 border-white/10 text-[9px] font-black uppercase tracking-[0.1em] px-2 py-0.5">
+                      {item.badge.label}
+                    </Badge>
+                  )}
+                  <span className="text-sm font-black tracking-tight flex items-center gap-1.5">
+                    {item.trend === "up" && <ArrowUpRight className="h-3 w-3 text-green-400" />}
+                    {item.trend === "down" && <ArrowDownRight className="h-3 w-3 text-red-400" />}
+                    {item.value}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
         {items.length > maxItems && onViewAll && (
-          <div className="p-3 border-t">
-            <Button variant="ghost" size="sm" className="w-full" onClick={onViewAll}>
+          <div className="p-3 border-t border-white/5 bg-background/5">
+            <Button variant="ghost" size="sm" className="w-full text-[10px] font-black uppercase tracking-widest hover:bg-white/5" onClick={onViewAll}>
               View All ({items.length})
             </Button>
           </div>
@@ -313,48 +338,51 @@ export function DonutWidget({
   };
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">{title}</CardTitle>
         {description && (
-          <CardDescription className="text-xs">{description}</CardDescription>
+          <CardDescription className="text-[9px] font-bold uppercase opacity-30 mt-1">{description}</CardDescription>
         )}
       </CardHeader>
-      <CardContent>
-        <div className="flex items-center gap-4">
-          <div className="relative w-32 h-32 flex-shrink-0">
-            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+      <CardContent className="pt-6">
+        <div className="flex items-center gap-8">
+          <div className="relative w-40 h-40 flex-shrink-0">
+            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90 filter drop-shadow-[0_0_8px_rgba(0,0,0,0.3)]">
               {segments.map((segment, i) => (
-                <path
+                <motion.path
                   key={i}
+                  initial={{ strokeDasharray: "0 1000", opacity: 0 }}
+                  animate={{ strokeDasharray: "1000 1000", opacity: 1 }}
+                  transition={{ duration: 1, delay: i * 0.1 }}
                   d={createArcPath(segment.startAngle, segment.angle, 45, 30)}
                   fill={segment.color}
-                  className="transition-opacity hover:opacity-80"
+                  className="transition-opacity hover:opacity-80 cursor-pointer"
                 />
               ))}
             </svg>
             {(centerLabel || centerValue) && (
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 {centerValue && (
-                  <span className="text-xl font-bold">{centerValue}</span>
+                  <span className="text-2xl font-black tracking-tight">{centerValue}</span>
                 )}
                 {centerLabel && (
-                  <span className="text-xs text-muted-foreground">{centerLabel}</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-30 mt-1">{centerLabel}</span>
                 )}
               </div>
             )}
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 space-y-3">
             {data.map((d, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
+              <div key={i} className="flex items-center justify-between group">
+                <div className="flex items-center gap-3">
                   <div
-                    className="w-3 h-3 rounded-full"
+                    className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.2)]"
                     style={{ backgroundColor: d.color || defaultColors[i % defaultColors.length] }}
                   />
-                  <span className="text-muted-foreground">{d.label}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity">{d.label}</span>
                 </div>
-                <span className="font-medium">{d.value}</span>
+                <span className="text-[11px] font-black tracking-tighter">{d.value}</span>
               </div>
             ))}
           </div>
@@ -397,41 +425,58 @@ export function SparklineWidget({
     .join(" ");
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+    <Card className={cn("border-white/5 glass-morphism overflow-hidden shadow-2xl", className)}>
+      <CardHeader className="pb-4 border-b border-white/5 bg-background/5">
+        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 text-muted-foreground">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex items-end justify-between gap-4">
+      <CardContent className="pt-6">
+        <div className="flex items-end justify-between gap-6">
           <div>
-            <div className="text-2xl font-bold">{value}</div>
+            <div className="text-3xl font-black tracking-tight leading-none">{value}</div>
             {trend && (
               <span
                 className={cn(
-                  "flex items-center text-xs font-medium mt-1",
-                  trend.direction === "up" && "text-green-600",
-                  trend.direction === "down" && "text-red-600",
-                  trend.direction === "neutral" && "text-muted-foreground"
+                  "flex items-center text-[10px] font-black uppercase tracking-wider mt-3 px-2 py-0.5 rounded-full border w-fit",
+                  trend.direction === "up" && "text-green-400 border-green-500/20 bg-green-500/10 shadow-[0_0_8px_rgba(34,197,94,0.1)]",
+                  trend.direction === "down" && "text-red-400 border-red-500/20 bg-red-500/10 shadow-[0_0_8px_rgba(239,68,68,0.1)]",
+                  trend.direction === "neutral" && "text-muted-foreground border-white/10 bg-white/5"
                 )}
               >
-                {trend.direction === "up" && <TrendingUp className="h-3 w-3 mr-1" />}
-                {trend.direction === "down" && <TrendingDown className="h-3 w-3 mr-1" />}
+                {trend.direction === "up" && <TrendingUp className="h-2.5 w-2.5 mr-1" />}
+                {trend.direction === "down" && <TrendingDown className="h-2.5 w-2.5 mr-1" />}
                 {trend.value > 0 ? "+" : ""}
                 {trend.value}%
               </span>
             )}
           </div>
-          <div className="w-24 h-12">
+          <div className="w-32 h-14">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full">
-              <polyline
-                points={points}
+              <defs>
+                <linearGradient id={`gradient-${title.replace(/\s+/g, '-')}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={color} stopOpacity="0.5" />
+                  <stop offset="100%" stopColor={color} stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <motion.path
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                d={`M ${points.split(' ').map((p, i) => i === 0 ? p : `L ${p}`).join(' ')}`}
                 fill="none"
                 stroke={color}
-                strokeWidth="3"
+                strokeWidth="4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="drop-shadow-[0_0_5px_rgba(var(--primary),0.5)]"
+              />
+              <motion.path
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                d={`M ${points} L 100,100 L 0,100 Z`}
+                fill={`url(#gradient-${title.replace(/\s+/g, '-')})`}
               />
             </svg>
           </div>

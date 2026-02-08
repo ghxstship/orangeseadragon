@@ -1,12 +1,12 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useSupabase } from "./use-supabase";
 import type { Database } from "@/types/database";
 
-type OrganizationMember = Database["public"]["Tables"]["organization_members"]["Row"];
-type OrganizationMemberInsert = Database["public"]["Tables"]["organization_members"]["Insert"];
-type OrganizationMemberUpdate = Database["public"]["Tables"]["organization_members"]["Update"];
+type _OrganizationMember = Database["public"]["Tables"]["organization_members"]["Row"];
+type _OrganizationMemberInsert = Database["public"]["Tables"]["organization_members"]["Insert"];
+type _OrganizationMemberUpdate = Database["public"]["Tables"]["organization_members"]["Update"];
 
 export function usePeople(organizationId: string | null) {
     const supabase = useSupabase();

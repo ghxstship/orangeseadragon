@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { DashboardLayoutConfig, WidgetConfig } from "./types";
+import type { DashboardLayoutConfig } from "./types";
 
 /**
  * DASHBOARD LAYOUT

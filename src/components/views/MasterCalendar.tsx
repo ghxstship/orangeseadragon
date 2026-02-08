@@ -19,6 +19,7 @@ import {
   RefreshCw,
   Calendar,
   ExternalLink,
+  Plus,
 } from "lucide-react";
 import {
   format,
@@ -69,15 +70,23 @@ interface MasterCalendarProps {
   className?: string;
   defaultSources?: CalendarSourceType[];
   projectId?: string;
+  readOnly?: boolean;
+  onEventCreate?: (event: Partial<UnifiedCalendarItem>) => Promise<void>;
+  onEventUpdate?: (id: string, updates: Partial<UnifiedCalendarItem>) => Promise<void>;
 }
 
 export function MasterCalendar({
   className,
   defaultSources,
   projectId,
+  readOnly = false,
+  onEventCreate,
+  onEventUpdate,
 }: MasterCalendarProps) {
   const router = useRouter();
   const [currentDate, setCurrentDate] = React.useState(new Date());
+  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const [createDate, setCreateDate] = React.useState<Date | null>(null);
   const [data, setData] = React.useState<CalendarAggregationResult | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -149,6 +158,27 @@ export function MasterCalendar({
     setCurrentDate(date);
   };
 
+  const handleDateClick = (date: Date) => {
+    if (readOnly) return;
+    setCreateDate(date);
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCreateEvent = async (eventData: Partial<UnifiedCalendarItem>) => {
+    if (!onEventCreate) return;
+    try {
+      await onEventCreate(eventData);
+      setIsCreateModalOpen(false);
+      setCreateDate(null);
+      fetchCalendarData();
+    } catch (error) {
+      console.error('Failed to create event:', error);
+    }
+  };
+
+  // Note: handleUpdateEvent will be used for drag-to-reschedule in future
+  void onEventUpdate; // Acknowledge prop for future use
+
   const toggleSource = (source: CalendarSourceType) => {
     setEnabledSources((prev) => {
       const next = new Set(prev);
@@ -183,6 +213,20 @@ export function MasterCalendar({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Create Event Button */}
+          {!readOnly && (
+            <Button
+              size="sm"
+              onClick={() => {
+                setCreateDate(new Date());
+                setIsCreateModalOpen(true);
+              }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              New Event
+            </Button>
+          )}
+
           {/* Source Filter */}
           <Popover>
             <PopoverTrigger asChild>
@@ -309,8 +353,22 @@ export function MasterCalendar({
           selectedDate={currentDate}
           onDateChange={handleDateChange}
           onEventClick={handleEventClick}
+          onDateClick={!readOnly ? handleDateClick : undefined}
           showViewSwitcher
           showNavigation
+        />
+      )}
+
+      {/* Create Event Modal */}
+      {isCreateModalOpen && createDate && (
+        <CreateEventModal
+          isOpen={isCreateModalOpen}
+          onClose={() => {
+            setIsCreateModalOpen(false);
+            setCreateDate(null);
+          }}
+          initialDate={createDate}
+          onSubmit={handleCreateEvent}
         />
       )}
 
@@ -374,6 +432,126 @@ export function CalendarItemDetail({ item, onNavigate }: CalendarItemDetailProps
           View Details
         </Button>
       )}
+    </div>
+  );
+}
+
+interface CreateEventModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialDate: Date;
+  onSubmit: (event: Partial<UnifiedCalendarItem>) => Promise<void>;
+}
+
+function CreateEventModal({ isOpen, onClose, initialDate, onSubmit }: CreateEventModalProps) {
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [startTime, setStartTime] = React.useState(format(initialDate, "yyyy-MM-dd'T'HH:mm"));
+  const [endTime, setEndTime] = React.useState(format(new Date(initialDate.getTime() + 60 * 60 * 1000), "yyyy-MM-dd'T'HH:mm"));
+  const [allDay, setAllDay] = React.useState(false);
+  const [location, setLocation] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await onSubmit({
+        title: title.trim(),
+        description: description.trim() || undefined,
+        startTime,
+        endTime,
+        allDay,
+        location: location.trim() || undefined,
+        sourceType: 'calendar_event',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative z-50 w-full max-w-md rounded-lg border bg-background p-6 shadow-lg">
+        <h2 className="text-lg font-semibold mb-4">Create Event</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="text-sm font-medium">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Event title"
+              autoFocus
+              required
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Optional description"
+              rows={2}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium">Start</label>
+              <input
+                type="datetime-local"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium">End</label>
+              <input
+                type="datetime-local"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                required
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="all-day"
+              checked={allDay}
+              onCheckedChange={(checked) => setAllDay(!!checked)}
+            />
+            <Label htmlFor="all-day" className="text-sm">All day event</Label>
+          </div>
+          <div>
+            <label className="text-sm font-medium">Location</label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+              placeholder="Optional location"
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!title.trim() || isSubmitting}>
+              {isSubmitting ? 'Creating...' : 'Create Event'}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

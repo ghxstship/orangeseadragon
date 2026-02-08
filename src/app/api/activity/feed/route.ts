@@ -1,7 +1,8 @@
 // /app/api/activity/feed/route.ts
 
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * ACTIVITY FEED API (SSOT)
@@ -66,13 +67,9 @@ const TYPE_CONFIG: Record<ActivityType, { label: string; icon: string }> = {
 };
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
-  
-  // Auth check - RLS will handle the rest
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { supabase } = auth;
 
   const searchParams = request.nextUrl.searchParams;
   
@@ -163,7 +160,7 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('[Activity Feed API] Query error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
     // Transform to unified format
@@ -201,7 +198,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({
+    return apiSuccess({
       items,
       pagination: {
         total: count || 0,
@@ -212,10 +209,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[Activity Feed API] Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch activity feed' }, 
-      { status: 500 }
-    );
+    return serverError('Failed to fetch activity feed');
   }
 }
 

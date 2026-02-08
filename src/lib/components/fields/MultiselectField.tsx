@@ -8,6 +8,7 @@ import { FieldRenderProps } from './index';
  *
  * Renders a multiselect field with checkboxes.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function MultiselectField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selectedValues = Array.isArray(value) ? value : [];

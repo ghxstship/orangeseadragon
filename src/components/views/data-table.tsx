@@ -11,8 +11,13 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getExpandedRowModel,
+  getGroupedRowModel,
   useReactTable,
+  ColumnSizingState,
+  GroupingState,
 } from "@tanstack/react-table";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -37,9 +42,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   ChevronsLeft,
   ChevronsRight,
   Settings2,
@@ -82,6 +89,10 @@ export interface DataTableProps<TData, TValue> {
   emptyMessage?: string;
   rowActions?: RowAction<TData>[];
   getRowId?: (row: TData) => string;
+  density?: "comfortable" | "compact";
+  resizable?: boolean;
+  grouping?: string[];
+  onGroupingChange?: (grouping: string[]) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -103,12 +114,23 @@ export function DataTable<TData, TValue>({
   rowActions,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getRowId,
+  density = "comfortable",
+  resizable = true,
+  grouping: externalGrouping,
+  onGroupingChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
+  const [grouping, setGrouping] = React.useState<GroupingState>(externalGrouping || []);
+
+  // Sync external grouping
+  React.useEffect(() => {
+    if (externalGrouping) setGrouping(externalGrouping);
+  }, [externalGrouping]);
 
   const selectColumn: ColumnDef<TData, TValue> = {
     id: "select",
@@ -210,16 +232,27 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getGroupedRowModel: getGroupedRowModel(),
+    onGroupingChange: (updater) => {
+      const next = typeof updater === "function" ? updater(grouping) : updater;
+      setGrouping(next);
+      onGroupingChange?.(next);
+    },
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: "includesString",
+    columnResizeMode: "onChange",
+    onColumnSizingChange: setColumnSizing,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
       globalFilter,
+      columnSizing,
+      grouping,
     },
     initialState: {
       pagination: { pageSize },
@@ -282,79 +315,148 @@ export function DataTable<TData, TValue>({
         )}
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <div
-                          className={
-                            header.column.getCanSort()
-                              ? "flex items-center gap-2 cursor-pointer select-none"
-                              : ""
-                          }
-                          onClick={header.column.getToggleSortingHandler()}
+      <div className="rounded-md border overflow-hidden">
+        <div className="relative overflow-auto max-h-[70vh]">
+          <Table className="relative w-full border-collapse" style={{ width: resizable ? table.getCenterTotalSize() : "100%" }}>
+            <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="relative p-0 h-10 border-b bg-card/50 backdrop-blur-md"
+                        style={{ width: header.getSize() }}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <div className="group flex h-full items-center px-4">
+                            <div
+                              className={cn(
+                                "flex items-center gap-2 flex-1",
+                                header.column.getCanSort() && "cursor-pointer select-none"
+                              )}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                              {header.column.getCanSort() && (
+                                <span className="text-muted-foreground">
+                                  {header.column.getIsSorted() === "asc" ? (
+                                    <ArrowUp className="h-4 w-4" />
+                                  ) : header.column.getIsSorted() === "desc" ? (
+                                    <ArrowDown className="h-4 w-4" />
+                                  ) : (
+                                    <ArrowUpDown className="h-4 w-4 hidden group-hover:block" />
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                            {resizable && header.column.getCanResize() && (
+                              <div
+                                onMouseDown={header.getResizeHandler()}
+                                onTouchStart={header.getResizeHandler()}
+                                className={cn(
+                                  "absolute right-0 top-0 h-full w-1 cursor-col-resize bg-border opacity-0 hover:opacity-100 transition-opacity",
+                                  header.column.getIsResizing() && "bg-primary opacity-100 w-1"
+                                )}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={tableColumns.length} className="h-24 text-center">
+                    <div className="flex items-center justify-center">
+                      <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => {
+                  if (row.getIsGrouped()) {
+                    return (
+                      <TableRow key={row.id} className="bg-muted/30 group hover:bg-muted/50">
+                        <TableCell
+                          colSpan={row.getVisibleCells().length}
+                          className="px-4 py-2 font-bold text-xs uppercase tracking-wider text-muted-foreground"
+                          onClick={() => row.toggleExpanded()}
                         >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {header.column.getCanSort() && (
-                            <span className="text-muted-foreground">
-                              {header.column.getIsSorted() === "asc" ? (
-                                <ArrowUp className="h-4 w-4" />
-                              ) : header.column.getIsSorted() === "desc" ? (
-                                <ArrowDown className="h-4 w-4" />
-                              ) : (
-                                <ArrowUpDown className="h-4 w-4" />
+                          <div className="flex items-center gap-2 cursor-pointer">
+                            {row.getIsExpanded() ? (
+                              <ChevronDown className="h-4 w-4" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4" />
+                            )}
+                            <span>
+                              {flexRender(
+                                row.getVisibleCells()[0].column.columnDef.cell,
+                                row.getVisibleCells()[0].getContext()
                               )}
                             </span>
-                          )}
-                        </div>
+                            <Badge variant="outline" className="ml-2 font-normal lowercase tracking-normal">
+                              {row.subRows.length} items
+                            </Badge>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }
+
+                  return (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className={cn(
+                        "group border-b transition-colors",
+                        onRowClick && "cursor-pointer"
                       )}
-                    </TableHead>
+                      onClick={() => onRowClick?.(row.original)}
+                    >
+                      {row.getVisibleCells().map((cell) => {
+                        if (cell.getIsGrouped()) return null;
+                        if (cell.getIsPlaceholder()) return <TableCell key={cell.id} />;
+
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            className={cn(
+                              "px-4 transition-all duration-200",
+                              density === "compact" ? "py-1.5" : "py-4",
+                              cell.column.id === "select" && "sticky left-0 z-20 bg-card/90 backdrop-blur-sm shadow-[1px_0_0_0_rgba(0,0,0,0.05)]"
+                            )}
+                            style={{ width: cell.column.getSize() }}
+                          >
+                            {cell.getIsAggregated()
+                              ? flexRender(
+                                cell.column.columnDef.aggregatedCell ?? cell.column.columnDef.cell,
+                                cell.getContext()
+                              )
+                              : flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
                   );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={tableColumns.length} className="h-24 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className={onRowClick ? "cursor-pointer" : ""}
-                  onClick={() => onRowClick?.(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={tableColumns.length} className="h-24 text-center">
+                    {emptyMessage}
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={tableColumns.length} className="h-24 text-center">
-                  {emptyMessage}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {showPagination && (

@@ -534,7 +534,7 @@ function renderTemplate(template: NotificationTemplate, data: Record<string, unk
   const interpolate = (text: string): string => {
     return text.replace(/\{\{([^}]+)\}\}/g, (match, path) => {
       const trimmedPath = path.trim();
-      
+
       // Handle #each blocks (simplified)
       if (trimmedPath.startsWith("#each")) {
         return match; // Skip for now, handle separately
@@ -601,8 +601,6 @@ async function sendEmailNotification(
   body: string,
   from?: string
 ): Promise<NotificationResult> {
-  const supabase = createClient();
-
   // Log email to database (in production, integrate with email provider)
   await getTable("email_logs").insert({
     recipients,
@@ -627,8 +625,6 @@ async function sendPushNotification(
   body: string,
   data?: Record<string, unknown>
 ): Promise<NotificationResult> {
-  const supabase = createClient();
-
   // Log push notification (in production, integrate with FCM, OneSignal, etc.)
   await getTable("push_notifications").insert({
     recipients,
@@ -651,8 +647,6 @@ async function sendSMSNotification(
   recipients: string[],
   body: string
 ): Promise<NotificationResult> {
-  const supabase = createClient();
-
   // Log SMS (in production, integrate with Twilio, etc.)
   await getTable("sms_logs").insert({
     recipients,
@@ -675,8 +669,6 @@ async function sendSlackNotification(
   blocks?: unknown[]
 ): Promise<NotificationResult> {
   // In production, integrate with Slack API
-  const supabase = createClient();
-
   await getTable("slack_messages").insert({
     channel,
     text,

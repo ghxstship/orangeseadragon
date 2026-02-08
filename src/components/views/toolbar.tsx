@@ -63,12 +63,15 @@ import {
   GripVertical,
 } from "lucide-react";
 
-export type ViewType = "table" | "list" | "grid" | "kanban" | "calendar" | "timeline" | "gantt" | "map" | "workload";
+export type ViewType = "table" | "list" | "grid" | "kanban" | "calendar" | "timeline" | "gantt" | "map" | "workload" | "matrix";
 
 export interface ToolbarFilter {
   id: string;
   label: string;
-  value: string | string[];
+  field?: string;
+  type?: string;
+  operator?: string;
+  value?: string | string[];
   options?: Array<{ label: string; value: string }>;
 }
 
@@ -293,6 +296,7 @@ const viewIcons: Record<ViewType, React.ReactNode> = {
   gantt: <Columns3 className="h-4 w-4" />,
   map: <Map className="h-4 w-4" />,
   workload: <Users className="h-4 w-4" />,
+  matrix: <Table2 className="h-4 w-4" />,
 };
 
 export function Toolbar({

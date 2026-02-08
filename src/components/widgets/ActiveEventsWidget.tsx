@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/hooks/use-supabase';
 import { useOrganization } from '@/hooks/use-organization';
 
@@ -13,7 +12,7 @@ interface ActiveEventsWidgetProps {
 export function ActiveEventsWidget({ title = "Active Events", limit = 5 }: ActiveEventsWidgetProps) {
   const { user } = useUser();
   const organizationId = user?.user_metadata?.organization_id || null;
-  const { data: organization } = useOrganization(organizationId);
+  const { data: _organization } = useOrganization(organizationId);
 
   // Mock data for now - in real app would use events hook
   const mockEvents = [

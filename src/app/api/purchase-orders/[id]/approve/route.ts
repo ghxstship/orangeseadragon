@@ -1,5 +1,6 @@
-import { createServiceClient } from '@/lib/supabase/server';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { requireAuth } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
  * POST /api/purchase-orders/[id]/approve
@@ -9,15 +10,12 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = await createServiceClient();
   const { id } = await params;
 
   try {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth.error) return auth.error;
+    const { user, supabase } = auth;
 
     // Get the purchase order
     const { data: po, error: fetchError } = await supabase
@@ -27,14 +25,12 @@ export async function POST(
       .single();
 
     if (fetchError || !po) {
-      return NextResponse.json({ error: 'Purchase order not found' }, { status: 404 });
+      return notFound('Purchase order');
     }
 
     // Check if in correct status
     if (po.status !== 'pending_approval') {
-      return NextResponse.json({ 
-        error: `Cannot approve PO with status: ${po.status}` 
-      }, { status: 400 });
+      return badRequest(`Cannot approve PO with status: ${po.status}`);
     }
 
     // Update the purchase order
@@ -50,16 +46,12 @@ export async function POST(
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return supabaseError(error);
     }
 
-    return NextResponse.json({
-      success: true,
-      purchase_order: data,
-      message: 'Purchase order approved'
-    });
+    return apiSuccess(data, { message: 'Purchase order approved' });
   } catch (e) {
     console.error('[API] PO approval error:', e);
-    return NextResponse.json({ error: 'Approval failed' }, { status: 500 });
+    return serverError('Approval failed');
   }
 }

@@ -1,5 +1,6 @@
-import { createServiceClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { requireAuth } from "@/lib/api/guard";
+import { apiSuccess, supabaseError } from "@/lib/api/response";
 
 const parseBoolean = (value: string | null) => {
   if (value === null) return undefined;
@@ -17,14 +18,9 @@ const parseNumber = (value: string | null, fallback: number) => {
 const allowedInboxTypes = new Set(["message", "approval", "review", "mention", "assignment"]);
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { user, supabase } = auth;
 
   const searchParams = request.nextUrl.searchParams;
   const page = parseNumber(searchParams.get("page"), 1);
@@ -47,7 +43,7 @@ export async function GET(request: NextRequest) {
   const { data, error, count } = await query;
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return supabaseError(error);
   }
 
   const mapped = (data ?? []).map((item) => {
@@ -79,7 +75,7 @@ export async function GET(request: NextRequest) {
   const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
   const unreadCount = filtered.filter((item) => !item.read).length;
 
-  return NextResponse.json({
+  return apiSuccess({
     data: filtered,
     meta: {
       page,

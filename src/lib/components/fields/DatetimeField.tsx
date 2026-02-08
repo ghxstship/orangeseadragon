@@ -6,6 +6,7 @@ import { FieldRenderProps } from './index';
  *
  * Renders a datetime input field.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function DatetimeField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   const formatDateTime = (date: Date | string | null) => {
     if (!date) return '';

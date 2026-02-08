@@ -6,6 +6,7 @@ import { FieldRenderProps } from './index';
  *
  * Renders a currency input field with proper formatting.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function CurrencyField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/[^0-9.-]/g, '');

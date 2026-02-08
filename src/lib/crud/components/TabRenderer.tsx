@@ -13,6 +13,7 @@ interface TabRendererProps {
  * Renders tab content based on schema configuration.
  * Supports overview, related entities, activity, comments, files, etc.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function TabRenderer({ schema, tabConfig, record, onRefresh }: TabRendererProps) {
   if (!tabConfig) {
     return (
@@ -93,13 +94,14 @@ import { getSchema } from '@/lib/schemas';
 /**
  * Related entities tab
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function RelatedTab({ relatedSchema, foreignKey, record, defaultView, allowCreate }: any) {
   const schema = getSchema(relatedSchema);
 
   if (!schema) {
     return (
       <div className="p-6">
-        <p className="text-destructive font-semibold">Schema for "{relatedSchema}" not found</p>
+        <p className="text-destructive font-semibold">Schema for &quot;{relatedSchema}&quot; not found</p>
       </div>
     );
   }

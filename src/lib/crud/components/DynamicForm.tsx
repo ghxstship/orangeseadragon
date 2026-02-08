@@ -19,6 +19,7 @@ interface DynamicFormProps {
  * Renders a form based on schema configuration.
  * Supports sections, conditional fields, and validation.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: DynamicFormProps) {
   const [formData, setFormData] = useState(initialData || {});
   const [errors, setErrors] = useState<Record<string, string>>({});

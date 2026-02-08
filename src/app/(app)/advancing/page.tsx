@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { DashboardTemplate, DashboardSection } from '@/components/templates/DashboardTemplate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, Clock, CheckCircle2, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AlertTriangle, Clock, CheckCircle2, TrendingUp, QrCode, AlertCircle, RefreshCw } from 'lucide-react';
+import { ScannerModal, ConflictPanel, ConflictBadge } from '@/components/modules/advancing';
 
 interface DashboardMetrics {
   totalAdvances: number;
@@ -24,28 +26,64 @@ interface CriticalItem {
   vendor?: { id: string; name: string };
 }
 
+interface Conflict {
+  id: string;
+  conflict_type: string;
+  severity: 'warning' | 'blocking';
+  status: 'open' | 'resolved' | 'ignored';
+  description: string;
+  entity_type: string;
+  entity_id: string;
+  conflicting_entity_id?: string;
+  conflict_start?: string;
+  conflict_end?: string;
+  suggested_resolutions?: Array<{ action: string; label: string }>;
+  detected_at: string;
+}
+
 export default function AdvancingDashboardPage() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [criticalItems, setCriticalItems] = useState<CriticalItem[]>([]);
   const [upcomingDeliveries, setUpcomingDeliveries] = useState<CriticalItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [conflictPanelOpen, setConflictPanelOpen] = useState(false);
+  const [conflicts, setConflicts] = useState<Conflict[]>([]);
+  const [conflictsLoading, setConflictsLoading] = useState(false);
+
+  const fetchDashboard = useCallback(async () => {
+    try {
+      const res = await fetch('/api/advancing/dashboard');
+      const data = await res.json();
+      setMetrics(data.metrics);
+      setCriticalItems(data.criticalItems || []);
+      setUpcomingDeliveries(data.upcomingDeliveries || []);
+    } catch (error) {
+      console.error('Failed to fetch dashboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchConflicts = useCallback(async () => {
+    setConflictsLoading(true);
+    try {
+      const res = await fetch('/api/advancing/conflicts?status=open');
+      if (res.ok) {
+        const data = await res.json();
+        setConflicts(data.records || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch conflicts:', error);
+    } finally {
+      setConflictsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchDashboard() {
-      try {
-        const res = await fetch('/api/advancing/dashboard');
-        const data = await res.json();
-        setMetrics(data.metrics);
-        setCriticalItems(data.criticalItems || []);
-        setUpcomingDeliveries(data.upcomingDeliveries || []);
-      } catch (error) {
-        console.error('Failed to fetch dashboard:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchDashboard();
-  }, []);
+    fetchConflicts();
+  }, [fetchDashboard, fetchConflicts]);
 
   const completionRate = metrics ? Math.round((metrics.completedItems / Math.max(metrics.totalItems, 1)) * 100) : 0;
   const budgetConfirmedRate = metrics ? Math.round((metrics.confirmedBudget / Math.max(metrics.totalBudget, 1)) * 100) : 0;
@@ -54,34 +92,34 @@ export default function AdvancingDashboardPage() {
     {
       id: 'metrics',
       widgets: [
-        { 
-          id: 'total-items', 
-          title: 'Total Items', 
-          type: 'metric', 
-          size: 'small', 
+        {
+          id: 'total-items',
+          title: 'Total Items',
+          type: 'metric',
+          size: 'small',
           value: metrics?.totalItems || 0,
         },
-        { 
-          id: 'completed', 
-          title: 'Completed', 
-          type: 'metric', 
-          size: 'small', 
+        {
+          id: 'completed',
+          title: 'Completed',
+          type: 'metric',
+          size: 'small',
           value: `${completionRate}%`,
           change: metrics?.completedItems,
           changeLabel: 'items done'
         },
-        { 
-          id: 'critical', 
-          title: 'Critical Pending', 
-          type: 'metric', 
-          size: 'small', 
+        {
+          id: 'critical',
+          title: 'Critical Pending',
+          type: 'metric',
+          size: 'small',
           value: metrics?.criticalPending || 0,
         },
-        { 
-          id: 'budget', 
-          title: 'Budget Confirmed', 
-          type: 'metric', 
-          size: 'small', 
+        {
+          id: 'budget',
+          title: 'Budget Confirmed',
+          type: 'metric',
+          size: 'small',
           value: `${budgetConfirmedRate}%`,
           change: metrics?.confirmedBudget ? Math.round(metrics.confirmedBudget / 1000) : 0,
           changeLabel: 'confirmed'
@@ -94,16 +132,61 @@ export default function AdvancingDashboardPage() {
       widgets: [
         { id: 'advances-nav', title: 'Advances', description: 'Production advances by event', type: 'custom', size: 'medium' },
         { id: 'items-nav', title: 'Items', description: 'All advance items by category', type: 'custom', size: 'medium' },
+        { id: 'catalog-nav', title: 'Catalog', description: 'Uber Eats style advancing storefront', type: 'custom', size: 'medium' },
         { id: 'fulfillment-nav', title: 'Fulfillment', description: 'Delivery & installation tracking', type: 'custom', size: 'medium' },
         { id: 'vendors-nav', title: 'Vendors', description: 'Vendor coordination & performance', type: 'custom', size: 'medium' },
       ],
     },
   ];
 
+  const blockingConflicts = conflicts.filter(c => c.severity === 'blocking');
+
   return (
     <div className="space-y-6">
+      {/* Action Bar */}
+      <div className="px-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold">Advancing</h1>
+          {blockingConflicts.length > 0 && (
+            <ConflictBadge 
+              count={blockingConflicts.length} 
+              severity="blocking"
+              onClick={() => setConflictPanelOpen(true)}
+            />
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setConflictPanelOpen(true)}
+          >
+            <AlertCircle className="h-4 w-4 mr-2" />
+            Conflicts
+            {conflicts.length > 0 && (
+              <Badge variant="secondary" className="ml-2">{conflicts.length}</Badge>
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setScannerOpen(true)}
+          >
+            <QrCode className="h-4 w-4 mr-2" />
+            Scan
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => { fetchDashboard(); fetchConflicts(); }}
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
       <DashboardTemplate
-        title="Advancing"
+        title=""
         subtitle="Production advance coordination"
         sections={dashboardSections}
       />
@@ -206,7 +289,7 @@ export default function AdvancingDashboardPage() {
                 </div>
               </div>
               <div className="mt-4 h-2 bg-muted rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-green-500 transition-all duration-500"
                   style={{ width: `${budgetConfirmedRate}%` }}
                 />
@@ -215,6 +298,24 @@ export default function AdvancingDashboardPage() {
           </Card>
         </div>
       )}
+
+      {/* Scanner Modal */}
+      <ScannerModal
+        open={scannerOpen}
+        onOpenChange={setScannerOpen}
+        onScanComplete={() => {
+          fetchDashboard();
+        }}
+      />
+
+      {/* Conflict Panel */}
+      <ConflictPanel
+        open={conflictPanelOpen}
+        onOpenChange={setConflictPanelOpen}
+        conflicts={conflicts}
+        onRefresh={fetchConflicts}
+        loading={conflictsLoading}
+      />
     </div>
   );
 }

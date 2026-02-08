@@ -1,5 +1,6 @@
-import { createServiceClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { requireAuth } from "@/lib/api/guard";
+import { apiSuccess, supabaseError } from "@/lib/api/response";
 
 const parseBoolean = (value: string | null) => {
   if (value === null) return undefined;
@@ -15,14 +16,9 @@ const parseNumber = (value: string | null, fallback: number) => {
 };
 
 export async function GET(request: NextRequest) {
-  const supabase = await createServiceClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (auth.error) return auth.error;
+  const { user, supabase } = auth;
 
   const searchParams = request.nextUrl.searchParams;
   const page = parseNumber(searchParams.get("page"), 1);
@@ -49,7 +45,7 @@ export async function GET(request: NextRequest) {
   const { data, error, count } = await query;
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return supabaseError(error);
   }
 
   const { count: unreadCount, error: unreadError } = await supabase
@@ -59,7 +55,7 @@ export async function GET(request: NextRequest) {
     .eq("is_read", false);
 
   if (unreadError) {
-    return NextResponse.json({ error: unreadError.message }, { status: 500 });
+    return supabaseError(unreadError);
   }
 
   const notifications = (data ?? []).map((item) => {
@@ -85,14 +81,11 @@ export async function GET(request: NextRequest) {
   const total = count ?? 0;
   const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
 
-  return NextResponse.json({
-    data: notifications,
-    meta: {
-      page,
-      limit,
-      total,
-      totalPages,
-      unreadCount: unreadCount ?? 0,
-    },
+  return apiSuccess(notifications, {
+    page,
+    limit,
+    total,
+    totalPages,
+    unreadCount: unreadCount ?? 0,
   });
 }

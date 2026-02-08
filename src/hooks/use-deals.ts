@@ -1,10 +1,10 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useSupabase } from "./use-supabase";
 import type { Database } from "@/types/database";
 
-type Deal = Database["public"]["Tables"]["deals"]["Row"];
+type _Deal = Database["public"]["Tables"]["deals"]["Row"];
 
 export function useDeals(organizationId: string | null) {
     const supabase = useSupabase();

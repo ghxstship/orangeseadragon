@@ -1,9 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Settings, Plus, GripVertical } from 'lucide-react';
+import { Settings, Plus, GripVertical, ChevronRight } from 'lucide-react';
 
 export interface DashboardWidget {
   id: string;
@@ -15,6 +16,7 @@ export interface DashboardWidget {
   value?: string | number;
   change?: number;
   changeLabel?: string;
+  href?: string;
 }
 
 export interface DashboardSection {
@@ -158,15 +160,28 @@ function WidgetRenderer({ widget, editable }: { widget: DashboardWidget; editabl
     case 'activity':
       return <Wrapper><ActivityWidget widget={widget} /></Wrapper>;
     case 'custom':
-      return (
-        <Wrapper>
-          <Card className={sizeClasses[widget.size]}>
-            <CardHeader>
+      const customCard = (
+        <Card className={cn(
+          sizeClasses[widget.size],
+          widget.href && "cursor-pointer hover:bg-accent/50 transition-colors"
+        )}>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
               <CardTitle>{widget.title}</CardTitle>
               {widget.description && <CardDescription>{widget.description}</CardDescription>}
-            </CardHeader>
-            <CardContent>{widget.content}</CardContent>
-          </Card>
+            </div>
+            {widget.href && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
+          </CardHeader>
+          <CardContent>{widget.content}</CardContent>
+        </Card>
+      );
+      return (
+        <Wrapper>
+          {widget.href ? (
+            <Link href={widget.href}>{customCard}</Link>
+          ) : (
+            customCard
+          )}
         </Wrapper>
       );
     default:

@@ -3,21 +3,23 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-lg border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+          "border-primary/20 bg-primary/10 text-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]",
         secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "border-white/10 bg-white/5 text-muted-foreground",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
+          "border-destructive/20 bg-destructive/10 text-destructive shadow-[0_0_10px_rgba(var(--destructive),0.2)]",
+        outline: "border-white/10 text-foreground",
         success:
-          "border-transparent bg-green-500 text-white hover:bg-green-500/80",
+          "border-green-500/20 bg-green-500/10 text-green-500 shadow-[0_0_10px_rgba(34,197,94,0.2)]",
         warning:
-          "border-transparent bg-yellow-500 text-white hover:bg-yellow-500/80",
+          "border-amber-500/20 bg-amber-500/10 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]",
+        spatial:
+          "border-white/10 bg-white/5 backdrop-blur-xl text-foreground shadow-2xl hover:border-primary/30 transition-all",
       },
     },
     defaultVariants: {
@@ -28,7 +30,7 @@ const badgeVariants = cva(
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+  VariantProps<typeof badgeVariants> { }
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (

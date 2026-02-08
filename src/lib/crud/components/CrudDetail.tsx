@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EntitySchema } from '@/lib/schema/types';
+import { EntitySchema, EntityRecord } from '@/lib/schema/types';
 import { useCrud } from '../hooks/useCrud';
 import { DetailLayout } from '@/lib/layouts';
 import { TabRenderer } from './TabRenderer';
 import { LoadingState, ErrorState, EmptyState } from '@/components/states/AsyncStates';
 
-interface CrudDetailProps<T = Record<string, unknown>> {
+interface CrudDetailProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
   id: string;
   initialTab?: string;
@@ -20,10 +20,10 @@ interface CrudDetailProps<T = Record<string, unknown>> {
  * Renders ANY entity detail view based on schema configuration.
  * Uses the unified DetailLayout which accepts EntitySchema directly.
  */
-export function CrudDetail<T extends Record<string, unknown>>({ 
-  schema, 
-  id, 
-  initialTab 
+export function CrudDetail<T extends EntityRecord>({
+  schema,
+  id,
+  initialTab
 }: CrudDetailProps<T>) {
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState(initialTab || schema.layouts.detail.tabs[0]?.key || 'overview');
@@ -68,7 +68,7 @@ export function CrudDetail<T extends Record<string, unknown>>({
       onDelete={handleDelete}
     >
       <TabRenderer
-        schema={schema}
+        schema={schema as unknown as EntitySchema<EntityRecord>}
         tabConfig={tabConfig}
         record={record}
         onRefresh={refresh}
