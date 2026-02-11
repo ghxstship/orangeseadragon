@@ -20,8 +20,8 @@ CREATE TABLE lookup_tables (
     UNIQUE(table_name, key)
 );
 
-CREATE INDEX idx_lookup_tables_table_name ON lookup_tables(table_name);
-CREATE INDEX idx_lookup_tables_active ON lookup_tables(is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_lookup_tables_table_name ON lookup_tables(table_name);
+CREATE INDEX IF NOT EXISTS idx_lookup_tables_active ON lookup_tables(is_active) WHERE is_active = TRUE;
 
 -- ============================================================================
 -- PAGE LAYOUTS (Configuration-Driven UI)
@@ -47,10 +47,10 @@ CREATE TABLE page_layouts (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_page_layouts_slug ON page_layouts(slug);
-CREATE INDEX idx_page_layouts_route ON page_layouts(route);
-CREATE INDEX idx_page_layouts_active ON page_layouts(is_active) WHERE is_active = TRUE;
-CREATE INDEX idx_page_layouts_type ON page_layouts(layout_type);
+CREATE INDEX IF NOT EXISTS idx_page_layouts_slug ON page_layouts(slug);
+CREATE INDEX IF NOT EXISTS idx_page_layouts_route ON page_layouts(route);
+CREATE INDEX IF NOT EXISTS idx_page_layouts_active ON page_layouts(is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_page_layouts_type ON page_layouts(layout_type);
 
 -- ============================================================================
 -- TENANT CONFIGURATION (Whitelabeling)
@@ -70,9 +70,9 @@ CREATE TABLE tenant_config (
     UNIQUE(organization_id, config_key, environment)
 );
 
-CREATE INDEX idx_tenant_config_org ON tenant_config(organization_id);
-CREATE INDEX idx_tenant_config_key ON tenant_config(config_key);
-CREATE INDEX idx_tenant_config_active ON tenant_config(is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_tenant_config_org ON tenant_config(organization_id);
+CREATE INDEX IF NOT EXISTS idx_tenant_config_key ON tenant_config(config_key);
+CREATE INDEX IF NOT EXISTS idx_tenant_config_active ON tenant_config(is_active) WHERE is_active = TRUE;
 
 -- ============================================================================
 -- TENANT FEATURES (Feature Flags)
@@ -92,9 +92,9 @@ CREATE TABLE tenant_features (
     UNIQUE(organization_id, feature_slug)
 );
 
-CREATE INDEX idx_tenant_features_org ON tenant_features(organization_id);
-CREATE INDEX idx_tenant_features_slug ON tenant_features(feature_slug);
-CREATE INDEX idx_tenant_features_enabled ON tenant_features(is_enabled) WHERE is_enabled = TRUE;
+CREATE INDEX IF NOT EXISTS idx_tenant_features_org ON tenant_features(organization_id);
+CREATE INDEX IF NOT EXISTS idx_tenant_features_slug ON tenant_features(feature_slug);
+CREATE INDEX IF NOT EXISTS idx_tenant_features_enabled ON tenant_features(is_enabled) WHERE is_enabled = TRUE;
 
 -- ============================================================================
 -- USER ROLES (RBAC - Role-Based Access Control)
@@ -116,11 +116,11 @@ CREATE TABLE user_roles (
     UNIQUE(organization_id, user_id, role_slug)
 );
 
-CREATE INDEX idx_user_roles_org ON user_roles(organization_id);
-CREATE INDEX idx_user_roles_user ON user_roles(user_id);
-CREATE INDEX idx_user_roles_slug ON user_roles(role_slug);
-CREATE INDEX idx_user_roles_active ON user_roles(is_active) WHERE is_active = TRUE;
-CREATE INDEX idx_user_roles_expires ON user_roles(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_user_roles_org ON user_roles(organization_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_user ON user_roles(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_roles_slug ON user_roles(role_slug);
+CREATE INDEX IF NOT EXISTS idx_user_roles_active ON user_roles(is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_user_roles_expires ON user_roles(expires_at) WHERE expires_at IS NOT NULL;
 
 -- ============================================================================
 -- TRANSLATIONS (i18n)
@@ -142,11 +142,11 @@ CREATE TABLE translations (
     UNIQUE(locale, namespace, key)
 );
 
-CREATE INDEX idx_translations_locale ON translations(locale);
-CREATE INDEX idx_translations_namespace ON translations(namespace);
-CREATE INDEX idx_translations_key ON translations(key);
-CREATE INDEX idx_translations_approved ON translations(is_approved) WHERE is_approved = TRUE;
-CREATE INDEX idx_translations_search ON translations USING GIN(to_tsvector('english', key || ' ' || COALESCE(value, '')));
+CREATE INDEX IF NOT EXISTS idx_translations_locale ON translations(locale);
+CREATE INDEX IF NOT EXISTS idx_translations_namespace ON translations(namespace);
+CREATE INDEX IF NOT EXISTS idx_translations_key ON translations(key);
+CREATE INDEX IF NOT EXISTS idx_translations_approved ON translations(is_approved) WHERE is_approved = TRUE;
+CREATE INDEX IF NOT EXISTS idx_translations_search ON translations USING GIN(to_tsvector('english', key || ' ' || COALESCE(value, '')));
 
 -- ============================================================================
 -- RLS POLICIES
@@ -161,14 +161,17 @@ ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE translations ENABLE ROW LEVEL SECURITY;
 
 -- Lookup Tables: Public read for active entries
+DROP POLICY IF EXISTS "lookup_tables_public_read" ON lookup_tables;
 CREATE POLICY "lookup_tables_public_read" ON lookup_tables
     FOR SELECT USING (is_active = TRUE);
 
 -- Page Layouts: Public read for active layouts
+DROP POLICY IF EXISTS "page_layouts_public_read" ON page_layouts;
 CREATE POLICY "page_layouts_public_read" ON page_layouts
     FOR SELECT USING (is_active = TRUE);
 
 -- Tenant Config: Organization members can read their org's config
+DROP POLICY IF EXISTS "tenant_config_org_read" ON tenant_config;
 CREATE POLICY "tenant_config_org_read" ON tenant_config
     FOR SELECT USING (
         organization_id IN (
@@ -178,6 +181,7 @@ CREATE POLICY "tenant_config_org_read" ON tenant_config
     );
 
 -- Tenant Features: Organization members can read their org's features
+DROP POLICY IF EXISTS "tenant_features_org_read" ON tenant_features;
 CREATE POLICY "tenant_features_org_read" ON tenant_features
     FOR SELECT USING (
         organization_id IN (
@@ -187,6 +191,7 @@ CREATE POLICY "tenant_features_org_read" ON tenant_features
     );
 
 -- User Roles: Organization members can read roles in their org
+DROP POLICY IF EXISTS "user_roles_org_read" ON user_roles;
 CREATE POLICY "user_roles_org_read" ON user_roles
     FOR SELECT USING (
         organization_id IN (
@@ -196,5 +201,6 @@ CREATE POLICY "user_roles_org_read" ON user_roles
     );
 
 -- Translations: Public read for approved translations
+DROP POLICY IF EXISTS "translations_public_read" ON translations;
 CREATE POLICY "translations_public_read" ON translations
     FOR SELECT USING (is_approved = TRUE);

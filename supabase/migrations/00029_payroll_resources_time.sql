@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS payroll_runs (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_payroll_runs_org ON payroll_runs(org_id);
-CREATE INDEX idx_payroll_runs_pay_date ON payroll_runs(pay_date);
+CREATE INDEX IF NOT EXISTS idx_payroll_runs_org ON payroll_runs(org_id);
+CREATE INDEX IF NOT EXISTS idx_payroll_runs_pay_date ON payroll_runs(pay_date);
 
 CREATE TABLE IF NOT EXISTS payroll_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS payroll_items (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_payroll_items_run ON payroll_items(payroll_run_id);
-CREATE INDEX idx_payroll_items_employee ON payroll_items(employee_id);
+CREATE INDEX IF NOT EXISTS idx_payroll_items_run ON payroll_items(payroll_run_id);
+CREATE INDEX IF NOT EXISTS idx_payroll_items_employee ON payroll_items(employee_id);
 
 -- ============================================================================
 -- PROJECT RESOURCES
@@ -71,9 +71,9 @@ CREATE TABLE IF NOT EXISTS project_resources (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_project_resources_project ON project_resources(project_id);
-CREATE INDEX idx_project_resources_contact ON project_resources(contact_id);
-CREATE INDEX idx_project_resources_org ON project_resources(org_id);
+CREATE INDEX IF NOT EXISTS idx_project_resources_project ON project_resources(project_id);
+CREATE INDEX IF NOT EXISTS idx_project_resources_contact ON project_resources(contact_id);
+CREATE INDEX IF NOT EXISTS idx_project_resources_org ON project_resources(org_id);
 
 -- ============================================================================
 -- TIME TRACKING
@@ -99,10 +99,10 @@ CREATE TABLE IF NOT EXISTS time_entries (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_time_entries_project ON time_entries(project_id);
-CREATE INDEX idx_time_entries_user ON time_entries(user_id);
-CREATE INDEX idx_time_entries_date ON time_entries(date);
-CREATE INDEX idx_time_entries_org ON time_entries(org_id);
+CREATE INDEX IF NOT EXISTS idx_time_entries_project ON time_entries(project_id);
+CREATE INDEX IF NOT EXISTS idx_time_entries_user ON time_entries(user_id);
+CREATE INDEX IF NOT EXISTS idx_time_entries_date ON time_entries(date);
+CREATE INDEX IF NOT EXISTS idx_time_entries_org ON time_entries(org_id);
 
 -- Weekly time summary view
 CREATE OR REPLACE VIEW time_entries_weekly AS
@@ -123,23 +123,35 @@ GROUP BY org_id, user_id, project_id, DATE_TRUNC('week', date);
 
 -- Payroll Runs
 ALTER TABLE payroll_runs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "payroll_runs_org_read" ON payroll_runs;
 CREATE POLICY "payroll_runs_org_read" ON payroll_runs FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "payroll_runs_org_insert" ON payroll_runs;
 CREATE POLICY "payroll_runs_org_insert" ON payroll_runs FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "payroll_runs_org_update" ON payroll_runs;
 CREATE POLICY "payroll_runs_org_update" ON payroll_runs FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "payroll_runs_org_delete" ON payroll_runs;
 CREATE POLICY "payroll_runs_org_delete" ON payroll_runs FOR DELETE USING (is_organization_member(org_id));
 
 -- Project Resources
 ALTER TABLE project_resources ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "project_resources_org_read" ON project_resources;
 CREATE POLICY "project_resources_org_read" ON project_resources FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "project_resources_org_insert" ON project_resources;
 CREATE POLICY "project_resources_org_insert" ON project_resources FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "project_resources_org_update" ON project_resources;
 CREATE POLICY "project_resources_org_update" ON project_resources FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "project_resources_org_delete" ON project_resources;
 CREATE POLICY "project_resources_org_delete" ON project_resources FOR DELETE USING (is_organization_member(org_id));
 
 -- Time Entries
 ALTER TABLE time_entries ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "time_entries_org_read" ON time_entries;
 CREATE POLICY "time_entries_org_read" ON time_entries FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "time_entries_org_insert" ON time_entries;
 CREATE POLICY "time_entries_org_insert" ON time_entries FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "time_entries_org_update" ON time_entries;
 CREATE POLICY "time_entries_org_update" ON time_entries FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "time_entries_org_delete" ON time_entries;
 CREATE POLICY "time_entries_org_delete" ON time_entries FOR DELETE USING (is_organization_member(org_id));
 
 COMMIT;

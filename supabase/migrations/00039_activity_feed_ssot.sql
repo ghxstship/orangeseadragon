@@ -61,15 +61,15 @@ CREATE TABLE IF NOT EXISTS activity_feed (
 );
 
 -- Indexes for common queries
-CREATE INDEX idx_activity_feed_organization ON activity_feed(organization_id);
-CREATE INDEX idx_activity_feed_type ON activity_feed(activity_type);
-CREATE INDEX idx_activity_feed_entity ON activity_feed(entity_type, entity_id);
-CREATE INDEX idx_activity_feed_actor ON activity_feed(actor_id);
-CREATE INDEX idx_activity_feed_activity_at ON activity_feed(activity_at DESC);
-CREATE INDEX idx_activity_feed_project ON activity_feed(project_id) WHERE project_id IS NOT NULL;
-CREATE INDEX idx_activity_feed_event ON activity_feed(event_id) WHERE event_id IS NOT NULL;
-CREATE INDEX idx_activity_feed_company ON activity_feed(company_id) WHERE company_id IS NOT NULL;
-CREATE INDEX idx_activity_feed_deal ON activity_feed(deal_id) WHERE deal_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_activity_feed_organization ON activity_feed(organization_id);
+CREATE INDEX IF NOT EXISTS idx_activity_feed_type ON activity_feed(activity_type);
+CREATE INDEX IF NOT EXISTS idx_activity_feed_entity ON activity_feed(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_activity_feed_actor ON activity_feed(actor_id);
+CREATE INDEX IF NOT EXISTS idx_activity_feed_activity_at ON activity_feed(activity_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activity_feed_project ON activity_feed(project_id) WHERE project_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_activity_feed_event ON activity_feed(event_id) WHERE event_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_activity_feed_company ON activity_feed(company_id) WHERE company_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_activity_feed_deal ON activity_feed(deal_id) WHERE deal_id IS NOT NULL;
 
 -- ============================================================================
 -- HELPER FUNCTION: Upsert activity feed entry

@@ -69,17 +69,17 @@ CREATE TABLE IF NOT EXISTS document_registry (
 );
 
 -- Indexes for common queries
-CREATE INDEX idx_document_registry_organization ON document_registry(organization_id);
-CREATE INDEX idx_document_registry_type ON document_registry(document_type);
-CREATE INDEX idx_document_registry_category ON document_registry(document_category);
-CREATE INDEX idx_document_registry_entity ON document_registry(entity_type, entity_id);
-CREATE INDEX idx_document_registry_status ON document_registry(status);
-CREATE INDEX idx_document_registry_expires ON document_registry(expires_at) WHERE expires_at IS NOT NULL;
-CREATE INDEX idx_document_registry_project ON document_registry(project_id) WHERE project_id IS NOT NULL;
-CREATE INDEX idx_document_registry_event ON document_registry(event_id) WHERE event_id IS NOT NULL;
-CREATE INDEX idx_document_registry_company ON document_registry(company_id) WHERE company_id IS NOT NULL;
-CREATE INDEX idx_document_registry_tags ON document_registry USING GIN(tags);
-CREATE INDEX idx_document_registry_search ON document_registry USING GIN(to_tsvector('english', title || ' ' || COALESCE(description, '')));
+CREATE INDEX IF NOT EXISTS idx_document_registry_organization ON document_registry(organization_id);
+CREATE INDEX IF NOT EXISTS idx_document_registry_type ON document_registry(document_type);
+CREATE INDEX IF NOT EXISTS idx_document_registry_category ON document_registry(document_category);
+CREATE INDEX IF NOT EXISTS idx_document_registry_entity ON document_registry(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_document_registry_status ON document_registry(status);
+CREATE INDEX IF NOT EXISTS idx_document_registry_expires ON document_registry(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_document_registry_project ON document_registry(project_id) WHERE project_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_document_registry_event ON document_registry(event_id) WHERE event_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_document_registry_company ON document_registry(company_id) WHERE company_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_document_registry_tags ON document_registry USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_document_registry_search ON document_registry USING GIN(to_tsvector('english', title || ' ' || COALESCE(description, '')));
 
 -- ============================================================================
 -- HELPER FUNCTION: Upsert document registry entry

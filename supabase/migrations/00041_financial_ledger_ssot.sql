@@ -77,17 +77,17 @@ CREATE TABLE IF NOT EXISTS financial_ledger (
 );
 
 -- Indexes for common queries
-CREATE INDEX idx_financial_ledger_organization ON financial_ledger(organization_id);
-CREATE INDEX idx_financial_ledger_type ON financial_ledger(transaction_type);
-CREATE INDEX idx_financial_ledger_direction ON financial_ledger(direction);
-CREATE INDEX idx_financial_ledger_entity ON financial_ledger(entity_type, entity_id);
-CREATE INDEX idx_financial_ledger_status ON financial_ledger(status);
-CREATE INDEX idx_financial_ledger_date ON financial_ledger(transaction_date DESC);
-CREATE INDEX idx_financial_ledger_due_date ON financial_ledger(due_date) WHERE due_date IS NOT NULL;
-CREATE INDEX idx_financial_ledger_project ON financial_ledger(project_id) WHERE project_id IS NOT NULL;
-CREATE INDEX idx_financial_ledger_event ON financial_ledger(event_id) WHERE event_id IS NOT NULL;
-CREATE INDEX idx_financial_ledger_company ON financial_ledger(company_id) WHERE company_id IS NOT NULL;
-CREATE INDEX idx_financial_ledger_counterparty ON financial_ledger(counterparty_type, counterparty_id);
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_organization ON financial_ledger(organization_id);
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_type ON financial_ledger(transaction_type);
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_direction ON financial_ledger(direction);
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_entity ON financial_ledger(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_status ON financial_ledger(status);
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_date ON financial_ledger(transaction_date DESC);
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_due_date ON financial_ledger(due_date) WHERE due_date IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_project ON financial_ledger(project_id) WHERE project_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_event ON financial_ledger(event_id) WHERE event_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_company ON financial_ledger(company_id) WHERE company_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_financial_ledger_counterparty ON financial_ledger(counterparty_type, counterparty_id);
 
 -- ============================================================================
 -- HELPER FUNCTION: Upsert financial ledger entry

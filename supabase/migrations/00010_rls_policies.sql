@@ -206,19 +206,23 @@ $$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
 -- ============================================================================
 
 -- Organizations: Users can see organizations they belong to
+DROP POLICY IF EXISTS "Users can view their organizations" ON organizations;
 CREATE POLICY "Users can view their organizations"
     ON organizations FOR SELECT
     USING (id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Owners can update their organizations" ON organizations;
 CREATE POLICY "Owners can update their organizations"
     ON organizations FOR UPDATE
     USING (is_organization_owner(id));
 
 -- Users: Users can see themselves and members of their organizations
+DROP POLICY IF EXISTS "Users can view themselves" ON users;
 CREATE POLICY "Users can view themselves"
     ON users FOR SELECT
     USING (id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can view organization members" ON users;
 CREATE POLICY "Users can view organization members"
     ON users FOR SELECT
     USING (
@@ -228,51 +232,62 @@ CREATE POLICY "Users can view organization members"
         )
     );
 
+DROP POLICY IF EXISTS "Users can update themselves" ON users;
 CREATE POLICY "Users can update themselves"
     ON users FOR UPDATE
     USING (id = auth.uid());
 
 -- Organization Members: Members can see other members in their organizations
+DROP POLICY IF EXISTS "Members can view organization members" ON organization_members;
 CREATE POLICY "Members can view organization members"
     ON organization_members FOR SELECT
     USING (organization_id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Owners can manage organization members" ON organization_members;
 CREATE POLICY "Owners can manage organization members"
     ON organization_members FOR ALL
     USING (is_organization_owner(organization_id));
 
 -- Roles: Members can view roles in their organizations
+DROP POLICY IF EXISTS "Members can view roles" ON roles;
 CREATE POLICY "Members can view roles"
     ON roles FOR SELECT
     USING (organization_id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Owners can manage roles" ON roles;
 CREATE POLICY "Owners can manage roles"
     ON roles FOR ALL
     USING (is_organization_owner(organization_id));
 
 -- Departments: Members can view departments
+DROP POLICY IF EXISTS "Members can view departments" ON departments;
 CREATE POLICY "Members can view departments"
     ON departments FOR SELECT
     USING (organization_id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Admins can manage departments" ON departments;
 CREATE POLICY "Admins can manage departments"
     ON departments FOR ALL
     USING (get_user_role_level(organization_id) >= 80);
 
 -- Positions: Members can view positions
+DROP POLICY IF EXISTS "Members can view positions" ON positions;
 CREATE POLICY "Members can view positions"
     ON positions FOR SELECT
     USING (organization_id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Admins can manage positions" ON positions;
 CREATE POLICY "Admins can manage positions"
     ON positions FOR ALL
     USING (get_user_role_level(organization_id) >= 80);
 
 -- Workspaces: Members can view workspaces
+DROP POLICY IF EXISTS "Members can view workspaces" ON workspaces;
 CREATE POLICY "Members can view workspaces"
     ON workspaces FOR SELECT
     USING (organization_id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Admins can manage workspaces" ON workspaces;
 CREATE POLICY "Admins can manage workspaces"
     ON workspaces FOR ALL
     USING (get_user_role_level(organization_id) >= 80);
@@ -282,6 +297,7 @@ CREATE POLICY "Admins can manage workspaces"
 -- ============================================================================
 
 -- Projects: Members can view projects based on visibility
+DROP POLICY IF EXISTS "Members can view projects" ON projects;
 CREATE POLICY "Members can view projects"
     ON projects FOR SELECT
     USING (
@@ -294,10 +310,12 @@ CREATE POLICY "Members can view projects"
         )
     );
 
+DROP POLICY IF EXISTS "Members can create projects" ON projects;
 CREATE POLICY "Members can create projects"
     ON projects FOR INSERT
     WITH CHECK (organization_id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Project members can update projects" ON projects;
 CREATE POLICY "Project members can update projects"
     ON projects FOR UPDATE
     USING (
@@ -307,6 +325,7 @@ CREATE POLICY "Project members can update projects"
     );
 
 -- Tasks: Members can view tasks in their projects
+DROP POLICY IF EXISTS "Members can view tasks" ON tasks;
 CREATE POLICY "Members can view tasks"
     ON tasks FOR SELECT
     USING (
@@ -318,10 +337,12 @@ CREATE POLICY "Members can view tasks"
         )
     );
 
+DROP POLICY IF EXISTS "Members can create tasks" ON tasks;
 CREATE POLICY "Members can create tasks"
     ON tasks FOR INSERT
     WITH CHECK (organization_id = ANY(get_user_organization_ids()));
 
+DROP POLICY IF EXISTS "Assignees can update tasks" ON tasks;
 CREATE POLICY "Assignees can update tasks"
     ON tasks FOR UPDATE
     USING (
@@ -447,10 +468,12 @@ SELECT create_org_policies('tags');
 -- NOTIFICATIONS POLICIES
 -- ============================================================================
 
+DROP POLICY IF EXISTS "Users can view their notifications" ON notifications;
 CREATE POLICY "Users can view their notifications"
     ON notifications FOR SELECT
     USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update their notifications" ON notifications;
 CREATE POLICY "Users can update their notifications"
     ON notifications FOR UPDATE
     USING (user_id = auth.uid());
@@ -459,6 +482,7 @@ CREATE POLICY "Users can update their notifications"
 -- AUDIT LOG POLICIES
 -- ============================================================================
 
+DROP POLICY IF EXISTS "Admins can view audit logs" ON audit_logs;
 CREATE POLICY "Admins can view audit logs"
     ON audit_logs FOR SELECT
     USING (get_user_role_level(organization_id) >= 80);

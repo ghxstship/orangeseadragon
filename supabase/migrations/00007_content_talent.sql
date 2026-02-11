@@ -28,10 +28,10 @@ CREATE TABLE media (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_media_organization ON media(organization_id);
-CREATE INDEX idx_media_type ON media(file_type);
-CREATE INDEX idx_media_folder ON media(folder_path);
-CREATE INDEX idx_media_tags ON media USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_media_organization ON media(organization_id);
+CREATE INDEX IF NOT EXISTS idx_media_type ON media(file_type);
+CREATE INDEX IF NOT EXISTS idx_media_folder ON media(folder_path);
+CREATE INDEX IF NOT EXISTS idx_media_tags ON media USING GIN(tags);
 
 -- Brand Guidelines
 CREATE TABLE brand_guidelines (
@@ -56,8 +56,8 @@ CREATE TABLE brand_guidelines (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_brand_guidelines_organization ON brand_guidelines(organization_id);
-CREATE INDEX idx_brand_guidelines_status ON brand_guidelines(status);
+CREATE INDEX IF NOT EXISTS idx_brand_guidelines_organization ON brand_guidelines(organization_id);
+CREATE INDEX IF NOT EXISTS idx_brand_guidelines_status ON brand_guidelines(status);
 
 -- Marketing Campaigns
 CREATE TABLE campaigns (
@@ -84,11 +84,11 @@ CREATE TABLE campaigns (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_campaigns_organization ON campaigns(organization_id);
-CREATE INDEX idx_campaigns_project ON campaigns(project_id);
-CREATE INDEX idx_campaigns_event ON campaigns(event_id);
-CREATE INDEX idx_campaigns_status ON campaigns(status);
-CREATE INDEX idx_campaigns_dates ON campaigns(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_campaigns_organization ON campaigns(organization_id);
+CREATE INDEX IF NOT EXISTS idx_campaigns_project ON campaigns(project_id);
+CREATE INDEX IF NOT EXISTS idx_campaigns_event ON campaigns(event_id);
+CREATE INDEX IF NOT EXISTS idx_campaigns_status ON campaigns(status);
+CREATE INDEX IF NOT EXISTS idx_campaigns_dates ON campaigns(start_date, end_date);
 
 -- Marketing Materials
 CREATE TABLE marketing_materials (
@@ -113,11 +113,11 @@ CREATE TABLE marketing_materials (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_marketing_materials_organization ON marketing_materials(organization_id);
-CREATE INDEX idx_marketing_materials_campaign ON marketing_materials(campaign_id);
-CREATE INDEX idx_marketing_materials_event ON marketing_materials(event_id);
-CREATE INDEX idx_marketing_materials_type ON marketing_materials(material_type);
-CREATE INDEX idx_marketing_materials_status ON marketing_materials(status);
+CREATE INDEX IF NOT EXISTS idx_marketing_materials_organization ON marketing_materials(organization_id);
+CREATE INDEX IF NOT EXISTS idx_marketing_materials_campaign ON marketing_materials(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_marketing_materials_event ON marketing_materials(event_id);
+CREATE INDEX IF NOT EXISTS idx_marketing_materials_type ON marketing_materials(material_type);
+CREATE INDEX IF NOT EXISTS idx_marketing_materials_status ON marketing_materials(status);
 
 -- Social Media Posts
 CREATE TABLE social_posts (
@@ -142,11 +142,11 @@ CREATE TABLE social_posts (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_social_posts_organization ON social_posts(organization_id);
-CREATE INDEX idx_social_posts_campaign ON social_posts(campaign_id);
-CREATE INDEX idx_social_posts_platform ON social_posts(platform);
-CREATE INDEX idx_social_posts_status ON social_posts(status);
-CREATE INDEX idx_social_posts_scheduled ON social_posts(scheduled_at);
+CREATE INDEX IF NOT EXISTS idx_social_posts_organization ON social_posts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_social_posts_campaign ON social_posts(campaign_id);
+CREATE INDEX IF NOT EXISTS idx_social_posts_platform ON social_posts(platform);
+CREATE INDEX IF NOT EXISTS idx_social_posts_status ON social_posts(status);
+CREATE INDEX IF NOT EXISTS idx_social_posts_scheduled ON social_posts(scheduled_at);
 
 -- Content Approvals
 CREATE TABLE content_approvals (
@@ -165,11 +165,11 @@ CREATE TABLE content_approvals (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_content_approvals_organization ON content_approvals(organization_id);
-CREATE INDEX idx_content_approvals_entity ON content_approvals(entity_type, entity_id);
-CREATE INDEX idx_content_approvals_status ON content_approvals(status);
-CREATE INDEX idx_content_approvals_assigned ON content_approvals(assigned_to);
-CREATE INDEX idx_content_approvals_pending ON content_approvals(organization_id, status) WHERE status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_content_approvals_organization ON content_approvals(organization_id);
+CREATE INDEX IF NOT EXISTS idx_content_approvals_entity ON content_approvals(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_content_approvals_status ON content_approvals(status);
+CREATE INDEX IF NOT EXISTS idx_content_approvals_assigned ON content_approvals(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_content_approvals_pending ON content_approvals(organization_id, status) WHERE status = 'pending';
 
 -- ============================================================================
 -- TALENT MANAGEMENT TABLES
@@ -221,11 +221,11 @@ CREATE TABLE talent_profiles (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_talent_profiles_organization ON talent_profiles(organization_id);
-CREATE INDEX idx_talent_profiles_type ON talent_profiles(talent_type);
-CREATE INDEX idx_talent_profiles_status ON talent_profiles(booking_status);
-CREATE INDEX idx_talent_profiles_genres ON talent_profiles USING GIN(genres);
-CREATE INDEX idx_talent_profiles_tags ON talent_profiles USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_talent_profiles_organization ON talent_profiles(organization_id);
+CREATE INDEX IF NOT EXISTS idx_talent_profiles_type ON talent_profiles(talent_type);
+CREATE INDEX IF NOT EXISTS idx_talent_profiles_status ON talent_profiles(booking_status);
+CREATE INDEX IF NOT EXISTS idx_talent_profiles_genres ON talent_profiles USING GIN(genres);
+CREATE INDEX IF NOT EXISTS idx_talent_profiles_tags ON talent_profiles USING GIN(tags);
 
 -- Talent Bookings
 CREATE TABLE talent_bookings (
@@ -264,11 +264,11 @@ CREATE TABLE talent_bookings (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_talent_bookings_organization ON talent_bookings(organization_id);
-CREATE INDEX idx_talent_bookings_talent ON talent_bookings(talent_id);
-CREATE INDEX idx_talent_bookings_event ON talent_bookings(event_id);
-CREATE INDEX idx_talent_bookings_status ON talent_bookings(status);
-CREATE INDEX idx_talent_bookings_date ON talent_bookings(performance_date);
+CREATE INDEX IF NOT EXISTS idx_talent_bookings_organization ON talent_bookings(organization_id);
+CREATE INDEX IF NOT EXISTS idx_talent_bookings_talent ON talent_bookings(talent_id);
+CREATE INDEX IF NOT EXISTS idx_talent_bookings_event ON talent_bookings(event_id);
+CREATE INDEX IF NOT EXISTS idx_talent_bookings_status ON talent_bookings(status);
+CREATE INDEX IF NOT EXISTS idx_talent_bookings_date ON talent_bookings(performance_date);
 
 -- Riders
 CREATE TABLE riders (
@@ -291,11 +291,11 @@ CREATE TABLE riders (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_riders_organization ON riders(organization_id);
-CREATE INDEX idx_riders_talent ON riders(talent_id);
-CREATE INDEX idx_riders_booking ON riders(booking_id);
-CREATE INDEX idx_riders_type ON riders(rider_type);
-CREATE INDEX idx_riders_status ON riders(status);
+CREATE INDEX IF NOT EXISTS idx_riders_organization ON riders(organization_id);
+CREATE INDEX IF NOT EXISTS idx_riders_talent ON riders(talent_id);
+CREATE INDEX IF NOT EXISTS idx_riders_booking ON riders(booking_id);
+CREATE INDEX IF NOT EXISTS idx_riders_type ON riders(rider_type);
+CREATE INDEX IF NOT EXISTS idx_riders_status ON riders(status);
 
 -- Rider Items
 CREATE TABLE rider_items (
@@ -316,9 +316,9 @@ CREATE TABLE rider_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_rider_items_rider ON rider_items(rider_id);
-CREATE INDEX idx_rider_items_category ON rider_items(category);
-CREATE INDEX idx_rider_items_status ON rider_items(status);
+CREATE INDEX IF NOT EXISTS idx_rider_items_rider ON rider_items(rider_id);
+CREATE INDEX IF NOT EXISTS idx_rider_items_category ON rider_items(category);
+CREATE INDEX IF NOT EXISTS idx_rider_items_status ON rider_items(status);
 
 -- Setlists
 CREATE TABLE setlists (
@@ -338,10 +338,10 @@ CREATE TABLE setlists (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_setlists_organization ON setlists(organization_id);
-CREATE INDEX idx_setlists_talent ON setlists(talent_id);
-CREATE INDEX idx_setlists_booking ON setlists(booking_id);
-CREATE INDEX idx_setlists_status ON setlists(status);
+CREATE INDEX IF NOT EXISTS idx_setlists_organization ON setlists(organization_id);
+CREATE INDEX IF NOT EXISTS idx_setlists_talent ON setlists(talent_id);
+CREATE INDEX IF NOT EXISTS idx_setlists_booking ON setlists(booking_id);
+CREATE INDEX IF NOT EXISTS idx_setlists_status ON setlists(status);
 
 -- Setlist Items
 CREATE TABLE setlist_items (
@@ -359,8 +359,8 @@ CREATE TABLE setlist_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_setlist_items_setlist ON setlist_items(setlist_id);
-CREATE INDEX idx_setlist_items_position ON setlist_items(setlist_id, position);
+CREATE INDEX IF NOT EXISTS idx_setlist_items_setlist ON setlist_items(setlist_id);
+CREATE INDEX IF NOT EXISTS idx_setlist_items_position ON setlist_items(setlist_id, position);
 
 -- Talent Payments
 CREATE TABLE talent_payments (
@@ -381,7 +381,7 @@ CREATE TABLE talent_payments (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_talent_payments_organization ON talent_payments(organization_id);
-CREATE INDEX idx_talent_payments_booking ON talent_payments(booking_id);
-CREATE INDEX idx_talent_payments_status ON talent_payments(status);
-CREATE INDEX idx_talent_payments_due ON talent_payments(due_date);
+CREATE INDEX IF NOT EXISTS idx_talent_payments_organization ON talent_payments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_talent_payments_booking ON talent_payments(booking_id);
+CREATE INDEX IF NOT EXISTS idx_talent_payments_status ON talent_payments(status);
+CREATE INDEX IF NOT EXISTS idx_talent_payments_due ON talent_payments(due_date);

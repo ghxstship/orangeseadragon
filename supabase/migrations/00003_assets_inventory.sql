@@ -24,8 +24,8 @@ CREATE TABLE asset_categories (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_asset_categories_organization ON asset_categories(organization_id);
-CREATE INDEX idx_asset_categories_parent ON asset_categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_asset_categories_organization ON asset_categories(organization_id);
+CREATE INDEX IF NOT EXISTS idx_asset_categories_parent ON asset_categories(parent_id);
 
 -- Locations
 CREATE TABLE locations (
@@ -53,9 +53,9 @@ CREATE TABLE locations (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_locations_organization ON locations(organization_id);
-CREATE INDEX idx_locations_type ON locations(location_type);
-CREATE INDEX idx_locations_parent ON locations(parent_id);
+CREATE INDEX IF NOT EXISTS idx_locations_organization ON locations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_locations_type ON locations(location_type);
+CREATE INDEX IF NOT EXISTS idx_locations_parent ON locations(parent_id);
 
 -- Assets
 CREATE TABLE assets (
@@ -95,12 +95,12 @@ CREATE TABLE assets (
     UNIQUE(organization_id, asset_tag)
 );
 
-CREATE INDEX idx_assets_organization ON assets(organization_id);
-CREATE INDEX idx_assets_category ON assets(category_id);
-CREATE INDEX idx_assets_location ON assets(location_id);
-CREATE INDEX idx_assets_status ON assets(status);
-CREATE INDEX idx_assets_tag ON assets(asset_tag);
-CREATE INDEX idx_assets_serial ON assets(serial_number);
+CREATE INDEX IF NOT EXISTS idx_assets_organization ON assets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_assets_category ON assets(category_id);
+CREATE INDEX IF NOT EXISTS idx_assets_location ON assets(location_id);
+CREATE INDEX IF NOT EXISTS idx_assets_status ON assets(status);
+CREATE INDEX IF NOT EXISTS idx_assets_tag ON assets(asset_tag);
+CREATE INDEX IF NOT EXISTS idx_assets_serial ON assets(serial_number);
 
 -- Asset Kits
 CREATE TABLE asset_kits (
@@ -121,8 +121,8 @@ CREATE TABLE asset_kits (
     UNIQUE(organization_id, kit_number)
 );
 
-CREATE INDEX idx_asset_kits_organization ON asset_kits(organization_id);
-CREATE INDEX idx_asset_kits_status ON asset_kits(status);
+CREATE INDEX IF NOT EXISTS idx_asset_kits_organization ON asset_kits(organization_id);
+CREATE INDEX IF NOT EXISTS idx_asset_kits_status ON asset_kits(status);
 
 -- Asset Kit Items
 CREATE TABLE asset_kit_items (
@@ -136,8 +136,8 @@ CREATE TABLE asset_kit_items (
     UNIQUE(kit_id, asset_id)
 );
 
-CREATE INDEX idx_asset_kit_items_kit ON asset_kit_items(kit_id);
-CREATE INDEX idx_asset_kit_items_asset ON asset_kit_items(asset_id);
+CREATE INDEX IF NOT EXISTS idx_asset_kit_items_kit ON asset_kit_items(kit_id);
+CREATE INDEX IF NOT EXISTS idx_asset_kit_items_asset ON asset_kit_items(asset_id);
 
 -- Asset Check Actions (check-in/check-out)
 CREATE TABLE asset_check_actions (
@@ -164,12 +164,12 @@ CREATE TABLE asset_check_actions (
     CHECK (asset_id IS NOT NULL OR kit_id IS NOT NULL)
 );
 
-CREATE INDEX idx_asset_check_actions_organization ON asset_check_actions(organization_id);
-CREATE INDEX idx_asset_check_actions_asset ON asset_check_actions(asset_id);
-CREATE INDEX idx_asset_check_actions_kit ON asset_check_actions(kit_id);
-CREATE INDEX idx_asset_check_actions_project ON asset_check_actions(project_id);
-CREATE INDEX idx_asset_check_actions_event ON asset_check_actions(event_id);
-CREATE INDEX idx_asset_check_actions_user ON asset_check_actions(checked_out_to);
+CREATE INDEX IF NOT EXISTS idx_asset_check_actions_organization ON asset_check_actions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_asset_check_actions_asset ON asset_check_actions(asset_id);
+CREATE INDEX IF NOT EXISTS idx_asset_check_actions_kit ON asset_check_actions(kit_id);
+CREATE INDEX IF NOT EXISTS idx_asset_check_actions_project ON asset_check_actions(project_id);
+CREATE INDEX IF NOT EXISTS idx_asset_check_actions_event ON asset_check_actions(event_id);
+CREATE INDEX IF NOT EXISTS idx_asset_check_actions_user ON asset_check_actions(checked_out_to);
 
 -- Asset Reservations
 CREATE TABLE asset_reservations (
@@ -189,11 +189,11 @@ CREATE TABLE asset_reservations (
     CHECK (asset_id IS NOT NULL OR kit_id IS NOT NULL)
 );
 
-CREATE INDEX idx_asset_reservations_organization ON asset_reservations(organization_id);
-CREATE INDEX idx_asset_reservations_asset ON asset_reservations(asset_id);
-CREATE INDEX idx_asset_reservations_kit ON asset_reservations(kit_id);
-CREATE INDEX idx_asset_reservations_dates ON asset_reservations(start_date, end_date);
-CREATE INDEX idx_asset_reservations_status ON asset_reservations(status);
+CREATE INDEX IF NOT EXISTS idx_asset_reservations_organization ON asset_reservations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_asset_reservations_asset ON asset_reservations(asset_id);
+CREATE INDEX IF NOT EXISTS idx_asset_reservations_kit ON asset_reservations(kit_id);
+CREATE INDEX IF NOT EXISTS idx_asset_reservations_dates ON asset_reservations(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_asset_reservations_status ON asset_reservations(status);
 
 -- Asset Maintenance
 CREATE TABLE asset_maintenance (
@@ -218,10 +218,10 @@ CREATE TABLE asset_maintenance (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_asset_maintenance_organization ON asset_maintenance(organization_id);
-CREATE INDEX idx_asset_maintenance_asset ON asset_maintenance(asset_id);
-CREATE INDEX idx_asset_maintenance_status ON asset_maintenance(status);
-CREATE INDEX idx_asset_maintenance_scheduled ON asset_maintenance(scheduled_date);
+CREATE INDEX IF NOT EXISTS idx_asset_maintenance_organization ON asset_maintenance(organization_id);
+CREATE INDEX IF NOT EXISTS idx_asset_maintenance_asset ON asset_maintenance(asset_id);
+CREATE INDEX IF NOT EXISTS idx_asset_maintenance_status ON asset_maintenance(status);
+CREATE INDEX IF NOT EXISTS idx_asset_maintenance_scheduled ON asset_maintenance(scheduled_date);
 
 -- Inventory Items (consumables)
 CREATE TABLE inventory_items (
@@ -249,11 +249,11 @@ CREATE TABLE inventory_items (
     UNIQUE(organization_id, sku)
 );
 
-CREATE INDEX idx_inventory_items_organization ON inventory_items(organization_id);
-CREATE INDEX idx_inventory_items_category ON inventory_items(category_id);
-CREATE INDEX idx_inventory_items_location ON inventory_items(location_id);
-CREATE INDEX idx_inventory_items_sku ON inventory_items(sku);
-CREATE INDEX idx_inventory_items_low_stock ON inventory_items(organization_id) 
+CREATE INDEX IF NOT EXISTS idx_inventory_items_organization ON inventory_items(organization_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_category ON inventory_items(category_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_location ON inventory_items(location_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_sku ON inventory_items(sku);
+CREATE INDEX IF NOT EXISTS idx_inventory_items_low_stock ON inventory_items(organization_id) 
     WHERE quantity_on_hand <= reorder_point;
 
 -- Inventory Transactions
@@ -275,7 +275,7 @@ CREATE TABLE inventory_transactions (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_inventory_transactions_organization ON inventory_transactions(organization_id);
-CREATE INDEX idx_inventory_transactions_item ON inventory_transactions(inventory_item_id);
-CREATE INDEX idx_inventory_transactions_type ON inventory_transactions(transaction_type);
-CREATE INDEX idx_inventory_transactions_created ON inventory_transactions(created_at);
+CREATE INDEX IF NOT EXISTS idx_inventory_transactions_organization ON inventory_transactions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_transactions_item ON inventory_transactions(inventory_item_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_transactions_type ON inventory_transactions(transaction_type);
+CREATE INDEX IF NOT EXISTS idx_inventory_transactions_created ON inventory_transactions(created_at);

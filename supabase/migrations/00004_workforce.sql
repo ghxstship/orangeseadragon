@@ -22,7 +22,7 @@ CREATE TABLE certification_types (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_certification_types_organization ON certification_types(organization_id);
+CREATE INDEX IF NOT EXISTS idx_certification_types_organization ON certification_types(organization_id);
 
 -- User Certifications
 CREATE TABLE user_certifications (
@@ -43,11 +43,11 @@ CREATE TABLE user_certifications (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_user_certifications_organization ON user_certifications(organization_id);
-CREATE INDEX idx_user_certifications_user ON user_certifications(user_id);
-CREATE INDEX idx_user_certifications_type ON user_certifications(certification_type_id);
-CREATE INDEX idx_user_certifications_expiry ON user_certifications(expiry_date);
-CREATE INDEX idx_user_certifications_expiring ON user_certifications(organization_id, expiry_date) 
+CREATE INDEX IF NOT EXISTS idx_user_certifications_organization ON user_certifications(organization_id);
+CREATE INDEX IF NOT EXISTS idx_user_certifications_user ON user_certifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_certifications_type ON user_certifications(certification_type_id);
+CREATE INDEX IF NOT EXISTS idx_user_certifications_expiry ON user_certifications(expiry_date);
+CREATE INDEX IF NOT EXISTS idx_user_certifications_expiring ON user_certifications(organization_id, expiry_date) 
     WHERE status = 'active' AND expiry_date IS NOT NULL;
 
 -- Skills
@@ -63,8 +63,8 @@ CREATE TABLE skills (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_skills_organization ON skills(organization_id);
-CREATE INDEX idx_skills_category ON skills(category);
+CREATE INDEX IF NOT EXISTS idx_skills_organization ON skills(organization_id);
+CREATE INDEX IF NOT EXISTS idx_skills_category ON skills(category);
 
 -- User Skills
 CREATE TABLE user_skills (
@@ -82,8 +82,8 @@ CREATE TABLE user_skills (
     UNIQUE(user_id, skill_id)
 );
 
-CREATE INDEX idx_user_skills_user ON user_skills(user_id);
-CREATE INDEX idx_user_skills_skill ON user_skills(skill_id);
+CREATE INDEX IF NOT EXISTS idx_user_skills_user ON user_skills(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_skills_skill ON user_skills(skill_id);
 
 -- Rate Cards
 CREATE TABLE rate_cards (
@@ -98,8 +98,8 @@ CREATE TABLE rate_cards (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_rate_cards_organization ON rate_cards(organization_id);
-CREATE INDEX idx_rate_cards_effective ON rate_cards(effective_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_rate_cards_organization ON rate_cards(organization_id);
+CREATE INDEX IF NOT EXISTS idx_rate_cards_effective ON rate_cards(effective_date, end_date);
 
 -- Rate Card Items
 CREATE TABLE rate_card_items (
@@ -117,8 +117,8 @@ CREATE TABLE rate_card_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_rate_card_items_rate_card ON rate_card_items(rate_card_id);
-CREATE INDEX idx_rate_card_items_position ON rate_card_items(position_id);
+CREATE INDEX IF NOT EXISTS idx_rate_card_items_rate_card ON rate_card_items(rate_card_id);
+CREATE INDEX IF NOT EXISTS idx_rate_card_items_position ON rate_card_items(position_id);
 
 -- User Availability
 CREATE TABLE user_availability (
@@ -135,10 +135,10 @@ CREATE TABLE user_availability (
     UNIQUE(user_id, date, start_time)
 );
 
-CREATE INDEX idx_user_availability_organization ON user_availability(organization_id);
-CREATE INDEX idx_user_availability_user ON user_availability(user_id);
-CREATE INDEX idx_user_availability_date ON user_availability(date);
-CREATE INDEX idx_user_availability_lookup ON user_availability(user_id, date, availability_type);
+CREATE INDEX IF NOT EXISTS idx_user_availability_organization ON user_availability(organization_id);
+CREATE INDEX IF NOT EXISTS idx_user_availability_user ON user_availability(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_availability_date ON user_availability(date);
+CREATE INDEX IF NOT EXISTS idx_user_availability_lookup ON user_availability(user_id, date, availability_type);
 
 -- Crew Calls
 CREATE TABLE crew_calls (
@@ -165,11 +165,11 @@ CREATE TABLE crew_calls (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_crew_calls_organization ON crew_calls(organization_id);
-CREATE INDEX idx_crew_calls_project ON crew_calls(project_id);
-CREATE INDEX idx_crew_calls_event ON crew_calls(event_id);
-CREATE INDEX idx_crew_calls_date ON crew_calls(date);
-CREATE INDEX idx_crew_calls_status ON crew_calls(status);
+CREATE INDEX IF NOT EXISTS idx_crew_calls_organization ON crew_calls(organization_id);
+CREATE INDEX IF NOT EXISTS idx_crew_calls_project ON crew_calls(project_id);
+CREATE INDEX IF NOT EXISTS idx_crew_calls_event ON crew_calls(event_id);
+CREATE INDEX IF NOT EXISTS idx_crew_calls_date ON crew_calls(date);
+CREATE INDEX IF NOT EXISTS idx_crew_calls_status ON crew_calls(status);
 
 -- Crew Call Positions
 CREATE TABLE crew_call_positions (
@@ -193,8 +193,8 @@ CREATE TABLE crew_call_positions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_crew_call_positions_crew_call ON crew_call_positions(crew_call_id);
-CREATE INDEX idx_crew_call_positions_position ON crew_call_positions(position_id);
+CREATE INDEX IF NOT EXISTS idx_crew_call_positions_crew_call ON crew_call_positions(crew_call_id);
+CREATE INDEX IF NOT EXISTS idx_crew_call_positions_position ON crew_call_positions(position_id);
 
 -- Crew Assignments
 CREATE TABLE crew_assignments (
@@ -219,10 +219,10 @@ CREATE TABLE crew_assignments (
     UNIQUE(crew_call_position_id, user_id)
 );
 
-CREATE INDEX idx_crew_assignments_organization ON crew_assignments(organization_id);
-CREATE INDEX idx_crew_assignments_crew_call ON crew_assignments(crew_call_id);
-CREATE INDEX idx_crew_assignments_user ON crew_assignments(user_id);
-CREATE INDEX idx_crew_assignments_status ON crew_assignments(status);
+CREATE INDEX IF NOT EXISTS idx_crew_assignments_organization ON crew_assignments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_crew_assignments_crew_call ON crew_assignments(crew_call_id);
+CREATE INDEX IF NOT EXISTS idx_crew_assignments_user ON crew_assignments(user_id);
+CREATE INDEX IF NOT EXISTS idx_crew_assignments_status ON crew_assignments(status);
 
 -- Shifts
 CREATE TABLE shifts (
@@ -245,11 +245,11 @@ CREATE TABLE shifts (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_shifts_organization ON shifts(organization_id);
-CREATE INDEX idx_shifts_user ON shifts(user_id);
-CREATE INDEX idx_shifts_date ON shifts(date);
-CREATE INDEX idx_shifts_project ON shifts(project_id);
-CREATE INDEX idx_shifts_event ON shifts(event_id);
+CREATE INDEX IF NOT EXISTS idx_shifts_organization ON shifts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_shifts_user ON shifts(user_id);
+CREATE INDEX IF NOT EXISTS idx_shifts_date ON shifts(date);
+CREATE INDEX IF NOT EXISTS idx_shifts_project ON shifts(project_id);
+CREATE INDEX IF NOT EXISTS idx_shifts_event ON shifts(event_id);
 
 -- Timesheets
 CREATE TABLE timesheets (
@@ -276,10 +276,10 @@ CREATE TABLE timesheets (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_timesheets_organization ON timesheets(organization_id);
-CREATE INDEX idx_timesheets_user ON timesheets(user_id);
-CREATE INDEX idx_timesheets_period ON timesheets(period_start, period_end);
-CREATE INDEX idx_timesheets_status ON timesheets(status);
+CREATE INDEX IF NOT EXISTS idx_timesheets_organization ON timesheets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_timesheets_user ON timesheets(user_id);
+CREATE INDEX IF NOT EXISTS idx_timesheets_period ON timesheets(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_timesheets_status ON timesheets(status);
 
 -- Timesheet Entries
 CREATE TABLE timesheet_entries (
@@ -305,10 +305,10 @@ CREATE TABLE timesheet_entries (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_timesheet_entries_timesheet ON timesheet_entries(timesheet_id);
-CREATE INDEX idx_timesheet_entries_date ON timesheet_entries(date);
-CREATE INDEX idx_timesheet_entries_project ON timesheet_entries(project_id);
-CREATE INDEX idx_timesheet_entries_event ON timesheet_entries(event_id);
+CREATE INDEX IF NOT EXISTS idx_timesheet_entries_timesheet ON timesheet_entries(timesheet_id);
+CREATE INDEX IF NOT EXISTS idx_timesheet_entries_date ON timesheet_entries(date);
+CREATE INDEX IF NOT EXISTS idx_timesheet_entries_project ON timesheet_entries(project_id);
+CREATE INDEX IF NOT EXISTS idx_timesheet_entries_event ON timesheet_entries(event_id);
 
 -- Contractors
 CREATE TABLE contractors (
@@ -335,6 +335,6 @@ CREATE TABLE contractors (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_contractors_organization ON contractors(organization_id);
-CREATE INDEX idx_contractors_user ON contractors(user_id);
-CREATE INDEX idx_contractors_email ON contractors(email);
+CREATE INDEX IF NOT EXISTS idx_contractors_organization ON contractors(organization_id);
+CREATE INDEX IF NOT EXISTS idx_contractors_user ON contractors(user_id);
+CREATE INDEX IF NOT EXISTS idx_contractors_email ON contractors(email);

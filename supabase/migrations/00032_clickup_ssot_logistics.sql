@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS shipments (
     UNIQUE(organization_id, shipment_number)
 );
 
-CREATE INDEX idx_shipments_org ON shipments(organization_id);
-CREATE INDEX idx_shipments_production ON shipments(production_id);
-CREATE INDEX idx_shipments_status ON shipments(status);
+CREATE INDEX IF NOT EXISTS idx_shipments_org ON shipments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_shipments_production ON shipments(production_id);
+CREATE INDEX IF NOT EXISTS idx_shipments_status ON shipments(status);
 
 -- Shipment Items
 CREATE TABLE IF NOT EXISTS shipment_items (
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS shipment_items (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_shipment_items_shipment ON shipment_items(shipment_id);
+CREATE INDEX IF NOT EXISTS idx_shipment_items_shipment ON shipment_items(shipment_id);
 
 -- ============================================================================
 -- LOGISTICS - PULL LISTS
@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS pull_lists (
     UNIQUE(organization_id, pull_list_number)
 );
 
-CREATE INDEX idx_pull_lists_org ON pull_lists(organization_id);
-CREATE INDEX idx_pull_lists_production ON pull_lists(production_id);
+CREATE INDEX IF NOT EXISTS idx_pull_lists_org ON pull_lists(organization_id);
+CREATE INDEX IF NOT EXISTS idx_pull_lists_production ON pull_lists(production_id);
 
 -- Pull List Items
 CREATE TABLE IF NOT EXISTS pull_list_items (
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS pull_list_items (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_pull_list_items_list ON pull_list_items(pull_list_id);
+CREATE INDEX IF NOT EXISTS idx_pull_list_items_list ON pull_list_items(pull_list_id);
 
 -- ============================================================================
 -- LOGISTICS - LOAD PLANS
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS load_plans (
     UNIQUE(organization_id, load_plan_number)
 );
 
-CREATE INDEX idx_load_plans_org ON load_plans(organization_id);
+CREATE INDEX IF NOT EXISTS idx_load_plans_org ON load_plans(organization_id);
 
 -- ============================================================================
 -- WORK ORDERS
@@ -173,9 +173,9 @@ CREATE TABLE IF NOT EXISTS work_orders (
     UNIQUE(organization_id, work_order_number)
 );
 
-CREATE INDEX idx_work_orders_org ON work_orders(organization_id);
-CREATE INDEX idx_work_orders_production ON work_orders(production_id);
-CREATE INDEX idx_work_orders_status ON work_orders(status);
+CREATE INDEX IF NOT EXISTS idx_work_orders_org ON work_orders(organization_id);
+CREATE INDEX IF NOT EXISTS idx_work_orders_production ON work_orders(production_id);
+CREATE INDEX IF NOT EXISTS idx_work_orders_status ON work_orders(status);
 
 -- ============================================================================
 -- SITE OPERATIONS - DAILY REPORTS
@@ -208,8 +208,8 @@ CREATE TABLE IF NOT EXISTS daily_site_reports (
     UNIQUE(organization_id, report_number)
 );
 
-CREATE INDEX idx_daily_site_reports_org ON daily_site_reports(organization_id);
-CREATE INDEX idx_daily_site_reports_date ON daily_site_reports(report_date);
+CREATE INDEX IF NOT EXISTS idx_daily_site_reports_org ON daily_site_reports(organization_id);
+CREATE INDEX IF NOT EXISTS idx_daily_site_reports_date ON daily_site_reports(report_date);
 
 -- ============================================================================
 -- SITE OPERATIONS - ISSUES & PUNCH ITEMS
@@ -238,8 +238,8 @@ CREATE TABLE IF NOT EXISTS site_issues (
     UNIQUE(organization_id, issue_number)
 );
 
-CREATE INDEX idx_site_issues_org ON site_issues(organization_id);
-CREATE INDEX idx_site_issues_status ON site_issues(status);
+CREATE INDEX IF NOT EXISTS idx_site_issues_org ON site_issues(organization_id);
+CREATE INDEX IF NOT EXISTS idx_site_issues_status ON site_issues(status);
 
 CREATE TABLE IF NOT EXISTS punch_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -269,8 +269,8 @@ CREATE TABLE IF NOT EXISTS punch_items (
     UNIQUE(organization_id, punch_number)
 );
 
-CREATE INDEX idx_punch_items_org ON punch_items(organization_id);
-CREATE INDEX idx_punch_items_status ON punch_items(status);
+CREATE INDEX IF NOT EXISTS idx_punch_items_org ON punch_items(organization_id);
+CREATE INDEX IF NOT EXISTS idx_punch_items_status ON punch_items(status);
 
 -- ============================================================================
 -- INSPECTIONS
@@ -306,9 +306,9 @@ CREATE TABLE IF NOT EXISTS inspections (
     UNIQUE(organization_id, inspection_number)
 );
 
-CREATE INDEX idx_inspections_org ON inspections(organization_id);
-CREATE INDEX idx_inspections_type ON inspections(inspection_type);
-CREATE INDEX idx_inspections_status ON inspections(status);
+CREATE INDEX IF NOT EXISTS idx_inspections_org ON inspections(organization_id);
+CREATE INDEX IF NOT EXISTS idx_inspections_type ON inspections(inspection_type);
+CREATE INDEX IF NOT EXISTS idx_inspections_status ON inspections(status);
 
 -- ============================================================================
 -- SHOW OPERATIONS - RUN OF SHOW
@@ -331,8 +331,8 @@ CREATE TABLE IF NOT EXISTS run_of_show (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_run_of_show_org ON run_of_show(organization_id);
-CREATE INDEX idx_run_of_show_date ON run_of_show(show_date);
+CREATE INDEX IF NOT EXISTS idx_run_of_show_org ON run_of_show(organization_id);
+CREATE INDEX IF NOT EXISTS idx_run_of_show_date ON run_of_show(show_date);
 
 CREATE TABLE IF NOT EXISTS run_of_show_elements (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -352,7 +352,7 @@ CREATE TABLE IF NOT EXISTS run_of_show_elements (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_ros_elements_ros ON run_of_show_elements(run_of_show_id);
+CREATE INDEX IF NOT EXISTS idx_ros_elements_ros ON run_of_show_elements(run_of_show_id);
 
 -- Communications Plans
 CREATE TABLE IF NOT EXISTS comms_plans (
@@ -371,7 +371,7 @@ CREATE TABLE IF NOT EXISTS comms_plans (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_comms_plans_org ON comms_plans(organization_id);
+CREATE INDEX IF NOT EXISTS idx_comms_plans_org ON comms_plans(organization_id);
 
 -- ============================================================================
 -- RLS POLICIES
@@ -392,13 +392,23 @@ ALTER TABLE run_of_show_elements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE comms_plans ENABLE ROW LEVEL SECURITY;
 
 -- Create org-based RLS policies for all tables
+DROP POLICY IF EXISTS "shipments_org_access" ON shipments;
 CREATE POLICY "shipments_org_access" ON shipments FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "pull_lists_org_access" ON pull_lists;
 CREATE POLICY "pull_lists_org_access" ON pull_lists FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "load_plans_org_access" ON load_plans;
 CREATE POLICY "load_plans_org_access" ON load_plans FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "work_orders_org_access" ON work_orders;
 CREATE POLICY "work_orders_org_access" ON work_orders FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "daily_site_reports_org_access" ON daily_site_reports;
 CREATE POLICY "daily_site_reports_org_access" ON daily_site_reports FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "site_issues_org_access" ON site_issues;
 CREATE POLICY "site_issues_org_access" ON site_issues FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "punch_items_org_access" ON punch_items;
 CREATE POLICY "punch_items_org_access" ON punch_items FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "inspections_org_access" ON inspections;
 CREATE POLICY "inspections_org_access" ON inspections FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "run_of_show_org_access" ON run_of_show;
 CREATE POLICY "run_of_show_org_access" ON run_of_show FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "comms_plans_org_access" ON comms_plans;
 CREATE POLICY "comms_plans_org_access" ON comms_plans FOR ALL USING (is_organization_member(organization_id));

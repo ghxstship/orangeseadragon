@@ -32,7 +32,7 @@ CREATE TABLE discussion_categories (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_discussion_categories_organization ON discussion_categories(organization_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_categories_organization ON discussion_categories(organization_id);
 
 -- Discussions
 CREATE TABLE discussions (
@@ -54,11 +54,11 @@ CREATE TABLE discussions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_discussions_organization ON discussions(organization_id);
-CREATE INDEX idx_discussions_category ON discussions(category_id);
-CREATE INDEX idx_discussions_author ON discussions(author_id);
-CREATE INDEX idx_discussions_status ON discussions(status);
-CREATE INDEX idx_discussions_pinned ON discussions(organization_id, is_pinned) WHERE is_pinned = TRUE;
+CREATE INDEX IF NOT EXISTS idx_discussions_organization ON discussions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_discussions_category ON discussions(category_id);
+CREATE INDEX IF NOT EXISTS idx_discussions_author ON discussions(author_id);
+CREATE INDEX IF NOT EXISTS idx_discussions_status ON discussions(status);
+CREATE INDEX IF NOT EXISTS idx_discussions_pinned ON discussions(organization_id, is_pinned) WHERE is_pinned = TRUE;
 
 -- Discussion Replies
 CREATE TABLE discussion_replies (
@@ -73,9 +73,9 @@ CREATE TABLE discussion_replies (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_discussion_replies_discussion ON discussion_replies(discussion_id);
-CREATE INDEX idx_discussion_replies_parent ON discussion_replies(parent_id);
-CREATE INDEX idx_discussion_replies_author ON discussion_replies(author_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_replies_discussion ON discussion_replies(discussion_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_replies_parent ON discussion_replies(parent_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_replies_author ON discussion_replies(author_id);
 
 -- Discussion Subscriptions
 CREATE TABLE discussion_subscriptions (
@@ -87,8 +87,8 @@ CREATE TABLE discussion_subscriptions (
     UNIQUE(discussion_id, user_id)
 );
 
-CREATE INDEX idx_discussion_subscriptions_discussion ON discussion_subscriptions(discussion_id);
-CREATE INDEX idx_discussion_subscriptions_user ON discussion_subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_subscriptions_discussion ON discussion_subscriptions(discussion_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_subscriptions_user ON discussion_subscriptions(user_id);
 
 -- ============================================================================
 -- CHALLENGES & COMPETITIONS
@@ -119,9 +119,9 @@ CREATE TABLE challenges (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_challenges_organization ON challenges(organization_id);
-CREATE INDEX idx_challenges_status ON challenges(status);
-CREATE INDEX idx_challenges_dates ON challenges(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_challenges_organization ON challenges(organization_id);
+CREATE INDEX IF NOT EXISTS idx_challenges_status ON challenges(status);
+CREATE INDEX IF NOT EXISTS idx_challenges_dates ON challenges(start_date, end_date);
 
 -- Challenge Submissions
 CREATE TABLE challenge_submissions (
@@ -143,9 +143,9 @@ CREATE TABLE challenge_submissions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_challenge_submissions_challenge ON challenge_submissions(challenge_id);
-CREATE INDEX idx_challenge_submissions_submitter ON challenge_submissions(submitter_id);
-CREATE INDEX idx_challenge_submissions_rank ON challenge_submissions(challenge_id, rank);
+CREATE INDEX IF NOT EXISTS idx_challenge_submissions_challenge ON challenge_submissions(challenge_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_submissions_submitter ON challenge_submissions(submitter_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_submissions_rank ON challenge_submissions(challenge_id, rank);
 
 -- Challenge Votes
 CREATE TABLE challenge_votes (
@@ -157,8 +157,8 @@ CREATE TABLE challenge_votes (
     UNIQUE(submission_id, voter_id)
 );
 
-CREATE INDEX idx_challenge_votes_submission ON challenge_votes(submission_id);
-CREATE INDEX idx_challenge_votes_voter ON challenge_votes(voter_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_votes_submission ON challenge_votes(submission_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_votes_voter ON challenge_votes(voter_id);
 
 -- Challenge Judges
 CREATE TABLE challenge_judges (
@@ -171,7 +171,7 @@ CREATE TABLE challenge_judges (
     UNIQUE(challenge_id, user_id)
 );
 
-CREATE INDEX idx_challenge_judges_challenge ON challenge_judges(challenge_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_judges_challenge ON challenge_judges(challenge_id);
 
 -- ============================================================================
 -- MARKETPLACE
@@ -193,8 +193,8 @@ CREATE TABLE marketplace_categories (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_marketplace_categories_organization ON marketplace_categories(organization_id);
-CREATE INDEX idx_marketplace_categories_parent ON marketplace_categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_categories_organization ON marketplace_categories(organization_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_categories_parent ON marketplace_categories(parent_id);
 
 -- Marketplace Listings
 CREATE TABLE marketplace_listings (
@@ -224,12 +224,12 @@ CREATE TABLE marketplace_listings (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_marketplace_listings_organization ON marketplace_listings(organization_id);
-CREATE INDEX idx_marketplace_listings_category ON marketplace_listings(category_id);
-CREATE INDEX idx_marketplace_listings_seller ON marketplace_listings(seller_id);
-CREATE INDEX idx_marketplace_listings_status ON marketplace_listings(status);
-CREATE INDEX idx_marketplace_listings_type ON marketplace_listings(listing_type);
-CREATE INDEX idx_marketplace_listings_featured ON marketplace_listings(featured_until) WHERE featured_until IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_marketplace_listings_organization ON marketplace_listings(organization_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_listings_category ON marketplace_listings(category_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_listings_seller ON marketplace_listings(seller_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_listings_status ON marketplace_listings(status);
+CREATE INDEX IF NOT EXISTS idx_marketplace_listings_type ON marketplace_listings(listing_type);
+CREATE INDEX IF NOT EXISTS idx_marketplace_listings_featured ON marketplace_listings(featured_until) WHERE featured_until IS NOT NULL;
 
 -- Marketplace Inquiries
 CREATE TABLE marketplace_inquiries (
@@ -242,8 +242,8 @@ CREATE TABLE marketplace_inquiries (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_marketplace_inquiries_listing ON marketplace_inquiries(listing_id);
-CREATE INDEX idx_marketplace_inquiries_inquirer ON marketplace_inquiries(inquirer_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_inquiries_listing ON marketplace_inquiries(listing_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_inquiries_inquirer ON marketplace_inquiries(inquirer_id);
 
 -- Marketplace Favorites
 CREATE TABLE marketplace_favorites (
@@ -254,8 +254,8 @@ CREATE TABLE marketplace_favorites (
     UNIQUE(listing_id, user_id)
 );
 
-CREATE INDEX idx_marketplace_favorites_listing ON marketplace_favorites(listing_id);
-CREATE INDEX idx_marketplace_favorites_user ON marketplace_favorites(user_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_favorites_listing ON marketplace_favorites(listing_id);
+CREATE INDEX IF NOT EXISTS idx_marketplace_favorites_user ON marketplace_favorites(user_id);
 
 -- ============================================================================
 -- OPPORTUNITIES
@@ -290,11 +290,11 @@ CREATE TABLE opportunities (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_opportunities_organization ON opportunities(organization_id);
-CREATE INDEX idx_opportunities_posted_by ON opportunities(posted_by);
-CREATE INDEX idx_opportunities_type ON opportunities(opportunity_type);
-CREATE INDEX idx_opportunities_status ON opportunities(status);
-CREATE INDEX idx_opportunities_deadline ON opportunities(application_deadline);
+CREATE INDEX IF NOT EXISTS idx_opportunities_organization ON opportunities(organization_id);
+CREATE INDEX IF NOT EXISTS idx_opportunities_posted_by ON opportunities(posted_by);
+CREATE INDEX IF NOT EXISTS idx_opportunities_type ON opportunities(opportunity_type);
+CREATE INDEX IF NOT EXISTS idx_opportunities_status ON opportunities(status);
+CREATE INDEX IF NOT EXISTS idx_opportunities_deadline ON opportunities(application_deadline);
 
 -- Opportunity Applications
 CREATE TABLE opportunity_applications (
@@ -315,9 +315,9 @@ CREATE TABLE opportunity_applications (
     UNIQUE(opportunity_id, applicant_id)
 );
 
-CREATE INDEX idx_opportunity_applications_opportunity ON opportunity_applications(opportunity_id);
-CREATE INDEX idx_opportunity_applications_applicant ON opportunity_applications(applicant_id);
-CREATE INDEX idx_opportunity_applications_status ON opportunity_applications(status);
+CREATE INDEX IF NOT EXISTS idx_opportunity_applications_opportunity ON opportunity_applications(opportunity_id);
+CREATE INDEX IF NOT EXISTS idx_opportunity_applications_applicant ON opportunity_applications(applicant_id);
+CREATE INDEX IF NOT EXISTS idx_opportunity_applications_status ON opportunity_applications(status);
 
 -- ============================================================================
 -- CONNECTIONS & NETWORKING
@@ -336,9 +336,9 @@ CREATE TABLE connections (
     UNIQUE(requester_id, recipient_id)
 );
 
-CREATE INDEX idx_connections_requester ON connections(requester_id);
-CREATE INDEX idx_connections_recipient ON connections(recipient_id);
-CREATE INDEX idx_connections_status ON connections(status);
+CREATE INDEX IF NOT EXISTS idx_connections_requester ON connections(requester_id);
+CREATE INDEX IF NOT EXISTS idx_connections_recipient ON connections(recipient_id);
+CREATE INDEX IF NOT EXISTS idx_connections_status ON connections(status);
 
 -- User Profiles (extended public profile)
 CREATE TABLE user_profiles (
@@ -365,9 +365,9 @@ CREATE TABLE user_profiles (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_user_profiles_user ON user_profiles(user_id);
-CREATE INDEX idx_user_profiles_public ON user_profiles(is_public) WHERE is_public = TRUE;
-CREATE INDEX idx_user_profiles_skills ON user_profiles USING GIN(skills);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_user ON user_profiles(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_public ON user_profiles(is_public) WHERE is_public = TRUE;
+CREATE INDEX IF NOT EXISTS idx_user_profiles_skills ON user_profiles USING GIN(skills);
 
 -- Direct Messages
 CREATE TABLE direct_messages (
@@ -381,10 +381,10 @@ CREATE TABLE direct_messages (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_direct_messages_sender ON direct_messages(sender_id);
-CREATE INDEX idx_direct_messages_recipient ON direct_messages(recipient_id);
-CREATE INDEX idx_direct_messages_conversation ON direct_messages(LEAST(sender_id, recipient_id), GREATEST(sender_id, recipient_id));
-CREATE INDEX idx_direct_messages_unread ON direct_messages(recipient_id, status) WHERE status != 'read';
+CREATE INDEX IF NOT EXISTS idx_direct_messages_sender ON direct_messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_direct_messages_recipient ON direct_messages(recipient_id);
+CREATE INDEX IF NOT EXISTS idx_direct_messages_conversation ON direct_messages(LEAST(sender_id, recipient_id), GREATEST(sender_id, recipient_id));
+CREATE INDEX IF NOT EXISTS idx_direct_messages_unread ON direct_messages(recipient_id, status) WHERE status != 'read';
 
 -- Message Threads (for group conversations)
 CREATE TABLE message_threads (
@@ -397,7 +397,7 @@ CREATE TABLE message_threads (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_message_threads_organization ON message_threads(organization_id);
+CREATE INDEX IF NOT EXISTS idx_message_threads_organization ON message_threads(organization_id);
 
 -- Thread Participants
 CREATE TABLE thread_participants (
@@ -411,8 +411,8 @@ CREATE TABLE thread_participants (
     UNIQUE(thread_id, user_id)
 );
 
-CREATE INDEX idx_thread_participants_thread ON thread_participants(thread_id);
-CREATE INDEX idx_thread_participants_user ON thread_participants(user_id);
+CREATE INDEX IF NOT EXISTS idx_thread_participants_thread ON thread_participants(thread_id);
+CREATE INDEX IF NOT EXISTS idx_thread_participants_user ON thread_participants(user_id);
 
 -- Thread Messages
 CREATE TABLE thread_messages (
@@ -426,9 +426,9 @@ CREATE TABLE thread_messages (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_thread_messages_thread ON thread_messages(thread_id);
-CREATE INDEX idx_thread_messages_sender ON thread_messages(sender_id);
-CREATE INDEX idx_thread_messages_created ON thread_messages(created_at);
+CREATE INDEX IF NOT EXISTS idx_thread_messages_thread ON thread_messages(thread_id);
+CREATE INDEX IF NOT EXISTS idx_thread_messages_sender ON thread_messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_thread_messages_created ON thread_messages(created_at);
 
 -- ============================================================================
 -- PUBLIC PORTAL (GVTEWAY)
@@ -455,8 +455,8 @@ CREATE TABLE public_pages (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_public_pages_organization ON public_pages(organization_id);
-CREATE INDEX idx_public_pages_published ON public_pages(organization_id, is_published) WHERE is_published = TRUE;
+CREATE INDEX IF NOT EXISTS idx_public_pages_organization ON public_pages(organization_id);
+CREATE INDEX IF NOT EXISTS idx_public_pages_published ON public_pages(organization_id, is_published) WHERE is_published = TRUE;
 
 -- Public Events (event listings)
 CREATE TABLE public_events (
@@ -481,9 +481,9 @@ CREATE TABLE public_events (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_public_events_event ON public_events(event_id);
-CREATE INDEX idx_public_events_organization ON public_events(organization_id);
-CREATE INDEX idx_public_events_published ON public_events(organization_id, is_published) WHERE is_published = TRUE;
+CREATE INDEX IF NOT EXISTS idx_public_events_event ON public_events(event_id);
+CREATE INDEX IF NOT EXISTS idx_public_events_organization ON public_events(organization_id);
+CREATE INDEX IF NOT EXISTS idx_public_events_published ON public_events(organization_id, is_published) WHERE is_published = TRUE;
 
 -- Newsletter Subscribers
 CREATE TABLE newsletter_subscribers (
@@ -501,9 +501,9 @@ CREATE TABLE newsletter_subscribers (
     UNIQUE(organization_id, email)
 );
 
-CREATE INDEX idx_newsletter_subscribers_organization ON newsletter_subscribers(organization_id);
-CREATE INDEX idx_newsletter_subscribers_email ON newsletter_subscribers(email);
-CREATE INDEX idx_newsletter_subscribers_status ON newsletter_subscribers(status);
+CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_organization ON newsletter_subscribers(organization_id);
+CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_email ON newsletter_subscribers(email);
+CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_status ON newsletter_subscribers(status);
 
 -- Contact Form Submissions
 CREATE TABLE contact_submissions (
@@ -525,9 +525,9 @@ CREATE TABLE contact_submissions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_contact_submissions_organization ON contact_submissions(organization_id);
-CREATE INDEX idx_contact_submissions_status ON contact_submissions(status);
-CREATE INDEX idx_contact_submissions_email ON contact_submissions(email);
+CREATE INDEX IF NOT EXISTS idx_contact_submissions_organization ON contact_submissions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_contact_submissions_status ON contact_submissions(status);
+CREATE INDEX IF NOT EXISTS idx_contact_submissions_email ON contact_submissions(email);
 
 -- Testimonials
 CREATE TABLE testimonials (
@@ -548,9 +548,9 @@ CREATE TABLE testimonials (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_testimonials_organization ON testimonials(organization_id);
-CREATE INDEX idx_testimonials_featured ON testimonials(organization_id, is_featured) WHERE is_featured = TRUE;
-CREATE INDEX idx_testimonials_published ON testimonials(organization_id, is_published) WHERE is_published = TRUE;
+CREATE INDEX IF NOT EXISTS idx_testimonials_organization ON testimonials(organization_id);
+CREATE INDEX IF NOT EXISTS idx_testimonials_featured ON testimonials(organization_id, is_featured) WHERE is_featured = TRUE;
+CREATE INDEX IF NOT EXISTS idx_testimonials_published ON testimonials(organization_id, is_published) WHERE is_published = TRUE;
 
 -- FAQ Items
 CREATE TABLE faq_items (
@@ -568,6 +568,6 @@ CREATE TABLE faq_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_faq_items_organization ON faq_items(organization_id);
-CREATE INDEX idx_faq_items_category ON faq_items(category);
-CREATE INDEX idx_faq_items_published ON faq_items(organization_id, is_published) WHERE is_published = TRUE;
+CREATE INDEX IF NOT EXISTS idx_faq_items_organization ON faq_items(organization_id);
+CREATE INDEX IF NOT EXISTS idx_faq_items_category ON faq_items(category);
+CREATE INDEX IF NOT EXISTS idx_faq_items_published ON faq_items(organization_id, is_published) WHERE is_published = TRUE;

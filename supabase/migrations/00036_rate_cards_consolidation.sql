@@ -14,7 +14,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_cards' AND column_name = 'rate_card_type'
     ) THEN
-        ALTER TABLE rate_cards ADD COLUMN rate_card_type VARCHAR(20) DEFAULT 'workforce' 
+        ALTER TABLE rate_cards ADD COLUMN IF NOT EXISTS rate_card_type VARCHAR(20) DEFAULT 'workforce' 
             CHECK (rate_card_type IN ('workforce', 'service', 'rental', 'custom'));
     END IF;
 END $$;
@@ -26,7 +26,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_cards' AND column_name = 'is_active'
     ) THEN
-        ALTER TABLE rate_cards ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+        ALTER TABLE rate_cards ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
     END IF;
 END $$;
 
@@ -55,7 +55,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_card_items' AND column_name = 'service_id'
     ) THEN
-        ALTER TABLE rate_card_items ADD COLUMN service_id UUID REFERENCES services(id) ON DELETE SET NULL;
+        ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS service_id UUID REFERENCES services(id) ON DELETE SET NULL;
     END IF;
 END $$;
 
@@ -66,7 +66,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_card_items' AND column_name = 'item_code'
     ) THEN
-        ALTER TABLE rate_card_items ADD COLUMN item_code VARCHAR(50);
+        ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS item_code VARCHAR(50);
     END IF;
 END $$;
 
@@ -77,7 +77,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_card_items' AND column_name = 'description'
     ) THEN
-        ALTER TABLE rate_card_items ADD COLUMN description VARCHAR(255);
+        ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS description VARCHAR(255);
     END IF;
 END $$;
 
@@ -88,7 +88,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_card_items' AND column_name = 'unit_price'
     ) THEN
-        ALTER TABLE rate_card_items ADD COLUMN unit_price DECIMAL(12,2);
+        ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS unit_price DECIMAL(12,2);
         -- Copy regular_rate to unit_price for existing records
         UPDATE rate_card_items SET unit_price = regular_rate WHERE unit_price IS NULL AND regular_rate IS NOT NULL;
     END IF;
@@ -101,7 +101,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_card_items' AND column_name = 'unit'
     ) THEN
-        ALTER TABLE rate_card_items ADD COLUMN unit VARCHAR(50);
+        ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS unit VARCHAR(50);
     END IF;
 END $$;
 
@@ -112,7 +112,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'rate_card_items' AND column_name = 'minimum_quantity'
     ) THEN
-        ALTER TABLE rate_card_items ADD COLUMN minimum_quantity INTEGER DEFAULT 1;
+        ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS minimum_quantity INTEGER DEFAULT 1;
     END IF;
 END $$;
 

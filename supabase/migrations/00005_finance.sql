@@ -21,9 +21,9 @@ CREATE TABLE budget_categories (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_budget_categories_organization ON budget_categories(organization_id);
-CREATE INDEX idx_budget_categories_parent ON budget_categories(parent_id);
-CREATE INDEX idx_budget_categories_type ON budget_categories(category_type);
+CREATE INDEX IF NOT EXISTS idx_budget_categories_organization ON budget_categories(organization_id);
+CREATE INDEX IF NOT EXISTS idx_budget_categories_parent ON budget_categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_budget_categories_type ON budget_categories(category_type);
 
 -- Budgets
 CREATE TABLE budgets (
@@ -48,12 +48,12 @@ CREATE TABLE budgets (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_budgets_organization ON budgets(organization_id);
-CREATE INDEX idx_budgets_project ON budgets(project_id);
-CREATE INDEX idx_budgets_event ON budgets(event_id);
-CREATE INDEX idx_budgets_department ON budgets(department_id);
-CREATE INDEX idx_budgets_period ON budgets(start_date, end_date);
-CREATE INDEX idx_budgets_status ON budgets(status);
+CREATE INDEX IF NOT EXISTS idx_budgets_organization ON budgets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_budgets_project ON budgets(project_id);
+CREATE INDEX IF NOT EXISTS idx_budgets_event ON budgets(event_id);
+CREATE INDEX IF NOT EXISTS idx_budgets_department ON budgets(department_id);
+CREATE INDEX IF NOT EXISTS idx_budgets_period ON budgets(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_budgets_status ON budgets(status);
 
 -- Budget Line Items
 CREATE TABLE budget_line_items (
@@ -70,8 +70,8 @@ CREATE TABLE budget_line_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_budget_line_items_budget ON budget_line_items(budget_id);
-CREATE INDEX idx_budget_line_items_category ON budget_line_items(category_id);
+CREATE INDEX IF NOT EXISTS idx_budget_line_items_budget ON budget_line_items(budget_id);
+CREATE INDEX IF NOT EXISTS idx_budget_line_items_category ON budget_line_items(category_id);
 
 -- Invoices
 CREATE TABLE invoices (
@@ -108,14 +108,14 @@ CREATE TABLE invoices (
     UNIQUE(organization_id, invoice_number)
 );
 
-CREATE INDEX idx_invoices_organization ON invoices(organization_id);
-CREATE INDEX idx_invoices_number ON invoices(invoice_number);
-CREATE INDEX idx_invoices_direction ON invoices(direction);
-CREATE INDEX idx_invoices_status ON invoices(status);
-CREATE INDEX idx_invoices_project ON invoices(project_id);
-CREATE INDEX idx_invoices_event ON invoices(event_id);
-CREATE INDEX idx_invoices_due_date ON invoices(due_date);
-CREATE INDEX idx_invoices_overdue ON invoices(organization_id, due_date, status) 
+CREATE INDEX IF NOT EXISTS idx_invoices_organization ON invoices(organization_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_number ON invoices(invoice_number);
+CREATE INDEX IF NOT EXISTS idx_invoices_direction ON invoices(direction);
+CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices(status);
+CREATE INDEX IF NOT EXISTS idx_invoices_project ON invoices(project_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_event ON invoices(event_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_due_date ON invoices(due_date);
+CREATE INDEX IF NOT EXISTS idx_invoices_overdue ON invoices(organization_id, due_date, status) 
     WHERE status NOT IN ('paid', 'cancelled');
 
 -- Invoice Line Items
@@ -136,7 +136,7 @@ CREATE TABLE invoice_line_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_invoice_line_items_invoice ON invoice_line_items(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_invoice_line_items_invoice ON invoice_line_items(invoice_id);
 
 -- Payments
 CREATE TABLE payments (
@@ -156,9 +156,9 @@ CREATE TABLE payments (
     UNIQUE(organization_id, payment_number)
 );
 
-CREATE INDEX idx_payments_organization ON payments(organization_id);
-CREATE INDEX idx_payments_invoice ON payments(invoice_id);
-CREATE INDEX idx_payments_date ON payments(payment_date);
+CREATE INDEX IF NOT EXISTS idx_payments_organization ON payments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_payments_invoice ON payments(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_payments_date ON payments(payment_date);
 
 -- Expenses
 CREATE TABLE expenses (
@@ -193,12 +193,12 @@ CREATE TABLE expenses (
     UNIQUE(organization_id, expense_number)
 );
 
-CREATE INDEX idx_expenses_organization ON expenses(organization_id);
-CREATE INDEX idx_expenses_user ON expenses(user_id);
-CREATE INDEX idx_expenses_project ON expenses(project_id);
-CREATE INDEX idx_expenses_event ON expenses(event_id);
-CREATE INDEX idx_expenses_status ON expenses(status);
-CREATE INDEX idx_expenses_date ON expenses(expense_date);
+CREATE INDEX IF NOT EXISTS idx_expenses_organization ON expenses(organization_id);
+CREATE INDEX IF NOT EXISTS idx_expenses_user ON expenses(user_id);
+CREATE INDEX IF NOT EXISTS idx_expenses_project ON expenses(project_id);
+CREATE INDEX IF NOT EXISTS idx_expenses_event ON expenses(event_id);
+CREATE INDEX IF NOT EXISTS idx_expenses_status ON expenses(status);
+CREATE INDEX IF NOT EXISTS idx_expenses_date ON expenses(expense_date);
 
 -- Purchase Requisitions
 CREATE TABLE purchase_requisitions (
@@ -228,10 +228,10 @@ CREATE TABLE purchase_requisitions (
     UNIQUE(organization_id, requisition_number)
 );
 
-CREATE INDEX idx_purchase_requisitions_organization ON purchase_requisitions(organization_id);
-CREATE INDEX idx_purchase_requisitions_project ON purchase_requisitions(project_id);
-CREATE INDEX idx_purchase_requisitions_status ON purchase_requisitions(status);
-CREATE INDEX idx_purchase_requisitions_requested_by ON purchase_requisitions(requested_by);
+CREATE INDEX IF NOT EXISTS idx_purchase_requisitions_organization ON purchase_requisitions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_requisitions_project ON purchase_requisitions(project_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_requisitions_status ON purchase_requisitions(status);
+CREATE INDEX IF NOT EXISTS idx_purchase_requisitions_requested_by ON purchase_requisitions(requested_by);
 
 -- Purchase Requisition Items
 CREATE TABLE purchase_requisition_items (
@@ -249,7 +249,7 @@ CREATE TABLE purchase_requisition_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_purchase_requisition_items_requisition ON purchase_requisition_items(requisition_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_requisition_items_requisition ON purchase_requisition_items(requisition_id);
 
 -- Purchase Orders
 CREATE TABLE purchase_orders (
@@ -280,10 +280,10 @@ CREATE TABLE purchase_orders (
     UNIQUE(organization_id, po_number)
 );
 
-CREATE INDEX idx_purchase_orders_organization ON purchase_orders(organization_id);
-CREATE INDEX idx_purchase_orders_vendor ON purchase_orders(vendor_id);
-CREATE INDEX idx_purchase_orders_project ON purchase_orders(project_id);
-CREATE INDEX idx_purchase_orders_status ON purchase_orders(status);
+CREATE INDEX IF NOT EXISTS idx_purchase_orders_organization ON purchase_orders(organization_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_orders_vendor ON purchase_orders(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_orders_project ON purchase_orders(project_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_orders_status ON purchase_orders(status);
 
 -- Purchase Order Items
 CREATE TABLE purchase_order_items (
@@ -303,7 +303,7 @@ CREATE TABLE purchase_order_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_purchase_order_items_po ON purchase_order_items(purchase_order_id);
+CREATE INDEX IF NOT EXISTS idx_purchase_order_items_po ON purchase_order_items(purchase_order_id);
 
 -- Contracts
 CREATE TABLE contracts (
@@ -339,10 +339,10 @@ CREATE TABLE contracts (
     UNIQUE(organization_id, contract_number)
 );
 
-CREATE INDEX idx_contracts_organization ON contracts(organization_id);
-CREATE INDEX idx_contracts_type ON contracts(contract_type);
-CREATE INDEX idx_contracts_status ON contracts(status);
-CREATE INDEX idx_contracts_counterparty ON contracts(counterparty_type, counterparty_id);
-CREATE INDEX idx_contracts_dates ON contracts(start_date, end_date);
-CREATE INDEX idx_contracts_expiring ON contracts(organization_id, end_date, status) 
+CREATE INDEX IF NOT EXISTS idx_contracts_organization ON contracts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_contracts_type ON contracts(contract_type);
+CREATE INDEX IF NOT EXISTS idx_contracts_status ON contracts(status);
+CREATE INDEX IF NOT EXISTS idx_contracts_counterparty ON contracts(counterparty_type, counterparty_id);
+CREATE INDEX IF NOT EXISTS idx_contracts_dates ON contracts(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_contracts_expiring ON contracts(organization_id, end_date, status) 
     WHERE status = 'active' AND end_date IS NOT NULL;

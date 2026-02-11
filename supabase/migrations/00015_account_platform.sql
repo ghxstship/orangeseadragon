@@ -39,8 +39,8 @@ CREATE TABLE subscription_plans (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_subscription_plans_tier ON subscription_plans(tier);
-CREATE INDEX idx_subscription_plans_active ON subscription_plans(is_active, is_public);
+CREATE INDEX IF NOT EXISTS idx_subscription_plans_tier ON subscription_plans(tier);
+CREATE INDEX IF NOT EXISTS idx_subscription_plans_active ON subscription_plans(is_active, is_public);
 
 -- Organization Subscriptions
 CREATE TABLE organization_subscriptions (
@@ -62,9 +62,9 @@ CREATE TABLE organization_subscriptions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_organization_subscriptions_organization ON organization_subscriptions(organization_id);
-CREATE INDEX idx_organization_subscriptions_plan ON organization_subscriptions(plan_id);
-CREATE INDEX idx_organization_subscriptions_status ON organization_subscriptions(status);
+CREATE INDEX IF NOT EXISTS idx_organization_subscriptions_organization ON organization_subscriptions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_organization_subscriptions_plan ON organization_subscriptions(plan_id);
+CREATE INDEX IF NOT EXISTS idx_organization_subscriptions_status ON organization_subscriptions(status);
 
 -- Payment Methods
 CREATE TABLE payment_methods (
@@ -85,8 +85,8 @@ CREATE TABLE payment_methods (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_payment_methods_organization ON payment_methods(organization_id);
-CREATE INDEX idx_payment_methods_default ON payment_methods(organization_id, is_default) WHERE is_default = TRUE;
+CREATE INDEX IF NOT EXISTS idx_payment_methods_organization ON payment_methods(organization_id);
+CREATE INDEX IF NOT EXISTS idx_payment_methods_default ON payment_methods(organization_id, is_default) WHERE is_default = TRUE;
 
 -- Billing Invoices
 CREATE TABLE billing_invoices (
@@ -113,9 +113,9 @@ CREATE TABLE billing_invoices (
     UNIQUE(organization_id, invoice_number)
 );
 
-CREATE INDEX idx_billing_invoices_organization ON billing_invoices(organization_id);
-CREATE INDEX idx_billing_invoices_subscription ON billing_invoices(subscription_id);
-CREATE INDEX idx_billing_invoices_status ON billing_invoices(status);
+CREATE INDEX IF NOT EXISTS idx_billing_invoices_organization ON billing_invoices(organization_id);
+CREATE INDEX IF NOT EXISTS idx_billing_invoices_subscription ON billing_invoices(subscription_id);
+CREATE INDEX IF NOT EXISTS idx_billing_invoices_status ON billing_invoices(status);
 
 -- Billing Invoice Items
 CREATE TABLE billing_invoice_items (
@@ -131,7 +131,7 @@ CREATE TABLE billing_invoice_items (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_billing_invoice_items_invoice ON billing_invoice_items(invoice_id);
+CREATE INDEX IF NOT EXISTS idx_billing_invoice_items_invoice ON billing_invoice_items(invoice_id);
 
 -- Usage Records
 CREATE TABLE usage_records (
@@ -146,9 +146,9 @@ CREATE TABLE usage_records (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_usage_records_organization ON usage_records(organization_id);
-CREATE INDEX idx_usage_records_metric ON usage_records(metric_type);
-CREATE INDEX idx_usage_records_period ON usage_records(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_usage_records_organization ON usage_records(organization_id);
+CREATE INDEX IF NOT EXISTS idx_usage_records_metric ON usage_records(metric_type);
+CREATE INDEX IF NOT EXISTS idx_usage_records_period ON usage_records(period_start, period_end);
 
 -- Usage Limits
 CREATE TABLE usage_limits (
@@ -167,7 +167,7 @@ CREATE TABLE usage_limits (
     UNIQUE(organization_id, metric_type)
 );
 
-CREATE INDEX idx_usage_limits_organization ON usage_limits(organization_id);
+CREATE INDEX IF NOT EXISTS idx_usage_limits_organization ON usage_limits(organization_id);
 
 -- Credits & Coupons
 CREATE TABLE organization_credits (
@@ -183,8 +183,8 @@ CREATE TABLE organization_credits (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_organization_credits_organization ON organization_credits(organization_id);
-CREATE INDEX idx_organization_credits_expires ON organization_credits(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_organization_credits_organization ON organization_credits(organization_id);
+CREATE INDEX IF NOT EXISTS idx_organization_credits_expires ON organization_credits(expires_at) WHERE expires_at IS NOT NULL;
 
 -- ============================================================================
 -- PLATFORM CONFIGURATION
@@ -206,7 +206,7 @@ CREATE TABLE feature_flags (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_feature_flags_enabled ON feature_flags(is_enabled);
+CREATE INDEX IF NOT EXISTS idx_feature_flags_enabled ON feature_flags(is_enabled);
 
 -- Organization Feature Overrides
 CREATE TABLE organization_feature_overrides (
@@ -220,7 +220,7 @@ CREATE TABLE organization_feature_overrides (
     UNIQUE(organization_id, feature_flag_id)
 );
 
-CREATE INDEX idx_organization_feature_overrides_organization ON organization_feature_overrides(organization_id);
+CREATE INDEX IF NOT EXISTS idx_organization_feature_overrides_organization ON organization_feature_overrides(organization_id);
 
 -- API Keys
 CREATE TABLE api_keys (
@@ -240,9 +240,9 @@ CREATE TABLE api_keys (
     revoked_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_api_keys_organization ON api_keys(organization_id);
-CREATE INDEX idx_api_keys_prefix ON api_keys(key_prefix);
-CREATE INDEX idx_api_keys_status ON api_keys(status);
+CREATE INDEX IF NOT EXISTS idx_api_keys_organization ON api_keys(organization_id);
+CREATE INDEX IF NOT EXISTS idx_api_keys_prefix ON api_keys(key_prefix);
+CREATE INDEX IF NOT EXISTS idx_api_keys_status ON api_keys(status);
 
 -- API Key Usage
 CREATE TABLE api_key_usage (
@@ -257,8 +257,8 @@ CREATE TABLE api_key_usage (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_api_key_usage_key ON api_key_usage(api_key_id);
-CREATE INDEX idx_api_key_usage_created ON api_key_usage(created_at);
+CREATE INDEX IF NOT EXISTS idx_api_key_usage_key ON api_key_usage(api_key_id);
+CREATE INDEX IF NOT EXISTS idx_api_key_usage_created ON api_key_usage(created_at);
 
 -- Webhooks
 CREATE TABLE webhooks (
@@ -281,9 +281,9 @@ CREATE TABLE webhooks (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_webhooks_organization ON webhooks(organization_id);
-CREATE INDEX idx_webhooks_status ON webhooks(status);
-CREATE INDEX idx_webhooks_events ON webhooks USING GIN(events);
+CREATE INDEX IF NOT EXISTS idx_webhooks_organization ON webhooks(organization_id);
+CREATE INDEX IF NOT EXISTS idx_webhooks_status ON webhooks(status);
+CREATE INDEX IF NOT EXISTS idx_webhooks_events ON webhooks USING GIN(events);
 
 -- Webhook Deliveries
 CREATE TABLE webhook_deliveries (
@@ -303,9 +303,9 @@ CREATE TABLE webhook_deliveries (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_webhook_deliveries_webhook ON webhook_deliveries(webhook_id);
-CREATE INDEX idx_webhook_deliveries_status ON webhook_deliveries(status);
-CREATE INDEX idx_webhook_deliveries_retry ON webhook_deliveries(next_retry_at) WHERE status = 'retrying';
+CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_webhook ON webhook_deliveries(webhook_id);
+CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_status ON webhook_deliveries(status);
+CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_retry ON webhook_deliveries(next_retry_at) WHERE status = 'retrying';
 
 -- Custom Domains
 CREATE TABLE custom_domains (
@@ -324,8 +324,8 @@ CREATE TABLE custom_domains (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_custom_domains_organization ON custom_domains(organization_id);
-CREATE INDEX idx_custom_domains_domain ON custom_domains(domain);
+CREATE INDEX IF NOT EXISTS idx_custom_domains_organization ON custom_domains(organization_id);
+CREATE INDEX IF NOT EXISTS idx_custom_domains_domain ON custom_domains(domain);
 
 -- OAuth Applications
 CREATE TABLE oauth_applications (
@@ -347,8 +347,8 @@ CREATE TABLE oauth_applications (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_oauth_applications_organization ON oauth_applications(organization_id);
-CREATE INDEX idx_oauth_applications_client_id ON oauth_applications(client_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_applications_organization ON oauth_applications(organization_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_applications_client_id ON oauth_applications(client_id);
 
 -- OAuth Authorizations
 CREATE TABLE oauth_authorizations (
@@ -361,8 +361,8 @@ CREATE TABLE oauth_authorizations (
     UNIQUE(application_id, user_id)
 );
 
-CREATE INDEX idx_oauth_authorizations_application ON oauth_authorizations(application_id);
-CREATE INDEX idx_oauth_authorizations_user ON oauth_authorizations(user_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_authorizations_application ON oauth_authorizations(application_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_authorizations_user ON oauth_authorizations(user_id);
 
 -- OAuth Tokens
 CREATE TABLE oauth_tokens (
@@ -376,8 +376,8 @@ CREATE TABLE oauth_tokens (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_oauth_tokens_authorization ON oauth_tokens(authorization_id);
-CREATE INDEX idx_oauth_tokens_expires ON oauth_tokens(expires_at);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_authorization ON oauth_tokens(authorization_id);
+CREATE INDEX IF NOT EXISTS idx_oauth_tokens_expires ON oauth_tokens(expires_at);
 
 -- ============================================================================
 -- SUPPORT & HELP
@@ -407,11 +407,11 @@ CREATE TABLE support_tickets (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_support_tickets_organization ON support_tickets(organization_id);
-CREATE INDEX idx_support_tickets_user ON support_tickets(user_id);
-CREATE INDEX idx_support_tickets_status ON support_tickets(status);
-CREATE INDEX idx_support_tickets_priority ON support_tickets(priority);
-CREATE INDEX idx_support_tickets_assigned ON support_tickets(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_organization ON support_tickets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_user ON support_tickets(user_id);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_priority ON support_tickets(priority);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_assigned ON support_tickets(assigned_to);
 
 -- Ticket Comments
 CREATE TABLE ticket_comments (
@@ -426,8 +426,8 @@ CREATE TABLE ticket_comments (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_ticket_comments_ticket ON ticket_comments(ticket_id);
-CREATE INDEX idx_ticket_comments_user ON ticket_comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_comments_ticket ON ticket_comments(ticket_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_comments_user ON ticket_comments(user_id);
 
 -- Knowledge Base Categories
 CREATE TABLE kb_categories (
@@ -443,7 +443,7 @@ CREATE TABLE kb_categories (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_kb_categories_parent ON kb_categories(parent_id);
+CREATE INDEX IF NOT EXISTS idx_kb_categories_parent ON kb_categories(parent_id);
 
 -- Knowledge Base Articles
 CREATE TABLE kb_articles (
@@ -469,11 +469,11 @@ CREATE TABLE kb_articles (
     last_edited_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_kb_articles_category ON kb_articles(category_id);
-CREATE INDEX idx_kb_articles_status ON kb_articles(status);
-CREATE INDEX idx_kb_articles_featured ON kb_articles(is_featured) WHERE is_featured = TRUE;
-CREATE INDEX idx_kb_articles_tags ON kb_articles USING GIN(tags);
-CREATE INDEX idx_kb_articles_search ON kb_articles USING GIN(to_tsvector('english', title || ' ' || COALESCE(content, '')));
+CREATE INDEX IF NOT EXISTS idx_kb_articles_category ON kb_articles(category_id);
+CREATE INDEX IF NOT EXISTS idx_kb_articles_status ON kb_articles(status);
+CREATE INDEX IF NOT EXISTS idx_kb_articles_featured ON kb_articles(is_featured) WHERE is_featured = TRUE;
+CREATE INDEX IF NOT EXISTS idx_kb_articles_tags ON kb_articles USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_kb_articles_search ON kb_articles USING GIN(to_tsvector('english', title || ' ' || COALESCE(content, '')));
 
 -- Article Feedback
 CREATE TABLE article_feedback (
@@ -485,7 +485,7 @@ CREATE TABLE article_feedback (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_article_feedback_article ON article_feedback(article_id);
+CREATE INDEX IF NOT EXISTS idx_article_feedback_article ON article_feedback(article_id);
 
 -- System Announcements
 CREATE TABLE system_announcements (
@@ -506,8 +506,8 @@ CREATE TABLE system_announcements (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_system_announcements_active ON system_announcements(starts_at, ends_at);
-CREATE INDEX idx_system_announcements_type ON system_announcements(announcement_type);
+CREATE INDEX IF NOT EXISTS idx_system_announcements_active ON system_announcements(starts_at, ends_at);
+CREATE INDEX IF NOT EXISTS idx_system_announcements_type ON system_announcements(announcement_type);
 
 -- Announcement Dismissals
 CREATE TABLE announcement_dismissals (
@@ -518,7 +518,7 @@ CREATE TABLE announcement_dismissals (
     UNIQUE(announcement_id, user_id)
 );
 
-CREATE INDEX idx_announcement_dismissals_user ON announcement_dismissals(user_id);
+CREATE INDEX IF NOT EXISTS idx_announcement_dismissals_user ON announcement_dismissals(user_id);
 
 -- ============================================================================
 -- USER PREFERENCES & SETTINGS
@@ -543,7 +543,7 @@ CREATE TABLE user_preferences (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_user_preferences_user ON user_preferences(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_preferences_user ON user_preferences(user_id);
 
 -- User Sessions
 CREATE TABLE user_sessions (
@@ -560,9 +560,9 @@ CREATE TABLE user_sessions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_user_sessions_user ON user_sessions(user_id);
-CREATE INDEX idx_user_sessions_token ON user_sessions(session_token);
-CREATE INDEX idx_user_sessions_expires ON user_sessions(expires_at);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_user ON user_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(session_token);
+CREATE INDEX IF NOT EXISTS idx_user_sessions_expires ON user_sessions(expires_at);
 
 -- Login History
 CREATE TABLE login_history (
@@ -577,9 +577,9 @@ CREATE TABLE login_history (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_login_history_user ON login_history(user_id);
-CREATE INDEX idx_login_history_created ON login_history(created_at);
-CREATE INDEX idx_login_history_failed ON login_history(user_id, status) WHERE status = 'failed';
+CREATE INDEX IF NOT EXISTS idx_login_history_user ON login_history(user_id);
+CREATE INDEX IF NOT EXISTS idx_login_history_created ON login_history(created_at);
+CREATE INDEX IF NOT EXISTS idx_login_history_failed ON login_history(user_id, status) WHERE status = 'failed';
 
 -- User Activity Log
 CREATE TABLE user_activity_log (
@@ -595,8 +595,8 @@ CREATE TABLE user_activity_log (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_user_activity_log_user ON user_activity_log(user_id);
-CREATE INDEX idx_user_activity_log_organization ON user_activity_log(organization_id);
-CREATE INDEX idx_user_activity_log_type ON user_activity_log(activity_type);
-CREATE INDEX idx_user_activity_log_entity ON user_activity_log(entity_type, entity_id);
-CREATE INDEX idx_user_activity_log_created ON user_activity_log(created_at);
+CREATE INDEX IF NOT EXISTS idx_user_activity_log_user ON user_activity_log(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_activity_log_organization ON user_activity_log(organization_id);
+CREATE INDEX IF NOT EXISTS idx_user_activity_log_type ON user_activity_log(activity_type);
+CREATE INDEX IF NOT EXISTS idx_user_activity_log_entity ON user_activity_log(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_user_activity_log_created ON user_activity_log(created_at);

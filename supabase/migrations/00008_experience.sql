@@ -27,9 +27,9 @@ CREATE TABLE ticket_types (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_ticket_types_organization ON ticket_types(organization_id);
-CREATE INDEX idx_ticket_types_event ON ticket_types(event_id);
-CREATE INDEX idx_ticket_types_tier ON ticket_types(tier);
+CREATE INDEX IF NOT EXISTS idx_ticket_types_organization ON ticket_types(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_types_event ON ticket_types(event_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_types_tier ON ticket_types(tier);
 
 -- Ticket Orders
 CREATE TABLE ticket_orders (
@@ -59,10 +59,10 @@ CREATE TABLE ticket_orders (
     UNIQUE(organization_id, order_number)
 );
 
-CREATE INDEX idx_ticket_orders_organization ON ticket_orders(organization_id);
-CREATE INDEX idx_ticket_orders_event ON ticket_orders(event_id);
-CREATE INDEX idx_ticket_orders_email ON ticket_orders(customer_email);
-CREATE INDEX idx_ticket_orders_status ON ticket_orders(status);
+CREATE INDEX IF NOT EXISTS idx_ticket_orders_organization ON ticket_orders(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_orders_event ON ticket_orders(event_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_orders_email ON ticket_orders(customer_email);
+CREATE INDEX IF NOT EXISTS idx_ticket_orders_status ON ticket_orders(status);
 
 -- Tickets
 CREATE TABLE tickets (
@@ -90,13 +90,13 @@ CREATE TABLE tickets (
     UNIQUE(organization_id, ticket_number)
 );
 
-CREATE INDEX idx_tickets_organization ON tickets(organization_id);
-CREATE INDEX idx_tickets_event ON tickets(event_id);
-CREATE INDEX idx_tickets_type ON tickets(ticket_type_id);
-CREATE INDEX idx_tickets_order ON tickets(order_id);
-CREATE INDEX idx_tickets_status ON tickets(status);
-CREATE INDEX idx_tickets_barcode ON tickets(barcode);
-CREATE INDEX idx_tickets_holder ON tickets(holder_email);
+CREATE INDEX IF NOT EXISTS idx_tickets_organization ON tickets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_event ON tickets(event_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_type ON tickets(ticket_type_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_order ON tickets(order_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
+CREATE INDEX IF NOT EXISTS idx_tickets_barcode ON tickets(barcode);
+CREATE INDEX IF NOT EXISTS idx_tickets_holder ON tickets(holder_email);
 
 -- ============================================================================
 -- GUEST LIST TABLES
@@ -121,10 +121,10 @@ CREATE TABLE guest_lists (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_guest_lists_organization ON guest_lists(organization_id);
-CREATE INDEX idx_guest_lists_event ON guest_lists(event_id);
-CREATE INDEX idx_guest_lists_type ON guest_lists(list_type);
-CREATE INDEX idx_guest_lists_status ON guest_lists(status);
+CREATE INDEX IF NOT EXISTS idx_guest_lists_organization ON guest_lists(organization_id);
+CREATE INDEX IF NOT EXISTS idx_guest_lists_event ON guest_lists(event_id);
+CREATE INDEX IF NOT EXISTS idx_guest_lists_type ON guest_lists(list_type);
+CREATE INDEX IF NOT EXISTS idx_guest_lists_status ON guest_lists(status);
 
 -- Guest List Entries
 CREATE TABLE guest_list_entries (
@@ -149,9 +149,9 @@ CREATE TABLE guest_list_entries (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_guest_list_entries_list ON guest_list_entries(guest_list_id);
-CREATE INDEX idx_guest_list_entries_email ON guest_list_entries(email);
-CREATE INDEX idx_guest_list_entries_status ON guest_list_entries(status);
+CREATE INDEX IF NOT EXISTS idx_guest_list_entries_list ON guest_list_entries(guest_list_id);
+CREATE INDEX IF NOT EXISTS idx_guest_list_entries_email ON guest_list_entries(email);
+CREATE INDEX IF NOT EXISTS idx_guest_list_entries_status ON guest_list_entries(status);
 
 -- ============================================================================
 -- HOSPITALITY TABLES
@@ -177,11 +177,11 @@ CREATE TABLE hospitality_requests (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_hospitality_requests_organization ON hospitality_requests(organization_id);
-CREATE INDEX idx_hospitality_requests_event ON hospitality_requests(event_id);
-CREATE INDEX idx_hospitality_requests_booking ON hospitality_requests(booking_id);
-CREATE INDEX idx_hospitality_requests_type ON hospitality_requests(request_type);
-CREATE INDEX idx_hospitality_requests_status ON hospitality_requests(status);
+CREATE INDEX IF NOT EXISTS idx_hospitality_requests_organization ON hospitality_requests(organization_id);
+CREATE INDEX IF NOT EXISTS idx_hospitality_requests_event ON hospitality_requests(event_id);
+CREATE INDEX IF NOT EXISTS idx_hospitality_requests_booking ON hospitality_requests(booking_id);
+CREATE INDEX IF NOT EXISTS idx_hospitality_requests_type ON hospitality_requests(request_type);
+CREATE INDEX IF NOT EXISTS idx_hospitality_requests_status ON hospitality_requests(status);
 
 -- Accommodations
 CREATE TABLE accommodations (
@@ -213,11 +213,11 @@ CREATE TABLE accommodations (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_accommodations_organization ON accommodations(organization_id);
-CREATE INDEX idx_accommodations_event ON accommodations(event_id);
-CREATE INDEX idx_accommodations_booking ON accommodations(booking_id);
-CREATE INDEX idx_accommodations_dates ON accommodations(check_in_date, check_out_date);
-CREATE INDEX idx_accommodations_status ON accommodations(status);
+CREATE INDEX IF NOT EXISTS idx_accommodations_organization ON accommodations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_accommodations_event ON accommodations(event_id);
+CREATE INDEX IF NOT EXISTS idx_accommodations_booking ON accommodations(booking_id);
+CREATE INDEX IF NOT EXISTS idx_accommodations_dates ON accommodations(check_in_date, check_out_date);
+CREATE INDEX IF NOT EXISTS idx_accommodations_status ON accommodations(status);
 
 -- Transportation
 CREATE TABLE transportation (
@@ -250,12 +250,12 @@ CREATE TABLE transportation (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_transportation_organization ON transportation(organization_id);
-CREATE INDEX idx_transportation_event ON transportation(event_id);
-CREATE INDEX idx_transportation_booking ON transportation(booking_id);
-CREATE INDEX idx_transportation_type ON transportation(transport_type);
-CREATE INDEX idx_transportation_date ON transportation(departure_date);
-CREATE INDEX idx_transportation_status ON transportation(status);
+CREATE INDEX IF NOT EXISTS idx_transportation_organization ON transportation(organization_id);
+CREATE INDEX IF NOT EXISTS idx_transportation_event ON transportation(event_id);
+CREATE INDEX IF NOT EXISTS idx_transportation_booking ON transportation(booking_id);
+CREATE INDEX IF NOT EXISTS idx_transportation_type ON transportation(transport_type);
+CREATE INDEX IF NOT EXISTS idx_transportation_date ON transportation(departure_date);
+CREATE INDEX IF NOT EXISTS idx_transportation_status ON transportation(status);
 
 -- Catering Orders
 CREATE TABLE catering_orders (
@@ -283,12 +283,12 @@ CREATE TABLE catering_orders (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_catering_orders_organization ON catering_orders(organization_id);
-CREATE INDEX idx_catering_orders_event ON catering_orders(event_id);
-CREATE INDEX idx_catering_orders_booking ON catering_orders(booking_id);
-CREATE INDEX idx_catering_orders_type ON catering_orders(order_type);
-CREATE INDEX idx_catering_orders_status ON catering_orders(status);
-CREATE INDEX idx_catering_orders_delivery ON catering_orders(delivery_time);
+CREATE INDEX IF NOT EXISTS idx_catering_orders_organization ON catering_orders(organization_id);
+CREATE INDEX IF NOT EXISTS idx_catering_orders_event ON catering_orders(event_id);
+CREATE INDEX IF NOT EXISTS idx_catering_orders_booking ON catering_orders(booking_id);
+CREATE INDEX IF NOT EXISTS idx_catering_orders_type ON catering_orders(order_type);
+CREATE INDEX IF NOT EXISTS idx_catering_orders_status ON catering_orders(status);
+CREATE INDEX IF NOT EXISTS idx_catering_orders_delivery ON catering_orders(delivery_time);
 
 -- ============================================================================
 -- COMMUNITY TABLES
@@ -319,10 +319,10 @@ CREATE TABLE community_members (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_community_members_organization ON community_members(organization_id);
-CREATE INDEX idx_community_members_user ON community_members(user_id);
-CREATE INDEX idx_community_members_type ON community_members(member_type);
-CREATE INDEX idx_community_members_interests ON community_members USING GIN(interests);
+CREATE INDEX IF NOT EXISTS idx_community_members_organization ON community_members(organization_id);
+CREATE INDEX IF NOT EXISTS idx_community_members_user ON community_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_community_members_type ON community_members(member_type);
+CREATE INDEX IF NOT EXISTS idx_community_members_interests ON community_members USING GIN(interests);
 
 -- Community Posts
 CREATE TABLE community_posts (
@@ -346,12 +346,12 @@ CREATE TABLE community_posts (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_community_posts_organization ON community_posts(organization_id);
-CREATE INDEX idx_community_posts_author ON community_posts(author_id);
-CREATE INDEX idx_community_posts_type ON community_posts(post_type);
-CREATE INDEX idx_community_posts_visibility ON community_posts(visibility);
-CREATE INDEX idx_community_posts_published ON community_posts(published_at);
-CREATE INDEX idx_community_posts_featured ON community_posts(organization_id, is_featured) WHERE is_featured = TRUE;
+CREATE INDEX IF NOT EXISTS idx_community_posts_organization ON community_posts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_community_posts_author ON community_posts(author_id);
+CREATE INDEX IF NOT EXISTS idx_community_posts_type ON community_posts(post_type);
+CREATE INDEX IF NOT EXISTS idx_community_posts_visibility ON community_posts(visibility);
+CREATE INDEX IF NOT EXISTS idx_community_posts_published ON community_posts(published_at);
+CREATE INDEX IF NOT EXISTS idx_community_posts_featured ON community_posts(organization_id, is_featured) WHERE is_featured = TRUE;
 
 -- Community Comments
 CREATE TABLE community_comments (
@@ -366,9 +366,9 @@ CREATE TABLE community_comments (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_community_comments_post ON community_comments(post_id);
-CREATE INDEX idx_community_comments_parent ON community_comments(parent_id);
-CREATE INDEX idx_community_comments_author ON community_comments(author_id);
+CREATE INDEX IF NOT EXISTS idx_community_comments_post ON community_comments(post_id);
+CREATE INDEX IF NOT EXISTS idx_community_comments_parent ON community_comments(parent_id);
+CREATE INDEX IF NOT EXISTS idx_community_comments_author ON community_comments(author_id);
 
 -- Community Follows
 CREATE TABLE community_follows (
@@ -379,5 +379,5 @@ CREATE TABLE community_follows (
     UNIQUE(follower_id, following_id)
 );
 
-CREATE INDEX idx_community_follows_follower ON community_follows(follower_id);
-CREATE INDEX idx_community_follows_following ON community_follows(following_id);
+CREATE INDEX IF NOT EXISTS idx_community_follows_follower ON community_follows(follower_id);
+CREATE INDEX IF NOT EXISTS idx_community_follows_following ON community_follows(following_id);

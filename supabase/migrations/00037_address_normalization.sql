@@ -44,11 +44,11 @@ CREATE TABLE IF NOT EXISTS addresses (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_addresses_org ON addresses(organization_id);
-CREATE INDEX idx_addresses_type ON addresses(address_type);
-CREATE INDEX idx_addresses_city ON addresses(city);
-CREATE INDEX idx_addresses_country ON addresses(country_code);
-CREATE INDEX idx_addresses_geo ON addresses(latitude, longitude) WHERE latitude IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_addresses_org ON addresses(organization_id);
+CREATE INDEX IF NOT EXISTS idx_addresses_type ON addresses(address_type);
+CREATE INDEX IF NOT EXISTS idx_addresses_city ON addresses(city);
+CREATE INDEX IF NOT EXISTS idx_addresses_country ON addresses(country_code);
+CREATE INDEX IF NOT EXISTS idx_addresses_geo ON addresses(latitude, longitude) WHERE latitude IS NOT NULL;
 
 -- ============================================================================
 -- STEP 2: Add address_id columns to tables with inline addresses
@@ -61,8 +61,8 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'companies' AND column_name = 'address_id'
     ) THEN
-        ALTER TABLE companies ADD COLUMN address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
-        CREATE INDEX idx_companies_address ON companies(address_id);
+        ALTER TABLE companies ADD COLUMN IF NOT EXISTS address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_companies_address ON companies(address_id);
     END IF;
 END $$;
 
@@ -73,8 +73,8 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'contacts' AND column_name = 'address_id'
     ) THEN
-        ALTER TABLE contacts ADD COLUMN address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
-        CREATE INDEX idx_contacts_address ON contacts(address_id);
+        ALTER TABLE contacts ADD COLUMN IF NOT EXISTS address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_contacts_address ON contacts(address_id);
     END IF;
 END $$;
 
@@ -85,8 +85,8 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'venues' AND column_name = 'address_id'
     ) THEN
-        ALTER TABLE venues ADD COLUMN address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
-        CREATE INDEX idx_venues_address ON venues(address_id);
+        ALTER TABLE venues ADD COLUMN IF NOT EXISTS address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_venues_address ON venues(address_id);
     END IF;
 END $$;
 
@@ -97,8 +97,8 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'locations' AND column_name = 'address_id'
     ) THEN
-        ALTER TABLE locations ADD COLUMN address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
-        CREATE INDEX idx_locations_address ON locations(address_id);
+        ALTER TABLE locations ADD COLUMN IF NOT EXISTS address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_locations_address ON locations(address_id);
     END IF;
 END $$;
 
@@ -109,8 +109,8 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'events' AND column_name = 'address_id'
     ) THEN
-        ALTER TABLE events ADD COLUMN address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
-        CREATE INDEX idx_events_address ON events(address_id);
+        ALTER TABLE events ADD COLUMN IF NOT EXISTS address_id UUID REFERENCES addresses(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_events_address ON events(address_id);
     END IF;
 END $$;
 
@@ -248,6 +248,7 @@ FROM addresses;
 
 ALTER TABLE addresses ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view addresses in their organization" ON addresses;
 CREATE POLICY "Users can view addresses in their organization"
     ON addresses FOR SELECT
     USING (organization_id IN (
@@ -255,6 +256,7 @@ CREATE POLICY "Users can view addresses in their organization"
         WHERE user_id = auth.uid()
     ));
 
+DROP POLICY IF EXISTS "Users can create addresses in their organization" ON addresses;
 CREATE POLICY "Users can create addresses in their organization"
     ON addresses FOR INSERT
     WITH CHECK (organization_id IN (
@@ -262,6 +264,7 @@ CREATE POLICY "Users can create addresses in their organization"
         WHERE user_id = auth.uid()
     ));
 
+DROP POLICY IF EXISTS "Users can update addresses in their organization" ON addresses;
 CREATE POLICY "Users can update addresses in their organization"
     ON addresses FOR UPDATE
     USING (organization_id IN (
@@ -269,6 +272,7 @@ CREATE POLICY "Users can update addresses in their organization"
         WHERE user_id = auth.uid()
     ));
 
+DROP POLICY IF EXISTS "Users can delete addresses in their organization" ON addresses;
 CREATE POLICY "Users can delete addresses in their organization"
     ON addresses FOR DELETE
     USING (organization_id IN (
@@ -280,6 +284,7 @@ CREATE POLICY "Users can delete addresses in their organization"
 -- STEP 6: Trigger for updated_at
 -- ============================================================================
 
+DROP TRIGGER IF EXISTS set_addresses_updated_at ON addresses;
 CREATE TRIGGER set_addresses_updated_at
     BEFORE UPDATE ON addresses
     FOR EACH ROW

@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS conversations (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_conversations_participants ON conversations USING GIN (participant_ids);
-CREATE INDEX idx_conversations_last_message ON conversations(last_message_at DESC);
-CREATE INDEX idx_conversations_archived ON conversations(is_archived);
+CREATE INDEX IF NOT EXISTS idx_conversations_participants ON conversations USING GIN (participant_ids);
+CREATE INDEX IF NOT EXISTS idx_conversations_last_message ON conversations(last_message_at DESC);
+CREATE INDEX IF NOT EXISTS idx_conversations_archived ON conversations(is_archived);
 
 -- ============================================================================
 -- 2. MESSAGES TABLE (Real-time Messaging)
@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS messages (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_messages_conversation ON messages(conversation_id, created_at);
-CREATE INDEX idx_messages_sender ON messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_messages_conversation ON messages(conversation_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id);
 
 -- ============================================================================
 -- 3. REACTIONS TABLE (Emoji Reactions on Content)
@@ -58,54 +58,43 @@ CREATE TABLE IF NOT EXISTS reactions (
   UNIQUE(user_id, target_type, target_id, emoji)
 );
 
-CREATE INDEX idx_reactions_target ON reactions(target_type, target_id);
-CREATE INDEX idx_reactions_user ON reactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_reactions_target ON reactions(target_type, target_id);
+CREATE INDEX IF NOT EXISTS idx_reactions_user ON reactions(user_id);
 
 -- ============================================================================
 -- 4. DISCUSSION REPLIES TABLE (Threaded Discussions)
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS discussion_replies (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  discussion_id UUID NOT NULL REFERENCES discussions(id) ON DELETE CASCADE,
-  parent_reply_id UUID REFERENCES discussion_replies(id) ON DELETE CASCADE,
-  author_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
-  is_best_answer BOOLEAN DEFAULT FALSE,
-  reply_count INTEGER DEFAULT 0,
-  reaction_count INTEGER DEFAULT 0,
-  is_edited BOOLEAN DEFAULT FALSE,
-  edited_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing discussion_replies table (originally from 00014_network_community.sql)
+ALTER TABLE discussion_replies ADD COLUMN IF NOT EXISTS parent_reply_id UUID;
+ALTER TABLE discussion_replies ADD COLUMN IF NOT EXISTS is_best_answer BOOLEAN DEFAULT FALSE;
+ALTER TABLE discussion_replies ADD COLUMN IF NOT EXISTS reply_count INTEGER DEFAULT 0;
+ALTER TABLE discussion_replies ADD COLUMN IF NOT EXISTS reaction_count INTEGER DEFAULT 0;
+ALTER TABLE discussion_replies ADD COLUMN IF NOT EXISTS is_edited BOOLEAN DEFAULT FALSE;
+ALTER TABLE discussion_replies ADD COLUMN IF NOT EXISTS edited_at TIMESTAMPTZ;
 
-CREATE INDEX idx_discussion_replies_discussion ON discussion_replies(discussion_id, created_at);
-CREATE INDEX idx_discussion_replies_parent ON discussion_replies(parent_reply_id);
-CREATE INDEX idx_discussion_replies_author ON discussion_replies(author_id);
-CREATE INDEX idx_discussion_replies_best ON discussion_replies(discussion_id) WHERE is_best_answer = TRUE;
+CREATE INDEX IF NOT EXISTS idx_discussion_replies_discussion ON discussion_replies(discussion_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_discussion_replies_parent ON discussion_replies(parent_reply_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_replies_author ON discussion_replies(author_id);
+CREATE INDEX IF NOT EXISTS idx_discussion_replies_best ON discussion_replies(discussion_id) WHERE is_best_answer = TRUE;
 
 -- ============================================================================
 -- 5. ACTIVITIES TABLE (Activity Feed)
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS activities (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  organization_id UUID REFERENCES organizations(id) ON DELETE CASCADE,
-  actor_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  action TEXT NOT NULL CHECK (action IN ('created', 'updated', 'joined', 'completed', 'commented', 'reacted', 'connected', 'shared', 'mentioned', 'achieved')),
-  target_type TEXT NOT NULL CHECK (target_type IN ('discussion', 'challenge', 'showcase', 'opportunity', 'connection', 'marketplace', 'profile', 'badge')),
-  target_id UUID NOT NULL,
-  target_title TEXT,
-  target_url TEXT,
-  metadata JSONB,
-  visibility TEXT DEFAULT 'connections' CHECK (visibility IN ('public', 'connections', 'private')),
-  reaction_count INTEGER DEFAULT 0,
-  comment_count INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing activities table (originally from 00006_crm_venues.sql)
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS actor_id UUID REFERENCES auth.users(id) ON DELETE CASCADE;
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS action TEXT CHECK (action IN ('created', 'updated', 'joined', 'completed', 'commented', 'reacted', 'connected', 'shared', 'mentioned', 'achieved'));
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS target_type TEXT CHECK (target_type IN ('discussion', 'challenge', 'showcase', 'opportunity', 'connection', 'marketplace', 'profile', 'badge'));
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS target_id UUID;
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS target_title TEXT;
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS target_url TEXT;
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS metadata JSONB;
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS visibility TEXT DEFAULT 'connections' CHECK (visibility IN ('public', 'connections', 'private'));
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS reaction_count INTEGER DEFAULT 0;
+ALTER TABLE activities ADD COLUMN IF NOT EXISTS comment_count INTEGER DEFAULT 0;
 
-CREATE INDEX idx_activities_actor ON activities(actor_id, created_at DESC);
-CREATE INDEX idx_activities_target ON activities(target_type, target_id);
-CREATE INDEX idx_activities_created ON activities(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activities_actor ON activities(actor_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_activities_target ON activities(target_type, target_id);
+CREATE INDEX IF NOT EXISTS idx_activities_created ON activities(created_at DESC);
 
 -- ============================================================================
 -- 6. USER FOLLOWS TABLE (Following Relationships)
@@ -120,8 +109,8 @@ CREATE TABLE IF NOT EXISTS user_follows (
   UNIQUE(follower_id, following_id, following_type)
 );
 
-CREATE INDEX idx_user_follows_follower ON user_follows(follower_id);
-CREATE INDEX idx_user_follows_following ON user_follows(following_type, following_id);
+CREATE INDEX IF NOT EXISTS idx_user_follows_follower ON user_follows(follower_id);
+CREATE INDEX IF NOT EXISTS idx_user_follows_following ON user_follows(following_type, following_id);
 
 -- ============================================================================
 -- 7. CHALLENGE PARTICIPANTS TABLE
@@ -143,9 +132,9 @@ CREATE TABLE IF NOT EXISTS challenge_participants (
   UNIQUE(challenge_id, user_id)
 );
 
-CREATE INDEX idx_challenge_participants_challenge ON challenge_participants(challenge_id);
-CREATE INDEX idx_challenge_participants_user ON challenge_participants(user_id);
-CREATE INDEX idx_challenge_participants_score ON challenge_participants(challenge_id, score DESC);
+CREATE INDEX IF NOT EXISTS idx_challenge_participants_challenge ON challenge_participants(challenge_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_participants_user ON challenge_participants(user_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_participants_score ON challenge_participants(challenge_id, score DESC);
 
 -- ============================================================================
 -- 8. CHALLENGE MILESTONES TABLE
@@ -164,33 +153,23 @@ CREATE TABLE IF NOT EXISTS challenge_milestones (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_challenge_milestones_challenge ON challenge_milestones(challenge_id, "order");
+CREATE INDEX IF NOT EXISTS idx_challenge_milestones_challenge ON challenge_milestones(challenge_id, "order");
 
 -- ============================================================================
 -- 9. CHALLENGE SUBMISSIONS TABLE
 -- ============================================================================
-CREATE TABLE IF NOT EXISTS challenge_submissions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  challenge_id UUID NOT NULL REFERENCES challenges(id) ON DELETE CASCADE,
-  participant_id UUID NOT NULL REFERENCES challenge_participants(id) ON DELETE CASCADE,
-  milestone_id UUID REFERENCES challenge_milestones(id) ON DELETE SET NULL,
-  title TEXT NOT NULL,
-  description TEXT,
-  attachments JSONB,
-  submission_type TEXT DEFAULT 'milestone' CHECK (submission_type IN ('milestone', 'final', 'update')),
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('draft', 'pending', 'reviewed', 'approved', 'rejected')),
-  score INTEGER,
-  feedback TEXT,
-  reviewer_id UUID REFERENCES auth.users(id),
-  submitted_at TIMESTAMPTZ DEFAULT NOW(),
-  reviewed_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing challenge_submissions table (originally from 00014_network_community.sql)
+ALTER TABLE challenge_submissions ADD COLUMN IF NOT EXISTS participant_id UUID;
+ALTER TABLE challenge_submissions ADD COLUMN IF NOT EXISTS milestone_id UUID;
+ALTER TABLE challenge_submissions ADD COLUMN IF NOT EXISTS attachments JSONB;
+ALTER TABLE challenge_submissions ADD COLUMN IF NOT EXISTS submission_type TEXT DEFAULT 'milestone' CHECK (submission_type IN ('milestone', 'final', 'update'));
+ALTER TABLE challenge_submissions ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending' CHECK (status IN ('draft', 'pending', 'reviewed', 'approved', 'rejected'));
+ALTER TABLE challenge_submissions ADD COLUMN IF NOT EXISTS reviewer_id UUID REFERENCES auth.users(id);
+ALTER TABLE challenge_submissions ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ;
 
-CREATE INDEX idx_challenge_submissions_challenge ON challenge_submissions(challenge_id);
-CREATE INDEX idx_challenge_submissions_participant ON challenge_submissions(participant_id);
-CREATE INDEX idx_challenge_submissions_status ON challenge_submissions(status);
+CREATE INDEX IF NOT EXISTS idx_challenge_submissions_challenge ON challenge_submissions(challenge_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_submissions_participant ON challenge_submissions(participant_id);
+CREATE INDEX IF NOT EXISTS idx_challenge_submissions_status ON challenge_submissions(status);
 
 -- ============================================================================
 -- 10. GAMIFICATION: USER POINTS TABLE
@@ -207,8 +186,8 @@ CREATE TABLE IF NOT EXISTS user_points (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_user_points_user ON user_points(user_id);
-CREATE INDEX idx_user_points_leaderboard ON user_points(lifetime_points DESC);
+CREATE INDEX IF NOT EXISTS idx_user_points_user ON user_points(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_points_leaderboard ON user_points(lifetime_points DESC);
 
 -- ============================================================================
 -- 11. GAMIFICATION: BADGES TABLE
@@ -228,8 +207,8 @@ CREATE TABLE IF NOT EXISTS badges (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_badges_category ON badges(category);
-CREATE INDEX idx_badges_active ON badges(is_active);
+CREATE INDEX IF NOT EXISTS idx_badges_category ON badges(category);
+CREATE INDEX IF NOT EXISTS idx_badges_active ON badges(is_active);
 
 -- ============================================================================
 -- 12. GAMIFICATION: USER BADGES TABLE
@@ -244,9 +223,9 @@ CREATE TABLE IF NOT EXISTS user_badges (
   UNIQUE(user_id, badge_id)
 );
 
-CREATE INDEX idx_user_badges_user ON user_badges(user_id);
-CREATE INDEX idx_user_badges_badge ON user_badges(badge_id);
-CREATE INDEX idx_user_badges_featured ON user_badges(user_id) WHERE is_featured = TRUE;
+CREATE INDEX IF NOT EXISTS idx_user_badges_user ON user_badges(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_badges_badge ON user_badges(badge_id);
+CREATE INDEX IF NOT EXISTS idx_user_badges_featured ON user_badges(user_id) WHERE is_featured = TRUE;
 
 -- ============================================================================
 -- 13. ALTER CONNECTIONS TABLE (Add Request Workflow Fields)
@@ -323,6 +302,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_reaction_count ON reactions;
 CREATE TRIGGER trigger_update_reaction_count
 AFTER INSERT OR DELETE ON reactions
 FOR EACH ROW EXECUTE FUNCTION update_reaction_count();

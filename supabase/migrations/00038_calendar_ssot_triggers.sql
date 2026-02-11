@@ -118,7 +118,7 @@ BEGIN
         SELECT 1 FROM pg_constraint 
         WHERE conname = 'calendar_events_org_external_id_unique'
     ) THEN
-        CREATE UNIQUE INDEX calendar_events_org_external_id_unique 
+        CREATE UNIQUE INDEX IF NOT EXISTS calendar_events_org_external_id_unique 
         ON calendar_events(organization_id, external_id) 
         WHERE external_id IS NOT NULL;
     END IF;

@@ -40,9 +40,9 @@ CREATE TABLE programs (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_programs_organization ON programs(organization_id);
-CREATE INDEX idx_programs_status ON programs(status);
-CREATE INDEX idx_programs_owner ON programs(owner_id);
+CREATE INDEX IF NOT EXISTS idx_programs_organization ON programs(organization_id);
+CREATE INDEX IF NOT EXISTS idx_programs_status ON programs(status);
+CREATE INDEX IF NOT EXISTS idx_programs_owner ON programs(owner_id);
 
 -- Program Projects (junction table)
 CREATE TABLE program_projects (
@@ -55,8 +55,8 @@ CREATE TABLE program_projects (
     UNIQUE(program_id, project_id)
 );
 
-CREATE INDEX idx_program_projects_program ON program_projects(program_id);
-CREATE INDEX idx_program_projects_project ON program_projects(project_id);
+CREATE INDEX IF NOT EXISTS idx_program_projects_program ON program_projects(program_id);
+CREATE INDEX IF NOT EXISTS idx_program_projects_project ON program_projects(project_id);
 
 -- Program Members
 CREATE TABLE program_members (
@@ -69,8 +69,8 @@ CREATE TABLE program_members (
     UNIQUE(program_id, user_id)
 );
 
-CREATE INDEX idx_program_members_program ON program_members(program_id);
-CREATE INDEX idx_program_members_user ON program_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_program_members_program ON program_members(program_id);
+CREATE INDEX IF NOT EXISTS idx_program_members_user ON program_members(user_id);
 
 -- Program Objectives
 CREATE TABLE program_objectives (
@@ -87,7 +87,7 @@ CREATE TABLE program_objectives (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_program_objectives_program ON program_objectives(program_id);
+CREATE INDEX IF NOT EXISTS idx_program_objectives_program ON program_objectives(program_id);
 
 -- Program Metrics
 CREATE TABLE program_metrics (
@@ -105,8 +105,8 @@ CREATE TABLE program_metrics (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_program_metrics_program ON program_metrics(program_id);
-CREATE INDEX idx_program_metrics_period ON program_metrics(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_program_metrics_program ON program_metrics(program_id);
+CREATE INDEX IF NOT EXISTS idx_program_metrics_period ON program_metrics(period_start, period_end);
 
 -- Portfolios (groups of programs)
 CREATE TABLE portfolios (
@@ -126,7 +126,7 @@ CREATE TABLE portfolios (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_portfolios_organization ON portfolios(organization_id);
+CREATE INDEX IF NOT EXISTS idx_portfolios_organization ON portfolios(organization_id);
 
 -- Portfolio Programs
 CREATE TABLE portfolio_programs (
@@ -138,8 +138,8 @@ CREATE TABLE portfolio_programs (
     UNIQUE(portfolio_id, program_id)
 );
 
-CREATE INDEX idx_portfolio_programs_portfolio ON portfolio_programs(portfolio_id);
-CREATE INDEX idx_portfolio_programs_program ON portfolio_programs(program_id);
+CREATE INDEX IF NOT EXISTS idx_portfolio_programs_portfolio ON portfolio_programs(portfolio_id);
+CREATE INDEX IF NOT EXISTS idx_portfolio_programs_program ON portfolio_programs(program_id);
 
 -- ============================================================================
 -- FORECASTING TABLES
@@ -161,9 +161,9 @@ CREATE TABLE forecasts (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_forecasts_organization ON forecasts(organization_id);
-CREATE INDEX idx_forecasts_type ON forecasts(forecast_type);
-CREATE INDEX idx_forecasts_dates ON forecasts(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_forecasts_organization ON forecasts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_forecasts_type ON forecasts(forecast_type);
+CREATE INDEX IF NOT EXISTS idx_forecasts_dates ON forecasts(start_date, end_date);
 
 -- Forecast Periods
 CREATE TABLE forecast_periods (
@@ -179,8 +179,8 @@ CREATE TABLE forecast_periods (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_forecast_periods_forecast ON forecast_periods(forecast_id);
-CREATE INDEX idx_forecast_periods_dates ON forecast_periods(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_forecast_periods_forecast ON forecast_periods(forecast_id);
+CREATE INDEX IF NOT EXISTS idx_forecast_periods_dates ON forecast_periods(period_start, period_end);
 
 -- Forecast Items
 CREATE TABLE forecast_items (
@@ -196,8 +196,8 @@ CREATE TABLE forecast_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_forecast_items_period ON forecast_items(forecast_period_id);
-CREATE INDEX idx_forecast_items_category ON forecast_items(category_id);
+CREATE INDEX IF NOT EXISTS idx_forecast_items_period ON forecast_items(forecast_period_id);
+CREATE INDEX IF NOT EXISTS idx_forecast_items_category ON forecast_items(category_id);
 
 -- Forecast Scenarios
 CREATE TABLE forecast_scenarios (
@@ -214,8 +214,8 @@ CREATE TABLE forecast_scenarios (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_forecast_scenarios_forecast ON forecast_scenarios(forecast_id);
-CREATE INDEX idx_forecast_scenarios_type ON forecast_scenarios(scenario_type);
+CREATE INDEX IF NOT EXISTS idx_forecast_scenarios_forecast ON forecast_scenarios(forecast_id);
+CREATE INDEX IF NOT EXISTS idx_forecast_scenarios_type ON forecast_scenarios(scenario_type);
 
 -- Budget vs Actual
 CREATE TABLE budget_vs_actual (
@@ -237,10 +237,10 @@ CREATE TABLE budget_vs_actual (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_budget_vs_actual_organization ON budget_vs_actual(organization_id);
-CREATE INDEX idx_budget_vs_actual_budget ON budget_vs_actual(budget_id);
-CREATE INDEX idx_budget_vs_actual_project ON budget_vs_actual(project_id);
-CREATE INDEX idx_budget_vs_actual_period ON budget_vs_actual(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_budget_vs_actual_organization ON budget_vs_actual(organization_id);
+CREATE INDEX IF NOT EXISTS idx_budget_vs_actual_budget ON budget_vs_actual(budget_id);
+CREATE INDEX IF NOT EXISTS idx_budget_vs_actual_project ON budget_vs_actual(project_id);
+CREATE INDEX IF NOT EXISTS idx_budget_vs_actual_period ON budget_vs_actual(period_start, period_end);
 
 -- Resource Forecasts
 CREATE TABLE resource_forecasts (
@@ -262,10 +262,10 @@ CREATE TABLE resource_forecasts (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_resource_forecasts_organization ON resource_forecasts(organization_id);
-CREATE INDEX idx_resource_forecasts_project ON resource_forecasts(project_id);
-CREATE INDEX idx_resource_forecasts_department ON resource_forecasts(department_id);
-CREATE INDEX idx_resource_forecasts_period ON resource_forecasts(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_resource_forecasts_organization ON resource_forecasts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_resource_forecasts_project ON resource_forecasts(project_id);
+CREATE INDEX IF NOT EXISTS idx_resource_forecasts_department ON resource_forecasts(department_id);
+CREATE INDEX IF NOT EXISTS idx_resource_forecasts_period ON resource_forecasts(period_start, period_end);
 
 -- Capacity Planning
 CREATE TABLE capacity_plans (
@@ -281,8 +281,8 @@ CREATE TABLE capacity_plans (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_capacity_plans_organization ON capacity_plans(organization_id);
-CREATE INDEX idx_capacity_plans_dates ON capacity_plans(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_capacity_plans_organization ON capacity_plans(organization_id);
+CREATE INDEX IF NOT EXISTS idx_capacity_plans_dates ON capacity_plans(start_date, end_date);
 
 -- Capacity Plan Items
 CREATE TABLE capacity_plan_items (
@@ -301,6 +301,6 @@ CREATE TABLE capacity_plan_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_capacity_plan_items_plan ON capacity_plan_items(capacity_plan_id);
-CREATE INDEX idx_capacity_plan_items_user ON capacity_plan_items(user_id);
-CREATE INDEX idx_capacity_plan_items_period ON capacity_plan_items(period_start, period_end);
+CREATE INDEX IF NOT EXISTS idx_capacity_plan_items_plan ON capacity_plan_items(capacity_plan_id);
+CREATE INDEX IF NOT EXISTS idx_capacity_plan_items_user ON capacity_plan_items(user_id);
+CREATE INDEX IF NOT EXISTS idx_capacity_plan_items_period ON capacity_plan_items(period_start, period_end);

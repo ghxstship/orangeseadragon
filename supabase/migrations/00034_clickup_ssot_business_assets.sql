@@ -23,8 +23,8 @@ CREATE TABLE IF NOT EXISTS services (
     UNIQUE(organization_id, service_code)
 );
 
-CREATE INDEX idx_services_org ON services(organization_id);
-CREATE INDEX idx_services_category ON services(category);
+CREATE INDEX IF NOT EXISTS idx_services_org ON services(organization_id);
+CREATE INDEX IF NOT EXISTS idx_services_category ON services(category);
 
 CREATE TABLE IF NOT EXISTS service_packages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS service_packages (
     UNIQUE(organization_id, package_code)
 );
 
-CREATE INDEX idx_service_packages_org ON service_packages(organization_id);
+CREATE INDEX IF NOT EXISTS idx_service_packages_org ON service_packages(organization_id);
 
 CREATE TABLE IF NOT EXISTS package_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -51,33 +51,21 @@ CREATE TABLE IF NOT EXISTS package_items (
     UNIQUE(package_id, service_id)
 );
 
-CREATE TABLE IF NOT EXISTS rate_cards (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    effective_date DATE NOT NULL,
-    expiration_date DATE,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing rate_cards table (originally from 00004_workforce.sql)
+ALTER TABLE rate_cards ADD COLUMN IF NOT EXISTS expiration_date DATE;
+ALTER TABLE rate_cards ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
 
-CREATE INDEX idx_rate_cards_org ON rate_cards(organization_id);
+CREATE INDEX IF NOT EXISTS idx_rate_cards_org ON rate_cards(organization_id);
 
-CREATE TABLE IF NOT EXISTS rate_card_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    rate_card_id UUID NOT NULL REFERENCES rate_cards(id) ON DELETE CASCADE,
-    service_id UUID REFERENCES services(id) ON DELETE SET NULL,
-    item_code VARCHAR(50),
-    description VARCHAR(255) NOT NULL,
-    unit_price DECIMAL(12,2) NOT NULL,
-    unit VARCHAR(50),
-    minimum_quantity INTEGER DEFAULT 1,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing rate_card_items table (originally from 00004_workforce.sql)
+ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS service_id UUID;
+ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS item_code VARCHAR(50);
+ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS description VARCHAR(255);
+ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS unit_price DECIMAL(12,2);
+ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS unit VARCHAR(50);
+ALTER TABLE rate_card_items ADD COLUMN IF NOT EXISTS minimum_quantity INTEGER DEFAULT 1;
 
-CREATE INDEX idx_rate_card_items_card ON rate_card_items(rate_card_id);
+CREATE INDEX IF NOT EXISTS idx_rate_card_items_card ON rate_card_items(rate_card_id);
 
 -- ============================================================================
 -- ASSETS - FLEET & VEHICLES
@@ -109,8 +97,8 @@ CREATE TABLE IF NOT EXISTS vehicles (
     UNIQUE(organization_id, vehicle_number)
 );
 
-CREATE INDEX idx_vehicles_org ON vehicles(organization_id);
-CREATE INDEX idx_vehicles_status ON vehicles(status);
+CREATE INDEX IF NOT EXISTS idx_vehicles_org ON vehicles(organization_id);
+CREATE INDEX IF NOT EXISTS idx_vehicles_status ON vehicles(status);
 
 CREATE TABLE IF NOT EXISTS carriers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -131,7 +119,7 @@ CREATE TABLE IF NOT EXISTS carriers (
     UNIQUE(organization_id, carrier_code)
 );
 
-CREATE INDEX idx_carriers_org ON carriers(organization_id);
+CREATE INDEX IF NOT EXISTS idx_carriers_org ON carriers(organization_id);
 
 CREATE TABLE IF NOT EXISTS freight_quotes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -153,7 +141,7 @@ CREATE TABLE IF NOT EXISTS freight_quotes (
     UNIQUE(organization_id, quote_number)
 );
 
-CREATE INDEX idx_freight_quotes_org ON freight_quotes(organization_id);
+CREATE INDEX IF NOT EXISTS idx_freight_quotes_org ON freight_quotes(organization_id);
 
 -- ============================================================================
 -- ASSETS - TRACKING & CUSTODY
@@ -178,7 +166,7 @@ CREATE TABLE IF NOT EXISTS gps_devices (
     UNIQUE(organization_id, device_id)
 );
 
-CREATE INDEX idx_gps_devices_org ON gps_devices(organization_id);
+CREATE INDEX IF NOT EXISTS idx_gps_devices_org ON gps_devices(organization_id);
 
 CREATE TABLE IF NOT EXISTS location_log (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -196,10 +184,10 @@ CREATE TABLE IF NOT EXISTS location_log (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_location_log_org ON location_log(organization_id);
-CREATE INDEX idx_location_log_device ON location_log(gps_device_id);
-CREATE INDEX idx_location_log_asset ON location_log(asset_id);
-CREATE INDEX idx_location_log_time ON location_log(recorded_at);
+CREATE INDEX IF NOT EXISTS idx_location_log_org ON location_log(organization_id);
+CREATE INDEX IF NOT EXISTS idx_location_log_device ON location_log(gps_device_id);
+CREATE INDEX IF NOT EXISTS idx_location_log_asset ON location_log(asset_id);
+CREATE INDEX IF NOT EXISTS idx_location_log_time ON location_log(recorded_at);
 
 CREATE TABLE IF NOT EXISTS custody_log (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -219,9 +207,9 @@ CREATE TABLE IF NOT EXISTS custody_log (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_custody_log_org ON custody_log(organization_id);
-CREATE INDEX idx_custody_log_asset ON custody_log(asset_id);
-CREATE INDEX idx_custody_log_time ON custody_log(recorded_at);
+CREATE INDEX IF NOT EXISTS idx_custody_log_org ON custody_log(organization_id);
+CREATE INDEX IF NOT EXISTS idx_custody_log_asset ON custody_log(asset_id);
+CREATE INDEX IF NOT EXISTS idx_custody_log_time ON custody_log(recorded_at);
 
 CREATE TABLE IF NOT EXISTS missing_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -247,8 +235,8 @@ CREATE TABLE IF NOT EXISTS missing_items (
     UNIQUE(organization_id, report_number)
 );
 
-CREATE INDEX idx_missing_items_org ON missing_items(organization_id);
-CREATE INDEX idx_missing_items_status ON missing_items(status);
+CREATE INDEX IF NOT EXISTS idx_missing_items_org ON missing_items(organization_id);
+CREATE INDEX IF NOT EXISTS idx_missing_items_status ON missing_items(status);
 
 -- ============================================================================
 -- ASSETS - MAINTENANCE ENHANCEMENTS
@@ -269,7 +257,7 @@ CREATE TABLE IF NOT EXISTS pm_schedules (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_pm_schedules_org ON pm_schedules(organization_id);
+CREATE INDEX IF NOT EXISTS idx_pm_schedules_org ON pm_schedules(organization_id);
 
 CREATE TABLE IF NOT EXISTS service_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -297,10 +285,10 @@ CREATE TABLE IF NOT EXISTS service_history (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_service_history_org ON service_history(organization_id);
-CREATE INDEX idx_service_history_asset ON service_history(asset_id);
-CREATE INDEX idx_service_history_vehicle ON service_history(vehicle_id);
-CREATE INDEX idx_service_history_date ON service_history(service_date);
+CREATE INDEX IF NOT EXISTS idx_service_history_org ON service_history(organization_id);
+CREATE INDEX IF NOT EXISTS idx_service_history_asset ON service_history(asset_id);
+CREATE INDEX IF NOT EXISTS idx_service_history_vehicle ON service_history(vehicle_id);
+CREATE INDEX IF NOT EXISTS idx_service_history_date ON service_history(service_date);
 
 CREATE TABLE IF NOT EXISTS parts_inventory (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -322,7 +310,7 @@ CREATE TABLE IF NOT EXISTS parts_inventory (
     UNIQUE(organization_id, part_number)
 );
 
-CREATE INDEX idx_parts_inventory_org ON parts_inventory(organization_id);
+CREATE INDEX IF NOT EXISTS idx_parts_inventory_org ON parts_inventory(organization_id);
 
 -- ============================================================================
 -- ASSETS - SITE ADVANCES
@@ -346,8 +334,8 @@ CREATE TABLE IF NOT EXISTS site_advances (
     UNIQUE(organization_id, advance_number)
 );
 
-CREATE INDEX idx_site_advances_org ON site_advances(organization_id);
-CREATE INDEX idx_site_advances_production ON site_advances(production_id);
+CREATE INDEX IF NOT EXISTS idx_site_advances_org ON site_advances(organization_id);
+CREATE INDEX IF NOT EXISTS idx_site_advances_production ON site_advances(production_id);
 
 CREATE TABLE IF NOT EXISTS advance_reports (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -370,7 +358,7 @@ CREATE TABLE IF NOT EXISTS advance_reports (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_advance_reports_advance ON advance_reports(site_advance_id);
+CREATE INDEX IF NOT EXISTS idx_advance_reports_advance ON advance_reports(site_advance_id);
 
 CREATE TABLE IF NOT EXISTS venue_specs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -393,8 +381,8 @@ CREATE TABLE IF NOT EXISTS venue_specs (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_venue_specs_org ON venue_specs(organization_id);
-CREATE INDEX idx_venue_specs_venue ON venue_specs(venue_id);
+CREATE INDEX IF NOT EXISTS idx_venue_specs_org ON venue_specs(organization_id);
+CREATE INDEX IF NOT EXISTS idx_venue_specs_venue ON venue_specs(venue_id);
 
 -- ============================================================================
 -- BUSINESS - CONTENT MARKETING
@@ -421,9 +409,9 @@ CREATE TABLE IF NOT EXISTS content_items (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_content_items_org ON content_items(organization_id);
-CREATE INDEX idx_content_items_type ON content_items(content_type);
-CREATE INDEX idx_content_items_status ON content_items(status);
+CREATE INDEX IF NOT EXISTS idx_content_items_org ON content_items(organization_id);
+CREATE INDEX IF NOT EXISTS idx_content_items_type ON content_items(content_type);
+CREATE INDEX IF NOT EXISTS idx_content_items_status ON content_items(status);
 
 CREATE TABLE IF NOT EXISTS case_studies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -449,8 +437,8 @@ CREATE TABLE IF NOT EXISTS case_studies (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_case_studies_org ON case_studies(organization_id);
-CREATE INDEX idx_case_studies_status ON case_studies(status);
+CREATE INDEX IF NOT EXISTS idx_case_studies_org ON case_studies(organization_id);
+CREATE INDEX IF NOT EXISTS idx_case_studies_status ON case_studies(status);
 
 CREATE TABLE IF NOT EXISTS press_releases (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -472,33 +460,18 @@ CREATE TABLE IF NOT EXISTS press_releases (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_press_releases_org ON press_releases(organization_id);
-CREATE INDEX idx_press_releases_date ON press_releases(release_date);
+CREATE INDEX IF NOT EXISTS idx_press_releases_org ON press_releases(organization_id);
+CREATE INDEX IF NOT EXISTS idx_press_releases_date ON press_releases(release_date);
 
 -- ============================================================================
 -- BUSINESS - BRAND KIT
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS brand_guidelines (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    version VARCHAR(20) DEFAULT '1.0',
-    primary_colors JSONB DEFAULT '[]',
-    secondary_colors JSONB DEFAULT '[]',
-    typography JSONB DEFAULT '{}',
-    logo_usage TEXT,
-    voice_tone TEXT,
-    dos_donts TEXT,
-    document_url TEXT,
-    status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'archived')),
-    is_current BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by UUID REFERENCES users(id) ON DELETE SET NULL
-);
+-- Extend existing brand_guidelines table (originally from 00007_content_talent.sql)
+ALTER TABLE brand_guidelines ADD COLUMN IF NOT EXISTS dos_donts TEXT;
+ALTER TABLE brand_guidelines ADD COLUMN IF NOT EXISTS is_current BOOLEAN DEFAULT TRUE;
 
-CREATE INDEX idx_brand_guidelines_org ON brand_guidelines(organization_id);
+CREATE INDEX IF NOT EXISTS idx_brand_guidelines_org ON brand_guidelines(organization_id);
 
 CREATE TABLE IF NOT EXISTS brand_assets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -520,8 +493,8 @@ CREATE TABLE IF NOT EXISTS brand_assets (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_brand_assets_org ON brand_assets(organization_id);
-CREATE INDEX idx_brand_assets_type ON brand_assets(asset_type);
+CREATE INDEX IF NOT EXISTS idx_brand_assets_org ON brand_assets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_brand_assets_type ON brand_assets(asset_type);
 
 CREATE TABLE IF NOT EXISTS brand_templates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -539,7 +512,7 @@ CREATE TABLE IF NOT EXISTS brand_templates (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_brand_templates_org ON brand_templates(organization_id);
+CREATE INDEX IF NOT EXISTS idx_brand_templates_org ON brand_templates(organization_id);
 
 -- ============================================================================
 -- RLS POLICIES
@@ -568,25 +541,47 @@ ALTER TABLE brand_guidelines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE brand_assets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE brand_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "services_org_access" ON services;
 CREATE POLICY "services_org_access" ON services FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "service_packages_org_access" ON service_packages;
 CREATE POLICY "service_packages_org_access" ON service_packages FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "rate_cards_org_access" ON rate_cards;
 CREATE POLICY "rate_cards_org_access" ON rate_cards FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "vehicles_org_access" ON vehicles;
 CREATE POLICY "vehicles_org_access" ON vehicles FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "carriers_org_access" ON carriers;
 CREATE POLICY "carriers_org_access" ON carriers FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "freight_quotes_org_access" ON freight_quotes;
 CREATE POLICY "freight_quotes_org_access" ON freight_quotes FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "gps_devices_org_access" ON gps_devices;
 CREATE POLICY "gps_devices_org_access" ON gps_devices FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "location_log_org_access" ON location_log;
 CREATE POLICY "location_log_org_access" ON location_log FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "custody_log_org_access" ON custody_log;
 CREATE POLICY "custody_log_org_access" ON custody_log FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "missing_items_org_access" ON missing_items;
 CREATE POLICY "missing_items_org_access" ON missing_items FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "pm_schedules_org_access" ON pm_schedules;
 CREATE POLICY "pm_schedules_org_access" ON pm_schedules FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "service_history_org_access" ON service_history;
 CREATE POLICY "service_history_org_access" ON service_history FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "parts_inventory_org_access" ON parts_inventory;
 CREATE POLICY "parts_inventory_org_access" ON parts_inventory FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "site_advances_org_access" ON site_advances;
 CREATE POLICY "site_advances_org_access" ON site_advances FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "advance_reports_org_access" ON advance_reports;
 CREATE POLICY "advance_reports_org_access" ON advance_reports FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "venue_specs_org_access" ON venue_specs;
 CREATE POLICY "venue_specs_org_access" ON venue_specs FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "content_items_org_access" ON content_items;
 CREATE POLICY "content_items_org_access" ON content_items FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "case_studies_org_access" ON case_studies;
 CREATE POLICY "case_studies_org_access" ON case_studies FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "press_releases_org_access" ON press_releases;
 CREATE POLICY "press_releases_org_access" ON press_releases FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "brand_guidelines_org_access" ON brand_guidelines;
 CREATE POLICY "brand_guidelines_org_access" ON brand_guidelines FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "brand_assets_org_access" ON brand_assets;
 CREATE POLICY "brand_assets_org_access" ON brand_assets FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "brand_templates_org_access" ON brand_templates;
 CREATE POLICY "brand_templates_org_access" ON brand_templates FOR ALL USING (is_organization_member(organization_id));

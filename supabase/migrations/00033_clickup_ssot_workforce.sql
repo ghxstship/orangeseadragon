@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS availability_submissions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_availability_org ON availability_submissions(organization_id);
-CREATE INDEX idx_availability_user ON availability_submissions(user_id);
-CREATE INDEX idx_availability_dates ON availability_submissions(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_availability_org ON availability_submissions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_availability_user ON availability_submissions(user_id);
+CREATE INDEX IF NOT EXISTS idx_availability_dates ON availability_submissions(start_date, end_date);
 
 CREATE TABLE IF NOT EXISTS blackout_dates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS blackout_dates (
     UNIQUE(organization_id, user_id, blackout_date)
 );
 
-CREATE INDEX idx_blackout_org ON blackout_dates(organization_id);
-CREATE INDEX idx_blackout_user ON blackout_dates(user_id);
+CREATE INDEX IF NOT EXISTS idx_blackout_org ON blackout_dates(organization_id);
+CREATE INDEX IF NOT EXISTS idx_blackout_user ON blackout_dates(user_id);
 
 -- ============================================================================
 -- WORKFORCE - TRAVEL MANAGEMENT
@@ -64,9 +64,9 @@ CREATE TABLE IF NOT EXISTS travel_requests (
     UNIQUE(organization_id, request_number)
 );
 
-CREATE INDEX idx_travel_requests_org ON travel_requests(organization_id);
-CREATE INDEX idx_travel_requests_traveler ON travel_requests(traveler_id);
-CREATE INDEX idx_travel_requests_status ON travel_requests(status);
+CREATE INDEX IF NOT EXISTS idx_travel_requests_org ON travel_requests(organization_id);
+CREATE INDEX IF NOT EXISTS idx_travel_requests_traveler ON travel_requests(traveler_id);
+CREATE INDEX IF NOT EXISTS idx_travel_requests_status ON travel_requests(status);
 
 CREATE TABLE IF NOT EXISTS flights (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -90,8 +90,8 @@ CREATE TABLE IF NOT EXISTS flights (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_flights_org ON flights(organization_id);
-CREATE INDEX idx_flights_traveler ON flights(traveler_id);
+CREATE INDEX IF NOT EXISTS idx_flights_org ON flights(organization_id);
+CREATE INDEX IF NOT EXISTS idx_flights_traveler ON flights(traveler_id);
 
 CREATE TABLE IF NOT EXISTS hotels (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -113,8 +113,8 @@ CREATE TABLE IF NOT EXISTS hotels (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_hotels_org ON hotels(organization_id);
-CREATE INDEX idx_hotels_guest ON hotels(guest_id);
+CREATE INDEX IF NOT EXISTS idx_hotels_org ON hotels(organization_id);
+CREATE INDEX IF NOT EXISTS idx_hotels_guest ON hotels(guest_id);
 
 CREATE TABLE IF NOT EXISTS ground_transport (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS ground_transport (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_ground_transport_org ON ground_transport(organization_id);
+CREATE INDEX IF NOT EXISTS idx_ground_transport_org ON ground_transport(organization_id);
 
 CREATE TABLE IF NOT EXISTS per_diems (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -153,7 +153,7 @@ CREATE TABLE IF NOT EXISTS per_diems (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_per_diems_org ON per_diems(organization_id);
+CREATE INDEX IF NOT EXISTS idx_per_diems_org ON per_diems(organization_id);
 
 -- ============================================================================
 -- WORKFORCE - RECRUITMENT
@@ -188,8 +188,8 @@ CREATE TABLE IF NOT EXISTS job_requisitions (
     UNIQUE(organization_id, requisition_number)
 );
 
-CREATE INDEX idx_job_requisitions_org ON job_requisitions(organization_id);
-CREATE INDEX idx_job_requisitions_status ON job_requisitions(status);
+CREATE INDEX IF NOT EXISTS idx_job_requisitions_org ON job_requisitions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_job_requisitions_status ON job_requisitions(status);
 
 CREATE TABLE IF NOT EXISTS candidates (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -213,9 +213,9 @@ CREATE TABLE IF NOT EXISTS candidates (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_candidates_org ON candidates(organization_id);
-CREATE INDEX idx_candidates_requisition ON candidates(requisition_id);
-CREATE INDEX idx_candidates_status ON candidates(status);
+CREATE INDEX IF NOT EXISTS idx_candidates_org ON candidates(organization_id);
+CREATE INDEX IF NOT EXISTS idx_candidates_requisition ON candidates(requisition_id);
+CREATE INDEX IF NOT EXISTS idx_candidates_status ON candidates(status);
 
 CREATE TABLE IF NOT EXISTS candidate_interviews (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -238,8 +238,8 @@ CREATE TABLE IF NOT EXISTS candidate_interviews (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_candidate_interviews_org ON candidate_interviews(organization_id);
-CREATE INDEX idx_candidate_interviews_candidate ON candidate_interviews(candidate_id);
+CREATE INDEX IF NOT EXISTS idx_candidate_interviews_org ON candidate_interviews(organization_id);
+CREATE INDEX IF NOT EXISTS idx_candidate_interviews_candidate ON candidate_interviews(candidate_id);
 
 CREATE TABLE IF NOT EXISTS job_offers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -264,8 +264,8 @@ CREATE TABLE IF NOT EXISTS job_offers (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_job_offers_org ON job_offers(organization_id);
-CREATE INDEX idx_job_offers_candidate ON job_offers(candidate_id);
+CREATE INDEX IF NOT EXISTS idx_job_offers_org ON job_offers(organization_id);
+CREATE INDEX IF NOT EXISTS idx_job_offers_candidate ON job_offers(candidate_id);
 
 -- ============================================================================
 -- WORKFORCE - PERFORMANCE
@@ -293,9 +293,9 @@ CREATE TABLE IF NOT EXISTS goals (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_goals_org ON goals(organization_id);
-CREATE INDEX idx_goals_user ON goals(user_id);
-CREATE INDEX idx_goals_status ON goals(status);
+CREATE INDEX IF NOT EXISTS idx_goals_org ON goals(organization_id);
+CREATE INDEX IF NOT EXISTS idx_goals_user ON goals(user_id);
+CREATE INDEX IF NOT EXISTS idx_goals_status ON goals(status);
 
 CREATE TABLE IF NOT EXISTS peer_feedback (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -311,8 +311,8 @@ CREATE TABLE IF NOT EXISTS peer_feedback (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_peer_feedback_org ON peer_feedback(organization_id);
-CREATE INDEX idx_peer_feedback_to ON peer_feedback(to_user_id);
+CREATE INDEX IF NOT EXISTS idx_peer_feedback_org ON peer_feedback(organization_id);
+CREATE INDEX IF NOT EXISTS idx_peer_feedback_to ON peer_feedback(to_user_id);
 
 CREATE TABLE IF NOT EXISTS pips (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -335,8 +335,8 @@ CREATE TABLE IF NOT EXISTS pips (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_pips_org ON pips(organization_id);
-CREATE INDEX idx_pips_employee ON pips(employee_id);
+CREATE INDEX IF NOT EXISTS idx_pips_org ON pips(organization_id);
+CREATE INDEX IF NOT EXISTS idx_pips_employee ON pips(employee_id);
 
 -- ============================================================================
 -- WORKFORCE - SAFETY
@@ -364,8 +364,8 @@ CREATE TABLE IF NOT EXISTS near_misses (
     UNIQUE(organization_id, report_number)
 );
 
-CREATE INDEX idx_near_misses_org ON near_misses(organization_id);
-CREATE INDEX idx_near_misses_date ON near_misses(incident_date);
+CREATE INDEX IF NOT EXISTS idx_near_misses_org ON near_misses(organization_id);
+CREATE INDEX IF NOT EXISTS idx_near_misses_date ON near_misses(incident_date);
 
 CREATE TABLE IF NOT EXISTS safety_observations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -386,7 +386,7 @@ CREATE TABLE IF NOT EXISTS safety_observations (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_safety_observations_org ON safety_observations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_safety_observations_org ON safety_observations(organization_id);
 
 CREATE TABLE IF NOT EXISTS workers_comp_claims (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -414,8 +414,8 @@ CREATE TABLE IF NOT EXISTS workers_comp_claims (
     UNIQUE(organization_id, claim_number)
 );
 
-CREATE INDEX idx_workers_comp_org ON workers_comp_claims(organization_id);
-CREATE INDEX idx_workers_comp_employee ON workers_comp_claims(employee_id);
+CREATE INDEX IF NOT EXISTS idx_workers_comp_org ON workers_comp_claims(organization_id);
+CREATE INDEX IF NOT EXISTS idx_workers_comp_employee ON workers_comp_claims(employee_id);
 
 -- ============================================================================
 -- RLS POLICIES
@@ -439,20 +439,37 @@ ALTER TABLE near_misses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE safety_observations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE workers_comp_claims ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "availability_org_access" ON availability_submissions;
 CREATE POLICY "availability_org_access" ON availability_submissions FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "blackout_org_access" ON blackout_dates;
 CREATE POLICY "blackout_org_access" ON blackout_dates FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "travel_requests_org_access" ON travel_requests;
 CREATE POLICY "travel_requests_org_access" ON travel_requests FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "flights_org_access" ON flights;
 CREATE POLICY "flights_org_access" ON flights FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "hotels_org_access" ON hotels;
 CREATE POLICY "hotels_org_access" ON hotels FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "ground_transport_org_access" ON ground_transport;
 CREATE POLICY "ground_transport_org_access" ON ground_transport FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "per_diems_org_access" ON per_diems;
 CREATE POLICY "per_diems_org_access" ON per_diems FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "job_requisitions_org_access" ON job_requisitions;
 CREATE POLICY "job_requisitions_org_access" ON job_requisitions FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "candidates_org_access" ON candidates;
 CREATE POLICY "candidates_org_access" ON candidates FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "candidate_interviews_org_access" ON candidate_interviews;
 CREATE POLICY "candidate_interviews_org_access" ON candidate_interviews FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "job_offers_org_access" ON job_offers;
 CREATE POLICY "job_offers_org_access" ON job_offers FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "goals_org_access" ON goals;
 CREATE POLICY "goals_org_access" ON goals FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "peer_feedback_org_access" ON peer_feedback;
 CREATE POLICY "peer_feedback_org_access" ON peer_feedback FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "pips_org_access" ON pips;
 CREATE POLICY "pips_org_access" ON pips FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "near_misses_org_access" ON near_misses;
 CREATE POLICY "near_misses_org_access" ON near_misses FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "safety_observations_org_access" ON safety_observations;
 CREATE POLICY "safety_observations_org_access" ON safety_observations FOR ALL USING (is_organization_member(organization_id));
+DROP POLICY IF EXISTS "workers_comp_org_access" ON workers_comp_claims;
 CREATE POLICY "workers_comp_org_access" ON workers_comp_claims FOR ALL USING (is_organization_member(organization_id));

@@ -24,14 +24,14 @@ CREATE TABLE workflow_templates (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_workflow_templates_organization ON workflow_templates(organization_id);
-CREATE INDEX idx_workflow_templates_entity ON workflow_templates(entity_type);
-CREATE INDEX idx_workflow_templates_trigger ON workflow_templates(trigger_type);
-CREATE INDEX idx_workflow_templates_active ON workflow_templates(organization_id, is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_workflow_templates_organization ON workflow_templates(organization_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_templates_entity ON workflow_templates(entity_type);
+CREATE INDEX IF NOT EXISTS idx_workflow_templates_trigger ON workflow_templates(trigger_type);
+CREATE INDEX IF NOT EXISTS idx_workflow_templates_active ON workflow_templates(organization_id, is_active) WHERE is_active = TRUE;
 -- Unique slug per organization (for org-specific templates)
-CREATE UNIQUE INDEX idx_workflow_templates_org_slug ON workflow_templates(organization_id, slug) WHERE organization_id IS NOT NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_workflow_templates_org_slug ON workflow_templates(organization_id, slug) WHERE organization_id IS NOT NULL;
 -- Unique slug for system templates (where organization_id IS NULL)
-CREATE UNIQUE INDEX idx_workflow_templates_system_slug ON workflow_templates(slug) WHERE organization_id IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_workflow_templates_system_slug ON workflow_templates(slug) WHERE organization_id IS NULL;
 
 -- Workflow Steps
 CREATE TABLE workflow_steps (
@@ -50,8 +50,8 @@ CREATE TABLE workflow_steps (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_workflow_steps_template ON workflow_steps(workflow_template_id);
-CREATE INDEX idx_workflow_steps_position ON workflow_steps(workflow_template_id, position);
+CREATE INDEX IF NOT EXISTS idx_workflow_steps_template ON workflow_steps(workflow_template_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_steps_position ON workflow_steps(workflow_template_id, position);
 
 -- Workflow Runs
 CREATE TABLE workflow_runs (
@@ -72,11 +72,11 @@ CREATE TABLE workflow_runs (
     triggered_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_workflow_runs_organization ON workflow_runs(organization_id);
-CREATE INDEX idx_workflow_runs_template ON workflow_runs(workflow_template_id);
-CREATE INDEX idx_workflow_runs_entity ON workflow_runs(entity_type, entity_id);
-CREATE INDEX idx_workflow_runs_status ON workflow_runs(status);
-CREATE INDEX idx_workflow_runs_created ON workflow_runs(created_at);
+CREATE INDEX IF NOT EXISTS idx_workflow_runs_organization ON workflow_runs(organization_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_runs_template ON workflow_runs(workflow_template_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_runs_entity ON workflow_runs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_runs_status ON workflow_runs(status);
+CREATE INDEX IF NOT EXISTS idx_workflow_runs_created ON workflow_runs(created_at);
 
 -- Workflow Step Executions
 CREATE TABLE workflow_step_executions (
@@ -93,9 +93,9 @@ CREATE TABLE workflow_step_executions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_workflow_step_executions_run ON workflow_step_executions(workflow_run_id);
-CREATE INDEX idx_workflow_step_executions_step ON workflow_step_executions(workflow_step_id);
-CREATE INDEX idx_workflow_step_executions_status ON workflow_step_executions(status);
+CREATE INDEX IF NOT EXISTS idx_workflow_step_executions_run ON workflow_step_executions(workflow_run_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_step_executions_step ON workflow_step_executions(workflow_step_id);
+CREATE INDEX IF NOT EXISTS idx_workflow_step_executions_status ON workflow_step_executions(status);
 
 -- Approval Workflows
 CREATE TABLE approval_workflows (
@@ -114,9 +114,9 @@ CREATE TABLE approval_workflows (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_approval_workflows_organization ON approval_workflows(organization_id);
-CREATE INDEX idx_approval_workflows_entity ON approval_workflows(entity_type);
-CREATE INDEX idx_approval_workflows_active ON approval_workflows(organization_id, is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_approval_workflows_organization ON approval_workflows(organization_id);
+CREATE INDEX IF NOT EXISTS idx_approval_workflows_entity ON approval_workflows(entity_type);
+CREATE INDEX IF NOT EXISTS idx_approval_workflows_active ON approval_workflows(organization_id, is_active) WHERE is_active = TRUE;
 
 -- Approval Requests
 CREATE TABLE approval_requests (
@@ -137,12 +137,12 @@ CREATE TABLE approval_requests (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_approval_requests_organization ON approval_requests(organization_id);
-CREATE INDEX idx_approval_requests_workflow ON approval_requests(approval_workflow_id);
-CREATE INDEX idx_approval_requests_entity ON approval_requests(entity_type, entity_id);
-CREATE INDEX idx_approval_requests_status ON approval_requests(status);
-CREATE INDEX idx_approval_requests_requested_by ON approval_requests(requested_by);
-CREATE INDEX idx_approval_requests_pending ON approval_requests(organization_id, status) WHERE status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_approval_requests_organization ON approval_requests(organization_id);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_workflow ON approval_requests(approval_workflow_id);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_entity ON approval_requests(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_status ON approval_requests(status);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_requested_by ON approval_requests(requested_by);
+CREATE INDEX IF NOT EXISTS idx_approval_requests_pending ON approval_requests(organization_id, status) WHERE status = 'pending';
 
 -- Approval Decisions
 CREATE TABLE approval_decisions (
@@ -157,9 +157,9 @@ CREATE TABLE approval_decisions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_approval_decisions_request ON approval_decisions(approval_request_id);
-CREATE INDEX idx_approval_decisions_approver ON approval_decisions(approver_id);
-CREATE INDEX idx_approval_decisions_decided ON approval_decisions(decided_at);
+CREATE INDEX IF NOT EXISTS idx_approval_decisions_request ON approval_decisions(approval_request_id);
+CREATE INDEX IF NOT EXISTS idx_approval_decisions_approver ON approval_decisions(approver_id);
+CREATE INDEX IF NOT EXISTS idx_approval_decisions_decided ON approval_decisions(decided_at);
 
 -- ============================================================================
 -- DOCUMENT MANAGEMENT TABLES
@@ -182,9 +182,9 @@ CREATE TABLE document_folders (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_document_folders_organization ON document_folders(organization_id);
-CREATE INDEX idx_document_folders_parent ON document_folders(parent_id);
-CREATE INDEX idx_document_folders_path ON document_folders(path);
+CREATE INDEX IF NOT EXISTS idx_document_folders_organization ON document_folders(organization_id);
+CREATE INDEX IF NOT EXISTS idx_document_folders_parent ON document_folders(parent_id);
+CREATE INDEX IF NOT EXISTS idx_document_folders_path ON document_folders(path);
 
 -- Documents
 CREATE TABLE documents (
@@ -217,14 +217,14 @@ CREATE TABLE documents (
     last_edited_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_documents_organization ON documents(organization_id);
-CREATE INDEX idx_documents_folder ON documents(folder_id);
-CREATE INDEX idx_documents_project ON documents(project_id);
-CREATE INDEX idx_documents_event ON documents(event_id);
-CREATE INDEX idx_documents_type ON documents(document_type);
-CREATE INDEX idx_documents_status ON documents(status);
-CREATE INDEX idx_documents_tags ON documents USING GIN(tags);
-CREATE INDEX idx_documents_search ON documents USING GIN(to_tsvector('english', title || ' ' || COALESCE(content, '')));
+CREATE INDEX IF NOT EXISTS idx_documents_organization ON documents(organization_id);
+CREATE INDEX IF NOT EXISTS idx_documents_folder ON documents(folder_id);
+CREATE INDEX IF NOT EXISTS idx_documents_project ON documents(project_id);
+CREATE INDEX IF NOT EXISTS idx_documents_event ON documents(event_id);
+CREATE INDEX IF NOT EXISTS idx_documents_type ON documents(document_type);
+CREATE INDEX IF NOT EXISTS idx_documents_status ON documents(status);
+CREATE INDEX IF NOT EXISTS idx_documents_tags ON documents USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_documents_search ON documents USING GIN(to_tsvector('english', title || ' ' || COALESCE(content, '')));
 
 -- Document Versions
 CREATE TABLE document_versions (
@@ -239,8 +239,8 @@ CREATE TABLE document_versions (
     UNIQUE(document_id, version)
 );
 
-CREATE INDEX idx_document_versions_document ON document_versions(document_id);
-CREATE INDEX idx_document_versions_version ON document_versions(document_id, version);
+CREATE INDEX IF NOT EXISTS idx_document_versions_document ON document_versions(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_versions_version ON document_versions(document_id, version);
 
 -- Document Comments
 CREATE TABLE document_comments (
@@ -258,10 +258,10 @@ CREATE TABLE document_comments (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_document_comments_document ON document_comments(document_id);
-CREATE INDEX idx_document_comments_parent ON document_comments(parent_id);
-CREATE INDEX idx_document_comments_user ON document_comments(user_id);
-CREATE INDEX idx_document_comments_unresolved ON document_comments(document_id, is_resolved) WHERE is_resolved = FALSE;
+CREATE INDEX IF NOT EXISTS idx_document_comments_document ON document_comments(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_comments_parent ON document_comments(parent_id);
+CREATE INDEX IF NOT EXISTS idx_document_comments_user ON document_comments(user_id);
+CREATE INDEX IF NOT EXISTS idx_document_comments_unresolved ON document_comments(document_id, is_resolved) WHERE is_resolved = FALSE;
 
 -- Document Shares
 CREATE TABLE document_shares (
@@ -276,9 +276,9 @@ CREATE TABLE document_shares (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_document_shares_document ON document_shares(document_id);
-CREATE INDEX idx_document_shares_user ON document_shares(shared_with_user_id);
-CREATE INDEX idx_document_shares_token ON document_shares(share_token);
+CREATE INDEX IF NOT EXISTS idx_document_shares_document ON document_shares(document_id);
+CREATE INDEX IF NOT EXISTS idx_document_shares_user ON document_shares(shared_with_user_id);
+CREATE INDEX IF NOT EXISTS idx_document_shares_token ON document_shares(share_token);
 
 -- ============================================================================
 -- CUSTOM FIELDS TABLES
@@ -306,9 +306,9 @@ CREATE TABLE custom_field_definitions (
     UNIQUE(organization_id, entity_type, slug)
 );
 
-CREATE INDEX idx_custom_field_definitions_organization ON custom_field_definitions(organization_id);
-CREATE INDEX idx_custom_field_definitions_entity ON custom_field_definitions(entity_type);
-CREATE INDEX idx_custom_field_definitions_active ON custom_field_definitions(organization_id, entity_type, is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_custom_field_definitions_organization ON custom_field_definitions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_custom_field_definitions_entity ON custom_field_definitions(entity_type);
+CREATE INDEX IF NOT EXISTS idx_custom_field_definitions_active ON custom_field_definitions(organization_id, entity_type, is_active) WHERE is_active = TRUE;
 
 -- Custom Field Values
 CREATE TABLE custom_field_values (
@@ -323,10 +323,10 @@ CREATE TABLE custom_field_values (
     UNIQUE(field_definition_id, entity_id)
 );
 
-CREATE INDEX idx_custom_field_values_organization ON custom_field_values(organization_id);
-CREATE INDEX idx_custom_field_values_definition ON custom_field_values(field_definition_id);
-CREATE INDEX idx_custom_field_values_entity ON custom_field_values(entity_type, entity_id);
-CREATE INDEX idx_custom_field_values_value ON custom_field_values USING GIN(value);
+CREATE INDEX IF NOT EXISTS idx_custom_field_values_organization ON custom_field_values(organization_id);
+CREATE INDEX IF NOT EXISTS idx_custom_field_values_definition ON custom_field_values(field_definition_id);
+CREATE INDEX IF NOT EXISTS idx_custom_field_values_entity ON custom_field_values(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_custom_field_values_value ON custom_field_values USING GIN(value);
 
 -- ============================================================================
 -- TAGS & LABELS TABLES
@@ -346,8 +346,8 @@ CREATE TABLE tags (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_tags_organization ON tags(organization_id);
-CREATE INDEX idx_tags_entity_types ON tags USING GIN(entity_types);
+CREATE INDEX IF NOT EXISTS idx_tags_organization ON tags(organization_id);
+CREATE INDEX IF NOT EXISTS idx_tags_entity_types ON tags USING GIN(entity_types);
 
 -- Entity Tags
 CREATE TABLE entity_tags (
@@ -360,5 +360,5 @@ CREATE TABLE entity_tags (
     UNIQUE(tag_id, entity_type, entity_id)
 );
 
-CREATE INDEX idx_entity_tags_tag ON entity_tags(tag_id);
-CREATE INDEX idx_entity_tags_entity ON entity_tags(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_entity_tags_tag ON entity_tags(tag_id);
+CREATE INDEX IF NOT EXISTS idx_entity_tags_entity ON entity_tags(entity_type, entity_id);

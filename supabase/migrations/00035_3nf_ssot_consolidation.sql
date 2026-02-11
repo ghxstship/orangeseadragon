@@ -208,7 +208,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'assets' AND column_name = 'catalog_item_id'
     ) THEN
-        ALTER TABLE assets ADD COLUMN catalog_item_id UUID REFERENCES catalog_items(id) ON DELETE SET NULL;
+        ALTER TABLE assets ADD COLUMN IF NOT EXISTS catalog_item_id UUID REFERENCES catalog_items(id) ON DELETE SET NULL;
         CREATE INDEX IF NOT EXISTS idx_assets_catalog_item ON assets(catalog_item_id);
     END IF;
 END $$;
@@ -506,36 +506,43 @@ END $$;
 -- PHASE 8: TRIGGERS FOR updated_at
 -- ============================================================================
 
+DROP TRIGGER IF EXISTS update_catalog_items_updated_at ON catalog_items;
 CREATE TRIGGER update_catalog_items_updated_at
     BEFORE UPDATE ON catalog_items
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_employee_profiles_updated_at ON employee_profiles;
 CREATE TRIGGER update_employee_profiles_updated_at
     BEFORE UPDATE ON employee_profiles
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_training_programs_updated_at ON training_programs;
 CREATE TRIGGER update_training_programs_updated_at
     BEFORE UPDATE ON training_programs
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_training_assignments_updated_at ON training_assignments;
 CREATE TRIGGER update_training_assignments_updated_at
     BEFORE UPDATE ON training_assignments
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_training_sessions_updated_at ON training_sessions;
 CREATE TRIGGER update_training_sessions_updated_at
     BEFORE UPDATE ON training_sessions
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_performance_reviews_updated_at ON performance_reviews;
 CREATE TRIGGER update_performance_reviews_updated_at
     BEFORE UPDATE ON performance_reviews
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_performance_review_competencies_updated_at ON performance_review_competencies;
 CREATE TRIGGER update_performance_review_competencies_updated_at
     BEFORE UPDATE ON performance_review_competencies
     FOR EACH ROW

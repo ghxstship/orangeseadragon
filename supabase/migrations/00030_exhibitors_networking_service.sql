@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS exhibitors (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_exhibitors_event ON exhibitors(event_id);
-CREATE INDEX idx_exhibitors_org ON exhibitors(org_id);
+CREATE INDEX IF NOT EXISTS idx_exhibitors_event ON exhibitors(event_id);
+CREATE INDEX IF NOT EXISTS idx_exhibitors_org ON exhibitors(org_id);
 
 CREATE TABLE IF NOT EXISTS exhibitor_leads (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS exhibitor_leads (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_exhibitor_leads_exhibitor ON exhibitor_leads(exhibitor_id);
+CREATE INDEX IF NOT EXISTS idx_exhibitor_leads_exhibitor ON exhibitor_leads(exhibitor_id);
 
 -- ============================================================================
 -- NETWORKING SESSIONS
@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS networking_sessions (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_networking_sessions_event ON networking_sessions(event_id);
-CREATE INDEX idx_networking_sessions_org ON networking_sessions(org_id);
+CREATE INDEX IF NOT EXISTS idx_networking_sessions_event ON networking_sessions(event_id);
+CREATE INDEX IF NOT EXISTS idx_networking_sessions_org ON networking_sessions(org_id);
 
 CREATE TABLE IF NOT EXISTS networking_participants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -122,9 +122,9 @@ CREATE TABLE IF NOT EXISTS service_tickets (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_service_tickets_org ON service_tickets(org_id);
-CREATE INDEX idx_service_tickets_contact ON service_tickets(contact_id);
-CREATE INDEX idx_service_tickets_status ON service_tickets(status);
+CREATE INDEX IF NOT EXISTS idx_service_tickets_org ON service_tickets(org_id);
+CREATE INDEX IF NOT EXISTS idx_service_tickets_contact ON service_tickets(contact_id);
+CREATE INDEX IF NOT EXISTS idx_service_tickets_status ON service_tickets(status);
 
 -- Auto-generate ticket number
 CREATE OR REPLACE FUNCTION generate_ticket_number()
@@ -137,6 +137,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE SEQUENCE IF NOT EXISTS ticket_number_seq START 1;
 
+DROP TRIGGER IF EXISTS set_ticket_number ON service_tickets;
 CREATE TRIGGER set_ticket_number
   BEFORE INSERT ON service_tickets
   FOR EACH ROW
@@ -154,7 +155,7 @@ CREATE TABLE IF NOT EXISTS ticket_messages (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_ticket_messages_ticket ON ticket_messages(ticket_id);
+CREATE INDEX IF NOT EXISTS idx_ticket_messages_ticket ON ticket_messages(ticket_id);
 
 -- ============================================================================
 -- RLS POLICIES
@@ -162,23 +163,35 @@ CREATE INDEX idx_ticket_messages_ticket ON ticket_messages(ticket_id);
 
 -- Exhibitors
 ALTER TABLE exhibitors ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "exhibitors_org_read" ON exhibitors;
 CREATE POLICY "exhibitors_org_read" ON exhibitors FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "exhibitors_org_insert" ON exhibitors;
 CREATE POLICY "exhibitors_org_insert" ON exhibitors FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "exhibitors_org_update" ON exhibitors;
 CREATE POLICY "exhibitors_org_update" ON exhibitors FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "exhibitors_org_delete" ON exhibitors;
 CREATE POLICY "exhibitors_org_delete" ON exhibitors FOR DELETE USING (is_organization_member(org_id));
 
 -- Networking Sessions
 ALTER TABLE networking_sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "networking_sessions_org_read" ON networking_sessions;
 CREATE POLICY "networking_sessions_org_read" ON networking_sessions FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "networking_sessions_org_insert" ON networking_sessions;
 CREATE POLICY "networking_sessions_org_insert" ON networking_sessions FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "networking_sessions_org_update" ON networking_sessions;
 CREATE POLICY "networking_sessions_org_update" ON networking_sessions FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "networking_sessions_org_delete" ON networking_sessions;
 CREATE POLICY "networking_sessions_org_delete" ON networking_sessions FOR DELETE USING (is_organization_member(org_id));
 
 -- Service Tickets
 ALTER TABLE service_tickets ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "service_tickets_org_read" ON service_tickets;
 CREATE POLICY "service_tickets_org_read" ON service_tickets FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "service_tickets_org_insert" ON service_tickets;
 CREATE POLICY "service_tickets_org_insert" ON service_tickets FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "service_tickets_org_update" ON service_tickets;
 CREATE POLICY "service_tickets_org_update" ON service_tickets FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "service_tickets_org_delete" ON service_tickets;
 CREATE POLICY "service_tickets_org_delete" ON service_tickets FOR DELETE USING (is_organization_member(org_id));
 
 COMMIT;

@@ -171,28 +171,16 @@ CREATE TABLE IF NOT EXISTS fiscal_periods (
 -- ============================================================================
 
 -- Ticket types for events
-CREATE TABLE IF NOT EXISTS ticket_types (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    price_cents INTEGER NOT NULL DEFAULT 0,
-    currency_id UUID REFERENCES currencies(id),
-    quantity_available INTEGER,
-    quantity_sold INTEGER DEFAULT 0,
-    registration_type_id UUID REFERENCES registration_types(id),
-    sales_start_at TIMESTAMPTZ,
-    sales_end_at TIMESTAMPTZ,
-    min_per_order INTEGER DEFAULT 1,
-    max_per_order INTEGER,
-    is_visible BOOLEAN DEFAULT TRUE,
-    is_active BOOLEAN DEFAULT TRUE,
-    sort_order INTEGER DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by UUID REFERENCES users(id)
-);
+-- Extend existing ticket_types table (originally from 00008_experience.sql)
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS price_cents INTEGER DEFAULT 0;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS currency_id UUID;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS registration_type_id UUID;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS sales_start_at TIMESTAMPTZ;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS sales_end_at TIMESTAMPTZ;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS min_per_order INTEGER DEFAULT 1;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS is_visible BOOLEAN DEFAULT TRUE;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0;
+ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS created_by UUID;
 
 -- Event registrations
 CREATE TABLE IF NOT EXISTS event_registrations (
@@ -373,24 +361,16 @@ CREATE TABLE IF NOT EXISTS talent_riders (
 -- ============================================================================
 
 -- Event partners (sponsors, exhibitors, vendors)
-CREATE TABLE IF NOT EXISTS event_partners (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-    company_id UUID NOT NULL REFERENCES companies(id),
-    partner_type_id UUID NOT NULL REFERENCES partner_types(id),
-    sponsorship_level_id UUID REFERENCES sponsorship_levels(id),
-    status_id UUID REFERENCES statuses(id),
-    contract_id UUID REFERENCES contracts(id),
-    display_name VARCHAR(255),
-    display_logo_url TEXT,
-    display_description TEXT,
-    display_website_url TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by UUID REFERENCES users(id),
-    UNIQUE(event_id, company_id, partner_type_id)
-);
+-- Extend existing event_partners table (originally from 00016_additional_entities.sql)
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS organization_id UUID;
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS partner_type_id UUID;
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS sponsorship_level_id UUID;
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS status_id UUID;
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS display_name VARCHAR(255);
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS display_logo_url TEXT;
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS display_description TEXT;
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS display_website_url TEXT;
+ALTER TABLE event_partners ADD COLUMN IF NOT EXISTS created_by UUID;
 
 -- Partner contacts (people from partner companies)
 CREATE TABLE IF NOT EXISTS partner_contacts (
@@ -657,42 +637,22 @@ CREATE TABLE IF NOT EXISTS lead_score_events (
 -- ============================================================================
 
 -- Email templates
-CREATE TABLE IF NOT EXISTS email_templates (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    subject VARCHAR(500),
-    preview_text VARCHAR(500),
-    html_content TEXT,
-    text_content TEXT,
-    template_type VARCHAR(50) DEFAULT 'marketing',
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by UUID REFERENCES users(id)
-);
+-- Extend existing email_templates table (originally from 00016_additional_entities.sql)
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS preview_text VARCHAR(500);
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS html_content TEXT;
+ALTER TABLE email_templates ADD COLUMN IF NOT EXISTS text_content TEXT;
 
 -- Campaigns
-CREATE TABLE IF NOT EXISTS campaigns (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL,
-    campaign_type VARCHAR(50) NOT NULL CHECK (campaign_type IN ('email_blast', 'drip', 'newsletter', 'transactional', 'event_promo')),
-    status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'sending', 'sent', 'paused', 'cancelled')),
-    subject_line VARCHAR(500) NOT NULL,
-    preview_text VARCHAR(500),
-    from_name VARCHAR(255) NOT NULL,
-    from_email VARCHAR(255) NOT NULL,
-    reply_to_email VARCHAR(255),
-    template_id UUID REFERENCES email_templates(id),
-    audience_filter JSONB,
-    scheduled_at TIMESTAMPTZ,
-    sent_at TIMESTAMPTZ,
-    event_id UUID REFERENCES events(id),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by UUID REFERENCES users(id)
-);
+-- Extend existing campaigns table (originally from 00007_content_talent.sql)
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS subject_line VARCHAR(500);
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS preview_text VARCHAR(500);
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS from_name VARCHAR(255);
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS from_email VARCHAR(255);
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS reply_to_email VARCHAR(255);
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS template_id UUID;
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS audience_filter JSONB;
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS scheduled_at TIMESTAMPTZ;
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS sent_at TIMESTAMPTZ;
 
 -- Campaign recipients
 CREATE TABLE IF NOT EXISTS campaign_recipients (
@@ -819,50 +779,29 @@ CREATE TABLE IF NOT EXISTS leave_balances (
 -- ============================================================================
 
 -- Purchase orders
-CREATE TABLE IF NOT EXISTS purchase_orders (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    po_number VARCHAR(50) NOT NULL,
-    vendor_id UUID NOT NULL REFERENCES vendors(id),
-    event_id UUID REFERENCES events(id),
-    project_id UUID REFERENCES projects(id),
-    status VARCHAR(30) DEFAULT 'draft' CHECK (status IN ('draft', 'pending_approval', 'approved', 'sent', 'acknowledged', 'partial', 'received', 'cancelled')),
-    order_date DATE NOT NULL,
-    expected_delivery_date DATE,
-    shipping_address_id UUID REFERENCES addresses(id),
-    billing_address_id UUID REFERENCES addresses(id),
-    currency_id UUID NOT NULL REFERENCES currencies(id),
-    subtotal_cents INTEGER DEFAULT 0,
-    tax_cents INTEGER DEFAULT 0,
-    shipping_cents INTEGER DEFAULT 0,
-    total_cents INTEGER DEFAULT 0,
-    notes TEXT,
-    terms TEXT,
-    approved_by UUID REFERENCES users(id),
-    approved_at TIMESTAMPTZ,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by UUID REFERENCES users(id),
-    UNIQUE(organization_id, po_number)
-);
+-- Extend existing purchase_orders table (originally from 00005_finance.sql)
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS shipping_address_id UUID;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS billing_address_id UUID;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS currency_id UUID;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS subtotal_cents INTEGER DEFAULT 0;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS tax_cents INTEGER DEFAULT 0;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS shipping_cents INTEGER DEFAULT 0;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS total_cents INTEGER DEFAULT 0;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS terms TEXT;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS approved_by UUID;
+ALTER TABLE purchase_orders ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ;
 
 -- Purchase order line items
-CREATE TABLE IF NOT EXISTS purchase_order_items (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    purchase_order_id UUID NOT NULL REFERENCES purchase_orders(id) ON DELETE CASCADE,
-    description TEXT NOT NULL,
-    quantity DECIMAL(10,2) NOT NULL,
-    unit VARCHAR(50),
-    unit_price_cents INTEGER NOT NULL,
-    tax_rate DECIMAL(5,2) DEFAULT 0,
-    tax_cents INTEGER DEFAULT 0,
-    total_cents INTEGER NOT NULL,
-    asset_id UUID REFERENCES assets(id),
-    gl_account_id UUID REFERENCES chart_of_accounts(id),
-    received_quantity DECIMAL(10,2) DEFAULT 0,
-    line_number INTEGER NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing purchase_order_items table (originally from 00005_finance.sql)
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS quantity DECIMAL(10,2);
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS unit VARCHAR(50);
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS unit_price_cents INTEGER;
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS tax_cents INTEGER DEFAULT 0;
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS total_cents INTEGER;
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS asset_id UUID;
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS gl_account_id UUID;
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS received_quantity DECIMAL(10,2) DEFAULT 0;
+ALTER TABLE purchase_order_items ADD COLUMN IF NOT EXISTS line_number INTEGER;
 
 -- Goods receipts
 CREATE TABLE IF NOT EXISTS goods_receipts (
@@ -893,42 +832,20 @@ CREATE TABLE IF NOT EXISTS goods_receipt_items (
 -- ============================================================================
 
 -- Support tickets
-CREATE TABLE IF NOT EXISTS support_tickets (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    ticket_number VARCHAR(50) NOT NULL,
-    subject VARCHAR(500) NOT NULL,
-    description TEXT NOT NULL,
-    contact_id UUID NOT NULL REFERENCES contacts(id),
-    company_id UUID REFERENCES companies(id),
-    category_id UUID NOT NULL REFERENCES ticket_categories(id),
-    priority VARCHAR(20) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
-    status VARCHAR(20) DEFAULT 'new' CHECK (status IN ('new', 'open', 'pending', 'on_hold', 'resolved', 'closed')),
-    assigned_to_user_id UUID REFERENCES users(id),
-    assigned_team_id UUID REFERENCES teams(id),
-    source VARCHAR(50) CHECK (source IN ('email', 'phone', 'web', 'chat', 'social', 'internal')),
-    event_id UUID REFERENCES events(id),
-    registration_id UUID REFERENCES event_registrations(id),
-    first_response_at TIMESTAMPTZ,
-    resolved_at TIMESTAMPTZ,
-    closed_at TIMESTAMPTZ,
-    satisfaction_rating INTEGER CHECK (satisfaction_rating >= 1 AND satisfaction_rating <= 5),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by UUID REFERENCES users(id),
-    UNIQUE(organization_id, ticket_number)
-);
+-- Extend existing support_tickets table (originally from 00015_account_platform.sql)
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS contact_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS company_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS category_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS assigned_to_user_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS assigned_team_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS event_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS registration_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS created_by UUID;
 
 -- Ticket comments
-CREATE TABLE IF NOT EXISTS ticket_comments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    ticket_id UUID NOT NULL REFERENCES support_tickets(id) ON DELETE CASCADE,
-    author_id UUID REFERENCES users(id),
-    author_contact_id UUID REFERENCES contacts(id),
-    content TEXT NOT NULL,
-    is_internal BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing ticket_comments table (originally from 00015_account_platform.sql)
+ALTER TABLE ticket_comments ADD COLUMN IF NOT EXISTS author_id UUID;
+ALTER TABLE ticket_comments ADD COLUMN IF NOT EXISTS author_contact_id UUID;
 
 -- ============================================================================
 -- INDEXES

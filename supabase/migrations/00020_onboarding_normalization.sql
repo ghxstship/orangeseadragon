@@ -25,8 +25,8 @@ CREATE TABLE account_type_configs (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_account_type_configs_slug ON account_type_configs(slug);
-CREATE INDEX idx_account_type_configs_active ON account_type_configs(is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_account_type_configs_slug ON account_type_configs(slug);
+CREATE INDEX IF NOT EXISTS idx_account_type_configs_active ON account_type_configs(is_active) WHERE is_active = TRUE;
 
 -- ============================================================================
 -- ONBOARDING SYSTEM
@@ -50,8 +50,8 @@ CREATE TABLE onboarding_steps (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_onboarding_steps_slug ON onboarding_steps(slug);
-CREATE INDEX idx_onboarding_steps_position ON onboarding_steps(position);
+CREATE INDEX IF NOT EXISTS idx_onboarding_steps_slug ON onboarding_steps(slug);
+CREATE INDEX IF NOT EXISTS idx_onboarding_steps_position ON onboarding_steps(position);
 
 -- User Onboarding Progress
 CREATE TABLE user_onboarding_progress (
@@ -69,9 +69,9 @@ CREATE TABLE user_onboarding_progress (
     UNIQUE(user_id, organization_id, step_id)
 );
 
-CREATE INDEX idx_user_onboarding_progress_user ON user_onboarding_progress(user_id);
-CREATE INDEX idx_user_onboarding_progress_org ON user_onboarding_progress(organization_id);
-CREATE INDEX idx_user_onboarding_progress_status ON user_onboarding_progress(status);
+CREATE INDEX IF NOT EXISTS idx_user_onboarding_progress_user ON user_onboarding_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_onboarding_progress_org ON user_onboarding_progress(organization_id);
+CREATE INDEX IF NOT EXISTS idx_user_onboarding_progress_status ON user_onboarding_progress(status);
 
 -- User Onboarding State (tracks overall onboarding completion)
 CREATE TABLE user_onboarding_state (
@@ -89,8 +89,8 @@ CREATE TABLE user_onboarding_state (
     UNIQUE(user_id, organization_id)
 );
 
-CREATE INDEX idx_user_onboarding_state_user ON user_onboarding_state(user_id);
-CREATE INDEX idx_user_onboarding_state_completed ON user_onboarding_state(is_completed);
+CREATE INDEX IF NOT EXISTS idx_user_onboarding_state_user ON user_onboarding_state(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_onboarding_state_completed ON user_onboarding_state(is_completed);
 
 -- ============================================================================
 -- INVITATION SYSTEM
@@ -120,10 +120,10 @@ CREATE TABLE organization_invitations (
     UNIQUE(organization_id, email, revoked_at)
 );
 
-CREATE INDEX idx_organization_invitations_org ON organization_invitations(organization_id);
-CREATE INDEX idx_organization_invitations_email ON organization_invitations(email);
-CREATE INDEX idx_organization_invitations_token ON organization_invitations(token);
-CREATE INDEX idx_organization_invitations_pending ON organization_invitations(organization_id, accepted_at, declined_at, revoked_at) 
+CREATE INDEX IF NOT EXISTS idx_organization_invitations_org ON organization_invitations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_organization_invitations_email ON organization_invitations(email);
+CREATE INDEX IF NOT EXISTS idx_organization_invitations_token ON organization_invitations(token);
+CREATE INDEX IF NOT EXISTS idx_organization_invitations_pending ON organization_invitations(organization_id, accepted_at, declined_at, revoked_at) 
     WHERE accepted_at IS NULL AND declined_at IS NULL AND revoked_at IS NULL;
 
 -- ============================================================================
@@ -144,8 +144,8 @@ CREATE TABLE permission_definitions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_permission_definitions_category ON permission_definitions(category);
-CREATE INDEX idx_permission_definitions_resource ON permission_definitions(resource);
+CREATE INDEX IF NOT EXISTS idx_permission_definitions_category ON permission_definitions(category);
+CREATE INDEX IF NOT EXISTS idx_permission_definitions_resource ON permission_definitions(resource);
 
 -- ============================================================================
 -- USER PROFILE ENHANCEMENTS
@@ -156,33 +156,38 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS account_type VARCHAR(50) DEFAULT 'mem
 ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed_at TIMESTAMPTZ;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_completed_at TIMESTAMPTZ;
 
-CREATE INDEX idx_users_account_type ON users(account_type);
+CREATE INDEX IF NOT EXISTS idx_users_account_type ON users(account_type);
 
 -- ============================================================================
 -- TRIGGERS
 -- ============================================================================
 
 -- Apply updated_at trigger to new tables
+DROP TRIGGER IF EXISTS update_account_type_configs_updated_at ON account_type_configs;
 CREATE TRIGGER update_account_type_configs_updated_at
     BEFORE UPDATE ON account_type_configs
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_onboarding_steps_updated_at ON onboarding_steps;
 CREATE TRIGGER update_onboarding_steps_updated_at
     BEFORE UPDATE ON onboarding_steps
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_user_onboarding_progress_updated_at ON user_onboarding_progress;
 CREATE TRIGGER update_user_onboarding_progress_updated_at
     BEFORE UPDATE ON user_onboarding_progress
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_user_onboarding_state_updated_at ON user_onboarding_state;
 CREATE TRIGGER update_user_onboarding_state_updated_at
     BEFORE UPDATE ON user_onboarding_state
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_organization_invitations_updated_at ON organization_invitations;
 CREATE TRIGGER update_organization_invitations_updated_at
     BEFORE UPDATE ON organization_invitations
     FOR EACH ROW
@@ -236,28 +241,33 @@ ALTER TABLE organization_invitations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE permission_definitions ENABLE ROW LEVEL SECURITY;
 
 -- Account Type Configs: Read-only for all authenticated users
+DROP POLICY IF EXISTS "Account type configs are viewable by authenticated users" ON account_type_configs;
 CREATE POLICY "Account type configs are viewable by authenticated users"
     ON account_type_configs FOR SELECT
     TO authenticated
     USING (is_active = TRUE);
 
 -- Onboarding Steps: Read-only for all authenticated users
+DROP POLICY IF EXISTS "Onboarding steps are viewable by authenticated users" ON onboarding_steps;
 CREATE POLICY "Onboarding steps are viewable by authenticated users"
     ON onboarding_steps FOR SELECT
     TO authenticated
     USING (TRUE);
 
 -- User Onboarding Progress: Users can manage their own progress
+DROP POLICY IF EXISTS "Users can view their own onboarding progress" ON user_onboarding_progress;
 CREATE POLICY "Users can view their own onboarding progress"
     ON user_onboarding_progress FOR SELECT
     TO authenticated
     USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert their own onboarding progress" ON user_onboarding_progress;
 CREATE POLICY "Users can insert their own onboarding progress"
     ON user_onboarding_progress FOR INSERT
     TO authenticated
     WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update their own onboarding progress" ON user_onboarding_progress;
 CREATE POLICY "Users can update their own onboarding progress"
     ON user_onboarding_progress FOR UPDATE
     TO authenticated
@@ -265,16 +275,19 @@ CREATE POLICY "Users can update their own onboarding progress"
     WITH CHECK (user_id = auth.uid());
 
 -- User Onboarding State: Users can manage their own state
+DROP POLICY IF EXISTS "Users can view their own onboarding state" ON user_onboarding_state;
 CREATE POLICY "Users can view their own onboarding state"
     ON user_onboarding_state FOR SELECT
     TO authenticated
     USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can insert their own onboarding state" ON user_onboarding_state;
 CREATE POLICY "Users can insert their own onboarding state"
     ON user_onboarding_state FOR INSERT
     TO authenticated
     WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update their own onboarding state" ON user_onboarding_state;
 CREATE POLICY "Users can update their own onboarding state"
     ON user_onboarding_state FOR UPDATE
     TO authenticated
@@ -282,6 +295,7 @@ CREATE POLICY "Users can update their own onboarding state"
     WITH CHECK (user_id = auth.uid());
 
 -- Organization Invitations: Complex policies based on role
+DROP POLICY IF EXISTS "Users can view invitations for their email" ON organization_invitations;
 CREATE POLICY "Users can view invitations for their email"
     ON organization_invitations FOR SELECT
     TO authenticated
@@ -293,6 +307,7 @@ CREATE POLICY "Users can view invitations for their email"
         )
     );
 
+DROP POLICY IF EXISTS "Org admins can create invitations" ON organization_invitations;
 CREATE POLICY "Org admins can create invitations"
     ON organization_invitations FOR INSERT
     TO authenticated
@@ -306,6 +321,7 @@ CREATE POLICY "Org admins can create invitations"
         )
     );
 
+DROP POLICY IF EXISTS "Org admins can update invitations" ON organization_invitations;
 CREATE POLICY "Org admins can update invitations"
     ON organization_invitations FOR UPDATE
     TO authenticated
@@ -320,6 +336,7 @@ CREATE POLICY "Org admins can update invitations"
     );
 
 -- Permission Definitions: Read-only for all authenticated users
+DROP POLICY IF EXISTS "Permission definitions are viewable by authenticated users" ON permission_definitions;
 CREATE POLICY "Permission definitions are viewable by authenticated users"
     ON permission_definitions FOR SELECT
     TO authenticated

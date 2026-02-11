@@ -26,16 +26,17 @@ CREATE TABLE IF NOT EXISTS entity_activity_logs (
 );
 
 -- Indexes for efficient querying
-CREATE INDEX idx_entity_activity_logs_org ON entity_activity_logs(organization_id);
-CREATE INDEX idx_entity_activity_logs_entity ON entity_activity_logs(entity_type, entity_id);
-CREATE INDEX idx_entity_activity_logs_user ON entity_activity_logs(user_id);
-CREATE INDEX idx_entity_activity_logs_created ON entity_activity_logs(created_at DESC);
-CREATE INDEX idx_entity_activity_logs_org_created ON entity_activity_logs(organization_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_entity_activity_logs_org ON entity_activity_logs(organization_id);
+CREATE INDEX IF NOT EXISTS idx_entity_activity_logs_entity ON entity_activity_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_entity_activity_logs_user ON entity_activity_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_entity_activity_logs_created ON entity_activity_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_entity_activity_logs_org_created ON entity_activity_logs(organization_id, created_at DESC);
 
 -- Enable RLS
 ALTER TABLE entity_activity_logs ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Users can view activity logs in their organization" ON entity_activity_logs;
 CREATE POLICY "Users can view activity logs in their organization"
     ON entity_activity_logs FOR SELECT
     USING (
@@ -45,6 +46,7 @@ CREATE POLICY "Users can view activity logs in their organization"
         )
     );
 
+DROP POLICY IF EXISTS "Users can create activity logs in their organization" ON entity_activity_logs;
 CREATE POLICY "Users can create activity logs in their organization"
     ON entity_activity_logs FOR INSERT
     WITH CHECK (
@@ -62,34 +64,20 @@ ALTER PUBLICATION supabase_realtime ADD TABLE entity_activity_logs;
 -- Polymorphic comments that can be attached to any entity
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS entity_comments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    entity_type TEXT NOT NULL,
-    entity_id UUID NOT NULL,
-    parent_id UUID REFERENCES entity_comments(id) ON DELETE CASCADE,
-    author_id UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
-    author_name TEXT NOT NULL,
-    author_avatar_url TEXT,
-    content TEXT NOT NULL,
-    mentions TEXT[] DEFAULT '{}',
-    attachments JSONB,
-    is_edited BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Table entity_comments already exists from 00102_entity_comments.sql, skipping re-creation
 
 -- Indexes
-CREATE INDEX idx_entity_comments_org ON entity_comments(organization_id);
-CREATE INDEX idx_entity_comments_entity ON entity_comments(entity_type, entity_id);
-CREATE INDEX idx_entity_comments_parent ON entity_comments(parent_id);
-CREATE INDEX idx_entity_comments_author ON entity_comments(author_id);
-CREATE INDEX idx_entity_comments_created ON entity_comments(created_at);
+CREATE INDEX IF NOT EXISTS idx_entity_comments_org ON entity_comments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_entity_comments_entity ON entity_comments(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_entity_comments_parent ON entity_comments(parent_id);
+CREATE INDEX IF NOT EXISTS idx_entity_comments_author ON entity_comments(author_id);
+CREATE INDEX IF NOT EXISTS idx_entity_comments_created ON entity_comments(created_at);
 
 -- Enable RLS
 ALTER TABLE entity_comments ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Users can view comments in their organization" ON entity_comments;
 CREATE POLICY "Users can view comments in their organization"
     ON entity_comments FOR SELECT
     USING (
@@ -99,6 +87,7 @@ CREATE POLICY "Users can view comments in their organization"
         )
     );
 
+DROP POLICY IF EXISTS "Users can create comments in their organization" ON entity_comments;
 CREATE POLICY "Users can create comments in their organization"
     ON entity_comments FOR INSERT
     WITH CHECK (
@@ -109,11 +98,13 @@ CREATE POLICY "Users can create comments in their organization"
         AND author_id = auth.uid()
     );
 
+DROP POLICY IF EXISTS "Users can update their own comments" ON entity_comments;
 CREATE POLICY "Users can update their own comments"
     ON entity_comments FOR UPDATE
     USING (author_id = auth.uid())
     WITH CHECK (author_id = auth.uid());
 
+DROP POLICY IF EXISTS "Users can delete their own comments" ON entity_comments;
 CREATE POLICY "Users can delete their own comments"
     ON entity_comments FOR DELETE
     USING (author_id = auth.uid());
@@ -133,12 +124,13 @@ CREATE TABLE IF NOT EXISTS comment_mentions (
     UNIQUE(comment_id, user_id)
 );
 
-CREATE INDEX idx_comment_mentions_user ON comment_mentions(user_id);
-CREATE INDEX idx_comment_mentions_comment ON comment_mentions(comment_id);
+CREATE INDEX IF NOT EXISTS idx_comment_mentions_user ON comment_mentions(user_id);
+CREATE INDEX IF NOT EXISTS idx_comment_mentions_comment ON comment_mentions(comment_id);
 
 -- Enable RLS
 ALTER TABLE comment_mentions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view mentions in their organization" ON comment_mentions;
 CREATE POLICY "Users can view mentions in their organization"
     ON comment_mentions FOR SELECT
     USING (
@@ -155,60 +147,37 @@ CREATE POLICY "Users can view mentions in their organization"
 -- ============================================================================
 
 -- Runsheets table (if not exists - may already be defined)
-CREATE TABLE IF NOT EXISTS runsheets (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    event_id UUID REFERENCES events(id) ON DELETE SET NULL,
-    stage_id UUID REFERENCES stages(id) ON DELETE SET NULL,
-    name TEXT NOT NULL,
-    description TEXT,
-    date DATE,
-    scheduled_start TIMESTAMPTZ,
-    actual_start TIMESTAMPTZ,
-    scheduled_end TIMESTAMPTZ,
-    actual_end TIMESTAMPTZ,
-    status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'rehearsal', 'live', 'completed', 'cancelled')),
-    version INTEGER DEFAULT 1,
-    notes TEXT,
-    created_by UUID REFERENCES users(id) ON DELETE SET NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing runsheets table (originally from 00002_events_production.sql)
+ALTER TABLE runsheets ADD COLUMN IF NOT EXISTS scheduled_start TIMESTAMPTZ;
+ALTER TABLE runsheets ADD COLUMN IF NOT EXISTS actual_start TIMESTAMPTZ;
+ALTER TABLE runsheets ADD COLUMN IF NOT EXISTS scheduled_end TIMESTAMPTZ;
+ALTER TABLE runsheets ADD COLUMN IF NOT EXISTS actual_end TIMESTAMPTZ;
+ALTER TABLE runsheets ADD COLUMN IF NOT EXISTS notes TEXT;
 
 -- Runsheet Items (cues, segments, breaks)
-CREATE TABLE IF NOT EXISTS runsheet_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    runsheet_id UUID NOT NULL REFERENCES runsheets(id) ON DELETE CASCADE,
-    parent_id UUID REFERENCES runsheet_items(id) ON DELETE CASCADE,
-    item_order INTEGER NOT NULL,
-    item_type TEXT NOT NULL CHECK (item_type IN ('segment', 'cue', 'break', 'changeover', 'note')),
-    name TEXT NOT NULL,
-    description TEXT,
-    duration_planned INTERVAL,
-    duration_actual INTERVAL,
-    start_time_planned TIME,
-    start_time_actual TIME,
-    end_time_planned TIME,
-    end_time_actual TIME,
-    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'standby', 'go', 'running', 'complete', 'skipped')),
-    color TEXT,
-    icon TEXT,
-    assigned_to UUID[] DEFAULT '{}',
-    notes TEXT,
-    cue_number TEXT,
-    technical_notes TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing runsheet_items table (originally from 00002_events_production.sql)
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS item_order INTEGER;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS duration_planned INTERVAL;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS duration_actual INTERVAL;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS start_time_planned TIME;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS start_time_actual TIME;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS end_time_planned TIME;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS end_time_actual TIME;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS color TEXT;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS icon TEXT;
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS assigned_to UUID[] DEFAULT '{}';
+ALTER TABLE runsheet_items ADD COLUMN IF NOT EXISTS cue_number TEXT;
 
-CREATE INDEX idx_runsheet_items_runsheet ON runsheet_items(runsheet_id);
-CREATE INDEX idx_runsheet_items_order ON runsheet_items(runsheet_id, item_order);
-CREATE INDEX idx_runsheet_items_status ON runsheet_items(status);
+CREATE INDEX IF NOT EXISTS idx_runsheet_items_runsheet ON runsheet_items(runsheet_id);
+CREATE INDEX IF NOT EXISTS idx_runsheet_items_order ON runsheet_items(runsheet_id, item_order);
+CREATE INDEX IF NOT EXISTS idx_runsheet_items_status ON runsheet_items(status);
 
 -- Enable RLS
 ALTER TABLE runsheets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE runsheet_items ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view runsheets in their organization" ON runsheets;
 CREATE POLICY "Users can view runsheets in their organization"
     ON runsheets FOR SELECT
     USING (
@@ -218,6 +187,7 @@ CREATE POLICY "Users can view runsheets in their organization"
         )
     );
 
+DROP POLICY IF EXISTS "Users can manage runsheets in their organization" ON runsheets;
 CREATE POLICY "Users can manage runsheets in their organization"
     ON runsheets FOR ALL
     USING (
@@ -227,6 +197,7 @@ CREATE POLICY "Users can manage runsheets in their organization"
         )
     );
 
+DROP POLICY IF EXISTS "Users can view runsheet items in their organization" ON runsheet_items;
 CREATE POLICY "Users can view runsheet items in their organization"
     ON runsheet_items FOR SELECT
     USING (
@@ -238,6 +209,7 @@ CREATE POLICY "Users can view runsheet items in their organization"
         )
     );
 
+DROP POLICY IF EXISTS "Users can manage runsheet items in their organization" ON runsheet_items;
 CREATE POLICY "Users can manage runsheet items in their organization"
     ON runsheet_items FOR ALL
     USING (
@@ -257,24 +229,16 @@ ALTER PUBLICATION supabase_realtime ADD TABLE runsheet_items;
 -- SHOW CALL LOG (for live show calling history)
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS show_call_logs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    runsheet_id UUID NOT NULL REFERENCES runsheets(id) ON DELETE CASCADE,
-    runsheet_item_id UUID REFERENCES runsheet_items(id) ON DELETE SET NULL,
-    action TEXT NOT NULL CHECK (action IN ('go', 'standby', 'skip', 'pause', 'resume', 'reset', 'note')),
-    called_by UUID NOT NULL REFERENCES users(id) ON DELETE SET NULL,
-    called_by_name TEXT NOT NULL,
-    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    notes TEXT,
-    metadata JSONB
-);
+-- Extend existing show_call_logs table (originally from 00104_show_call_logs_notification_rules.sql)
+ALTER TABLE show_call_logs ADD COLUMN IF NOT EXISTS metadata JSONB;
 
-CREATE INDEX idx_show_call_logs_runsheet ON show_call_logs(runsheet_id);
-CREATE INDEX idx_show_call_logs_timestamp ON show_call_logs(timestamp);
+CREATE INDEX IF NOT EXISTS idx_show_call_logs_runsheet ON show_call_logs(runsheet_id);
+CREATE INDEX IF NOT EXISTS idx_show_call_logs_timestamp ON show_call_logs(timestamp);
 
 -- Enable RLS
 ALTER TABLE show_call_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view show call logs in their organization" ON show_call_logs;
 CREATE POLICY "Users can view show call logs in their organization"
     ON show_call_logs FOR SELECT
     USING (
@@ -286,6 +250,7 @@ CREATE POLICY "Users can view show call logs in their organization"
         )
     );
 
+DROP POLICY IF EXISTS "Users can create show call logs" ON show_call_logs;
 CREATE POLICY "Users can create show call logs"
     ON show_call_logs FOR INSERT
     WITH CHECK (
@@ -309,17 +274,17 @@ DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
                    WHERE table_name = 'events' AND column_name = 'is_template') THEN
-        ALTER TABLE events ADD COLUMN is_template BOOLEAN DEFAULT FALSE;
+        ALTER TABLE events ADD COLUMN IF NOT EXISTS is_template BOOLEAN DEFAULT FALSE;
     END IF;
     
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
                    WHERE table_name = 'events' AND column_name = 'template_id') THEN
-        ALTER TABLE events ADD COLUMN template_id UUID REFERENCES events(id) ON DELETE SET NULL;
+        ALTER TABLE events ADD COLUMN IF NOT EXISTS template_id UUID REFERENCES events(id) ON DELETE SET NULL;
     END IF;
     
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
                    WHERE table_name = 'events' AND column_name = 'template_name') THEN
-        ALTER TABLE events ADD COLUMN template_name TEXT;
+        ALTER TABLE events ADD COLUMN IF NOT EXISTS template_name TEXT;
     END IF;
 END $$;
 
@@ -329,28 +294,20 @@ CREATE INDEX IF NOT EXISTS idx_events_template ON events(is_template) WHERE is_t
 -- NOTIFICATION RULES (for expiration alerts)
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS notification_rules (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    description TEXT,
-    entity_type TEXT NOT NULL,
-    trigger_type TEXT NOT NULL CHECK (trigger_type IN ('expiration', 'status_change', 'assignment', 'due_date', 'custom')),
-    trigger_config JSONB NOT NULL DEFAULT '{}',
-    notification_config JSONB NOT NULL DEFAULT '{}',
-    is_active BOOLEAN DEFAULT TRUE,
-    created_by UUID REFERENCES users(id) ON DELETE SET NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing notification_rules table (originally from 00104_show_call_logs_notification_rules.sql)
+ALTER TABLE notification_rules ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE notification_rules ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE notification_rules ADD COLUMN IF NOT EXISTS trigger_config JSONB DEFAULT '{}';
+ALTER TABLE notification_rules ADD COLUMN IF NOT EXISTS created_by UUID;
 
-CREATE INDEX idx_notification_rules_org ON notification_rules(organization_id);
-CREATE INDEX idx_notification_rules_entity ON notification_rules(entity_type);
-CREATE INDEX idx_notification_rules_active ON notification_rules(is_active) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_notification_rules_org ON notification_rules(organization_id);
+CREATE INDEX IF NOT EXISTS idx_notification_rules_entity ON notification_rules(entity_type);
+CREATE INDEX IF NOT EXISTS idx_notification_rules_active ON notification_rules(is_active) WHERE is_active = TRUE;
 
 -- Enable RLS
 ALTER TABLE notification_rules ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view notification rules in their organization" ON notification_rules;
 CREATE POLICY "Users can view notification rules in their organization"
     ON notification_rules FOR SELECT
     USING (
@@ -360,6 +317,7 @@ CREATE POLICY "Users can view notification rules in their organization"
         )
     );
 
+DROP POLICY IF EXISTS "Admins can manage notification rules" ON notification_rules;
 CREATE POLICY "Admins can manage notification rules"
     ON notification_rules FOR ALL
     USING (

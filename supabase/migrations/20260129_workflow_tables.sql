@@ -4,43 +4,27 @@
 -- ==================== Core Workflow Tables ====================
 
 -- Workflows table
-CREATE TABLE IF NOT EXISTS workflows (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  description TEXT,
-  version INTEGER NOT NULL DEFAULT 1,
-  status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'inactive', 'archived')),
-  trigger JSONB NOT NULL,
-  steps JSONB NOT NULL,
-  variables JSONB,
-  metadata JSONB,
-  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  created_by UUID NOT NULL REFERENCES users(id),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing workflows table (originally from 00055_workflow_automation.sql)
+ALTER TABLE workflows ADD COLUMN IF NOT EXISTS version INTEGER DEFAULT 1;
+ALTER TABLE workflows ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'inactive', 'archived'));
+ALTER TABLE workflows ADD COLUMN IF NOT EXISTS trigger JSONB;
+ALTER TABLE workflows ADD COLUMN IF NOT EXISTS steps JSONB;
+ALTER TABLE workflows ADD COLUMN IF NOT EXISTS variables JSONB;
+ALTER TABLE workflows ADD COLUMN IF NOT EXISTS metadata JSONB;
 
 CREATE INDEX IF NOT EXISTS idx_workflows_org ON workflows(organization_id);
 CREATE INDEX IF NOT EXISTS idx_workflows_status ON workflows(status);
 CREATE INDEX IF NOT EXISTS idx_workflows_created_by ON workflows(created_by);
 
 -- Workflow executions table
-CREATE TABLE IF NOT EXISTS workflow_executions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  workflow_id UUID NOT NULL REFERENCES workflows(id) ON DELETE CASCADE,
-  workflow_version INTEGER NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'running', 'completed', 'failed', 'cancelled')),
-  trigger JSONB NOT NULL,
-  input JSONB,
-  output JSONB,
-  context JSONB,
-  steps JSONB NOT NULL,
-  error JSONB,
-  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  initiated_by UUID REFERENCES users(id),
-  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  completed_at TIMESTAMPTZ
-);
+-- Extend existing workflow_executions table (originally from 00084_workflow_engine.sql)
+ALTER TABLE workflow_executions ADD COLUMN IF NOT EXISTS workflow_version INTEGER;
+ALTER TABLE workflow_executions ADD COLUMN IF NOT EXISTS trigger JSONB;
+ALTER TABLE workflow_executions ADD COLUMN IF NOT EXISTS input JSONB;
+ALTER TABLE workflow_executions ADD COLUMN IF NOT EXISTS output JSONB;
+ALTER TABLE workflow_executions ADD COLUMN IF NOT EXISTS context JSONB;
+ALTER TABLE workflow_executions ADD COLUMN IF NOT EXISTS steps JSONB;
+ALTER TABLE workflow_executions ADD COLUMN IF NOT EXISTS error JSONB;
 
 CREATE INDEX IF NOT EXISTS idx_workflow_executions_workflow ON workflow_executions(workflow_id);
 CREATE INDEX IF NOT EXISTS idx_workflow_executions_status ON workflow_executions(status);
@@ -63,26 +47,15 @@ CREATE INDEX IF NOT EXISTS idx_scheduled_workflows_trigger ON scheduled_workflow
 -- ==================== Lead/CRM Tables ====================
 
 -- Leads table
-CREATE TABLE IF NOT EXISTS leads (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  company_name TEXT,
-  company_id UUID REFERENCES companies(id),
-  contact_id UUID REFERENCES contacts(id),
-  source TEXT,
-  status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'contacted', 'qualified', 'converted', 'lost')),
-  score INTEGER DEFAULT 0,
-  score_grade TEXT CHECK (score_grade IN ('A', 'B', 'C', 'D', 'F')),
-  company_size TEXT,
-  email_opens INTEGER DEFAULT 0,
-  page_views INTEGER DEFAULT 0,
-  estimated_value DECIMAL(12,2),
-  assignee_id UUID REFERENCES users(id),
-  assigned_at TIMESTAMPTZ,
-  converted_deal_id UUID,
-  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing leads table (originally from 00023_missing_entity_tables.sql)
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS company_name TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS score_grade TEXT CHECK (score_grade IN ('A', 'B', 'C', 'D', 'F'));
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS company_size TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS email_opens INTEGER DEFAULT 0;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS page_views INTEGER DEFAULT 0;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS assignee_id UUID;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS assigned_at TIMESTAMPTZ;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS converted_deal_id UUID;
 
 CREATE INDEX IF NOT EXISTS idx_leads_org ON leads(organization_id);
 CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
@@ -109,24 +82,11 @@ CREATE TABLE IF NOT EXISTS lead_score_history (
 CREATE INDEX IF NOT EXISTS idx_lead_score_history_lead ON lead_score_history(lead_id);
 
 -- Deals/Opportunities table
-CREATE TABLE IF NOT EXISTS deals (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  lead_id UUID REFERENCES leads(id),
-  company_id UUID REFERENCES companies(id),
-  contact_id UUID REFERENCES contacts(id),
-  pipeline_id UUID,
-  stage_id UUID,
-  value DECIMAL(12,2) DEFAULT 0,
-  probability INTEGER DEFAULT 0,
-  expected_close_date DATE,
-  owner_id UUID REFERENCES users(id),
-  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'won', 'lost')),
-  lost_reason TEXT,
-  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing deals table (originally from 00006_crm_venues.sql)
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS lead_id UUID;
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS pipeline_id UUID;
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS stage_id UUID;
+ALTER TABLE deals ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'open' CHECK (status IN ('open', 'won', 'lost'));
 
 CREATE INDEX IF NOT EXISTS idx_deals_org ON deals(organization_id);
 -- Handle pipeline_id column which may not exist in earlier schema
@@ -146,32 +106,19 @@ END $$;
 -- ==================== Support/Ticket Tables ====================
 
 -- Support tickets table
-CREATE TABLE IF NOT EXISTS support_tickets (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  ticket_number SERIAL,
-  subject TEXT NOT NULL,
-  description TEXT,
-  category TEXT,
-  priority TEXT DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high', 'urgent')),
-  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'assigned', 'in_progress', 'pending', 'resolved', 'closed')),
-  customer_id UUID, -- FK to customers table not defined
-  customer_email TEXT,
-  assignee_id UUID REFERENCES users(id),
-  escalated BOOLEAN DEFAULT FALSE,
-  escalated_at TIMESTAMPTZ,
-  escalation_level INTEGER DEFAULT 0,
-  escalation_reason TEXT,
-  sla_deadline TIMESTAMPTZ,
-  first_response_at TIMESTAMPTZ,
-  auto_responded BOOLEAN DEFAULT FALSE,
-  suggested_articles UUID[],
-  potential_duplicates UUID[],
-  flagged_for_merge BOOLEAN DEFAULT FALSE,
-  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  resolved_at TIMESTAMPTZ
-);
+-- Extend existing support_tickets table (originally from 00015_account_platform.sql)
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS customer_id UUID; -- FK to customers table not defined;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS customer_email TEXT;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS assignee_id UUID;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS escalated BOOLEAN DEFAULT FALSE;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS escalated_at TIMESTAMPTZ;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS escalation_level INTEGER DEFAULT 0;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS escalation_reason TEXT;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS sla_deadline TIMESTAMPTZ;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS auto_responded BOOLEAN DEFAULT FALSE;
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS suggested_articles UUID[];
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS potential_duplicates UUID[];
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS flagged_for_merge BOOLEAN DEFAULT FALSE;
 
 CREATE INDEX IF NOT EXISTS idx_support_tickets_org ON support_tickets(organization_id);
 CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
@@ -343,31 +290,18 @@ CREATE INDEX IF NOT EXISTS idx_survey_requests_customer ON survey_requests(custo
 -- ==================== Approval Tables ====================
 
 -- Approval requests
-CREATE TABLE IF NOT EXISTS approval_requests (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  entity_type TEXT NOT NULL,
-  entity_id UUID NOT NULL,
-  approvers TEXT[] NOT NULL,
-  required_approvals INTEGER NOT NULL DEFAULT 1,
-  current_approvals INTEGER DEFAULT 0,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'expired')),
-  metadata JSONB,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  completed_at TIMESTAMPTZ
-);
+-- Extend existing approval_requests table (originally from 00009_workflows_documents.sql)
+ALTER TABLE approval_requests ADD COLUMN IF NOT EXISTS approvers TEXT[];
+ALTER TABLE approval_requests ADD COLUMN IF NOT EXISTS required_approvals INTEGER DEFAULT 1;
+ALTER TABLE approval_requests ADD COLUMN IF NOT EXISTS current_approvals INTEGER DEFAULT 0;
+ALTER TABLE approval_requests ADD COLUMN IF NOT EXISTS metadata JSONB;
 
 CREATE INDEX IF NOT EXISTS idx_approval_requests_status ON approval_requests(status);
 CREATE INDEX IF NOT EXISTS idx_approval_requests_entity ON approval_requests(entity_type, entity_id);
 
 -- Approval decisions
-CREATE TABLE IF NOT EXISTS approval_decisions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  request_id UUID NOT NULL REFERENCES approval_requests(id) ON DELETE CASCADE,
-  approver_id UUID NOT NULL REFERENCES users(id),
-  decision TEXT NOT NULL CHECK (decision IN ('approved', 'rejected')),
-  comments TEXT,
-  decided_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing approval_decisions table (originally from 00009_workflows_documents.sql)
+ALTER TABLE approval_decisions ADD COLUMN IF NOT EXISTS request_id UUID;
 
 -- Handle request_id column which may not exist in earlier schema
 DO $$ BEGIN
@@ -413,15 +347,10 @@ CREATE TABLE IF NOT EXISTS generated_documents (
 -- ==================== Compliance Tables ====================
 
 -- Policy acknowledgments
-CREATE TABLE IF NOT EXISTS policy_acknowledgments (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  policy_id UUID NOT NULL,
-  user_id UUID NOT NULL REFERENCES users(id),
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'acknowledged', 'expired')),
-  due_date TIMESTAMPTZ,
-  acknowledged_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing policy_acknowledgments table (originally from 00013_compliance_reports.sql)
+ALTER TABLE policy_acknowledgments ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'acknowledged', 'expired'));
+ALTER TABLE policy_acknowledgments ADD COLUMN IF NOT EXISTS due_date TIMESTAMPTZ;
+ALTER TABLE policy_acknowledgments ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
 
 CREATE INDEX IF NOT EXISTS idx_policy_ack_user ON policy_acknowledgments(user_id);
 -- Handle status column which may not exist in earlier schema
@@ -432,20 +361,12 @@ DO $$ BEGIN
 END $$;
 
 -- Audit logs
-CREATE TABLE IF NOT EXISTS audit_logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  action TEXT NOT NULL,
-  entity_type TEXT NOT NULL,
-  entity_id UUID,
-  user_id UUID REFERENCES users(id),
-  user_email TEXT,
-  ip_address TEXT,
-  user_agent TEXT,
-  previous_state JSONB,
-  new_state JSONB,
-  metadata JSONB,
-  timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+-- Extend existing audit_logs table (originally from 00001_initial_schema.sql)
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS user_email TEXT;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS previous_state JSONB;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS new_state JSONB;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS metadata JSONB;
+ALTER TABLE audit_logs ADD COLUMN IF NOT EXISTS timestamp TIMESTAMPTZ DEFAULT NOW();
 
 CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id);
@@ -459,19 +380,9 @@ DO $$ BEGIN
 END $$;
 
 -- Compliance incidents
-CREATE TABLE IF NOT EXISTS compliance_incidents (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
-  description TEXT,
-  severity TEXT CHECK (severity IN ('low', 'medium', 'high', 'critical')),
-  category TEXT,
-  reported_by UUID REFERENCES users(id),
-  reported_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  status TEXT DEFAULT 'open' CHECK (status IN ('open', 'investigating', 'resolved', 'closed')),
-  resolution TEXT,
-  resolved_at TIMESTAMPTZ,
-  organization_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE
-);
+-- Extend existing compliance_incidents table (originally from 00013_compliance_reports.sql)
+ALTER TABLE compliance_incidents ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE compliance_incidents ADD COLUMN IF NOT EXISTS resolution TEXT;
 
 CREATE INDEX IF NOT EXISTS idx_compliance_incidents_org ON compliance_incidents(organization_id);
 CREATE INDEX IF NOT EXISTS idx_compliance_incidents_status ON compliance_incidents(status);

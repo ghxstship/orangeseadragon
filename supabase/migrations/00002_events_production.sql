@@ -38,11 +38,11 @@ CREATE TABLE events (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_events_organization ON events(organization_id);
-CREATE INDEX idx_events_project ON events(project_id);
-CREATE INDEX idx_events_dates ON events(start_date, end_date);
-CREATE INDEX idx_events_phase ON events(phase);
-CREATE INDEX idx_events_type ON events(event_type);
+CREATE INDEX IF NOT EXISTS idx_events_organization ON events(organization_id);
+CREATE INDEX IF NOT EXISTS idx_events_project ON events(project_id);
+CREATE INDEX IF NOT EXISTS idx_events_dates ON events(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_events_phase ON events(phase);
+CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type);
 
 -- Event Days
 CREATE TABLE event_days (
@@ -61,8 +61,8 @@ CREATE TABLE event_days (
     UNIQUE(event_id, date)
 );
 
-CREATE INDEX idx_event_days_event ON event_days(event_id);
-CREATE INDEX idx_event_days_date ON event_days(date);
+CREATE INDEX IF NOT EXISTS idx_event_days_event ON event_days(event_id);
+CREATE INDEX IF NOT EXISTS idx_event_days_date ON event_days(date);
 
 -- Stages
 CREATE TABLE stages (
@@ -83,8 +83,8 @@ CREATE TABLE stages (
     deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_stages_organization ON stages(organization_id);
-CREATE INDEX idx_stages_event ON stages(event_id);
+CREATE INDEX IF NOT EXISTS idx_stages_organization ON stages(organization_id);
+CREATE INDEX IF NOT EXISTS idx_stages_event ON stages(event_id);
 
 -- Show Calls
 CREATE TABLE show_calls (
@@ -102,8 +102,8 @@ CREATE TABLE show_calls (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_show_calls_event ON show_calls(event_id);
-CREATE INDEX idx_show_calls_day ON show_calls(event_day_id);
+CREATE INDEX IF NOT EXISTS idx_show_calls_event ON show_calls(event_id);
+CREATE INDEX IF NOT EXISTS idx_show_calls_day ON show_calls(event_day_id);
 
 -- Runsheets
 CREATE TABLE runsheets (
@@ -126,9 +126,9 @@ CREATE TABLE runsheets (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_runsheets_event ON runsheets(event_id);
-CREATE INDEX idx_runsheets_date ON runsheets(date);
-CREATE INDEX idx_runsheets_stage ON runsheets(stage_id);
+CREATE INDEX IF NOT EXISTS idx_runsheets_event ON runsheets(event_id);
+CREATE INDEX IF NOT EXISTS idx_runsheets_date ON runsheets(date);
+CREATE INDEX IF NOT EXISTS idx_runsheets_stage ON runsheets(stage_id);
 
 -- Runsheet Items
 CREATE TABLE runsheet_items (
@@ -153,8 +153,8 @@ CREATE TABLE runsheet_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_runsheet_items_runsheet ON runsheet_items(runsheet_id);
-CREATE INDEX idx_runsheet_items_position ON runsheet_items(runsheet_id, position);
+CREATE INDEX IF NOT EXISTS idx_runsheet_items_runsheet ON runsheet_items(runsheet_id);
+CREATE INDEX IF NOT EXISTS idx_runsheet_items_position ON runsheet_items(runsheet_id, position);
 
 -- Cue Sheets
 CREATE TABLE cue_sheets (
@@ -173,9 +173,9 @@ CREATE TABLE cue_sheets (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_cue_sheets_event ON cue_sheets(event_id);
-CREATE INDEX idx_cue_sheets_runsheet ON cue_sheets(runsheet_id);
-CREATE INDEX idx_cue_sheets_department ON cue_sheets(department);
+CREATE INDEX IF NOT EXISTS idx_cue_sheets_event ON cue_sheets(event_id);
+CREATE INDEX IF NOT EXISTS idx_cue_sheets_runsheet ON cue_sheets(runsheet_id);
+CREATE INDEX IF NOT EXISTS idx_cue_sheets_department ON cue_sheets(department);
 
 -- Cues
 CREATE TABLE cues (
@@ -201,9 +201,9 @@ CREATE TABLE cues (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_cues_cue_sheet ON cues(cue_sheet_id);
-CREATE INDEX idx_cues_runsheet_item ON cues(runsheet_item_id);
-CREATE INDEX idx_cues_position ON cues(cue_sheet_id, position);
+CREATE INDEX IF NOT EXISTS idx_cues_cue_sheet ON cues(cue_sheet_id);
+CREATE INDEX IF NOT EXISTS idx_cues_runsheet_item ON cues(runsheet_item_id);
+CREATE INDEX IF NOT EXISTS idx_cues_position ON cues(cue_sheet_id, position);
 
 -- Production Notes
 CREATE TABLE production_notes (
@@ -225,9 +225,9 @@ CREATE TABLE production_notes (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_production_notes_event ON production_notes(event_id);
-CREATE INDEX idx_production_notes_runsheet ON production_notes(runsheet_id);
-CREATE INDEX idx_production_notes_unresolved ON production_notes(event_id, is_resolved) WHERE is_resolved = FALSE;
+CREATE INDEX IF NOT EXISTS idx_production_notes_event ON production_notes(event_id);
+CREATE INDEX IF NOT EXISTS idx_production_notes_runsheet ON production_notes(runsheet_id);
+CREATE INDEX IF NOT EXISTS idx_production_notes_unresolved ON production_notes(event_id, is_resolved) WHERE is_resolved = FALSE;
 
 -- Incident Reports
 CREATE TABLE incident_reports (
@@ -256,7 +256,7 @@ CREATE TABLE incident_reports (
     UNIQUE(organization_id, incident_number)
 );
 
-CREATE INDEX idx_incident_reports_organization ON incident_reports(organization_id);
-CREATE INDEX idx_incident_reports_event ON incident_reports(event_id);
-CREATE INDEX idx_incident_reports_status ON incident_reports(status);
-CREATE INDEX idx_incident_reports_severity ON incident_reports(severity);
+CREATE INDEX IF NOT EXISTS idx_incident_reports_organization ON incident_reports(organization_id);
+CREATE INDEX IF NOT EXISTS idx_incident_reports_event ON incident_reports(event_id);
+CREATE INDEX IF NOT EXISTS idx_incident_reports_status ON incident_reports(status);
+CREATE INDEX IF NOT EXISTS idx_incident_reports_severity ON incident_reports(severity);

@@ -174,8 +174,8 @@ CREATE TABLE organizations (
     deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_organizations_slug ON organizations(slug);
-CREATE INDEX idx_organizations_subscription ON organizations(subscription_tier, subscription_status);
+CREATE INDEX IF NOT EXISTS idx_organizations_slug ON organizations(slug);
+CREATE INDEX IF NOT EXISTS idx_organizations_subscription ON organizations(subscription_tier, subscription_status);
 
 -- Users (extends Supabase auth.users)
 CREATE TABLE users (
@@ -194,7 +194,7 @@ CREATE TABLE users (
     deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 -- Roles
 CREATE TABLE roles (
@@ -212,7 +212,7 @@ CREATE TABLE roles (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_roles_organization ON roles(organization_id);
+CREATE INDEX IF NOT EXISTS idx_roles_organization ON roles(organization_id);
 
 -- Departments
 CREATE TABLE departments (
@@ -231,8 +231,8 @@ CREATE TABLE departments (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_departments_organization ON departments(organization_id);
-CREATE INDEX idx_departments_parent ON departments(parent_id);
+CREATE INDEX IF NOT EXISTS idx_departments_organization ON departments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_departments_parent ON departments(parent_id);
 
 -- Positions
 CREATE TABLE positions (
@@ -249,8 +249,8 @@ CREATE TABLE positions (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_positions_organization ON positions(organization_id);
-CREATE INDEX idx_positions_department ON positions(department_id);
+CREATE INDEX IF NOT EXISTS idx_positions_organization ON positions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_positions_department ON positions(department_id);
 
 -- Organization Members
 CREATE TABLE organization_members (
@@ -269,9 +269,9 @@ CREATE TABLE organization_members (
     UNIQUE(organization_id, user_id)
 );
 
-CREATE INDEX idx_org_members_organization ON organization_members(organization_id);
-CREATE INDEX idx_org_members_user ON organization_members(user_id);
-CREATE INDEX idx_org_members_role ON organization_members(role_id);
+CREATE INDEX IF NOT EXISTS idx_org_members_organization ON organization_members(organization_id);
+CREATE INDEX IF NOT EXISTS idx_org_members_user ON organization_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_org_members_role ON organization_members(role_id);
 
 -- Workspaces
 CREATE TABLE workspaces (
@@ -290,7 +290,7 @@ CREATE TABLE workspaces (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_workspaces_organization ON workspaces(organization_id);
+CREATE INDEX IF NOT EXISTS idx_workspaces_organization ON workspaces(organization_id);
 
 -- ============================================================================
 -- PROJECT MANAGEMENT TABLES
@@ -323,10 +323,10 @@ CREATE TABLE projects (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_projects_organization ON projects(organization_id);
-CREATE INDEX idx_projects_workspace ON projects(workspace_id);
-CREATE INDEX idx_projects_status ON projects(status);
-CREATE INDEX idx_projects_dates ON projects(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_projects_organization ON projects(organization_id);
+CREATE INDEX IF NOT EXISTS idx_projects_workspace ON projects(workspace_id);
+CREATE INDEX IF NOT EXISTS idx_projects_status ON projects(status);
+CREATE INDEX IF NOT EXISTS idx_projects_dates ON projects(start_date, end_date);
 
 -- Project Members
 CREATE TABLE project_members (
@@ -340,8 +340,8 @@ CREATE TABLE project_members (
     UNIQUE(project_id, user_id)
 );
 
-CREATE INDEX idx_project_members_project ON project_members(project_id);
-CREATE INDEX idx_project_members_user ON project_members(user_id);
+CREATE INDEX IF NOT EXISTS idx_project_members_project ON project_members(project_id);
+CREATE INDEX IF NOT EXISTS idx_project_members_user ON project_members(user_id);
 
 -- Task Lists
 CREATE TABLE task_lists (
@@ -358,7 +358,7 @@ CREATE TABLE task_lists (
     deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_task_lists_project ON task_lists(project_id);
+CREATE INDEX IF NOT EXISTS idx_task_lists_project ON task_lists(project_id);
 
 -- Tasks
 CREATE TABLE tasks (
@@ -387,12 +387,12 @@ CREATE TABLE tasks (
     deleted_at TIMESTAMPTZ
 );
 
-CREATE INDEX idx_tasks_organization ON tasks(organization_id);
-CREATE INDEX idx_tasks_project ON tasks(project_id);
-CREATE INDEX idx_tasks_status ON tasks(status);
-CREATE INDEX idx_tasks_due_date ON tasks(due_date);
-CREATE INDEX idx_tasks_parent ON tasks(parent_id);
-CREATE INDEX idx_tasks_tags ON tasks USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_tasks_organization ON tasks(organization_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_project ON tasks(project_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
+CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date);
+CREATE INDEX IF NOT EXISTS idx_tasks_parent ON tasks(parent_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_tags ON tasks USING GIN(tags);
 
 -- Task Assignments
 CREATE TABLE task_assignments (
@@ -404,8 +404,8 @@ CREATE TABLE task_assignments (
     UNIQUE(task_id, user_id)
 );
 
-CREATE INDEX idx_task_assignments_task ON task_assignments(task_id);
-CREATE INDEX idx_task_assignments_user ON task_assignments(user_id);
+CREATE INDEX IF NOT EXISTS idx_task_assignments_task ON task_assignments(task_id);
+CREATE INDEX IF NOT EXISTS idx_task_assignments_user ON task_assignments(user_id);
 
 -- Task Dependencies
 CREATE TABLE task_dependencies (
@@ -418,8 +418,8 @@ CREATE TABLE task_dependencies (
     UNIQUE(task_id, depends_on_task_id)
 );
 
-CREATE INDEX idx_task_deps_task ON task_dependencies(task_id);
-CREATE INDEX idx_task_deps_depends ON task_dependencies(depends_on_task_id);
+CREATE INDEX IF NOT EXISTS idx_task_deps_task ON task_dependencies(task_id);
+CREATE INDEX IF NOT EXISTS idx_task_deps_depends ON task_dependencies(depends_on_task_id);
 
 -- Milestones
 CREATE TABLE milestones (
@@ -435,8 +435,8 @@ CREATE TABLE milestones (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_milestones_project ON milestones(project_id);
-CREATE INDEX idx_milestones_due_date ON milestones(due_date);
+CREATE INDEX IF NOT EXISTS idx_milestones_project ON milestones(project_id);
+CREATE INDEX IF NOT EXISTS idx_milestones_due_date ON milestones(due_date);
 
 -- ============================================================================
 -- AUDIT & NOTIFICATIONS
@@ -457,9 +457,9 @@ CREATE TABLE audit_logs (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_audit_logs_organization ON audit_logs(organization_id);
-CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
-CREATE INDEX idx_audit_logs_created ON audit_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_organization ON audit_logs(organization_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at);
 
 -- Notifications
 CREATE TABLE notifications (
@@ -477,9 +477,9 @@ CREATE TABLE notifications (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_notifications_user ON notifications(user_id);
-CREATE INDEX idx_notifications_unread ON notifications(user_id, is_read) WHERE is_read = FALSE;
-CREATE INDEX idx_notifications_created ON notifications(created_at);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications(user_id, is_read) WHERE is_read = FALSE;
+CREATE INDEX IF NOT EXISTS idx_notifications_created ON notifications(created_at);
 
 -- ============================================================================
 -- TRIGGERS FOR UPDATED_AT

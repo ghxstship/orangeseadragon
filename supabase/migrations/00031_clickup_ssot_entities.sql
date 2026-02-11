@@ -151,10 +151,10 @@ CREATE TABLE IF NOT EXISTS productions (
     UNIQUE(organization_id, production_code)
 );
 
-CREATE INDEX idx_productions_org ON productions(organization_id);
-CREATE INDEX idx_productions_status ON productions(status);
-CREATE INDEX idx_productions_client ON productions(client_id);
-CREATE INDEX idx_productions_dates ON productions(event_start, event_end);
+CREATE INDEX IF NOT EXISTS idx_productions_org ON productions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_productions_status ON productions(status);
+CREATE INDEX IF NOT EXISTS idx_productions_client ON productions(client_id);
+CREATE INDEX IF NOT EXISTS idx_productions_dates ON productions(event_start, event_end);
 
 -- ============================================================================
 -- PROJECTS DOMAIN - ACTIVATIONS (SSOT)
@@ -184,8 +184,8 @@ CREATE TABLE IF NOT EXISTS activations (
     UNIQUE(organization_id, activation_code)
 );
 
-CREATE INDEX idx_activations_org ON activations(organization_id);
-CREATE INDEX idx_activations_status ON activations(status);
+CREATE INDEX IF NOT EXISTS idx_activations_org ON activations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_activations_status ON activations(status);
 
 -- ============================================================================
 -- PROJECTS DOMAIN - COMPLIANCE DOCUMENTS
@@ -220,9 +220,9 @@ CREATE TABLE IF NOT EXISTS permits (
     UNIQUE(organization_id, permit_number)
 );
 
-CREATE INDEX idx_permits_org ON permits(organization_id);
-CREATE INDEX idx_permits_production ON permits(production_id);
-CREATE INDEX idx_permits_status ON permits(status);
+CREATE INDEX IF NOT EXISTS idx_permits_org ON permits(organization_id);
+CREATE INDEX IF NOT EXISTS idx_permits_production ON permits(production_id);
+CREATE INDEX IF NOT EXISTS idx_permits_status ON permits(status);
 
 -- Certificates of Insurance
 CREATE TABLE IF NOT EXISTS certificates_of_insurance (
@@ -250,8 +250,8 @@ CREATE TABLE IF NOT EXISTS certificates_of_insurance (
     UNIQUE(organization_id, certificate_number)
 );
 
-CREATE INDEX idx_coi_org ON certificates_of_insurance(organization_id);
-CREATE INDEX idx_coi_production ON certificates_of_insurance(production_id);
+CREATE INDEX IF NOT EXISTS idx_coi_org ON certificates_of_insurance(organization_id);
+CREATE INDEX IF NOT EXISTS idx_coi_production ON certificates_of_insurance(production_id);
 
 -- Safety Plans
 CREATE TABLE IF NOT EXISTS safety_plans (
@@ -280,5 +280,5 @@ CREATE TABLE IF NOT EXISTS safety_plans (
     UNIQUE(organization_id, plan_number)
 );
 
-CREATE INDEX idx_safety_plans_org ON safety_plans(organization_id);
-CREATE INDEX idx_safety_plans_production ON safety_plans(production_id);
+CREATE INDEX IF NOT EXISTS idx_safety_plans_org ON safety_plans(organization_id);
+CREATE INDEX IF NOT EXISTS idx_safety_plans_production ON safety_plans(production_id);

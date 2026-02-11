@@ -42,9 +42,9 @@ CREATE TABLE compliance_policies (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_compliance_policies_organization ON compliance_policies(organization_id);
-CREATE INDEX idx_compliance_policies_status ON compliance_policies(status);
-CREATE INDEX idx_compliance_policies_type ON compliance_policies(policy_type);
+CREATE INDEX IF NOT EXISTS idx_compliance_policies_organization ON compliance_policies(organization_id);
+CREATE INDEX IF NOT EXISTS idx_compliance_policies_status ON compliance_policies(status);
+CREATE INDEX IF NOT EXISTS idx_compliance_policies_type ON compliance_policies(policy_type);
 
 -- Policy Versions
 CREATE TABLE policy_versions (
@@ -59,7 +59,7 @@ CREATE TABLE policy_versions (
     UNIQUE(policy_id, version)
 );
 
-CREATE INDEX idx_policy_versions_policy ON policy_versions(policy_id);
+CREATE INDEX IF NOT EXISTS idx_policy_versions_policy ON policy_versions(policy_id);
 
 -- Policy Acknowledgments
 CREATE TABLE policy_acknowledgments (
@@ -74,8 +74,8 @@ CREATE TABLE policy_acknowledgments (
     UNIQUE(policy_id, user_id, version)
 );
 
-CREATE INDEX idx_policy_acknowledgments_policy ON policy_acknowledgments(policy_id);
-CREATE INDEX idx_policy_acknowledgments_user ON policy_acknowledgments(user_id);
+CREATE INDEX IF NOT EXISTS idx_policy_acknowledgments_policy ON policy_acknowledgments(policy_id);
+CREATE INDEX IF NOT EXISTS idx_policy_acknowledgments_user ON policy_acknowledgments(user_id);
 
 -- Risk Assessments
 CREATE TABLE risk_assessments (
@@ -95,10 +95,10 @@ CREATE TABLE risk_assessments (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_risk_assessments_organization ON risk_assessments(organization_id);
-CREATE INDEX idx_risk_assessments_project ON risk_assessments(project_id);
-CREATE INDEX idx_risk_assessments_event ON risk_assessments(event_id);
-CREATE INDEX idx_risk_assessments_status ON risk_assessments(status);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_organization ON risk_assessments(organization_id);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_project ON risk_assessments(project_id);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_event ON risk_assessments(event_id);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_status ON risk_assessments(status);
 
 -- Risk Items
 CREATE TABLE risk_items (
@@ -124,9 +124,9 @@ CREATE TABLE risk_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_risk_items_assessment ON risk_items(assessment_id);
-CREATE INDEX idx_risk_items_status ON risk_items(status);
-CREATE INDEX idx_risk_items_level ON risk_items(risk_level);
+CREATE INDEX IF NOT EXISTS idx_risk_items_assessment ON risk_items(assessment_id);
+CREATE INDEX IF NOT EXISTS idx_risk_items_status ON risk_items(status);
+CREATE INDEX IF NOT EXISTS idx_risk_items_level ON risk_items(risk_level);
 
 -- Risk Mitigations
 CREATE TABLE risk_mitigations (
@@ -144,9 +144,9 @@ CREATE TABLE risk_mitigations (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_risk_mitigations_risk ON risk_mitigations(risk_item_id);
-CREATE INDEX idx_risk_mitigations_assigned ON risk_mitigations(assigned_to);
-CREATE INDEX idx_risk_mitigations_status ON risk_mitigations(status);
+CREATE INDEX IF NOT EXISTS idx_risk_mitigations_risk ON risk_mitigations(risk_item_id);
+CREATE INDEX IF NOT EXISTS idx_risk_mitigations_assigned ON risk_mitigations(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_risk_mitigations_status ON risk_mitigations(status);
 
 -- Audit Schedules
 CREATE TABLE audit_schedules (
@@ -169,9 +169,9 @@ CREATE TABLE audit_schedules (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_audit_schedules_organization ON audit_schedules(organization_id);
-CREATE INDEX idx_audit_schedules_date ON audit_schedules(scheduled_date);
-CREATE INDEX idx_audit_schedules_status ON audit_schedules(status);
+CREATE INDEX IF NOT EXISTS idx_audit_schedules_organization ON audit_schedules(organization_id);
+CREATE INDEX IF NOT EXISTS idx_audit_schedules_date ON audit_schedules(scheduled_date);
+CREATE INDEX IF NOT EXISTS idx_audit_schedules_status ON audit_schedules(status);
 
 -- Audit Findings
 CREATE TABLE audit_findings (
@@ -195,9 +195,9 @@ CREATE TABLE audit_findings (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_audit_findings_audit ON audit_findings(audit_id);
-CREATE INDEX idx_audit_findings_severity ON audit_findings(severity);
-CREATE INDEX idx_audit_findings_status ON audit_findings(status);
+CREATE INDEX IF NOT EXISTS idx_audit_findings_audit ON audit_findings(audit_id);
+CREATE INDEX IF NOT EXISTS idx_audit_findings_severity ON audit_findings(severity);
+CREATE INDEX IF NOT EXISTS idx_audit_findings_status ON audit_findings(status);
 
 -- Incidents (compliance/security)
 CREATE TABLE compliance_incidents (
@@ -226,10 +226,10 @@ CREATE TABLE compliance_incidents (
     UNIQUE(organization_id, incident_number)
 );
 
-CREATE INDEX idx_compliance_incidents_organization ON compliance_incidents(organization_id);
-CREATE INDEX idx_compliance_incidents_type ON compliance_incidents(incident_type);
-CREATE INDEX idx_compliance_incidents_severity ON compliance_incidents(severity);
-CREATE INDEX idx_compliance_incidents_status ON compliance_incidents(status);
+CREATE INDEX IF NOT EXISTS idx_compliance_incidents_organization ON compliance_incidents(organization_id);
+CREATE INDEX IF NOT EXISTS idx_compliance_incidents_type ON compliance_incidents(incident_type);
+CREATE INDEX IF NOT EXISTS idx_compliance_incidents_severity ON compliance_incidents(severity);
+CREATE INDEX IF NOT EXISTS idx_compliance_incidents_status ON compliance_incidents(status);
 
 -- Training Materials
 CREATE TABLE training_materials (
@@ -254,8 +254,8 @@ CREATE TABLE training_materials (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_training_materials_organization ON training_materials(organization_id);
-CREATE INDEX idx_training_materials_type ON training_materials(material_type);
+CREATE INDEX IF NOT EXISTS idx_training_materials_organization ON training_materials(organization_id);
+CREATE INDEX IF NOT EXISTS idx_training_materials_type ON training_materials(material_type);
 
 -- Training Completions
 CREATE TABLE training_completions (
@@ -273,9 +273,9 @@ CREATE TABLE training_completions (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_training_completions_material ON training_completions(training_material_id);
-CREATE INDEX idx_training_completions_user ON training_completions(user_id);
-CREATE INDEX idx_training_completions_expiring ON training_completions(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_training_completions_material ON training_completions(training_material_id);
+CREATE INDEX IF NOT EXISTS idx_training_completions_user ON training_completions(user_id);
+CREATE INDEX IF NOT EXISTS idx_training_completions_expiring ON training_completions(expires_at) WHERE expires_at IS NOT NULL;
 
 -- ============================================================================
 -- REPORTS TABLES
@@ -305,9 +305,9 @@ CREATE TABLE report_definitions (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_report_definitions_organization ON report_definitions(organization_id);
-CREATE INDEX idx_report_definitions_category ON report_definitions(category);
-CREATE INDEX idx_report_definitions_type ON report_definitions(report_type);
+CREATE INDEX IF NOT EXISTS idx_report_definitions_organization ON report_definitions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_report_definitions_category ON report_definitions(category);
+CREATE INDEX IF NOT EXISTS idx_report_definitions_type ON report_definitions(report_type);
 
 -- Report Schedules
 CREATE TABLE report_schedules (
@@ -327,8 +327,8 @@ CREATE TABLE report_schedules (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_report_schedules_definition ON report_schedules(report_definition_id);
-CREATE INDEX idx_report_schedules_next_run ON report_schedules(next_run_at) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_report_schedules_definition ON report_schedules(report_definition_id);
+CREATE INDEX IF NOT EXISTS idx_report_schedules_next_run ON report_schedules(next_run_at) WHERE is_active = TRUE;
 
 -- Report Exports
 CREATE TABLE report_exports (
@@ -351,10 +351,10 @@ CREATE TABLE report_exports (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_report_exports_organization ON report_exports(organization_id);
-CREATE INDEX idx_report_exports_definition ON report_exports(report_definition_id);
-CREATE INDEX idx_report_exports_status ON report_exports(status);
-CREATE INDEX idx_report_exports_expires ON report_exports(expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_report_exports_organization ON report_exports(organization_id);
+CREATE INDEX IF NOT EXISTS idx_report_exports_definition ON report_exports(report_definition_id);
+CREATE INDEX IF NOT EXISTS idx_report_exports_status ON report_exports(status);
+CREATE INDEX IF NOT EXISTS idx_report_exports_expires ON report_exports(expires_at) WHERE expires_at IS NOT NULL;
 
 -- Report Subscriptions
 CREATE TABLE report_subscriptions (
@@ -368,8 +368,8 @@ CREATE TABLE report_subscriptions (
     UNIQUE(report_schedule_id, user_id)
 );
 
-CREATE INDEX idx_report_subscriptions_schedule ON report_subscriptions(report_schedule_id);
-CREATE INDEX idx_report_subscriptions_user ON report_subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_report_subscriptions_schedule ON report_subscriptions(report_schedule_id);
+CREATE INDEX IF NOT EXISTS idx_report_subscriptions_user ON report_subscriptions(user_id);
 
 -- Saved Reports (user favorites)
 CREATE TABLE saved_reports (
@@ -383,8 +383,8 @@ CREATE TABLE saved_reports (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_saved_reports_user ON saved_reports(user_id);
-CREATE INDEX idx_saved_reports_definition ON saved_reports(report_definition_id);
+CREATE INDEX IF NOT EXISTS idx_saved_reports_user ON saved_reports(user_id);
+CREATE INDEX IF NOT EXISTS idx_saved_reports_definition ON saved_reports(report_definition_id);
 
 -- ============================================================================
 -- INSIGHTS & ANALYTICS TABLES
@@ -413,11 +413,11 @@ CREATE TABLE insight_reports (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_insight_reports_organization ON insight_reports(organization_id);
-CREATE INDEX idx_insight_reports_type ON insight_reports(insight_type);
-CREATE INDEX idx_insight_reports_category ON insight_reports(category);
-CREATE INDEX idx_insight_reports_entity ON insight_reports(entity_type, entity_id);
-CREATE INDEX idx_insight_reports_active ON insight_reports(organization_id, is_dismissed) WHERE is_dismissed = FALSE;
+CREATE INDEX IF NOT EXISTS idx_insight_reports_organization ON insight_reports(organization_id);
+CREATE INDEX IF NOT EXISTS idx_insight_reports_type ON insight_reports(insight_type);
+CREATE INDEX IF NOT EXISTS idx_insight_reports_category ON insight_reports(category);
+CREATE INDEX IF NOT EXISTS idx_insight_reports_entity ON insight_reports(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_insight_reports_active ON insight_reports(organization_id, is_dismissed) WHERE is_dismissed = FALSE;
 
 -- Anomaly Alerts
 CREATE TABLE anomaly_alerts (
@@ -442,10 +442,10 @@ CREATE TABLE anomaly_alerts (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_anomaly_alerts_organization ON anomaly_alerts(organization_id);
-CREATE INDEX idx_anomaly_alerts_type ON anomaly_alerts(alert_type);
-CREATE INDEX idx_anomaly_alerts_severity ON anomaly_alerts(severity);
-CREATE INDEX idx_anomaly_alerts_unacknowledged ON anomaly_alerts(organization_id, acknowledged_at) WHERE acknowledged_at IS NULL;
+CREATE INDEX IF NOT EXISTS idx_anomaly_alerts_organization ON anomaly_alerts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_anomaly_alerts_type ON anomaly_alerts(alert_type);
+CREATE INDEX IF NOT EXISTS idx_anomaly_alerts_severity ON anomaly_alerts(severity);
+CREATE INDEX IF NOT EXISTS idx_anomaly_alerts_unacknowledged ON anomaly_alerts(organization_id, acknowledged_at) WHERE acknowledged_at IS NULL;
 
 -- Predictions
 CREATE TABLE predictions (
@@ -471,10 +471,10 @@ CREATE TABLE predictions (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_predictions_organization ON predictions(organization_id);
-CREATE INDEX idx_predictions_type ON predictions(prediction_type);
-CREATE INDEX idx_predictions_entity ON predictions(entity_type, entity_id);
-CREATE INDEX idx_predictions_date ON predictions(predicted_date);
+CREATE INDEX IF NOT EXISTS idx_predictions_organization ON predictions(organization_id);
+CREATE INDEX IF NOT EXISTS idx_predictions_type ON predictions(prediction_type);
+CREATE INDEX IF NOT EXISTS idx_predictions_entity ON predictions(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_predictions_date ON predictions(predicted_date);
 
 -- Recommendations
 CREATE TABLE recommendations (
@@ -501,10 +501,10 @@ CREATE TABLE recommendations (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_recommendations_organization ON recommendations(organization_id);
-CREATE INDEX idx_recommendations_type ON recommendations(recommendation_type);
-CREATE INDEX idx_recommendations_status ON recommendations(status);
-CREATE INDEX idx_recommendations_entity ON recommendations(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_recommendations_organization ON recommendations(organization_id);
+CREATE INDEX IF NOT EXISTS idx_recommendations_type ON recommendations(recommendation_type);
+CREATE INDEX IF NOT EXISTS idx_recommendations_status ON recommendations(status);
+CREATE INDEX IF NOT EXISTS idx_recommendations_entity ON recommendations(entity_type, entity_id);
 
 -- Dashboard Widgets
 CREATE TABLE dashboard_widgets (
@@ -525,8 +525,8 @@ CREATE TABLE dashboard_widgets (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_dashboard_widgets_organization ON dashboard_widgets(organization_id);
-CREATE INDEX idx_dashboard_widgets_type ON dashboard_widgets(widget_type);
+CREATE INDEX IF NOT EXISTS idx_dashboard_widgets_organization ON dashboard_widgets(organization_id);
+CREATE INDEX IF NOT EXISTS idx_dashboard_widgets_type ON dashboard_widgets(widget_type);
 
 -- User Dashboards
 CREATE TABLE user_dashboards (
@@ -544,8 +544,8 @@ CREATE TABLE user_dashboards (
     UNIQUE(user_id, slug)
 );
 
-CREATE INDEX idx_user_dashboards_user ON user_dashboards(user_id);
-CREATE INDEX idx_user_dashboards_organization ON user_dashboards(organization_id);
+CREATE INDEX IF NOT EXISTS idx_user_dashboards_user ON user_dashboards(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_dashboards_organization ON user_dashboards(organization_id);
 
 -- Dashboard Widget Instances
 CREATE TABLE dashboard_widget_instances (
@@ -561,5 +561,5 @@ CREATE TABLE dashboard_widget_instances (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_dashboard_widget_instances_dashboard ON dashboard_widget_instances(dashboard_id);
-CREATE INDEX idx_dashboard_widget_instances_widget ON dashboard_widget_instances(widget_id);
+CREATE INDEX IF NOT EXISTS idx_dashboard_widget_instances_dashboard ON dashboard_widget_instances(dashboard_id);
+CREATE INDEX IF NOT EXISTS idx_dashboard_widget_instances_widget ON dashboard_widget_instances(widget_id);

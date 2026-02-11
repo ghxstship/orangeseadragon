@@ -211,34 +211,14 @@ CREATE TABLE IF NOT EXISTS sequence_email_logs (
 -- COMPLIANCE POLICIES
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS compliance_policies (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  policy_type TEXT NOT NULL CHECK (policy_type IN ('code_of_conduct', 'safety', 'privacy', 'security', 'hr', 'financial', 'operational', 'other')),
-  version TEXT DEFAULT '1.0',
-  effective_date DATE NOT NULL,
-  review_date DATE,
-  content TEXT NOT NULL,
-  summary TEXT,
-  requires_acknowledgment BOOLEAN DEFAULT TRUE,
-  acknowledgment_frequency TEXT DEFAULT 'on_update' CHECK (acknowledgment_frequency IN ('once', 'annually', 'on_update')),
-  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'active', 'archived')),
-  applies_to TEXT DEFAULT 'all' CHECK (applies_to IN ('all', 'full_time', 'contractors', 'specific_roles')),
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing compliance_policies table (originally from 00013_compliance_reports.sql)
+ALTER TABLE compliance_policies ADD COLUMN IF NOT EXISTS org_id UUID;
+ALTER TABLE compliance_policies ADD COLUMN IF NOT EXISTS summary TEXT;
+ALTER TABLE compliance_policies ADD COLUMN IF NOT EXISTS acknowledgment_frequency TEXT DEFAULT 'on_update' CHECK (acknowledgment_frequency IN ('once', 'annually', 'on_update'));
+ALTER TABLE compliance_policies ADD COLUMN IF NOT EXISTS applies_to TEXT DEFAULT 'all' CHECK (applies_to IN ('all', 'full_time', 'contractors', 'specific_roles'));
 
-CREATE TABLE IF NOT EXISTS policy_acknowledgments (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  policy_id UUID NOT NULL REFERENCES compliance_policies(id) ON DELETE CASCADE,
-  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  acknowledged_at TIMESTAMPTZ DEFAULT NOW(),
-  ip_address TEXT,
-  user_agent TEXT,
-  policy_version TEXT,
-  UNIQUE(policy_id, user_id, policy_version)
-);
+-- Extend existing policy_acknowledgments table (originally from 00013_compliance_reports.sql)
+ALTER TABLE policy_acknowledgments ADD COLUMN IF NOT EXISTS policy_version TEXT;
 
 -- ============================================================================
 -- FORM TEMPLATES
@@ -261,35 +241,15 @@ CREATE TABLE IF NOT EXISTS form_templates (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS form_fields (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  form_id UUID NOT NULL REFERENCES form_templates(id) ON DELETE CASCADE,
-  field_type TEXT NOT NULL CHECK (field_type IN ('text', 'email', 'phone', 'textarea', 'select', 'radio', 'checkbox', 'date', 'number', 'file', 'hidden')),
-  label TEXT NOT NULL,
-  name TEXT NOT NULL,
-  placeholder TEXT,
-  help_text TEXT,
-  is_required BOOLEAN DEFAULT FALSE,
-  validation_rules JSONB,
-  options JSONB,
-  default_value TEXT,
-  sort_order INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing form_fields table (originally from 00016_additional_entities.sql)
+ALTER TABLE form_fields ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0;
 
-CREATE TABLE IF NOT EXISTS form_submissions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  form_id UUID NOT NULL REFERENCES form_templates(id) ON DELETE CASCADE,
-  contact_id UUID REFERENCES contacts(id),
-  data JSONB NOT NULL,
-  source_url TEXT,
-  ip_address TEXT,
-  user_agent TEXT,
-  utm_source TEXT,
-  utm_medium TEXT,
-  utm_campaign TEXT,
-  submitted_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing form_submissions table (originally from 00016_additional_entities.sql)
+ALTER TABLE form_submissions ADD COLUMN IF NOT EXISTS contact_id UUID;
+ALTER TABLE form_submissions ADD COLUMN IF NOT EXISTS utm_source TEXT;
+ALTER TABLE form_submissions ADD COLUMN IF NOT EXISTS utm_medium TEXT;
+ALTER TABLE form_submissions ADD COLUMN IF NOT EXISTS utm_campaign TEXT;
+ALTER TABLE form_submissions ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMPTZ DEFAULT NOW();
 
 CREATE INDEX IF NOT EXISTS idx_form_submissions_form ON form_submissions(form_id);
 -- Handle both submitted_at (new schema) and created_at (old schema) column names
@@ -305,33 +265,21 @@ END $$;
 -- HOSPITALITY REQUESTS
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS hospitality_requests (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  org_id UUID NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
-  event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-  request_type TEXT NOT NULL CHECK (request_type IN ('catering', 'accommodation', 'transport', 'green_room', 'vip', 'other')),
-  requester_type TEXT NOT NULL CHECK (requester_type IN ('talent', 'partner', 'staff', 'vip_guest', 'general')),
-  contact_id UUID REFERENCES contacts(id),
-  
-  description TEXT NOT NULL,
-  quantity INT DEFAULT 1,
-  requested_date DATE NOT NULL,
-  requested_time TIME,
-  dietary_requirements TEXT,
-  special_instructions TEXT,
-  
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'in_progress', 'fulfilled', 'cancelled')),
-  estimated_cost DECIMAL(12,2),
-  actual_cost DECIMAL(12,2),
-  vendor_id UUID REFERENCES vendors(id),
-  
-  approved_by_id UUID REFERENCES contacts(id),
-  approved_at TIMESTAMPTZ,
-  fulfilled_at TIMESTAMPTZ,
-  
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Extend existing hospitality_requests table (originally from 00008_experience.sql)
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS org_id UUID;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS requester_type TEXT CHECK (requester_type IN ('talent', 'partner', 'staff', 'vip_guest', 'general'));
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS contact_id UUID;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS quantity INT DEFAULT 1;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS requested_date DATE;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS requested_time TIME;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS dietary_requirements TEXT;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS special_instructions TEXT;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS estimated_cost DECIMAL(12,2);
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS actual_cost DECIMAL(12,2);
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS vendor_id UUID;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS approved_by_id UUID;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ;
+ALTER TABLE hospitality_requests ADD COLUMN IF NOT EXISTS fulfilled_at TIMESTAMPTZ;
 
 CREATE INDEX IF NOT EXISTS idx_hospitality_requests_event ON hospitality_requests(event_id);
 -- Handle both requested_date (new schema) and request_date (old schema) column names
@@ -374,37 +322,57 @@ END $$;
 
 -- Session Types
 ALTER TABLE session_types ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "session_types_org_read" ON session_types;
 CREATE POLICY "session_types_org_read" ON session_types FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "session_types_org_insert" ON session_types;
 CREATE POLICY "session_types_org_insert" ON session_types FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "session_types_org_update" ON session_types;
 CREATE POLICY "session_types_org_update" ON session_types FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "session_types_org_delete" ON session_types;
 CREATE POLICY "session_types_org_delete" ON session_types FOR DELETE USING (is_organization_member(org_id));
 
 -- Session Tracks
 ALTER TABLE session_tracks ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "session_tracks_org_read" ON session_tracks;
 CREATE POLICY "session_tracks_org_read" ON session_tracks FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "session_tracks_org_insert" ON session_tracks;
 CREATE POLICY "session_tracks_org_insert" ON session_tracks FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "session_tracks_org_update" ON session_tracks;
 CREATE POLICY "session_tracks_org_update" ON session_tracks FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "session_tracks_org_delete" ON session_tracks;
 CREATE POLICY "session_tracks_org_delete" ON session_tracks FOR DELETE USING (is_organization_member(org_id));
 
 -- Offboarding Templates
 ALTER TABLE offboarding_templates ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "offboarding_templates_org_read" ON offboarding_templates;
 CREATE POLICY "offboarding_templates_org_read" ON offboarding_templates FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "offboarding_templates_org_insert" ON offboarding_templates;
 CREATE POLICY "offboarding_templates_org_insert" ON offboarding_templates FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "offboarding_templates_org_update" ON offboarding_templates;
 CREATE POLICY "offboarding_templates_org_update" ON offboarding_templates FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "offboarding_templates_org_delete" ON offboarding_templates;
 CREATE POLICY "offboarding_templates_org_delete" ON offboarding_templates FOR DELETE USING (is_organization_member(org_id));
 
 -- Offboarding Instances
 ALTER TABLE offboarding_instances ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "offboarding_instances_org_read" ON offboarding_instances;
 CREATE POLICY "offboarding_instances_org_read" ON offboarding_instances FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "offboarding_instances_org_insert" ON offboarding_instances;
 CREATE POLICY "offboarding_instances_org_insert" ON offboarding_instances FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "offboarding_instances_org_update" ON offboarding_instances;
 CREATE POLICY "offboarding_instances_org_update" ON offboarding_instances FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "offboarding_instances_org_delete" ON offboarding_instances;
 CREATE POLICY "offboarding_instances_org_delete" ON offboarding_instances FOR DELETE USING (is_organization_member(org_id));
 
 -- Email Sequences
 ALTER TABLE email_sequences ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "email_sequences_org_read" ON email_sequences;
 CREATE POLICY "email_sequences_org_read" ON email_sequences FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "email_sequences_org_insert" ON email_sequences;
 CREATE POLICY "email_sequences_org_insert" ON email_sequences FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "email_sequences_org_update" ON email_sequences;
 CREATE POLICY "email_sequences_org_update" ON email_sequences FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "email_sequences_org_delete" ON email_sequences;
 CREATE POLICY "email_sequences_org_delete" ON email_sequences FOR DELETE USING (is_organization_member(org_id));
 
 -- Compliance Policies - handle both org_id and organization_id
@@ -430,9 +398,13 @@ END $$;
 
 -- Form Templates
 ALTER TABLE form_templates ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "form_templates_org_read" ON form_templates;
 CREATE POLICY "form_templates_org_read" ON form_templates FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "form_templates_org_insert" ON form_templates;
 CREATE POLICY "form_templates_org_insert" ON form_templates FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "form_templates_org_update" ON form_templates;
 CREATE POLICY "form_templates_org_update" ON form_templates FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "form_templates_org_delete" ON form_templates;
 CREATE POLICY "form_templates_org_delete" ON form_templates FOR DELETE USING (is_organization_member(org_id));
 
 -- Hospitality Requests - handle both org_id and organization_id
@@ -606,37 +578,57 @@ CREATE TABLE IF NOT EXISTS subscriber_list_memberships (
 
 -- Performance Reviews
 ALTER TABLE performance_reviews ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "performance_reviews_org_read" ON performance_reviews;
 CREATE POLICY "performance_reviews_org_read" ON performance_reviews FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "performance_reviews_org_insert" ON performance_reviews;
 CREATE POLICY "performance_reviews_org_insert" ON performance_reviews FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "performance_reviews_org_update" ON performance_reviews;
 CREATE POLICY "performance_reviews_org_update" ON performance_reviews FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "performance_reviews_org_delete" ON performance_reviews;
 CREATE POLICY "performance_reviews_org_delete" ON performance_reviews FOR DELETE USING (is_organization_member(org_id));
 
 -- Training Courses
 ALTER TABLE training_courses ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "training_courses_org_read" ON training_courses;
 CREATE POLICY "training_courses_org_read" ON training_courses FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "training_courses_org_insert" ON training_courses;
 CREATE POLICY "training_courses_org_insert" ON training_courses FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "training_courses_org_update" ON training_courses;
 CREATE POLICY "training_courses_org_update" ON training_courses FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "training_courses_org_delete" ON training_courses;
 CREATE POLICY "training_courses_org_delete" ON training_courses FOR DELETE USING (is_organization_member(org_id));
 
 -- Landing Pages
 ALTER TABLE landing_pages ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "landing_pages_org_read" ON landing_pages;
 CREATE POLICY "landing_pages_org_read" ON landing_pages FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "landing_pages_org_insert" ON landing_pages;
 CREATE POLICY "landing_pages_org_insert" ON landing_pages FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "landing_pages_org_update" ON landing_pages;
 CREATE POLICY "landing_pages_org_update" ON landing_pages FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "landing_pages_org_delete" ON landing_pages;
 CREATE POLICY "landing_pages_org_delete" ON landing_pages FOR DELETE USING (is_organization_member(org_id));
 
 -- Subscribers
 ALTER TABLE subscribers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "subscribers_org_read" ON subscribers;
 CREATE POLICY "subscribers_org_read" ON subscribers FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "subscribers_org_insert" ON subscribers;
 CREATE POLICY "subscribers_org_insert" ON subscribers FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "subscribers_org_update" ON subscribers;
 CREATE POLICY "subscribers_org_update" ON subscribers FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "subscribers_org_delete" ON subscribers;
 CREATE POLICY "subscribers_org_delete" ON subscribers FOR DELETE USING (is_organization_member(org_id));
 
 -- Subscriber Lists
 ALTER TABLE subscriber_lists ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "subscriber_lists_org_read" ON subscriber_lists;
 CREATE POLICY "subscriber_lists_org_read" ON subscriber_lists FOR SELECT USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "subscriber_lists_org_insert" ON subscriber_lists;
 CREATE POLICY "subscriber_lists_org_insert" ON subscriber_lists FOR INSERT WITH CHECK (is_organization_member(org_id));
+DROP POLICY IF EXISTS "subscriber_lists_org_update" ON subscriber_lists;
 CREATE POLICY "subscriber_lists_org_update" ON subscriber_lists FOR UPDATE USING (is_organization_member(org_id));
+DROP POLICY IF EXISTS "subscriber_lists_org_delete" ON subscriber_lists;
 CREATE POLICY "subscriber_lists_org_delete" ON subscriber_lists FOR DELETE USING (is_organization_member(org_id));
 
 -- ============================================================================

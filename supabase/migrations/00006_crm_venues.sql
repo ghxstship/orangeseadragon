@@ -34,10 +34,10 @@ CREATE TABLE companies (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_companies_organization ON companies(organization_id);
-CREATE INDEX idx_companies_type ON companies(company_type);
-CREATE INDEX idx_companies_name ON companies(name);
-CREATE INDEX idx_companies_tags ON companies USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_companies_organization ON companies(organization_id);
+CREATE INDEX IF NOT EXISTS idx_companies_type ON companies(company_type);
+CREATE INDEX IF NOT EXISTS idx_companies_name ON companies(name);
+CREATE INDEX IF NOT EXISTS idx_companies_tags ON companies USING GIN(tags);
 
 -- Contacts
 CREATE TABLE contacts (
@@ -70,11 +70,11 @@ CREATE TABLE contacts (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_contacts_organization ON contacts(organization_id);
-CREATE INDEX idx_contacts_company ON contacts(company_id);
-CREATE INDEX idx_contacts_email ON contacts(email);
-CREATE INDEX idx_contacts_name ON contacts(full_name);
-CREATE INDEX idx_contacts_tags ON contacts USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_contacts_organization ON contacts(organization_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_company ON contacts(company_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_email ON contacts(email);
+CREATE INDEX IF NOT EXISTS idx_contacts_name ON contacts(full_name);
+CREATE INDEX IF NOT EXISTS idx_contacts_tags ON contacts USING GIN(tags);
 
 -- Deals
 CREATE TABLE deals (
@@ -106,13 +106,13 @@ CREATE TABLE deals (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_deals_organization ON deals(organization_id);
-CREATE INDEX idx_deals_company ON deals(company_id);
-CREATE INDEX idx_deals_contact ON deals(contact_id);
-CREATE INDEX idx_deals_stage ON deals(stage);
-CREATE INDEX idx_deals_owner ON deals(owner_id);
-CREATE INDEX idx_deals_close_date ON deals(expected_close_date);
-CREATE INDEX idx_deals_tags ON deals USING GIN(tags);
+CREATE INDEX IF NOT EXISTS idx_deals_organization ON deals(organization_id);
+CREATE INDEX IF NOT EXISTS idx_deals_company ON deals(company_id);
+CREATE INDEX IF NOT EXISTS idx_deals_contact ON deals(contact_id);
+CREATE INDEX IF NOT EXISTS idx_deals_stage ON deals(stage);
+CREATE INDEX IF NOT EXISTS idx_deals_owner ON deals(owner_id);
+CREATE INDEX IF NOT EXISTS idx_deals_close_date ON deals(expected_close_date);
+CREATE INDEX IF NOT EXISTS idx_deals_tags ON deals USING GIN(tags);
 
 -- Pipeline Stages
 CREATE TABLE pipeline_stages (
@@ -131,8 +131,8 @@ CREATE TABLE pipeline_stages (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_pipeline_stages_organization ON pipeline_stages(organization_id);
-CREATE INDEX idx_pipeline_stages_position ON pipeline_stages(organization_id, position);
+CREATE INDEX IF NOT EXISTS idx_pipeline_stages_organization ON pipeline_stages(organization_id);
+CREATE INDEX IF NOT EXISTS idx_pipeline_stages_position ON pipeline_stages(organization_id, position);
 
 -- Activities
 CREATE TABLE activities (
@@ -157,14 +157,14 @@ CREATE TABLE activities (
     created_by UUID REFERENCES users(id) ON DELETE SET NULL
 );
 
-CREATE INDEX idx_activities_organization ON activities(organization_id);
-CREATE INDEX idx_activities_type ON activities(activity_type);
-CREATE INDEX idx_activities_company ON activities(company_id);
-CREATE INDEX idx_activities_contact ON activities(contact_id);
-CREATE INDEX idx_activities_deal ON activities(deal_id);
-CREATE INDEX idx_activities_assigned ON activities(assigned_to);
-CREATE INDEX idx_activities_due ON activities(due_date);
-CREATE INDEX idx_activities_incomplete ON activities(organization_id, is_completed) WHERE is_completed = FALSE;
+CREATE INDEX IF NOT EXISTS idx_activities_organization ON activities(organization_id);
+CREATE INDEX IF NOT EXISTS idx_activities_type ON activities(activity_type);
+CREATE INDEX IF NOT EXISTS idx_activities_company ON activities(company_id);
+CREATE INDEX IF NOT EXISTS idx_activities_contact ON activities(contact_id);
+CREATE INDEX IF NOT EXISTS idx_activities_deal ON activities(deal_id);
+CREATE INDEX IF NOT EXISTS idx_activities_assigned ON activities(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_activities_due ON activities(due_date);
+CREATE INDEX IF NOT EXISTS idx_activities_incomplete ON activities(organization_id, is_completed) WHERE is_completed = FALSE;
 
 -- Proposals
 CREATE TABLE proposals (
@@ -197,10 +197,10 @@ CREATE TABLE proposals (
     UNIQUE(organization_id, proposal_number)
 );
 
-CREATE INDEX idx_proposals_organization ON proposals(organization_id);
-CREATE INDEX idx_proposals_deal ON proposals(deal_id);
-CREATE INDEX idx_proposals_company ON proposals(company_id);
-CREATE INDEX idx_proposals_status ON proposals(status);
+CREATE INDEX IF NOT EXISTS idx_proposals_organization ON proposals(organization_id);
+CREATE INDEX IF NOT EXISTS idx_proposals_deal ON proposals(deal_id);
+CREATE INDEX IF NOT EXISTS idx_proposals_company ON proposals(company_id);
+CREATE INDEX IF NOT EXISTS idx_proposals_status ON proposals(status);
 
 -- Proposal Items
 CREATE TABLE proposal_items (
@@ -218,7 +218,7 @@ CREATE TABLE proposal_items (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_proposal_items_proposal ON proposal_items(proposal_id);
+CREATE INDEX IF NOT EXISTS idx_proposal_items_proposal ON proposal_items(proposal_id);
 
 -- ============================================================================
 -- VENUE TABLES
@@ -262,10 +262,10 @@ CREATE TABLE venues (
     UNIQUE(organization_id, slug)
 );
 
-CREATE INDEX idx_venues_organization ON venues(organization_id);
-CREATE INDEX idx_venues_type ON venues(venue_type);
-CREATE INDEX idx_venues_city ON venues(city);
-CREATE INDEX idx_venues_location ON venues(latitude, longitude);
+CREATE INDEX IF NOT EXISTS idx_venues_organization ON venues(organization_id);
+CREATE INDEX IF NOT EXISTS idx_venues_type ON venues(venue_type);
+CREATE INDEX IF NOT EXISTS idx_venues_city ON venues(city);
+CREATE INDEX IF NOT EXISTS idx_venues_location ON venues(latitude, longitude);
 
 -- Venue Spaces
 CREATE TABLE venue_spaces (
@@ -292,8 +292,8 @@ CREATE TABLE venue_spaces (
     UNIQUE(venue_id, slug)
 );
 
-CREATE INDEX idx_venue_spaces_venue ON venue_spaces(venue_id);
-CREATE INDEX idx_venue_spaces_type ON venue_spaces(space_type);
+CREATE INDEX IF NOT EXISTS idx_venue_spaces_venue ON venue_spaces(venue_id);
+CREATE INDEX IF NOT EXISTS idx_venue_spaces_type ON venue_spaces(space_type);
 
 -- Venue Availability
 CREATE TABLE venue_availability (
@@ -310,10 +310,10 @@ CREATE TABLE venue_availability (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_venue_availability_venue ON venue_availability(venue_id);
-CREATE INDEX idx_venue_availability_space ON venue_availability(space_id);
-CREATE INDEX idx_venue_availability_date ON venue_availability(date);
-CREATE INDEX idx_venue_availability_lookup ON venue_availability(venue_id, date, is_available);
+CREATE INDEX IF NOT EXISTS idx_venue_availability_venue ON venue_availability(venue_id);
+CREATE INDEX IF NOT EXISTS idx_venue_availability_space ON venue_availability(space_id);
+CREATE INDEX IF NOT EXISTS idx_venue_availability_date ON venue_availability(date);
+CREATE INDEX IF NOT EXISTS idx_venue_availability_lookup ON venue_availability(venue_id, date, is_available);
 
 -- Site Surveys
 CREATE TABLE site_surveys (
@@ -342,7 +342,7 @@ CREATE TABLE site_surveys (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_site_surveys_organization ON site_surveys(organization_id);
-CREATE INDEX idx_site_surveys_venue ON site_surveys(venue_id);
-CREATE INDEX idx_site_surveys_event ON site_surveys(event_id);
-CREATE INDEX idx_site_surveys_date ON site_surveys(survey_date);
+CREATE INDEX IF NOT EXISTS idx_site_surveys_organization ON site_surveys(organization_id);
+CREATE INDEX IF NOT EXISTS idx_site_surveys_venue ON site_surveys(venue_id);
+CREATE INDEX IF NOT EXISTS idx_site_surveys_event ON site_surveys(event_id);
+CREATE INDEX IF NOT EXISTS idx_site_surveys_date ON site_surveys(survey_date);
