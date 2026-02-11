@@ -38,6 +38,7 @@ import { useUser } from "@/hooks/use-supabase";
 import { useNotifications } from "@/hooks/use-notifications";
 import { useInbox } from "@/hooks/use-inbox";
 import { useUIStore } from "@/stores/ui-store";
+import { OrgSwitcher } from "@/components/common/org-switcher";
 import { useSupabase } from "@/hooks/use-supabase";
 
 export function TopBar() {
@@ -119,6 +120,7 @@ export function TopBar() {
           </div>
           <span className="hidden font-semibold md:inline-block">ATLVS</span>
         </Link>
+        <OrgSwitcher className="ml-2" />
       </div>
 
       <nav className="ml-6 hidden items-center gap-1 text-sm md:flex">

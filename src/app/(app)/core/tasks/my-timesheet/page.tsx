@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
   Clock,
@@ -15,13 +16,20 @@ import {
   Send,
   Play,
   Square,
+  Loader2,
 } from "lucide-react";
+import {
+  useMyTimeEntries,
+  useUpsertTimeEntry,
+  useSubmitWeekTimeEntries,
+} from "@/hooks/use-my-time-entries";
 
-interface TimeEntry {
-  id: string;
-  project: string;
-  task: string;
-  hours: Record<string, number>;
+interface GridRow {
+  projectId: string;
+  projectName: string;
+  taskId: string | null;
+  taskName: string | null;
+  hours: Record<string, { id: string | null; value: number }>;
 }
 
 function getWeekDates(offset: number): Date[] {
@@ -51,63 +59,101 @@ function dateKey(date: Date): string {
 export default function MyTimesheetPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [activeTimer, setActiveTimer] = useState<string | null>(null);
-  const [entries, setEntries] = useState<TimeEntry[]>([
-    { id: "1", project: "Summer Festival 2026", task: "Stage Design", hours: {} },
-    { id: "2", project: "Corporate Gala", task: "Vendor Coordination", hours: {} },
-    { id: "3", project: "Brand Activation", task: "Site Survey", hours: {} },
-  ]);
 
   const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
   const isCurrentWeek = weekOffset === 0;
+  const weekStart = dateKey(weekDates[0]);
+  const weekEnd = dateKey(weekDates[6]);
+
+  const { data: rawEntries, isLoading } = useMyTimeEntries(weekStart, weekEnd);
+  const upsertEntry = useUpsertTimeEntry();
+  const submitWeek = useSubmitWeekTimeEntries();
+
+  // Group raw entries into grid rows (project+task → days)
+  const gridRows = useMemo<GridRow[]>(() => {
+    if (!rawEntries?.length) return [];
+    const rowMap = new Map<string, GridRow>();
+
+    for (const entry of rawEntries) {
+      const rowKey = `${entry.project_id}::${entry.task_id ?? "none"}`;
+      if (!rowMap.has(rowKey)) {
+        rowMap.set(rowKey, {
+          projectId: entry.project_id,
+          projectName: entry.project_name,
+          taskId: entry.task_id,
+          taskName: entry.task_name,
+          hours: {},
+        });
+      }
+      const row = rowMap.get(rowKey)!;
+      row.hours[entry.date] = { id: entry.id, value: entry.hours };
+    }
+
+    return Array.from(rowMap.values());
+  }, [rawEntries]);
 
   const weekTotals = useMemo(() => {
     const totals: Record<string, number> = {};
     weekDates.forEach((d) => {
       const key = dateKey(d);
-      totals[key] = entries.reduce((sum, e) => sum + (e.hours[key] || 0), 0);
+      totals[key] = gridRows.reduce((sum, r) => sum + (r.hours[key]?.value || 0), 0);
     });
     return totals;
-  }, [entries, weekDates]);
+  }, [gridRows, weekDates]);
 
   const grandTotal = useMemo(
     () => Object.values(weekTotals).reduce((sum, h) => sum + h, 0),
     [weekTotals]
   );
 
-  const billableTotal = useMemo(() => Math.round(grandTotal * 0.85 * 10) / 10, [grandTotal]);
+  const billableTotal = useMemo(() => {
+    if (!rawEntries?.length) return 0;
+    return rawEntries
+      .filter((e) => e.billable)
+      .reduce((sum, e) => sum + e.hours, 0);
+  }, [rawEntries]);
+
   const utilizationPct = useMemo(() => {
     const targetHours = 40;
     return Math.min(100, Math.round((grandTotal / targetHours) * 100));
   }, [grandTotal]);
 
   const handleHoursChange = useCallback(
-    (entryId: string, day: string, value: string) => {
+    (row: GridRow, day: string, value: string) => {
       const hours = parseFloat(value) || 0;
-      setEntries((prev) =>
-        prev.map((e) =>
-          e.id === entryId ? { ...e, hours: { ...e.hours, [day]: hours } } : e
-        )
-      );
+      const existing = row.hours[day];
+
+      upsertEntry.mutate({
+        id: existing?.id ?? undefined,
+        project_id: row.projectId,
+        task_id: row.taskId,
+        date: day,
+        hours,
+      });
     },
-    []
+    [upsertEntry]
   );
 
   const handleToggleTimer = useCallback(
-    (entryId: string) => {
-      setActiveTimer((prev) => (prev === entryId ? null : entryId));
+    (key: string) => {
+      setActiveTimer((prev) => (prev === key ? null : key));
     },
     []
   );
 
+  const handleSubmitWeek = useCallback(() => {
+    submitWeek.mutate({ weekStart, weekEnd });
+  }, [submitWeek, weekStart, weekEnd]);
+
   const rowTotal = useCallback(
-    (entry: TimeEntry) =>
-      weekDates.reduce((sum, d) => sum + (entry.hours[dateKey(d)] || 0), 0),
+    (row: GridRow) =>
+      weekDates.reduce((sum, d) => sum + (row.hours[dateKey(d)]?.value || 0), 0),
     [weekDates]
   );
 
   return (
     <div className="flex flex-col h-full bg-background">
-      {/* Header — Layout A */}
+      {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
         <div className="flex items-center justify-between px-6 py-4">
           <div>
@@ -128,8 +174,12 @@ export default function MyTimesheetPage() {
             <Button variant="outline" size="sm" onClick={() => setWeekOffset((w) => w + 1)}>
               <ChevronRight className="h-4 w-4" />
             </Button>
-            <Button size="sm">
-              <Send className="h-4 w-4 mr-2" />
+            <Button size="sm" onClick={handleSubmitWeek} disabled={submitWeek.isPending || grandTotal === 0}>
+              {submitWeek.isPending ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4 mr-2" />
+              )}
               Submit for Approval
             </Button>
           </div>
@@ -196,51 +246,79 @@ export default function MyTimesheetPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.map((entry) => (
-                    <tr key={entry.id} className="border-b border-border hover:bg-accent/30 transition-colors">
-                      <td className="px-4 py-2">
-                        <div className="font-medium text-sm">{entry.project}</div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider opacity-40 mt-0.5">
-                          {entry.task}
+                  {isLoading ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <tr key={i} className="border-b border-border">
+                        <td className="px-4 py-3"><Skeleton className="h-4 w-40" /></td>
+                        {weekDates.map((d) => (
+                          <td key={dateKey(d)} className="px-1 py-3 text-center"><Skeleton className="h-8 w-16 mx-auto" /></td>
+                        ))}
+                        <td className="px-4 py-3"><Skeleton className="h-4 w-10 mx-auto" /></td>
+                        <td />
+                      </tr>
+                    ))
+                  ) : gridRows.length === 0 ? (
+                    <tr>
+                      <td colSpan={weekDates.length + 3} className="px-4 py-12 text-center">
+                        <div className="text-muted-foreground">
+                          <Clock className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                          <p className="text-sm font-medium">No time entries this week</p>
+                          <p className="text-xs opacity-60 mt-1">Log time from your assigned tasks or projects</p>
                         </div>
                       </td>
-                      {weekDates.map((d) => {
-                        const key = dateKey(d);
-                        const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-                        return (
-                          <td key={key} className={cn("px-1 py-2 text-center", isWeekend && "opacity-50")}>
-                            <Input
-                              type="number"
-                              min={0}
-                              max={24}
-                              step={0.5}
-                              value={entry.hours[key] || ""}
-                              onChange={(e) => handleHoursChange(entry.id, key, e.target.value)}
-                              className="h-8 w-16 text-center text-xs mx-auto [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                              placeholder="—"
-                            />
-                          </td>
-                        );
-                      })}
-                      <td className="px-4 py-2 text-center">
-                        <span className="font-mono text-xs font-bold">{rowTotal(entry)}h</span>
-                      </td>
-                      <td className="px-2 py-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7"
-                          onClick={() => handleToggleTimer(entry.id)}
-                        >
-                          {activeTimer === entry.id ? (
-                            <Square className="h-3 w-3 text-destructive" />
-                          ) : (
-                            <Play className="h-3 w-3" />
-                          )}
-                        </Button>
-                      </td>
                     </tr>
-                  ))}
+                  ) : (
+                    gridRows.map((row) => {
+                      const rowKey = `${row.projectId}::${row.taskId ?? "none"}`;
+                      return (
+                        <tr key={rowKey} className="border-b border-border hover:bg-accent/30 transition-colors">
+                          <td className="px-4 py-2">
+                            <div className="font-medium text-sm">{row.projectName}</div>
+                            {row.taskName && (
+                              <div className="text-[10px] font-bold uppercase tracking-wider opacity-40 mt-0.5">
+                                {row.taskName}
+                              </div>
+                            )}
+                          </td>
+                          {weekDates.map((d) => {
+                            const key = dateKey(d);
+                            const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                            return (
+                              <td key={key} className={cn("px-1 py-2 text-center", isWeekend && "opacity-50")}>
+                                <Input
+                                  type="number"
+                                  min={0}
+                                  max={24}
+                                  step={0.5}
+                                  value={row.hours[key]?.value || ""}
+                                  onChange={(e) => handleHoursChange(row, key, e.target.value)}
+                                  className="h-8 w-16 text-center text-xs mx-auto [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                  placeholder="—"
+                                />
+                              </td>
+                            );
+                          })}
+                          <td className="px-4 py-2 text-center">
+                            <span className="font-mono text-xs font-bold">{rowTotal(row)}h</span>
+                          </td>
+                          <td className="px-2 py-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => handleToggleTimer(rowKey)}
+                            >
+                              {activeTimer === rowKey ? (
+                                <Square className="h-3 w-3 text-destructive" />
+                              ) : (
+                                <Play className="h-3 w-3" />
+                              )}
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
                 <tfoot>
                   <tr className="bg-muted/30 font-medium">

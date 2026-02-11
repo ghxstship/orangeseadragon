@@ -58,12 +58,26 @@ export const taskSchema = defineSchema({
           { label: 'Urgent', value: 'urgent' },
         ],
       },
+      start_date: {
+        type: 'date',
+        label: 'Start Date',
+        inTable: false,
+        inForm: true,
+        sortable: true,
+      },
       due_date: {
         type: 'date',
         label: 'Due Date',
         inTable: true,
         inForm: true,
         sortable: true,
+      },
+      estimated_hours: {
+        type: 'number',
+        label: 'Estimated Hours',
+        inForm: true,
+        inDetail: true,
+        min: 0,
       },
       assignee_id: {
         type: 'relation',
@@ -109,6 +123,18 @@ export const taskSchema = defineSchema({
     },
   },
 
+  relationships: {
+    hasMany: [
+      { entity: 'task_assignments', foreignKey: 'task_id', label: 'Assignees' },
+      { entity: 'task_dependencies', foreignKey: 'task_id', label: 'Dependencies' },
+      { entity: 'time_entries', foreignKey: 'task_id', label: 'Time Entries' },
+    ],
+    belongsTo: [
+      { entity: 'projects', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'task_lists', foreignKey: 'list_id', label: 'List' },
+    ],
+  },
+
   display: {
     title: (record) => record.title || 'Untitled Task',
     subtitle: (record) => record.status || 'No Status',
@@ -144,7 +170,7 @@ export const taskSchema = defineSchema({
         { key: 'done', label: 'Done', query: { where: { status: 'done' } } },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban', 'list', 'calendar', 'matrix'],
+      availableViews: ['table', 'kanban', 'list', 'calendar', 'matrix', 'timeline'],
     },
     detail: {
       tabs: [
@@ -172,7 +198,7 @@ export const taskSchema = defineSchema({
         {
           key: 'assignment',
           title: 'Assignment',
-          fields: ['assignee_id', 'project_id', 'list_id', 'due_date'],
+          fields: ['assignee_id', 'project_id', 'list_id', 'start_date', 'due_date', 'estimated_hours'],
         }
       ]
     }
@@ -203,8 +229,15 @@ export const taskSchema = defineSchema({
     },
     calendar: {
       titleField: 'title',
-      startField: 'due_date',
+      startField: 'start_date',
+      endField: 'due_date',
       colorField: 'priority',
+    },
+    timeline: {
+      titleField: 'title',
+      startField: 'start_date',
+      endField: 'due_date',
+      groupField: 'assignee_id',
     },
     matrix: {
       type: 'eisenhower',

@@ -140,6 +140,9 @@ export { rfpResponseSchema } from './rfpResponse';
 // Phase 6 module exports
 export { mediaAssetSchema } from './mediaAsset';
 
+// Productive.io gap closure exports
+export { fiscalYearSchema } from './fiscalYear';
+
 // Ecosystem module exports
 export { clientPortalAccessSchema } from './clientPortalAccess';
 export { webhookEndpointSchema } from './webhookEndpoint';
@@ -388,6 +391,7 @@ import { crewGigRatingSchema } from './crewGigRating';
 import { projectPostMortemSchema } from './projectPostMortem';
 import { rfpResponseSchema } from './rfpResponse';
 import { mediaAssetSchema } from './mediaAsset';
+import { fiscalYearSchema } from './fiscalYear';
 import { clientPortalAccessSchema } from './clientPortalAccess';
 import { webhookEndpointSchema } from './webhookEndpoint';
 import { oauthConnectionSchema } from './oauthConnection';
@@ -836,6 +840,10 @@ export function getSchema(entityName: string) {
     userBadge: userBadgeSchema,
     'user-badges': userBadgeSchema,
     'earned-badges': userBadgeSchema,
+    // Productive.io gap closure schemas
+    fiscalYear: fiscalYearSchema,
+    'fiscal-years': fiscalYearSchema,
+    fiscal_years: fiscalYearSchema,
   };
 
   return schemas[entityName] || null;

@@ -18,6 +18,10 @@ interface UIState {
   notificationsPanelOpen: boolean;
   setNotificationsPanelOpen: (open: boolean) => void;
   toggleNotificationsPanel: () => void;
+
+  quickAddTaskOpen: boolean;
+  setQuickAddTaskOpen: (open: boolean) => void;
+  toggleQuickAddTask: () => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -55,6 +59,12 @@ export const useUIStore = create<UIState>((set) => ({
   setNotificationsPanelOpen: (open) => set({ notificationsPanelOpen: open }),
   toggleNotificationsPanel: () =>
     set((state) => ({ notificationsPanelOpen: !state.notificationsPanelOpen })),
+
+  // Quick-add task dialog
+  quickAddTaskOpen: false,
+  setQuickAddTaskOpen: (open) => set({ quickAddTaskOpen: open }),
+  toggleQuickAddTask: () =>
+    set((state) => ({ quickAddTaskOpen: !state.quickAddTaskOpen })),
 }));
 
 // Selector hooks

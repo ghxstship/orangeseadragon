@@ -6,6 +6,7 @@ import { TopBar } from "./top-bar";
 import { Sidebar } from "./sidebar";
 import { CommandPalette } from "@/components/common/command-palette";
 import { NotificationCenter } from "@/components/common/notification-center";
+import { QuickAddTask } from "@/components/common/quick-add-task";
 import type { LayoutType } from "@/lib/layouts/types";
 
 interface AppShellProps {
@@ -74,6 +75,7 @@ export function AppShell({ children }: AppShellProps) {
 
         <CommandPalette />
         <NotificationCenter />
+        <QuickAddTask />
       </div>
     </LayoutContext.Provider>
   );

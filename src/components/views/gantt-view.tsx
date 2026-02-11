@@ -181,6 +181,7 @@ export function GanttView<T extends GanttTask>({
   title,
   className,
   onTaskClick,
+  onTaskUpdate,
   onDependencyShift,
   showDependencies = true,
   showCriticalPath = false,
@@ -189,15 +190,90 @@ export function GanttView<T extends GanttTask>({
   const [zoomLevel, setZoomLevel] = React.useState<ZoomLevel>("week");
   const [viewStart, setViewStart] = React.useState(() => startOfWeek(new Date()));
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const timelineRef = React.useRef<HTMLDivElement>(null);
 
-  // Expose dependency recalculation via onDependencyShift callback
-  const _handleTaskDateChange = React.useCallback((task: GanttTask, newEnd: Date) => {
-    if (!onDependencyShift) return;
-    const shifts = recalculateDependencies(tasks, task.id, newEnd, _skipWeekends);
-    if (shifts.length > 0) {
-      onDependencyShift(shifts);
-    }
-  }, [tasks, onDependencyShift, _skipWeekends]);
+  // Drag state
+  const [dragState, setDragState] = React.useState<{
+    taskId: string;
+    mode: "move" | "resize-end";
+    startX: number;
+    originalStart: Date;
+    originalEnd: Date;
+  } | null>(null);
+  const [dragPreview, setDragPreview] = React.useState<{
+    taskId: string;
+    newStart: Date;
+    newEnd: Date;
+  } | null>(null);
+
+  const handleDragStart = React.useCallback(
+    (e: React.MouseEvent, task: GanttTask, mode: "move" | "resize-end") => {
+      if (!onTaskUpdate) return;
+      e.stopPropagation();
+      e.preventDefault();
+      const start = typeof task.startDate === "string" ? parseISO(task.startDate) : new Date(task.startDate);
+      const end = typeof task.endDate === "string" ? parseISO(task.endDate) : new Date(task.endDate);
+      setDragState({ taskId: task.id, mode, startX: e.clientX, originalStart: start, originalEnd: end });
+    },
+    [onTaskUpdate]
+  );
+
+  React.useEffect(() => {
+    if (!dragState || !timelineRef.current) return;
+
+    const timelineEl = timelineRef.current;
+    const timelineWidth = timelineEl.scrollWidth;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - dragState.startX;
+      const daysDelta = Math.round((deltaX / timelineWidth) * differenceInDays(getViewEnd(), viewStart));
+
+      if (daysDelta === 0 && !dragPreview) return;
+
+      let newStart: Date;
+      let newEnd: Date;
+
+      if (dragState.mode === "move") {
+        newStart = _skipWeekends
+          ? addBusinessDays(dragState.originalStart, daysDelta)
+          : addDays(dragState.originalStart, daysDelta);
+        newEnd = _skipWeekends
+          ? addBusinessDays(dragState.originalEnd, daysDelta)
+          : addDays(dragState.originalEnd, daysDelta);
+      } else {
+        newStart = dragState.originalStart;
+        newEnd = _skipWeekends
+          ? addBusinessDays(dragState.originalEnd, daysDelta)
+          : addDays(dragState.originalEnd, daysDelta);
+        if (isBefore(newEnd, newStart)) newEnd = newStart;
+      }
+
+      setDragPreview({ taskId: dragState.taskId, newStart, newEnd });
+    };
+
+    const handleMouseUp = () => {
+      if (dragPreview) {
+        const task = tasks.find((t) => t.id === dragState.taskId);
+        if (task && onTaskUpdate) {
+          onTaskUpdate(task as T, { startDate: dragPreview.newStart, endDate: dragPreview.newEnd });
+        }
+        if (onDependencyShift) {
+          const shifts = recalculateDependencies(tasks, dragState.taskId, dragPreview.newEnd, _skipWeekends);
+          if (shifts.length > 0) onDependencyShift(shifts);
+        }
+      }
+      setDragState(null);
+      setDragPreview(null);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dragState, dragPreview, tasks, onTaskUpdate, onDependencyShift, _skipWeekends, viewStart]);
 
   const getViewEnd = React.useCallback(() => {
     switch (zoomLevel) {
@@ -227,9 +303,14 @@ export function GanttView<T extends GanttTask>({
   const timeUnits = getTimeUnits();
   const totalDays = differenceInDays(viewEnd, viewStart);
 
-  const getTaskPosition = (task: GanttTask) => {
-    const start = typeof task.startDate === "string" ? parseISO(task.startDate) : task.startDate;
-    const end = typeof task.endDate === "string" ? parseISO(task.endDate) : task.endDate;
+  const getTaskPosition = React.useCallback((task: GanttTask) => {
+    const preview = dragPreview?.taskId === task.id ? dragPreview : null;
+    const start = preview
+      ? preview.newStart
+      : typeof task.startDate === "string" ? parseISO(task.startDate) : task.startDate;
+    const end = preview
+      ? preview.newEnd
+      : typeof task.endDate === "string" ? parseISO(task.endDate) : task.endDate;
 
     const startOffset = Math.max(0, differenceInDays(start, viewStart));
     const duration = differenceInDays(end, start) + 1;
@@ -239,7 +320,7 @@ export function GanttView<T extends GanttTask>({
     const width = ((endOffset - startOffset) / totalDays) * 100;
 
     return { left: `${left}%`, width: `${Math.max(width, 1)}%` };
-  };
+  }, [dragPreview, viewStart, totalDays]);
 
   const isTaskVisible = (task: GanttTask) => {
     const start = typeof task.startDate === "string" ? parseISO(task.startDate) : task.startDate;
@@ -393,7 +474,7 @@ export function GanttView<T extends GanttTask>({
           </div>
 
           {/* Timeline */}
-          <div className="flex-1 overflow-x-auto" ref={containerRef}>
+          <div className="flex-1 overflow-x-auto" ref={(el) => { (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el; (timelineRef as React.MutableRefObject<HTMLDivElement | null>).current = el; }}>
             {/* Timeline Header */}
             <div className="h-12 border-b border-border bg-muted flex sticky top-0 z-30">
               {timeUnits.map((unit, i) => (
@@ -459,9 +540,10 @@ export function GanttView<T extends GanttTask>({
                               layoutId={task.id}
                               initial={{ opacity: 0, scale: 0.95, x: -20 }}
                               animate={{ opacity: 1, scale: 1, x: 0 }}
-                              whileHover={{ scale: 1.01, zIndex: 30, y: -1 }}
+                              whileHover={!dragState ? { scale: 1.01, zIndex: 30, y: -1 } : undefined}
                               className={cn(
-                                "absolute top-3 h-6 rounded-full cursor-pointer shadow-lg border border-border glass-morphism transition-all duration-300",
+                                "absolute top-3 h-6 rounded-full shadow-lg border border-border glass-morphism transition-all duration-300",
+                                dragState?.taskId === task.id ? "cursor-grabbing z-40 opacity-80 ring-2 ring-primary/50" : onTaskUpdate && !task.isMilestone ? "cursor-grab" : "cursor-pointer",
                                 task.isMilestone
                                   ? "w-4 h-4 top-4 rotate-45 bg-status-milestone shadow-lg border-status-milestone/60"
                                   : task.isCriticalPath && showCriticalPath
@@ -469,7 +551,12 @@ export function GanttView<T extends GanttTask>({
                                     : getStatusColor(task.status)
                               )}
                               style={task.isMilestone ? { left: position.left } : position}
-                              onClick={() => onTaskClick?.(task as unknown as T)}
+                              onMouseDown={(e) => {
+                                if (!task.isMilestone && onTaskUpdate) handleDragStart(e, task, "move");
+                              }}
+                              onClick={() => {
+                                if (!dragState) onTaskClick?.(task as unknown as T);
+                              }}
                             >
                               {!task.isMilestone && (
                                 <div
@@ -484,6 +571,12 @@ export function GanttView<T extends GanttTask>({
                                   initial={{ width: 0 }}
                                   animate={{ width: `${task.progress}%` }}
                                   className="absolute inset-y-0 left-0 bg-white/30 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                                />
+                              )}
+                              {!task.isMilestone && onTaskUpdate && (
+                                <div
+                                  className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-white/30 rounded-r-full z-10"
+                                  onMouseDown={(e) => handleDragStart(e, task, "resize-end")}
                                 />
                               )}
                             </motion.div>
