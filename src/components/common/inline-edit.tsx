@@ -119,7 +119,7 @@ export function InlineEdit({
             onClick={handleSave}
             disabled={isSaving}
           >
-            <Check className="h-4 w-4 text-green-600" />
+            <Check className="h-4 w-4 text-emerald-600" />
           </Button>
           <Button
             type="button"
@@ -129,7 +129,7 @@ export function InlineEdit({
             onClick={handleCancel}
             disabled={isSaving}
           >
-            <X className="h-4 w-4 text-red-600" />
+            <X className="h-4 w-4 text-destructive" />
           </Button>
         </div>
       </div>

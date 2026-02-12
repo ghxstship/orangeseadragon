@@ -216,7 +216,14 @@ export const purchaseOrderSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['po_number', 'vendor_id', 'event_id', 'order_date', 'total_cents', 'status'],
+      columns: [
+        'po_number',
+        { field: 'vendor_id', format: { type: 'relation', entityType: 'vendor' } },
+        { field: 'event_id', format: { type: 'relation', entityType: 'event' } },
+        { field: 'order_date', format: { type: 'date' } },
+        { field: 'total_cents', format: { type: 'currency' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', submitted: '#3b82f6', approved: '#22c55e', rejected: '#ef4444', received: '#8b5cf6', cancelled: '#6b7280' } } },
+      ],
     },
   },
   actions: {

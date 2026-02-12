@@ -207,7 +207,14 @@ export const customFieldDefinitionSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'entity_type', 'field_type', 'is_required', 'show_in_table', 'is_active'],
+      columns: [
+        'name',
+        'entity_type',
+        'field_type',
+        { field: 'is_required', format: { type: 'boolean' } },
+        { field: 'show_in_table', format: { type: 'boolean' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
   },
 

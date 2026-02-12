@@ -296,7 +296,16 @@ export const laborRuleSetSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'rule_type', 'jurisdiction', 'standard_daily_hours', 'overtime_after_daily_hours', 'minimum_turnaround_hours', 'is_active', 'effective_date'],
+      columns: [
+        'name',
+        'rule_type',
+        'jurisdiction',
+        { field: 'standard_daily_hours', format: { type: 'number' } },
+        { field: 'overtime_after_daily_hours', format: { type: 'number' } },
+        { field: 'minimum_turnaround_hours', format: { type: 'number' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+        { field: 'effective_date', format: { type: 'date' } },
+      ],
     },
   },
 

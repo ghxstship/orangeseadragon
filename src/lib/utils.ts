@@ -1,12 +1,13 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { DEFAULT_LOCALE, DEFAULT_CURRENCY } from "./config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export function formatDate(date: Date | string): string {
-  return new Date(date).toLocaleDateString("en-US", {
+  return new Date(date).toLocaleDateString(DEFAULT_LOCALE, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -14,7 +15,7 @@ export function formatDate(date: Date | string): string {
 }
 
 export function formatDateTime(date: Date | string): string {
-  return new Date(date).toLocaleString("en-US", {
+  return new Date(date).toLocaleString(DEFAULT_LOCALE, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -25,9 +26,9 @@ export function formatDateTime(date: Date | string): string {
 
 export function formatCurrency(
   amount: number,
-  currency: string = "USD"
+  currency: string = DEFAULT_CURRENCY
 ): string {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat(DEFAULT_LOCALE, {
     style: "currency",
     currency,
   }).format(amount);

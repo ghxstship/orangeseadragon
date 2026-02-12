@@ -76,7 +76,13 @@ export const backlogSchema = defineSchema({
       ],
     },
   },
-  views: { table: { columns: ['title', 'type', 'priority', 'points', 'projectId'] } },
+  views: { table: { columns: [
+        'title',
+        'type',
+        { field: 'priority', format: { type: 'badge', colorMap: { urgent: '#ef4444', high: '#f97316', medium: '#f59e0b', low: '#3b82f6', critical: '#ef4444', none: '#6b7280' } } },
+        { field: 'points', format: { type: 'number' } },
+        { field: 'projectId', format: { type: 'relation', entityType: 'project' } },
+      ] } },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/backlogs/${r.id}` } }],
     bulk: [],

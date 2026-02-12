@@ -253,7 +253,7 @@ export function ReceiptUploader({ onUploadComplete, maxFiles = 10 }: ReceiptUplo
                   )}
 
                   {receipt.status === 'failed' && (
-                    <div className="mt-1 flex items-center gap-2 text-sm text-red-600">
+                    <div className="mt-1 flex items-center gap-2 text-sm text-destructive">
                       <AlertCircle className="h-4 w-4" />
                       {receipt.error || 'Failed to process'}
                     </div>
@@ -262,7 +262,7 @@ export function ReceiptUploader({ onUploadComplete, maxFiles = 10 }: ReceiptUplo
 
                 <div className="flex items-center gap-2">
                   {receipt.status === 'completed' && (
-                    <Check className="h-5 w-5 text-green-600" />
+                    <Check className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   )}
                   <Button
                     variant="ghost"

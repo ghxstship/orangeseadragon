@@ -15,7 +15,7 @@ const badgeVariants = cva(
           "border-destructive/20 bg-destructive/10 text-destructive shadow-[0_0_10px_rgba(var(--destructive),0.2)]",
         outline: "border-border text-foreground",
         success:
-          "border-green-500/20 bg-green-500/10 text-green-500 shadow-[0_0_10px_rgba(34,197,94,0.2)]",
+          "border-emerald-500/20 bg-emerald-500/10 text-emerald-500 shadow-[0_0_10px_rgba(34,197,94,0.2)]",
         warning:
           "border-amber-500/20 bg-amber-500/10 text-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]",
         spatial:

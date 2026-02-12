@@ -223,7 +223,15 @@ export const paymentMilestoneSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'percentage', 'fixed_amount', 'trigger_type', 'due_date', 'status', 'invoice_id'],
+      columns: [
+        'name',
+        { field: 'percentage', format: { type: 'percentage' } },
+        { field: 'fixed_amount', format: { type: 'currency' } },
+        'trigger_type',
+        { field: 'due_date', format: { type: 'date' } },
+        { field: 'status', format: { type: 'badge', colorMap: { pending: '#f59e0b', invoiced: '#3b82f6', paid: '#22c55e', overdue: '#ef4444', waived: '#6b7280' } } },
+        { field: 'invoice_id', format: { type: 'relation', entityType: 'invoice' } },
+      ],
     },
   },
 

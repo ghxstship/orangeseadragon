@@ -60,7 +60,7 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
         return (
             <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border">
                 <div className="flex flex-col items-center justify-center py-4 text-center">
-                    <CheckCircle className="h-12 w-12 text-green-500 mb-3" />
+                    <CheckCircle className="h-12 w-12 text-emerald-500 dark:text-emerald-400 mb-3" />
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                         {leadCaptureType === "newsletter" ? "Subscribed!" : "Message Sent!"}
                     </h3>
@@ -120,7 +120,7 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
                     </div>
                 )}
                 {error && (
-                    <p className="text-sm text-red-500">{error}</p>
+                    <p className="text-sm text-destructive">{error}</p>
                 )}
                 <Button
                     type="submit"

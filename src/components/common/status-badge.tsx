@@ -13,9 +13,9 @@ const defaultColorMap: Record<string, string> = {
   // General statuses
   draft: "bg-muted text-muted-foreground border-border",
   pending: "bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]",
-  active: "bg-green-500/10 text-green-500 border-green-500/20 shadow-[0_0_10px_rgba(34,197,94,0.2)]",
+  active: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]",
   completed: "bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.2)]",
-  cancelled: "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]",
+  cancelled: "bg-destructive/10 text-destructive border-destructive/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]",
   archived: "bg-muted text-muted-foreground border-border opacity-60",
 
   // Project statuses
@@ -27,31 +27,31 @@ const defaultColorMap: Record<string, string> = {
   todo: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   in_progress: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   in_review: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  blocked: "bg-red-500/10 text-red-500 border-red-500/20",
-  done: "bg-green-500/10 text-green-500 border-green-500/20",
+  blocked: "bg-destructive/10 text-destructive border-destructive/20",
+  done: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
 
   // Asset statuses
-  available: "bg-green-500/10 text-green-500 border-green-500/20",
+  available: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
   in_use: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   maintenance: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   reserved: "bg-purple-500/10 text-purple-500 border-purple-500/20",
   retired: "bg-muted text-muted-foreground border-border",
-  lost: "bg-red-500/10 text-red-500 border-red-500/20",
+  lost: "bg-destructive/10 text-destructive border-destructive/20",
   damaged: "bg-orange-500/10 text-orange-500 border-orange-500/20",
 
   // Invoice statuses
   sent: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   viewed: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
   partially_paid: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  paid: "bg-green-500/10 text-green-500 border-green-500/20",
-  overdue: "bg-red-500/10 text-red-500 border-red-500/20",
+  paid: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+  overdue: "bg-destructive/10 text-destructive border-destructive/20",
   disputed: "bg-orange-500/10 text-orange-500 border-orange-500/20",
 
   // Event phases
   concept: "bg-muted text-muted-foreground border-border",
   pre_production: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   setup: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  live: "bg-red-500/10 text-red-500 border-red-500/20 font-black tracking-[0.3em]",
+  live: "bg-destructive/10 text-destructive border-destructive/20 font-black tracking-[0.3em]",
   teardown: "bg-purple-500/10 text-purple-500 border-purple-500/20",
   post_mortem: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
 
@@ -60,15 +60,15 @@ const defaultColorMap: Record<string, string> = {
   qualified: "bg-blue-500/10 text-blue-500 border-blue-500/20",
   proposal: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   negotiation: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  won: "bg-green-500/10 text-green-500 border-green-500/20",
+  won: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
 
   // Booking status
-  confirmed: "bg-green-500/10 text-green-500 border-green-500/20",
+  confirmed: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
   tentative: "bg-amber-500/10 text-amber-500 border-amber-500/20",
 
   // Approval status
-  approved: "bg-green-500/10 text-green-500 border-green-500/20",
-  rejected: "bg-red-500/10 text-red-500 border-red-500/20",
+  approved: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+  rejected: "bg-destructive/10 text-destructive border-destructive/20",
   review: "bg-amber-500/10 text-amber-500 border-amber-500/20",
 };
 
@@ -93,8 +93,8 @@ interface PriorityBadgeProps {
 }
 
 const priorityColorMap: Record<string, string> = {
-  urgent: "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
-  critical: "bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
+  urgent: "bg-destructive/10 text-destructive border-destructive/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
+  critical: "bg-destructive/10 text-destructive border-destructive/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
   high: "bg-orange-500/10 text-orange-500 border-orange-500/20",
   medium: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   low: "bg-blue-500/10 text-blue-500 border-blue-500/20",

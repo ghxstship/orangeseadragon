@@ -183,7 +183,14 @@ export const clockEntrySchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['employee_id', 'clock_in', 'clock_out', 'total_hours', 'break_minutes', 'status'],
+      columns: [
+        { field: 'employee_id', format: { type: 'relation', entityType: 'employee' } },
+        { field: 'clock_in', format: { type: 'datetime' } },
+        { field: 'clock_out', format: { type: 'datetime' } },
+        { field: 'total_hours', format: { type: 'number' } },
+        { field: 'break_minutes', format: { type: 'number' } },
+        { field: 'status', format: { type: 'badge', colorMap: { pending: '#f59e0b', approved: '#22c55e', rejected: '#ef4444' } } },
+      ],
     },
   },
   actions: {

@@ -19,7 +19,14 @@ export const shiftSchema = defineSchema({
   search: { enabled: true, fields: ['name'], placeholder: 'Search shifts...' },
   filters: { quick: [{ key: 'scheduled', label: 'Scheduled', query: { where: { status: 'scheduled' } } }], advanced: ['status', 'scheduleId', 'positionId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'today', label: 'Today', query: { where: { startTime: { gte: 'today', lt: 'tomorrow' } } }, count: true }, { key: 'upcoming', label: 'Upcoming', query: { where: { startTime: { gte: 'now' } } }, count: true }, { key: 'unassigned', label: 'Unassigned', query: { where: { personId: null } }, count: true }, { key: 'completed', label: 'Completed', query: { where: { status: 'completed' } } }], defaultView: 'table', availableViews: ['table', 'calendar'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Shift Details', fields: ['name', 'scheduleId', 'personId', 'positionId', 'startTime', 'endTime', 'status', 'notes'] }] } },
-  views: { table: { columns: ['name', 'personId', 'positionId', 'startTime', 'endTime', 'status'] } },
+  views: { table: { columns: [
+        'name',
+        { field: 'personId', format: { type: 'relation', entityType: 'person' } },
+        { field: 'positionId', format: { type: 'relation', entityType: 'position' } },
+        { field: 'startTime', format: { type: 'datetime' } },
+        { field: 'endTime', format: { type: 'datetime' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+      ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/shifts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Shift', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

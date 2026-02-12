@@ -175,18 +175,66 @@ export const taskSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'subtasks', label: 'Subtasks', content: { type: 'related', entity: 'tasks', foreignKey: 'parent_id' } },
-        { key: 'comments', label: 'Comments', content: { type: 'related', entity: 'comments', foreignKey: 'task_id' } },
+        { key: 'subtasks', label: 'Subtasks', content: { type: 'related', entity: 'tasks', foreignKey: 'parent_id', allowCreate: true } },
+        {
+          key: 'time',
+          label: 'Time',
+          content: { type: 'related', entity: 'timeEntry', foreignKey: 'task_id', defaultView: 'table', allowCreate: true },
+        },
+        { key: 'comments', label: 'Comments', content: { type: 'comments' } },
+        { key: 'files', label: 'Files', content: { type: 'files' } },
         { key: 'activity', label: 'Activity', content: { type: 'activity' } },
       ],
       overview: {
-        stats: [],
+        stats: [
+          {
+            key: 'time_estimated',
+            label: 'Estimated',
+            value: { type: 'field', field: 'estimated_hours' },
+            suffix: 'h',
+          },
+          {
+            key: 'time_logged',
+            label: 'Logged',
+            value: { type: 'relation-sum', entity: 'timeEntry', foreignKey: 'task_id', field: 'hours' },
+            suffix: 'h',
+            onClick: { tab: 'time' },
+          },
+        ],
         blocks: [
           { key: 'details', title: 'Task Details', content: { type: 'fields', fields: ['description', 'due_date', 'priority'] } },
           { key: 'dependencies', title: 'Dependencies', content: { type: 'custom', component: 'TaskDependencies' } },
           { key: 'checklists', title: 'Checklists', content: { type: 'custom', component: 'TaskChecklists' } },
         ]
-      }
+      },
+      sidebar: {
+        width: 300,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          {
+            key: 'properties',
+            title: 'Properties',
+            content: { type: 'stats', stats: ['status', 'priority', 'assignee_id', 'project_id', 'due_date'] },
+          },
+          {
+            key: 'time_tracking',
+            title: 'Time Tracking',
+            content: { type: 'stats', stats: ['estimated_hours'] },
+          },
+          {
+            key: 'quick_actions',
+            title: 'Quick Actions',
+            content: { type: 'quick-actions', actions: ['log-time'] },
+          },
+          {
+            key: 'recent_activity',
+            title: 'Recent Activity',
+            content: { type: 'activity', limit: 5 },
+            collapsible: true,
+          },
+        ],
+      },
     },
     form: {
       sections: [
@@ -206,7 +254,13 @@ export const taskSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'status', 'priority', 'due_date', 'assignee_id'],
+      columns: [
+        'title',
+        { field: 'status', format: { type: 'badge', colorMap: { todo: '#6b7280', in_progress: '#3b82f6', in_review: '#eab308', done: '#22c55e' } } },
+        { field: 'priority', format: { type: 'badge', colorMap: { low: '#6b7280', medium: '#3b82f6', high: '#f59e0b', urgent: '#ef4444' } } },
+        { field: 'due_date', format: { type: 'date' } },
+        { field: 'assignee_id', format: { type: 'relation', entityType: 'person' } },
+      ],
     },
     list: {
       titleField: 'title',

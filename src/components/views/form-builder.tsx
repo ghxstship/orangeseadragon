@@ -292,7 +292,7 @@ export function FormBuilder({
                       <span className="text-primary/60 group-hover:scale-110 transition-transform">{fieldTypeIcons[field.type]}</span>
                       <Label className="text-[11px] font-black uppercase tracking-wider cursor-pointer">
                         {field.label}
-                        {field.required && <span className="text-red-500 ml-1">*</span>}
+                        {field.required && <span className="text-destructive ml-1">*</span>}
                       </Label>
                     </div>
 
@@ -322,7 +322,7 @@ export function FormBuilder({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-red-400 hover:text-red-500 hover:bg-red-500/10 rounded-full"
+                          className="h-7 w-7 text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-full"
                           onClick={(e) => {
                             e.stopPropagation();
                             deleteField(field.id);
@@ -449,7 +449,7 @@ export function FormBuilder({
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-9 w-9 flex-shrink-0 hover:bg-red-500/10 text-red-400 rounded-full"
+                                  className="h-9 w-9 flex-shrink-0 hover:bg-destructive/10 text-destructive/80 rounded-full"
                                   onClick={() => {
                                     const newOptions = selectedField.options?.filter((_, idx) => idx !== i);
                                     updateField(selectedField.id, { options: newOptions });
@@ -572,7 +572,7 @@ export function FormRenderer({
             <div className="space-y-2">
               <Label htmlFor={field.id}>
                 {field.label}
-                {field.required && <span className="text-red-500 ml-1">*</span>}
+                {field.required && <span className="text-destructive ml-1">*</span>}
               </Label>
 
               {field.type === "textarea" ? (
@@ -650,7 +650,7 @@ export function FormRenderer({
               )}
 
               {errors[field.id] && (
-                <p className="text-xs text-red-500">{errors[field.id]}</p>
+                <p className="text-xs text-destructive">{errors[field.id]}</p>
               )}
             </div>
           )}

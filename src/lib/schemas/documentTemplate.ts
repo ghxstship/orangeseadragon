@@ -126,7 +126,12 @@ export const documentTemplateSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'category', 'is_active', 'updated_at'],
+      columns: [
+        'name',
+        'category',
+        { field: 'is_active', format: { type: 'boolean' } },
+        { field: 'updated_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

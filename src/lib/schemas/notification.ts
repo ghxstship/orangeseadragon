@@ -133,7 +133,12 @@ export const notificationSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'type', 'is_read', 'created_at'],
+      columns: [
+        'title',
+        'type',
+        { field: 'is_read', format: { type: 'boolean' } },
+        { field: 'created_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

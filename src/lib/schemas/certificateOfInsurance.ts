@@ -181,7 +181,11 @@ export const certificateOfInsuranceSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['certificate_number', 'name', 'insurance_provider', 'coverage_type', 'expiration_date', 'status'],
+      columns: [
+        'certificate_number', 'name', 'insurance_provider', 'coverage_type',
+        { field: 'expiration_date', format: { type: 'date' } },
+        { field: 'status', format: { type: 'badge', colorMap: { active: '#22c55e', expired: '#ef4444', pending: '#f59e0b', revoked: '#6b7280' } } },
+      ],
     },
   },
   actions: {

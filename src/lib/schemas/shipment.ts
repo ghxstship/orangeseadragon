@@ -251,7 +251,15 @@ export const shipmentSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['shipment_number', 'direction', 'production_id', 'status', 'scheduled_pickup_date', 'scheduled_delivery_date', 'tracking_number'],
+      columns: [
+        'shipment_number',
+        { field: 'direction', format: { type: 'badge', colorMap: { outbound: '#3b82f6', inbound: '#8b5cf6', transfer: '#f59e0b' } } },
+        { field: 'production_id', format: { type: 'relation', entityType: 'project' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#eab308', packed: '#3b82f6', in_transit: '#f59e0b', delivered: '#22c55e', cancelled: '#ef4444' } } },
+        { field: 'scheduled_pickup_date', format: { type: 'date' } },
+        { field: 'scheduled_delivery_date', format: { type: 'date' } },
+        'tracking_number',
+      ],
     },
     list: {
       titleField: 'shipment_number',

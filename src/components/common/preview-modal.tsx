@@ -78,7 +78,7 @@ export function PreviewModal({
 
       case "document":
         return src ? (
-          <div className="w-full h-[70vh] rounded-lg overflow-hidden bg-white">
+          <div className="w-full h-[70vh] rounded-lg overflow-hidden bg-background">
             <iframe
               src={`https://docs.google.com/viewer?url=${encodeURIComponent(src)}&embedded=true`}
               title={title}

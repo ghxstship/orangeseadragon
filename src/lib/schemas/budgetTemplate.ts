@@ -122,7 +122,12 @@ export const budgetTemplateSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'budget_type', 'production_type', 'is_default'],
+      columns: [
+        'name',
+        'budget_type',
+        'production_type',
+        { field: 'is_default', format: { type: 'boolean' } },
+      ],
     },
   },
 

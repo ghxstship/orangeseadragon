@@ -206,7 +206,15 @@ export const punchItemSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['item_number', 'title', 'production_id', 'status', 'priority', 'assigned_to_id', 'due_date'],
+      columns: [
+        'item_number',
+        'title',
+        { field: 'production_id', format: { type: 'relation', entityType: 'project' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+        { field: 'priority', format: { type: 'badge', colorMap: { urgent: '#ef4444', high: '#f97316', medium: '#f59e0b', low: '#3b82f6', critical: '#ef4444', none: '#6b7280' } } },
+        { field: 'assigned_to_id', format: { type: 'relation', entityType: 'person' } },
+        { field: 'due_date', format: { type: 'date' } },
+      ],
     },
     list: {
       titleField: 'title',

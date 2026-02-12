@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, FileText, Receipt, Check, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { DEFAULT_LOCALE } from '@/lib/config';
 
 interface Quote {
   id: string;
@@ -56,7 +57,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
     return (
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2 text-green-600">
+          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
             <Check className="h-6 w-6" />
             <CardTitle>Quote Converted Successfully</CardTitle>
           </div>
@@ -68,9 +69,9 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
               <p className="mt-2 font-medium">{quote.quoteNumber}</p>
               <Badge variant="secondary">Quote</Badge>
             </div>
-            <ArrowRight className="h-8 w-8 text-green-600" />
+            <ArrowRight className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
             <div className="text-center">
-              <Receipt className="mx-auto h-12 w-12 text-green-600" />
+              <Receipt className="mx-auto h-12 w-12 text-emerald-600 dark:text-emerald-400" />
               <p className="mt-2 font-medium">{result.invoiceNumber}</p>
               <Badge variant="default">Invoice</Badge>
             </div>
@@ -104,7 +105,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
       </CardHeader>
       <CardContent className="space-y-4">
         {isExpired && (
-          <div className="flex items-center gap-2 rounded-lg bg-yellow-50 p-3 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
+          <div className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
             <AlertCircle className="h-5 w-5" />
             <span>This quote expired on {format(quote.validUntil, 'PPP')}. You can still convert it.</span>
           </div>
@@ -118,7 +119,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold">
-                {quote.currency} {quote.totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                {quote.currency} {quote.totalAmount.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
               </p>
               <Badge variant={quote.status === 'accepted' ? 'default' : 'secondary'}>
                 {quote.status}
@@ -156,7 +157,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
         </div>
 
         {error && (
-          <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-red-800 dark:bg-red-900/20 dark:text-red-200">
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-destructive dark:bg-destructive/20 dark:text-destructive">
             <AlertCircle className="h-5 w-5" />
             <span>{error}</span>
           </div>

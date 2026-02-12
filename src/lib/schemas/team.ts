@@ -39,7 +39,12 @@ export const teamSchema = defineSchema({
     },
     form: { sections: [{ key: 'basic', title: 'Team Details', fields: ['name', 'projectId', 'leadId', 'description', 'color'] }] },
   },
-  views: { table: { columns: ['name', 'projectId', 'leadId', 'memberCount'] } },
+  views: { table: { columns: [
+        'name',
+        { field: 'projectId', format: { type: 'relation', entityType: 'project' } },
+        { field: 'leadId', format: { type: 'relation', entityType: 'person' } },
+        { field: 'memberCount', format: { type: 'number' } },
+      ] } },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/teams/${r.id}` } }],
     bulk: [],

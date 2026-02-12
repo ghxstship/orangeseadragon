@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { DEFAULT_LOCALE } from '@/lib/config';
 
 interface ExpenseApprovalData {
   id: string;
@@ -165,7 +166,7 @@ export function ExpenseApprovalCard({
               <div>
                 <p className="text-muted-foreground">Amount</p>
                 <p className="font-semibold">
-                  {approval.expense.currency} {approval.expense.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  {approval.expense.currency} {approval.expense.amount.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
@@ -203,7 +204,7 @@ export function ExpenseApprovalCard({
           )}
 
           {!approval.expense.receiptUrl && (
-            <div className="flex items-center gap-2 rounded-lg bg-yellow-50 p-3 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
+            <div className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
               <AlertCircle className="h-4 w-4" />
               <span className="text-sm">No receipt attached</span>
             </div>

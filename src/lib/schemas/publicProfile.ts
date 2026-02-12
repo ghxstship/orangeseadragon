@@ -162,7 +162,12 @@ export const publicProfileSchema = defineSchema({
 
     views: {
         table: {
-            columns: ['slug', 'entity_type', 'headline', 'is_public', 'is_verified', 'views_count'],
+            columns: [
+              'slug', 'entity_type', 'headline',
+              { field: 'is_public', format: { type: 'boolean' } },
+              { field: 'is_verified', format: { type: 'boolean' } },
+              { field: 'views_count', format: { type: 'number' } },
+            ],
         },
         grid: {
             titleField: 'slug',

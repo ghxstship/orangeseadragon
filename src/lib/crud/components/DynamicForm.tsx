@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from 'react';
+import { useMemo } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { EntitySchema } from '@/lib/schema/types';
 import { FieldRenderer } from '../../components/fields';
 import { Button } from '@/components/ui/button';
+import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
 
 interface DynamicFormProps {
   schema: EntitySchema;
@@ -17,47 +20,55 @@ interface DynamicFormProps {
  * DYNAMIC FORM COMPONENT
  *
  * Renders a form based on schema configuration.
- * Supports sections, conditional fields, and validation.
+ * Uses react-hook-form with zodResolver for validation.
+ * Falls back to schema.validate and field.validate for custom rules.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: DynamicFormProps) {
-  const [formData, setFormData] = useState(initialData || {});
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Generate Zod schema from field definitions
+  const zodSchema = useMemo(() => {
+    const formFieldKeys = extractFormFieldKeys(schema.layouts.form.sections as any[]);
+    return generateZodSchema(schema.data.fields, formFieldKeys, mode);
+  }, [schema, mode]);
+
+  const {
+    watch,
+    setValue,
+    handleSubmit: rhfHandleSubmit,
+    formState: { errors: rhfErrors, isSubmitting },
+    setError,
+    clearErrors,
+  } = useForm({
+    resolver: zodResolver(zodSchema),
+    defaultValues: initialData || {},
+    mode: 'onBlur',
+  });
+
+  const formData = watch();
 
   const handleFieldChange = (fieldKey: string, value: unknown) => {
-    setFormData((prev: Record<string, unknown>) => ({ ...prev, [fieldKey]: value }));
-    // Clear error when user starts typing
-    if (errors[fieldKey]) {
-      setErrors((prev) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { [fieldKey]: _removed, ...rest } = prev;
-        return rest;
-      });
-    }
+    setValue(fieldKey, value, { shouldValidate: true, shouldDirty: true });
+    clearErrors(fieldKey);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate form
+  const onFormSubmit = async (data: Record<string, unknown>) => {
+    // Run schema-level validation (backward compat)
     const validationErrors: Record<string, string> = {};
 
-    // Run schema-level validation
     if (schema.validate) {
-      const schemaErrors = schema.validate(formData, mode);
+      const schemaErrors = schema.validate(data, mode);
       if (schemaErrors) {
         Object.assign(validationErrors, schemaErrors);
       }
     }
 
-    // Run field-level validation
+    // Run field-level validation (backward compat)
     Object.entries(schema.data.fields).forEach(([fieldKey, fieldDef]) => {
       if (fieldDef.validate) {
-        const error = fieldDef.validate(formData[fieldKey], {
+        const error = fieldDef.validate(data[fieldKey], {
           mode,
-          record: formData,
-          formData,
+          record: data as any,
+          formData: data as any,
         });
         if (error) {
           validationErrors[fieldKey] = error;
@@ -66,21 +77,30 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
     });
 
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+      Object.entries(validationErrors).forEach(([key, message]) => {
+        setError(key, { type: 'custom', message });
+      });
       return;
     }
 
-    setIsSubmitting(true);
     try {
-      await onSubmit(formData);
+      await onSubmit(data);
     } catch (error) {
       console.error('Form submission error:', error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
+  // Get error message for a field from react-hook-form
+  const getFieldError = (fieldKey: string): string | undefined => {
+    const err = rhfErrors[fieldKey];
+    if (!err) return undefined;
+    return typeof err.message === 'string' ? err.message : undefined;
+  };
+
   const renderSection = (section: any) => {
+    // Check section-level condition
+    if (section.condition && !section.condition(formData)) return null;
+
     const fields = section.fields.map((field: any) => {
       const fieldKey = typeof field === 'string' ? field : field.fields?.[0];
       const fieldDef = schema.data.fields[fieldKey];
@@ -96,6 +116,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
       }
 
       const isInlineLabel = fieldDef.type === 'checkbox' || fieldDef.type === 'switch';
+      const fieldError = getFieldError(fieldKey);
 
       return (
         <div key={fieldKey} className="space-y-1.5">
@@ -110,15 +131,15 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
             fieldKey={fieldKey}
             value={formData[fieldKey]}
             onChange={(value) => handleFieldChange(fieldKey, value)}
-            error={errors[fieldKey]}
+            error={fieldError}
             mode={mode}
             record={formData}
           />
           {!isInlineLabel && fieldDef.helpText && (
             <p className="text-xs text-muted-foreground">{fieldDef.helpText}</p>
           )}
-          {!isInlineLabel && errors[fieldKey] && (
-            <p className="text-xs text-destructive">{errors[fieldKey]}</p>
+          {!isInlineLabel && fieldError && (
+            <p className="text-xs text-destructive">{fieldError}</p>
           )}
         </div>
       );
@@ -140,7 +161,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={rhfHandleSubmit(onFormSubmit)} className="space-y-8">
       {schema.layouts.form.sections.map(renderSection)}
 
       <div className="flex justify-end space-x-4 pt-6 border-t border-border">

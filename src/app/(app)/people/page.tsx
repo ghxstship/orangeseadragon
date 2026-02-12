@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import {
   Users,
@@ -17,6 +19,10 @@ import {
   FileText,
   BarChart3,
   ChevronRight,
+  RefreshCw,
+  GraduationCap,
+  Plane,
+  Star,
 } from 'lucide-react';
 
 interface NavCardProps {
@@ -46,6 +52,8 @@ function NavCard({ href, icon: Icon, title, description }: NavCardProps) {
 }
 
 export default function PeoplePage() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header — Layout C */}
@@ -54,6 +62,15 @@ export default function PeoplePage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">People</h1>
             <p className="text-muted-foreground">Human resources management</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => router.push('/people/rosters')}>
+              <Users className="h-4 w-4 mr-2" />
+              Directory
+            </Button>
           </div>
         </div>
       </header>
@@ -65,7 +82,7 @@ export default function PeoplePage() {
           <StatCard title="Total Staff" value="245" icon={Users} />
           <StatCard title="Available Now" value="89" icon={UserCheck} />
           <StatCard title="On Assignment" value="156" icon={Briefcase} />
-          <StatCard title="Pending Onboard" value="12" icon={UserPlus} />
+          <StatCard title="Pending Onboard" value="12" icon={UserPlus} trend={{ value: 12, isPositive: true }} />
         </StatGrid>
 
         {/* Navigation Cards */}
@@ -80,6 +97,9 @@ export default function PeoplePage() {
             <NavCard href="/people/compliance" icon={ShieldCheck} title="Compliance" description="Certifications & training status" />
             <NavCard href="/people/leave" icon={Palmtree} title="Leave Management" description="Request time off and view calendar" />
             <NavCard href="/people/documents" icon={FileText} title="Documents" description="Employee documents and files" />
+            <NavCard href="/people/training" icon={GraduationCap} title="Training" description="Courses, certifications & LMS" />
+            <NavCard href="/people/travel" icon={Plane} title="Travel" description="Bookings, flights & accommodations" />
+            <NavCard href="/people/performance" icon={Star} title="Performance" description="Reviews, goals & feedback" />
             <NavCard href="/people/analytics" icon={BarChart3} title="Workforce Analytics" description="AI-powered insights and predictions" />
           </div>
         </div>

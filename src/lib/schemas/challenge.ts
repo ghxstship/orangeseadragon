@@ -173,7 +173,13 @@ export const challengeSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'challenge_type', 'status', 'start_date', 'end_date', 'participant_count'],
+      columns: [
+        'title', 'challenge_type',
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', active: '#22c55e', completed: '#3b82f6', cancelled: '#ef4444' } } },
+        { field: 'start_date', format: { type: 'date' } },
+        { field: 'end_date', format: { type: 'date' } },
+        { field: 'participant_count', format: { type: 'number' } },
+      ],
     },
   },
 

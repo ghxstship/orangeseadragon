@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import {
   FileEdit,
@@ -10,6 +12,12 @@ import {
   PlayCircle,
   Wrench,
   MapPin,
+  RefreshCw,
+  Radio,
+  ClipboardList,
+  Users,
+  Building,
+  FileText,
 } from 'lucide-react';
 
 interface NavCardProps {
@@ -47,6 +55,8 @@ function NavCard({ href, icon: Icon, title, description, badge, badgeVariant = '
 }
 
 export default function OperationsPage() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header — Layout C */}
@@ -55,6 +65,15 @@ export default function OperationsPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Operations</h1>
             <p className="text-muted-foreground">Run of show management</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => router.push('/operations/runsheets')}>
+              <PlayCircle className="h-4 w-4 mr-2" />
+              Live Shows
+            </Button>
           </div>
         </div>
       </header>
@@ -94,6 +113,42 @@ export default function OperationsPage() {
               title="Shows"
               description="Manage productions & stages"
               badge="Live Now"
+            />
+            <NavCard
+              href="/operations/venues"
+              icon={Building}
+              title="Venues"
+              description="Venue maps, zones & checkpoints"
+            />
+            <NavCard
+              href="/operations/events"
+              icon={Users}
+              title="Event Ops"
+              description="Crew calls, talent & runsheets"
+            />
+            <NavCard
+              href="/operations/work-orders"
+              icon={Wrench}
+              title="Work Orders"
+              description="Maintenance and repair tasks"
+            />
+            <NavCard
+              href="/operations/comms"
+              icon={Radio}
+              title="Communications"
+              description="Radio, weather & daily reports"
+            />
+            <NavCard
+              href="/operations/daily-reports"
+              icon={FileText}
+              title="Daily Reports"
+              description="End-of-day summaries"
+            />
+            <NavCard
+              href="/operations/crew-checkins/kiosk"
+              icon={ClipboardList}
+              title="Crew Check-In"
+              description="Kiosk mode for on-site check-in"
             />
           </div>
         </div>

@@ -89,15 +89,15 @@ interface CrewSchedulerProps {
 }
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-500',
+  pending: 'bg-amber-500',
   invited: 'bg-blue-500',
-  confirmed: 'bg-green-500',
-  declined: 'bg-red-500',
+  confirmed: 'bg-emerald-500',
+  declined: 'bg-destructive',
   checked_in: 'bg-purple-500',
   checked_out: 'bg-gray-500',
-  completed: 'bg-green-600',
+  completed: 'bg-emerald-600',
   cancelled: 'bg-gray-400',
-  no_show: 'bg-red-600',
+  no_show: 'bg-destructive',
 };
 
 const ROLES = [
@@ -304,7 +304,7 @@ export function CrewScheduler({ eventId, advanceId, className }: CrewSchedulerPr
                       <div className="font-medium text-sm truncate flex items-center gap-1">
                         {crew.full_name}
                         {crew.rating && crew.rating >= 4.5 && (
-                          <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground truncate">

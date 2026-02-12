@@ -104,7 +104,12 @@ export const userFollowSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['follower_id', 'following_type', 'following_id', 'notify_on_update'],
+      columns: [
+        { field: 'follower_id', format: { type: 'relation', entityType: 'person' } },
+        'following_type',
+        { field: 'following_id', format: { type: 'relation', entityType: 'person' } },
+        { field: 'notify_on_update', format: { type: 'boolean' } },
+      ],
     },
   },
 

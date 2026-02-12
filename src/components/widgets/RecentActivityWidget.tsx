@@ -78,10 +78,10 @@ export function RecentActivityWidget({ title = "Recent Activity", limit = 5 }: R
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'done': return 'bg-green-500';
+      case 'done': return 'bg-emerald-500';
       case 'in_progress': return 'bg-blue-500';
-      case 'todo': return 'bg-yellow-500';
-      case 'blocked': return 'bg-red-500';
+      case 'todo': return 'bg-amber-500';
+      case 'blocked': return 'bg-destructive';
       default: return 'bg-gray-500';
     }
   };

@@ -297,8 +297,10 @@ export const invoiceSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'line-items', label: 'Line Items', content: { type: 'related', entity: 'invoice_line_items', foreignKey: 'invoice_id' } },
-        { key: 'payments', label: 'Payments', content: { type: 'related', entity: 'payments', foreignKey: 'invoice_id' } },
+        { key: 'line-items', label: 'Line Items', content: { type: 'related', entity: 'invoice_line_items', foreignKey: 'invoice_id', allowCreate: true } },
+        { key: 'payments', label: 'Payments', content: { type: 'related', entity: 'payments', foreignKey: 'invoice_id', allowCreate: true } },
+        { key: 'files', label: 'Files', content: { type: 'files' } },
+        { key: 'comments', label: 'Comments', content: { type: 'comments' } },
         { key: 'activity', label: 'Activity', content: { type: 'activity' } },
       ],
       overview: {
@@ -310,6 +312,17 @@ export const invoiceSchema = defineSchema({
         blocks: [
           { key: 'dates', title: 'Dates', content: { type: 'fields', fields: ['issue_date', 'due_date', 'sent_at', 'paid_at'] } },
           { key: 'details', title: 'Details', content: { type: 'fields', fields: ['invoice_type', 'direction', 'payment_terms', 'currency'] } },
+          { key: 'notes', title: 'Notes', content: { type: 'fields', fields: ['notes', 'internal_notes'] } },
+        ],
+      },
+      sidebar: {
+        width: 300,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          { key: 'properties', title: 'Properties', content: { type: 'stats', stats: ['status', 'invoice_type', 'direction', 'company_id', 'project_id'] } },
+          { key: 'financial', title: 'Financial', content: { type: 'stats', stats: ['total_amount', 'amount_paid', 'due_date'] } },
+          { key: 'recent_activity', title: 'Recent Activity', content: { type: 'activity', limit: 5 }, collapsible: true },
         ],
       },
     },
@@ -351,7 +364,18 @@ export const invoiceSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['invoice_number', 'company_id', 'direction', 'total_amount', 'amount_paid', 'amount_due', 'status', 'issue_date', 'due_date', 'days_overdue'],
+      columns: [
+        'invoice_number',
+        { field: 'company_id', format: { type: 'relation', entityType: 'company' } },
+        { field: 'direction', format: { type: 'badge', colorMap: { outgoing: '#3b82f6', incoming: '#8b5cf6' } } },
+        { field: 'total_amount', format: { type: 'currency' } },
+        { field: 'amount_paid', format: { type: 'currency' } },
+        { field: 'amount_due', format: { type: 'currency' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', sent: '#3b82f6', partially_paid: '#eab308', paid: '#22c55e', overdue: '#ef4444', void: '#6b7280' } } },
+        { field: 'issue_date', format: { type: 'date' } },
+        { field: 'due_date', format: { type: 'date' } },
+        { field: 'days_overdue', format: { type: 'number' } },
+      ],
     },
     kanban: {
       columnField: 'status',

@@ -17,7 +17,13 @@ export const kitSchema = defineSchema({
   search: { enabled: true, fields: ['name', 'code'], placeholder: 'Search kits...' },
   filters: { quick: [{ key: 'available', label: 'Available', query: { where: { status: 'available' } } }], advanced: ['status', 'categoryId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'available', label: 'Available', query: { where: { status: 'available' } }, count: true }, { key: 'in-use', label: 'In Use', query: { where: { status: 'in-use' } }, count: true }, { key: 'maintenance', label: 'Maintenance', query: { where: { status: 'maintenance' } }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'items', label: 'Items', value: { type: 'field', field: 'itemCount' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Kit Details', fields: ['name', 'code', 'categoryId', 'status', 'description'] }] } },
-  views: { table: { columns: ['name', 'code', 'categoryId', 'itemCount', 'status'] } },
+  views: { table: { columns: [
+        'name',
+        'code',
+        { field: 'categoryId', format: { type: 'relation', entityType: 'category' } },
+        { field: 'itemCount', format: { type: 'number' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+      ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/kits/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Kit', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

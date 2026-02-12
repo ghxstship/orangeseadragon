@@ -127,7 +127,12 @@ export const messageSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['content', 'sender_id', 'message_type', 'read_at'],
+      columns: [
+        'content',
+        { field: 'sender_id', format: { type: 'relation', entityType: 'person' } },
+        'message_type',
+        { field: 'read_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

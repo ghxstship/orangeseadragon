@@ -28,13 +28,15 @@ import { dealSchema } from '@/lib/schemas/deal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { DEFAULT_LOCALE } from '@/lib/config';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 // --- Types ---
-type Deal = any; // In a real app we'd infer from schema, but schema types are loose here.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Deal = any;
 
 // --- Utilities ---
-const currencyFormatter = new Intl.NumberFormat('en-US', {
+const currencyFormatter = new Intl.NumberFormat(DEFAULT_LOCALE, {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
@@ -102,12 +104,12 @@ function SortableDealCard({ deal, isOverlay }: { deal: Deal; isOverlay?: boolean
                 variants[deal.stage as keyof typeof variants] || 'border-l-gray-300',
                 isDragging && "opacity-30",
                 isOverlay && "shadow-xl rotate-2 cursor-grabbing opacity-90 scale-105 z-50 ring-2 ring-primary",
-                isRotting && "ring-2 ring-red-500/50 bg-red-50/30 dark:bg-red-950/20"
+                isRotting && "ring-2 ring-destructive/50 bg-destructive/5/30 dark:bg-destructive/90/20"
             )}
         >
             <CardContent className="p-3">
                 {isRotting && (
-                    <div className="flex items-center gap-1.5 mb-2 text-red-600 dark:text-red-400">
+                    <div className="flex items-center gap-1.5 mb-2 text-destructive dark:text-destructive/80">
                         <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                         </svg>
@@ -292,10 +294,10 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
         const colorMap: Record<string, string> = {
             gray: 'bg-slate-400',
             blue: 'bg-blue-500',
-            yellow: 'bg-yellow-500',
+            yellow: 'bg-amber-500',
             orange: 'bg-orange-500',
-            green: 'bg-green-500',
-            red: 'bg-red-500'
+            green: 'bg-emerald-500',
+            red: 'bg-destructive'
         };
         return colorMap[option?.color || 'gray'] || 'bg-slate-400';
     };

@@ -83,7 +83,7 @@ export function UpcomingTasksWidget({ title = "Upcoming Tasks", limit = 5 }: Upc
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'todo': return 'bg-yellow-500';
+      case 'todo': return 'bg-amber-500';
       case 'in_progress': return 'bg-blue-500';
       default: return 'bg-gray-500';
     }

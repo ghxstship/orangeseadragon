@@ -158,7 +158,14 @@ export const storageBinSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['code', 'name', 'warehouse_id', 'zone', 'bin_type', 'current_count'],
+      columns: [
+        'code',
+        'name',
+        { field: 'warehouse_id', format: { type: 'relation', entityType: 'warehouse' } },
+        'zone',
+        'bin_type',
+        { field: 'current_count', format: { type: 'number' } },
+      ],
     },
   },
 

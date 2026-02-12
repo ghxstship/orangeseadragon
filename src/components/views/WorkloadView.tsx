@@ -85,12 +85,12 @@ function getCapacityStatus(utilization: number): {
     return { status: "underloaded", color: "text-blue-500", bgColor: "bg-blue-500" };
   }
   if (utilization <= capacityThresholds.optimal) {
-    return { status: "optimal", color: "text-green-500", bgColor: "bg-green-500" };
+    return { status: "optimal", color: "text-emerald-500", bgColor: "bg-emerald-500" };
   }
   if (utilization <= capacityThresholds.overloaded) {
-    return { status: "overloaded", color: "text-yellow-500", bgColor: "bg-yellow-500" };
+    return { status: "overloaded", color: "text-amber-500", bgColor: "bg-amber-500" };
   }
-  return { status: "critical", color: "text-red-500", bgColor: "bg-red-500" };
+  return { status: "critical", color: "text-destructive", bgColor: "bg-destructive" };
 }
 
 export function WorkloadView({
@@ -243,7 +243,7 @@ export function WorkloadView({
         {/* Summary Stats */}
         <div className="flex items-center gap-4 mt-2 text-sm">
           <div className="flex items-center gap-1">
-            <CheckCircle className="h-4 w-4 text-green-500" />
+            <CheckCircle className="h-4 w-4 text-emerald-500" />
             <span>{summaryStats.optimal} optimal</span>
           </div>
           <div className="flex items-center gap-1">
@@ -251,7 +251,7 @@ export function WorkloadView({
             <span>{summaryStats.underloaded} underloaded</span>
           </div>
           <div className="flex items-center gap-1">
-            <AlertTriangle className="h-4 w-4 text-red-500" />
+            <AlertTriangle className="h-4 w-4 text-destructive" />
             <span>{summaryStats.overloaded} overloaded</span>
           </div>
         </div>
@@ -403,15 +403,15 @@ export function WorkloadView({
             <span>&lt;50% Underloaded</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-green-500" />
+            <div className="w-3 h-3 rounded-full bg-emerald-500" />
             <span>50-80% Optimal</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <div className="w-3 h-3 rounded-full bg-amber-500" />
             <span>80-100% Near Capacity</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
+            <div className="w-3 h-3 rounded-full bg-destructive" />
             <span>&gt;100% Overloaded</span>
           </div>
         </div>

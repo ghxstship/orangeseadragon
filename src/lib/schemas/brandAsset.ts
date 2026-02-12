@@ -161,7 +161,10 @@ export const brandAssetSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'asset_type', 'category', 'dimensions', 'is_approved'],
+      columns: [
+        'name', 'asset_type', 'category', 'dimensions',
+        { field: 'is_approved', format: { type: 'boolean' } },
+      ],
     },
   },
 

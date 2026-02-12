@@ -84,6 +84,7 @@ export function ClockInOut() {
   }, []);
 
   // Get location on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     getLocation();
   }, []);
@@ -271,7 +272,7 @@ export function ClockInOut() {
               </Badge>
             ) : location ? (
               isWithinGeofence === true ? (
-                <Badge variant="default" className="gap-1 bg-green-600">
+                <Badge variant="default" className="gap-1 bg-emerald-600 dark:bg-emerald-500">
                   <CheckCircle2 className="h-3 w-3" />
                   At Venue
                 </Badge>
@@ -295,22 +296,22 @@ export function ClockInOut() {
 
           {/* Active Shift Info */}
           {isClockedIn && activeShift && (
-            <div className="rounded-lg bg-green-50 dark:bg-green-900/20 p-4 space-y-2">
+            <div className="rounded-lg bg-emerald-50 dark:bg-emerald-900/20 p-4 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                <span className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
                   Currently Working
                 </span>
-                <span className="text-2xl font-mono font-bold text-green-700 dark:text-green-300">
+                <span className="text-2xl font-mono font-bold text-emerald-700 dark:text-emerald-300">
                   {getElapsedTime()}
                 </span>
               </div>
               {activeShift.eventName && (
-                <p className="text-sm text-green-700 dark:text-green-300">
+                <p className="text-sm text-emerald-700 dark:text-emerald-300">
                   {activeShift.eventName}
                   {activeShift.venueName && ` @ ${activeShift.venueName}`}
                 </p>
               )}
-              <p className="text-xs text-green-600 dark:text-green-400">
+              <p className="text-xs text-emerald-600 dark:text-emerald-400">
                 Started {formatDistanceToNow(new Date(activeShift.clockInTime), { addSuffix: true })}
               </p>
             </div>
@@ -318,10 +319,10 @@ export function ClockInOut() {
 
           {/* Break Status */}
           {isOnBreak && (
-            <div className="rounded-lg bg-yellow-50 dark:bg-yellow-900/20 p-4">
+            <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 p-4">
               <div className="flex items-center gap-2">
-                <Coffee className="h-5 w-5 text-yellow-600" />
-                <span className="font-medium text-yellow-800 dark:text-yellow-200">
+                <Coffee className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <span className="font-medium text-amber-800 dark:text-amber-200">
                   On Break
                 </span>
               </div>
@@ -365,7 +366,7 @@ export function ClockInOut() {
             {!isClockedIn ? (
               <Button
                 size="lg"
-                className="w-full h-16 text-lg gap-3 bg-green-600 hover:bg-green-700"
+                className="w-full h-16 text-lg gap-3 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600"
                 onClick={() => handleAction('clock_in')}
                 disabled={isLoading}
               >

@@ -17,7 +17,12 @@ export const categorySchema = defineSchema({
   search: { enabled: true, fields: ['name', 'code'], placeholder: 'Search categories...' },
   filters: { quick: [], advanced: ['parentId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }], defaultView: 'table', availableViews: ['table', 'grid'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'count', label: 'Assets', value: { type: 'field', field: 'assetCount' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Category Details', fields: ['name', 'parentId', 'code', 'description', 'image'] }] } },
-  views: { table: { columns: ['name', 'code', 'parentId', 'assetCount'] }, grid: { titleField: 'name', subtitleField: 'description', imageField: 'image', cardFields: ['assetCount'] } },
+  views: { table: { columns: [
+        'name',
+        'code',
+        { field: 'parentId', format: { type: 'relation', entityType: 'category' } },
+        { field: 'assetCount', format: { type: 'number' } },
+      ] }, grid: { titleField: 'name', subtitleField: 'description', imageField: 'image', cardFields: ['assetCount'] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/categories/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => { } } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

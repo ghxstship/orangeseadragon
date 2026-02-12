@@ -122,7 +122,13 @@ export const fiscalYearSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'start_date', 'end_date', 'is_current', 'status'],
+      columns: [
+        'name',
+        { field: 'start_date', format: { type: 'date' } },
+        { field: 'end_date', format: { type: 'date' } },
+        { field: 'is_current', format: { type: 'boolean' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+      ],
     },
   },
 

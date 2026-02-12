@@ -71,7 +71,7 @@ export function TransactionFeed() {
                                     <Badge variant="secondary" className="font-normal text-xs">{tx.category}</Badge>
                                 </TableCell>
                                 <TableCell className="text-right font-mono">
-                                    <span className={tx.type === 'credit' ? 'text-green-600 dark:text-green-500' : ''}>
+                                    <span className={tx.type === 'credit' ? 'text-emerald-600 dark:text-emerald-400' : ''}>
                                         {tx.type === 'credit' ? '+' : '-'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                     </span>
                                 </TableCell>
@@ -79,7 +79,7 @@ export function TransactionFeed() {
                                     ${tx.runningBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                 </TableCell>
                                 <TableCell>
-                                    <span className={`inline-flex items-center text-xs ${tx.status === 'pending' ? 'text-yellow-600' : 'text-green-600'}`}>
+                                    <span className={`inline-flex items-center text-xs ${tx.status === 'pending' ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                         {tx.status === 'pending' ? <ClockIcon className="mr-1 h-3 w-3" /> : <CheckIcon className="mr-1 h-3 w-3" />}
                                         {tx.status}
                                     </span>

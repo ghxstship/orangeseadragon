@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import {
   Package,
@@ -13,6 +15,9 @@ import {
   MapPin,
   CalendarCheck,
   ChevronRight,
+  RefreshCw,
+  Activity,
+  BarChart3,
 } from 'lucide-react';
 
 interface NavCardProps {
@@ -42,6 +47,8 @@ function NavCard({ href, icon: Icon, title, description }: NavCardProps) {
 }
 
 export default function AssetsPage() {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col h-full bg-background">
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
@@ -50,15 +57,24 @@ export default function AssetsPage() {
             <h1 className="text-2xl font-bold tracking-tight">Assets</h1>
             <p className="text-muted-foreground">Equipment & logistics management</p>
           </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon">
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            <Button onClick={() => router.push('/assets/catalog')}>
+              <BookOpen className="h-4 w-4 mr-2" />
+              Catalog
+            </Button>
+          </div>
         </div>
       </header>
 
       <div className="flex-1 overflow-auto p-6 space-y-8">
         <StatGrid columns={4}>
           <StatCard title="Total Assets" value="1,247" icon={Package} />
-          <StatCard title="Available" value="892" icon={CheckCircle} />
+          <StatCard title="Available" value="892" icon={CheckCircle} description="71% utilization" />
           <StatCard title="Deployed" value="355" icon={Truck} />
-          <StatCard title="In Maintenance" value="23" icon={Wrench} />
+          <StatCard title="In Maintenance" value="23" icon={Wrench} trend={{ value: 3, isPositive: false }} description="from last week" />
         </StatGrid>
 
         <div>
@@ -70,6 +86,9 @@ export default function AssetsPage() {
             <NavCard href="/assets/reservations" icon={CalendarCheck} title="Reservations" description="Book and track equipment" />
             <NavCard href="/assets/maintenance" icon={Wrench} title="Maintenance" description="Repairs and scheduled service" />
             <NavCard href="/assets/logistics" icon={Truck} title="Logistics" description="Shipments, vehicles & deployment" />
+            <NavCard href="/assets/status" icon={Activity} title="Status" description="Real-time asset tracking" />
+            <NavCard href="/assets/deployment" icon={Package} title="Deployment" description="Deploy assets to events" />
+            <NavCard href="/assets/advances" icon={BarChart3} title="Reports" description="Asset utilization analytics" />
           </div>
         </div>
       </div>

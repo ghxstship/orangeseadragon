@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,11 +12,13 @@ import { DataView } from "@/components/views/data-view";
 import { PageHeader } from "@/components/common/page-header";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
 import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
+import { RecordContextMenu } from "@/components/common/record-context-menu";
 import { useDataView, useFilteredData } from "@/lib/data-view-engine/hooks/use-data-view";
 import type { ViewType } from "@/lib/data-view-engine/hooks/use-data-view";
 import type { EntitySchema } from "@/lib/schema/types";
 import { useColumnPreference } from "@/lib/crud/hooks/useColumnPreference";
 import { Plus, RefreshCw } from "lucide-react";
+import { DEFAULT_LOCALE } from "@/lib/config";
 
 /**
  * LIST LAYOUT
@@ -67,8 +70,26 @@ export function ListLayout<T extends object>({
   onRefresh,
   children,
 }: ListLayoutProps<T>) {
+  const pathname = usePathname();
   const listConfig = schema.layouts.list;
   const tableConfig = schema.views?.table;
+
+  const rowContextMenuWrapper = React.useCallback(
+    (row: T, children: React.ReactNode) => {
+      const id = String((row as Record<string, unknown>)[schema.data.primaryKey || 'id']);
+      const name = String(
+        (row as Record<string, unknown>)['name'] ??
+        (row as Record<string, unknown>)['title'] ??
+        id
+      );
+      return (
+        <RecordContextMenu basePath={pathname} recordId={id} recordName={name}>
+          {children}
+        </RecordContextMenu>
+      );
+    },
+    [pathname, schema.data.primaryKey]
+  );
   
   const defaultViewType = (currentView || listConfig.defaultView || 'table') as ViewType;
   
@@ -98,6 +119,7 @@ export function ListLayout<T extends object>({
     defaultViewType,
     defaultColumns: visibleColumnIds,
     defaultPageSize: listConfig.pageSize ?? 20,
+    persistKey: schema.identity.slug,
   });
 
   // Sync column preferences with data view state
@@ -222,7 +244,7 @@ export function ListLayout<T extends object>({
                 title={stat.label}
                 value={
                   stat.format === "currency"
-                    ? new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(stat.value))
+                    ? new Intl.NumberFormat(DEFAULT_LOCALE, { style: "currency", currency: "USD" }).format(Number(stat.value))
                     : stat.format === "percentage"
                     ? `${stat.value}%`
                     : String(stat.value)
@@ -279,11 +301,13 @@ export function ListLayout<T extends object>({
                 columns: (tableConfig.columns || []).map((col) => {
                   const fieldKey = typeof col === 'string' ? col : col.field;
                   const fieldDef = schema.data.fields[fieldKey];
+                  const format = typeof col === 'string' ? undefined : col.format;
                   return {
                     field: fieldKey,
                     label: fieldDef?.label || fieldKey,
                     sortable: fieldDef?.sortable ?? true,
                     visible: true,
+                    ...(format ? { format } : {}),
                   };
                 }),
                 features: {
@@ -305,6 +329,7 @@ export function ListLayout<T extends object>({
             getRowId={getRowId}
             loading={loading}
             emptyMessage={`No ${schema.identity.namePlural.toLowerCase()} found.`}
+            renderRowWrapper={rowContextMenuWrapper}
           />
         )}
 

@@ -201,7 +201,15 @@ export const inspectionSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['inspection_number', 'name', 'inspection_type', 'production_id', 'status', 'scheduled_date', 'inspector_id'],
+      columns: [
+        'inspection_number',
+        'name',
+        'inspection_type',
+        { field: 'production_id', format: { type: 'relation', entityType: 'project' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+        { field: 'scheduled_date', format: { type: 'date' } },
+        { field: 'inspector_id', format: { type: 'relation', entityType: 'person' } },
+      ],
     },
     list: {
       titleField: 'name',

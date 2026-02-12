@@ -105,7 +105,10 @@ export const reactionSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['emoji', 'target_type', 'user_id'],
+      columns: [
+        'emoji', 'target_type',
+        { field: 'user_id', format: { type: 'relation', entityType: 'person' } },
+      ],
     },
   },
 

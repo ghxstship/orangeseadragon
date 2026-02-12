@@ -19,7 +19,14 @@ export const timesheetSchema = defineSchema({
   search: { enabled: true, fields: [], placeholder: 'Search timesheets...' },
   filters: { quick: [{ key: 'submitted', label: 'Submitted', query: { where: { status: 'submitted' } } }], advanced: ['status'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'draft', label: 'Draft', query: { where: { status: 'draft' } }, count: true }, { key: 'submitted', label: 'Submitted', query: { where: { status: 'submitted' } }, count: true }, { key: 'approved', label: 'Approved', query: { where: { status: 'approved' } } }, { key: 'paid', label: 'Paid', query: { where: { status: 'paid' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'hours', label: 'Hours', value: { type: 'field', field: 'total_regular_hours' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Timesheet Details', fields: ['user_id', 'period_start', 'period_end', 'status', 'notes'] }] } },
-  views: { table: { columns: ['user_id', 'period_start', 'period_end', 'total_regular_hours', 'total_amount', 'status'] } },
+  views: { table: { columns: [
+    { field: 'user_id', format: { type: 'relation', entityType: 'person' } },
+    { field: 'period_start', format: { type: 'date' } },
+    { field: 'period_end', format: { type: 'date' } },
+    { field: 'total_regular_hours', format: { type: 'number' } },
+    { field: 'total_amount', format: { type: 'currency' } },
+    { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', submitted: '#3b82f6', approved: '#22c55e', rejected: '#ef4444', paid: '#8b5cf6' } } },
+  ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/timesheets/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Timesheet', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

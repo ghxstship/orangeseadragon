@@ -150,7 +150,13 @@ export const credentialSchema = defineSchema({
     },
   },
   views: {
-    table: { columns: ['credential_number', 'name', 'credential_type', 'user_id', 'status', 'expiry_date', 'issuing_authority'] },
+    table: { columns: [
+      'credential_number', 'name', 'credential_type',
+      { field: 'user_id', format: { type: 'relation', entityType: 'person' } },
+      { field: 'status', format: { type: 'badge', colorMap: { active: '#22c55e', expired: '#ef4444', pending: '#f59e0b', revoked: '#6b7280' } } },
+      { field: 'expiry_date', format: { type: 'date' } },
+      'issuing_authority',
+    ] },
     list: {
       titleField: 'name',
       subtitleField: 'credential_type',

@@ -172,7 +172,14 @@ export const serviceHistorySchema = defineSchema({
 
   views: {
     table: {
-      columns: ['asset_id', 'service_type', 'service_date', 'performed_by', 'total_cost', 'next_service_date'],
+      columns: [
+        { field: 'asset_id', format: { type: 'relation', entityType: 'asset' } },
+        'service_type',
+        { field: 'service_date', format: { type: 'date' } },
+        { field: 'performed_by', format: { type: 'relation', entityType: 'person' } },
+        { field: 'total_cost', format: { type: 'currency' } },
+        { field: 'next_service_date', format: { type: 'date' } },
+      ],
     },
   },
 

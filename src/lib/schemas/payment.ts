@@ -18,7 +18,13 @@ export const paymentSchema = defineSchema({
   search: { enabled: true, fields: ['reference', 'reference_number'], placeholder: 'Search payments...' },
   filters: { quick: [], advanced: ['payment_method'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'bank-transfer', label: 'Bank Transfer', query: { where: { payment_method: 'bank_transfer' } } }, { key: 'credit-card', label: 'Credit Card', query: { where: { payment_method: 'credit_card' } } }, { key: 'check', label: 'Check', query: { where: { payment_method: 'check' } } }, { key: 'cash', label: 'Cash', query: { where: { payment_method: 'cash' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'amount', label: 'Amount', value: { type: 'field', field: 'amount' }, format: 'currency' }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Payment Details', fields: ['reference', 'invoiceId', 'amount', 'payment_method', 'date', 'reference_number', 'notes'] }] } },
-  views: { table: { columns: ['reference', 'invoiceId', 'amount', 'payment_method', 'date'] } },
+  views: { table: { columns: [
+    'reference',
+    { field: 'invoiceId', format: { type: 'relation', entityType: 'invoice' } },
+    { field: 'amount', format: { type: 'currency' } },
+    'payment_method',
+    { field: 'date', format: { type: 'date' } },
+  ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/payments/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'Record Payment', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

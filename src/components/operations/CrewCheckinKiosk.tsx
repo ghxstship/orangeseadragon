@@ -240,7 +240,7 @@ export function CrewCheckinKiosk() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { 
+    return date.toLocaleTimeString(undefined, { 
       hour: '2-digit', 
       minute: '2-digit',
       hour12: true 
@@ -277,7 +277,7 @@ export function CrewCheckinKiosk() {
               {formatTime(currentTime)}
             </div>
             <div className="text-sm text-neutral-400">
-              {currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+              {currentTime.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
             </div>
           </div>
           
@@ -285,7 +285,7 @@ export function CrewCheckinKiosk() {
             <div className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm",
               locationValid === true ? "bg-emerald-500/20 text-emerald-400" :
-              locationValid === false ? "bg-red-500/20 text-red-400" :
+              locationValid === false ? "bg-destructive/20 text-destructive/80" :
               "bg-neutral-500/20 text-neutral-400"
             )}>
               <MapPin className="h-4 w-4" />
@@ -480,10 +480,10 @@ export function CrewCheckinKiosk() {
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="text-center"
               >
-                <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-red-500 flex items-center justify-center">
+                <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-destructive flex items-center justify-center">
                   <XCircle className="h-16 w-16 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold text-red-400">Error</h2>
+                <h2 className="text-3xl font-bold text-destructive/80">Error</h2>
                 <p className="text-neutral-400 mt-2">
                   Could not process check-in
                 </p>

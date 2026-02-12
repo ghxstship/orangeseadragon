@@ -39,7 +39,11 @@ export const departmentSchema = defineSchema({
     },
     form: { sections: [{ key: 'basic', title: 'Department Details', fields: ['name', 'code', 'headId', 'color', 'description'] }] },
   },
-  views: { table: { columns: ['name', 'code', 'headId', 'memberCount'] } },
+  views: { table: { columns: [
+    'name', 'code',
+    { field: 'headId', format: { type: 'relation', entityType: 'person' } },
+    { field: 'memberCount', format: { type: 'number' } },
+  ] } },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/departments/${r.id}` } }],
     bulk: [],

@@ -306,8 +306,11 @@ export const dealSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'holds', label: 'Venue Holds', content: { type: 'related', entity: 'venue_holds', foreignKey: 'deal_id' } },
-        { key: 'proposals', label: 'Proposals', content: { type: 'related', entity: 'proposals', foreignKey: 'deal_id' } },
+        { key: 'holds', label: 'Venue Holds', content: { type: 'related', entity: 'venue_holds', foreignKey: 'deal_id', allowCreate: true } },
+        { key: 'proposals', label: 'Proposals', content: { type: 'related', entity: 'proposals', foreignKey: 'deal_id', allowCreate: true } },
+        { key: 'contacts', label: 'Contacts', content: { type: 'related', entity: 'contact', foreignKey: 'company_id' } },
+        { key: 'files', label: 'Files', content: { type: 'files' } },
+        { key: 'comments', label: 'Comments', content: { type: 'comments' } },
         { key: 'activity', label: 'Activity', content: { type: 'activity' } },
       ],
       overview: {
@@ -320,6 +323,16 @@ export const dealSchema = defineSchema({
           { key: 'hold', title: 'Hold Status', content: { type: 'fields', fields: ['hold_status', 'hold_date', 'hold_expires_at', 'hold_notes'] } },
           { key: 'forecast', title: 'Budget Forecast', content: { type: 'fields', fields: ['estimated_budget', 'estimated_costs', 'estimated_margin_percent'] } },
           { key: 'referral', title: 'Referral', content: { type: 'fields', fields: ['referral_source', 'referral_contact_id'] } },
+        ],
+      },
+      sidebar: {
+        width: 300,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          { key: 'properties', title: 'Properties', content: { type: 'stats', stats: ['stage', 'hold_status', 'production_type', 'close_date', 'probability'] } },
+          { key: 'financial', title: 'Financial', content: { type: 'stats', stats: ['value', 'estimated_budget', 'estimated_costs'] } },
+          { key: 'recent_activity', title: 'Recent Activity', content: { type: 'activity', limit: 5 }, collapsible: true },
         ],
       },
     },
@@ -337,7 +350,17 @@ export const dealSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'company_id', 'value', 'weighted_value', 'stage', 'hold_status', 'production_type', 'probability', 'close_date'],
+      columns: [
+        'name',
+        { field: 'company_id', format: { type: 'relation', entityType: 'company' } },
+        { field: 'value', format: { type: 'currency' } },
+        { field: 'weighted_value', format: { type: 'currency' } },
+        { field: 'stage', format: { type: 'badge', colorMap: { prospecting: '#6b7280', qualification: '#3b82f6', proposal: '#eab308', negotiation: '#f59e0b', closed_won: '#22c55e', closed_lost: '#ef4444' } } },
+        { field: 'hold_status', format: { type: 'badge', colorMap: { none: '#6b7280', first_hold: '#3b82f6', second_hold: '#eab308', confirmed: '#22c55e', released: '#ef4444' } } },
+        'production_type',
+        { field: 'probability', format: { type: 'percentage' } },
+        { field: 'close_date', format: { type: 'date' } },
+      ],
     },
     kanban: {
       columnField: 'stage',

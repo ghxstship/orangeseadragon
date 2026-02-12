@@ -124,13 +124,33 @@ export const peopleSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
+        { key: 'projects', label: 'Projects', content: { type: 'related', entity: 'projectResource', foreignKey: 'user_id', defaultView: 'table', allowCreate: false } },
+        { key: 'tasks', label: 'Tasks', content: { type: 'related', entity: 'task', foreignKey: 'assignee_id', defaultView: 'table', allowCreate: true } },
+        { key: 'time', label: 'Time', content: { type: 'related', entity: 'timeEntry', foreignKey: 'user_id', defaultView: 'table', allowCreate: true } },
+        { key: 'credentials', label: 'Credentials', content: { type: 'related', entity: 'credential', foreignKey: 'user_id', allowCreate: true } },
+        { key: 'files', label: 'Files', content: { type: 'files' } },
+        { key: 'activity', label: 'Activity', content: { type: 'activity' } },
       ],
       overview: {
-        stats: [],
+        stats: [
+          { key: 'active_projects', label: 'Active Projects', value: { type: 'relation-count', entity: 'projectResource', foreignKey: 'user_id' }, onClick: { tab: 'projects' } },
+          { key: 'open_tasks', label: 'Open Tasks', value: { type: 'relation-count', entity: 'task', foreignKey: 'assignee_id', filter: { status: { neq: 'done' } } }, onClick: { tab: 'tasks' } },
+        ],
         blocks: [
+          { key: 'bio', title: 'Bio', content: { type: 'fields', fields: ['bio'] } },
           { key: 'contact', title: 'Contact Info', content: { type: 'fields', fields: ['website', 'linkedin_url'] } },
         ]
-      }
+      },
+      sidebar: {
+        width: 300,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          { key: 'properties', title: 'Properties', content: { type: 'stats', stats: ['headline', 'location', 'is_available_for_hire'] } },
+          { key: 'quick_actions', title: 'Quick Actions', content: { type: 'quick-actions', actions: ['create-task'] } },
+          { key: 'recent_activity', title: 'Recent Activity', content: { type: 'activity', limit: 5 }, collapsible: true },
+        ],
+      },
     },
     form: {
       sections: [
@@ -156,7 +176,12 @@ export const peopleSchema = defineSchema({
   // Views
   views: {
     table: {
-      columns: ['headline', 'location', 'is_available_for_hire', 'is_public'],
+      columns: [
+        'headline',
+        'location',
+        { field: 'is_available_for_hire', format: { type: 'boolean', trueLabel: 'Available', falseLabel: 'Unavailable' } },
+        { field: 'is_public', format: { type: 'boolean', trueLabel: 'Public', falseLabel: 'Private' } },
+      ],
     }
   },
 

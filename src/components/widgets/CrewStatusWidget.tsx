@@ -32,9 +32,9 @@ export function CrewStatusWidget({ title = "Crew Status", limit = 5 }: CrewStatu
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'checked_in': return 'bg-green-500';
-      case 'checked_out': return 'bg-red-500';
-      case 'scheduled': return 'bg-yellow-500';
+      case 'checked_in': return 'bg-emerald-500';
+      case 'checked_out': return 'bg-destructive';
+      case 'scheduled': return 'bg-amber-500';
       default: return 'bg-gray-500';
     }
   };

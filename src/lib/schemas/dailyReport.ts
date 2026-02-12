@@ -179,7 +179,14 @@ export const dailyReportSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'event_id', 'report_date', 'attendance', 'incidents_count', 'status'],
+      columns: [
+        'title',
+        { field: 'event_id', format: { type: 'relation', entityType: 'event' } },
+        { field: 'report_date', format: { type: 'date' } },
+        { field: 'attendance', format: { type: 'number' } },
+        { field: 'incidents_count', format: { type: 'number' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+      ],
     },
   },
 

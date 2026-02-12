@@ -110,7 +110,12 @@ export const userPointsSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['user_id', 'level', 'points', 'lifetime_points'],
+      columns: [
+        { field: 'user_id', format: { type: 'relation', entityType: 'person' } },
+        { field: 'level', format: { type: 'number' } },
+        { field: 'points', format: { type: 'number' } },
+        { field: 'lifetime_points', format: { type: 'number' } },
+      ],
     },
   },
 
@@ -290,7 +295,12 @@ export const badgeSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'category', 'rarity', 'points_value', 'is_active'],
+      columns: [
+        'name', 'category',
+        { field: 'rarity', format: { type: 'badge', colorMap: { common: '#6b7280', uncommon: '#22c55e', rare: '#3b82f6', epic: '#8b5cf6', legendary: '#f59e0b' } } },
+        { field: 'points_value', format: { type: 'number' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
     grid: {
       titleField: 'name',
@@ -420,7 +430,12 @@ export const userBadgeSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['user_id', 'badge_id', 'earned_at', 'is_featured'],
+      columns: [
+        { field: 'user_id', format: { type: 'relation', entityType: 'person' } },
+        { field: 'badge_id', format: { type: 'relation', entityType: 'badge' } },
+        { field: 'earned_at', format: { type: 'datetime' } },
+        { field: 'is_featured', format: { type: 'boolean' } },
+      ],
     },
   },
 

@@ -55,7 +55,12 @@ export const techSpecSchema = defineSchema({
     },
     form: { sections: [{ key: 'basic', title: 'Tech Spec Details', fields: ['name', 'eventId', 'venueId', 'category', 'specifications', 'attachments'] }] },
   },
-  views: { table: { columns: ['name', 'category', 'eventId', 'venueId'] } },
+  views: { table: { columns: [
+        'name',
+        'category',
+        { field: 'eventId', format: { type: 'relation', entityType: 'event' } },
+        { field: 'venueId', format: { type: 'relation', entityType: 'venue' } },
+      ] } },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/tech-specs/${r.id}` } }],
     bulk: [],

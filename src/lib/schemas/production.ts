@@ -239,7 +239,15 @@ export const productionSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['production_code', 'name', 'client_id', 'status', 'health', 'event_start', 'contract_value'],
+      columns: [
+        'production_code',
+        'name',
+        { field: 'client_id', format: { type: 'relation', entityType: 'company' } },
+        { field: 'status', format: { type: 'badge', colorMap: { intake: '#6b7280', scoping: '#3b82f6', proposal: '#8b5cf6', pre_production: '#eab308', production: '#f59e0b', wrap: '#22c55e', closed: '#6b7280', cancelled: '#ef4444' } } },
+        { field: 'health', format: { type: 'badge', colorMap: { green: '#22c55e', yellow: '#eab308', red: '#ef4444' } } },
+        { field: 'event_start', format: { type: 'date' } },
+        { field: 'contract_value', format: { type: 'currency' } },
+      ],
     },
     list: {
       titleField: 'name',

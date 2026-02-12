@@ -314,7 +314,7 @@ export function ScannerModal({
               >
                 {cameraError ? (
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-                    <AlertCircle className="h-12 w-12 mb-4 text-red-400" />
+                    <AlertCircle className="h-12 w-12 mb-4 text-destructive/80" />
                     <p className="text-sm">{cameraError}</p>
                   </div>
                 ) : (
@@ -353,7 +353,7 @@ export function ScannerModal({
                         className="rounded-full bg-black/50 hover:bg-black/70"
                         onClick={toggleTorch}
                       >
-                        <Flashlight className={cn("h-4 w-4", torchOn && "text-yellow-400")} />
+                        <Flashlight className={cn("h-4 w-4", torchOn && "text-amber-400")} />
                       </Button>
                     </div>
                   </>
@@ -436,31 +436,31 @@ export function ScannerModal({
                 <div className={cn(
                   "p-4 rounded-lg border",
                   scanResult.success 
-                    ? "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800" 
-                    : "bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-800"
+                    ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-800" 
+                    : "bg-destructive/5 border-destructive/20 dark:bg-destructive/90/20 dark:border-destructive/40"
                 )}>
                   <div className="flex items-start gap-3">
                     <div className={cn(
                       "p-2 rounded-full",
-                      scanResult.success ? "bg-green-100 dark:bg-green-900" : "bg-red-100 dark:bg-red-900"
+                      scanResult.success ? "bg-emerald-100 dark:bg-emerald-900" : "bg-destructive/10 dark:bg-destructive/80"
                     )}>
                       {scanResult.success ? (
-                        <Check className="h-5 w-5 text-green-600 dark:text-green-400" />
+                        <Check className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                       ) : (
-                        <X className="h-5 w-5 text-red-600 dark:text-red-400" />
+                        <X className="h-5 w-5 text-destructive dark:text-destructive/80" />
                       )}
                     </div>
                     
                     <div className="flex-1 min-w-0">
                       <h4 className={cn(
                         "font-semibold",
-                        scanResult.success ? "text-green-800 dark:text-green-200" : "text-red-800 dark:text-red-200"
+                        scanResult.success ? "text-emerald-800 dark:text-emerald-200" : "text-destructive dark:text-destructive/60"
                       )}>
                         {scanResult.success ? 'Scan Successful' : 'Scan Failed'}
                       </h4>
                       
                       {scanResult.error && (
-                        <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                        <p className="text-sm text-destructive dark:text-destructive/80 mt-1">
                           {scanResult.error}
                         </p>
                       )}

@@ -156,7 +156,13 @@ export const receiptScanSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['fileName', 'extractedVendor', 'extractedAmount', 'extractedDate', 'status', 'overallConfidence'],
+      columns: [
+        'fileName', 'extractedVendor',
+        { field: 'extractedAmount', format: { type: 'currency' } },
+        { field: 'extractedDate', format: { type: 'date' } },
+        { field: 'status', format: { type: 'badge', colorMap: { pending: '#f59e0b', processing: '#3b82f6', completed: '#22c55e', failed: '#ef4444' } } },
+        { field: 'overallConfidence', format: { type: 'percentage' } },
+      ],
     },
     gallery: {
       imageField: 'fileUrl',

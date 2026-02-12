@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, Copy, Check, ExternalLink, Loader2, Mail } from 'lucide-react';
 import { toast } from 'sonner';
+import { DEFAULT_LOCALE } from '@/lib/config';
 
 interface PaymentLinkButtonProps {
   invoiceId: string;
@@ -147,7 +148,7 @@ export function PaymentLinkButton({
               <div>
                 <p className="font-medium">Invoice {invoiceNumber}</p>
                 <p className="text-sm text-muted-foreground">
-                  {currency} {amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  {currency} {amount.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
                 </p>
               </div>
               <Badge variant="secondary">Stripe</Badge>
@@ -185,7 +186,7 @@ export function PaymentLinkButton({
                       onClick={copyToClipboard}
                     >
                       {copied ? (
-                        <Check className="h-4 w-4 text-green-600" />
+                        <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                       ) : (
                         <Copy className="h-4 w-4" />
                       )}

@@ -19,8 +19,63 @@ export const companySchema = defineSchema({
   display: { title: (r: Record<string, unknown>) => String(r.name || 'Untitled'), subtitle: (r: Record<string, unknown>) => String(r.industry || ''), defaultSort: { field: 'name', direction: 'asc' } },
   search: { enabled: true, fields: ['name'], placeholder: 'Search companies...' },
   filters: { quick: [], advanced: ['industry', 'company_type'] },
-  layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'clients', label: 'Clients', query: { where: { company_type: 'client' } }, count: true }, { key: 'vendors', label: 'Vendors', query: { where: { company_type: 'vendor' } }, count: true }, { key: 'partners', label: 'Partners', query: { where: { company_type: 'partner' } } }, { key: 'sponsors', label: 'Sponsors', query: { where: { company_type: 'sponsor' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'contacts', label: 'Contacts', value: { type: 'field', field: 'contactCount' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Company Details', fields: ['name', 'company_type', 'industry', 'website', 'phone', 'email', 'address', 'notes'] }] } },
-  views: { table: { columns: ['name', 'company_type', 'industry', 'website', 'phone', 'contactCount'] } },
+  layouts: {
+    list: {
+      subpages: [
+        { key: 'all', label: 'All', query: { where: {} }, count: true },
+        { key: 'clients', label: 'Clients', query: { where: { company_type: 'client' } }, count: true },
+        { key: 'vendors', label: 'Vendors', query: { where: { company_type: 'vendor' } }, count: true },
+        { key: 'partners', label: 'Partners', query: { where: { company_type: 'partner' } } },
+        { key: 'sponsors', label: 'Sponsors', query: { where: { company_type: 'sponsor' } } },
+      ],
+      defaultView: 'table',
+      availableViews: ['table'],
+    },
+    detail: {
+      tabs: [
+        { key: 'overview', label: 'Overview', content: { type: 'overview' } },
+        { key: 'contacts', label: 'Contacts', content: { type: 'related', entity: 'contact', foreignKey: 'company_id', defaultView: 'table', allowCreate: true } },
+        { key: 'deals', label: 'Deals', content: { type: 'related', entity: 'deal', foreignKey: 'company_id', defaultView: 'table', allowCreate: true } },
+        { key: 'projects', label: 'Projects', content: { type: 'related', entity: 'project', foreignKey: 'client_id', defaultView: 'table' } },
+        { key: 'invoices', label: 'Invoices', content: { type: 'related', entity: 'invoice', foreignKey: 'company_id', defaultView: 'table' } },
+        { key: 'files', label: 'Files', content: { type: 'files' } },
+        { key: 'activity', label: 'Activity', content: { type: 'activity' } },
+      ],
+      overview: {
+        stats: [
+          { key: 'contacts', label: 'Contacts', value: { type: 'relation-count', entity: 'contact', foreignKey: 'company_id' }, onClick: { tab: 'contacts' } },
+          { key: 'deals', label: 'Active Deals', value: { type: 'relation-count', entity: 'deal', foreignKey: 'company_id' }, onClick: { tab: 'deals' } },
+          { key: 'revenue', label: 'Total Revenue', value: { type: 'relation-sum', entity: 'invoice', foreignKey: 'company_id', field: 'total_amount' }, format: 'currency' },
+        ],
+        blocks: [
+          { key: 'details', title: 'Company Details', content: { type: 'fields', fields: ['address', 'website', 'phone', 'email'] } },
+          { key: 'notes', title: 'Notes', content: { type: 'fields', fields: ['notes'] } },
+        ],
+      },
+      sidebar: {
+        width: 300,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          { key: 'properties', title: 'Properties', content: { type: 'stats', stats: ['company_type', 'industry'] } },
+          { key: 'recent_activity', title: 'Recent Activity', content: { type: 'activity', limit: 5 }, collapsible: true },
+        ],
+      },
+    },
+    form: {
+      sections: [
+        { key: 'basic', title: 'Company Details', fields: ['name', 'company_type', 'industry', 'website', 'phone', 'email', 'address', 'notes'] },
+      ],
+    },
+  },
+  views: { table: { columns: [
+    'name',
+    { field: 'company_type', format: { type: 'badge', colorMap: { client: '#3b82f6', vendor: '#8b5cf6', partner: '#f59e0b', venue: '#22c55e', agency: '#ec4899' } } },
+    'industry',
+    { field: 'website', format: { type: 'link' } },
+    'phone',
+    { field: 'contactCount', format: { type: 'number' } },
+  ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/companies/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Company', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

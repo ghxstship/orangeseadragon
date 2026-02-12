@@ -116,9 +116,9 @@ export function InboxItemDetail({
 
         {/* Actioned state */}
         {item.status === 'actioned' && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <span className="text-sm font-medium text-green-800 dark:text-green-200">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+            <span className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
               This item has been actioned
             </span>
           </div>

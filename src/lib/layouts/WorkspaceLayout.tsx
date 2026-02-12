@@ -178,7 +178,7 @@ export function WorkspaceLayout({
 
             {config.header?.showFavorite && onFavoriteToggle && (
               <Button variant="ghost" size="icon" onClick={onFavoriteToggle} className="h-8 w-8">
-                <Star className={cn("h-4 w-4", isFavorite && "fill-yellow-400 text-yellow-400")} />
+                <Star className={cn("h-4 w-4", isFavorite && "fill-amber-400 text-amber-400")} />
               </Button>
             )}
 

@@ -188,7 +188,12 @@ export const automationRuleSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'trigger_entity', 'trigger_event', 'is_active', 'run_count', 'last_run_at'],
+      columns: [
+        'name', 'trigger_entity', 'trigger_event',
+        { field: 'is_active', format: { type: 'boolean' } },
+        { field: 'run_count', format: { type: 'number' } },
+        { field: 'last_run_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

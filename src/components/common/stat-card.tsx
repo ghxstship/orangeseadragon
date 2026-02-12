@@ -37,7 +37,7 @@ export function StatCard({
       <Card className={cn("border-border overflow-hidden shadow-xl h-full relative group transition-all duration-500", className)}>
         <div className={cn(
           "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-br",
-          trend?.isPositive ? "from-green-500/5 to-transparent" : "from-red-500/5 to-transparent"
+          trend?.isPositive ? "from-emerald-500/5 to-transparent" : "from-destructive/5 to-transparent"
         )} />
 
         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
@@ -57,8 +57,8 @@ export function StatCard({
                   className={cn(
                     "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg",
                     trend.isPositive
-                      ? "bg-green-500/10 text-green-500 border border-green-500/20 shadow-green-500/10"
-                      : "bg-red-500/10 text-red-500 border border-red-500/20 shadow-red-500/10"
+                      ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-green-500/10"
+                      : "bg-destructive/10 text-destructive border border-destructive/20 shadow-red-500/10"
                   )}
                 >
                   {trend.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}

@@ -52,7 +52,12 @@ export const boardSchema = defineSchema({
     },
     form: { sections: [{ key: 'basic', title: 'Board Details', fields: ['name', 'projectId', 'type', 'description', 'isDefault'] }] },
   },
-  views: { table: { columns: ['name', 'projectId', 'type', 'isDefault'] } },
+  views: { table: { columns: [
+        'name',
+        { field: 'projectId', format: { type: 'relation', entityType: 'project' } },
+        'type',
+        { field: 'isDefault', format: { type: 'boolean' } },
+      ] } },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/boards/${r.id}` } }],
     bulk: [],

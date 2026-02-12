@@ -148,6 +148,24 @@ export const projectSchema = defineSchema({
     advanced: ['status', 'client', 'startDate'],
   },
 
+  // Relationships
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'client_id', label: 'Client' },
+      { entity: 'venue', foreignKey: 'venue_id', label: 'Venue' },
+    ],
+    hasMany: [
+      { entity: 'task', foreignKey: 'project_id', label: 'Tasks', cascade: 'delete' },
+      { entity: 'budget', foreignKey: 'project_id', label: 'Budgets', cascade: 'delete' },
+      { entity: 'timeEntry', foreignKey: 'project_id', label: 'Time Entries', cascade: 'delete' },
+      { entity: 'expense', foreignKey: 'project_id', label: 'Expenses', cascade: 'delete' },
+      { entity: 'invoice', foreignKey: 'project_id', label: 'Invoices', cascade: 'restrict' },
+      { entity: 'projectResource', foreignKey: 'project_id', label: 'Team Members', cascade: 'delete' },
+      { entity: 'document', foreignKey: 'project_id', label: 'Documents', cascade: 'delete' },
+      { entity: 'event', foreignKey: 'project_id', label: 'Events', cascade: 'restrict' },
+    ],
+  },
+
   // Layouts
   layouts: {
     list: {
@@ -163,33 +181,142 @@ export const projectSchema = defineSchema({
           label: 'Active',
           query: { where: { status: 'active' } },
           count: true,
-        }
+        },
+        {
+          key: 'planning',
+          label: 'Planning',
+          query: { where: { status: 'planning' } },
+          count: true,
+        },
+        {
+          key: 'completed',
+          label: 'Completed',
+          query: { where: { status: 'completed' } },
+          count: true,
+        },
       ],
       defaultView: 'table',
-      availableViews: ['table', 'kanban', 'calendar'],
+      availableViews: ['table', 'kanban', 'calendar', 'timeline'],
     },
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
         {
+          key: 'tasks',
+          label: 'Tasks',
+          content: { type: 'related', entity: 'task', foreignKey: 'project_id', defaultView: 'table', allowCreate: true },
+          badge: { compute: (record: any) => record._task_count || '' },
+        },
+        {
+          key: 'schedule',
+          label: 'Schedule',
+          content: { type: 'related', entity: 'task', foreignKey: 'project_id', defaultView: 'gantt', allowCreate: false },
+        },
+        {
           key: 'team',
           label: 'Team',
-          content: {
-            type: 'related',
-            entity: 'people',
-            foreignKey: 'projectId',
-            allowCreate: true
-          }
+          content: { type: 'related', entity: 'projectResource', foreignKey: 'project_id', allowCreate: true },
+          badge: { compute: (record: any) => record._team_count || '' },
+        },
+        {
+          key: 'budget',
+          label: 'Budget',
+          content: { type: 'related', entity: 'budget', foreignKey: 'project_id', allowCreate: true },
+        },
+        {
+          key: 'time',
+          label: 'Time',
+          content: { type: 'related', entity: 'timeEntry', foreignKey: 'project_id', defaultView: 'table', allowCreate: true },
+        },
+        {
+          key: 'expenses',
+          label: 'Expenses',
+          content: { type: 'related', entity: 'expense', foreignKey: 'project_id', defaultView: 'table', allowCreate: true },
+        },
+        {
+          key: 'documents',
+          label: 'Documents',
+          content: { type: 'files' },
+        },
+        {
+          key: 'invoices',
+          label: 'Invoices',
+          content: { type: 'related', entity: 'invoice', foreignKey: 'project_id', defaultView: 'table', allowCreate: true },
+        },
+        {
+          key: 'activity',
+          label: 'Activity',
+          content: { type: 'activity' },
+        },
+        {
+          key: 'settings',
+          label: 'Settings',
+          content: { type: 'fields', fields: ['name', 'code', 'client', 'status', 'startDate', 'endDate', 'budget', 'description'], editable: true },
         },
       ],
       overview: {
         stats: [
           { key: 'budget', label: 'Budget', value: { type: 'field', field: 'budget' }, format: 'currency' },
+          {
+            key: 'burned',
+            label: 'Burned',
+            value: { type: 'relation-sum', entity: 'expense', foreignKey: 'project_id', field: 'amount' },
+            format: 'currency',
+          },
+          {
+            key: 'margin',
+            label: 'Margin',
+            value: {
+              type: 'computed',
+              compute: (record: any) => {
+                const budget = Number(record.budget) || 0;
+                const burned = Number(record._total_expenses) || 0;
+                return budget > 0 ? Math.round(((budget - burned) / budget) * 100) : 0;
+              },
+            },
+            format: 'percentage',
+          },
+          {
+            key: 'team_count',
+            label: 'Team',
+            value: { type: 'relation-count', entity: 'projectResource', foreignKey: 'project_id' },
+            suffix: ' members',
+            onClick: { tab: 'team' },
+          },
         ],
         blocks: [
-          { key: 'details', title: 'Project Details', content: { type: 'fields', fields: ['description'] } },
+          { key: 'description', title: 'Description', content: { type: 'fields', fields: ['description'] } },
+          { key: 'key_dates', title: 'Key Dates', content: { type: 'fields', fields: ['startDate', 'endDate'] } },
         ]
-      }
+      },
+      sidebar: {
+        width: 320,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          {
+            key: 'properties',
+            title: 'Properties',
+            content: { type: 'stats', stats: ['status', 'client', 'startDate', 'endDate'] },
+          },
+          {
+            key: 'budget_summary',
+            title: 'Budget Health',
+            content: { type: 'stats', stats: ['budget', 'burned', 'margin'] },
+          },
+          {
+            key: 'quick_actions',
+            title: 'Quick Actions',
+            content: { type: 'quick-actions', actions: ['create-task', 'log-time', 'submit-expense', 'generate-invoice'] },
+          },
+          {
+            key: 'recent_activity',
+            title: 'Recent Activity',
+            content: { type: 'activity', limit: 5 },
+            collapsible: true,
+          },
+        ],
+      },
     },
     form: {
       sections: [
@@ -202,6 +329,12 @@ export const projectSchema = defineSchema({
           key: 'dates',
           title: 'Timeline & Budget',
           fields: ['startDate', 'endDate', 'budget'],
+        },
+        {
+          key: 'details',
+          title: 'Details',
+          fields: ['description'],
+          collapsible: true,
         }
       ]
     }
@@ -210,7 +343,16 @@ export const projectSchema = defineSchema({
   // Views
   views: {
     table: {
-      columns: ['name', 'code', 'client', 'status', 'startDate', 'endDate', 'budget', 'progress'],
+      columns: [
+        'name',
+        'code',
+        { field: 'client', format: { type: 'relation', entityType: 'company' } },
+        { field: 'status', format: { type: 'badge', colorMap: { planning: '#6b7280', pre_production: '#3b82f6', in_production: '#eab308', wrap: '#f59e0b', complete: '#22c55e', cancelled: '#ef4444', on_hold: '#6b7280' } } },
+        { field: 'startDate', format: { type: 'date' } },
+        { field: 'endDate', format: { type: 'date' } },
+        { field: 'budget', format: { type: 'currency' } },
+        { field: 'progress', format: { type: 'percentage' } },
+      ],
     }
   },
 

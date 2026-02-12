@@ -116,11 +116,11 @@ export function MatrixView({ items, config, onItemClick }: MatrixViewProps) {
 function getQuadrantColor(color?: string) {
     switch (color) {
         case 'red':
-            return { border: 'border-red-500/10', bg: 'bg-red-500/[0.02] shadow-[inner_0_0_50px_rgba(239,68,68,0.03)]' };
+            return { border: 'border-destructive/10', bg: 'bg-destructive/[0.02] shadow-[inner_0_0_50px_rgba(239,68,68,0.03)]' };
         case 'blue':
             return { border: 'border-blue-500/10', bg: 'bg-blue-500/[0.02] shadow-[inner_0_0_50px_rgba(59,130,246,0.03)]' };
         case 'yellow':
-            return { border: 'border-yellow-500/10', bg: 'bg-yellow-500/[0.02] shadow-[inner_0_0_50px_rgba(234,179,8,0.03)]' };
+            return { border: 'border-amber-500/10', bg: 'bg-amber-500/[0.02] shadow-[inner_0_0_50px_rgba(234,179,8,0.03)]' };
         case 'gray':
             return { border: 'border-border', bg: 'bg-white/[0.01] shadow-[inner_0_0_50px_rgba(255,255,255,0.01)]' };
         default:

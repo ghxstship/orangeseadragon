@@ -209,7 +209,12 @@ export const accommodationSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['guest_name', 'hotel_name', 'check_in_date', 'check_out_date', 'status'],
+      columns: [
+        'guest_name', 'hotel_name',
+        { field: 'check_in_date', format: { type: 'date' } },
+        { field: 'check_out_date', format: { type: 'date' } },
+        { field: 'status', format: { type: 'badge', colorMap: { pending: '#f59e0b', confirmed: '#22c55e', checked_in: '#3b82f6', checked_out: '#6b7280', cancelled: '#ef4444' } } },
+      ],
     },
   },
 

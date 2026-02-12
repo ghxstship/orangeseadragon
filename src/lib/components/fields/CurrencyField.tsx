@@ -1,4 +1,5 @@
 import React from 'react';
+import { DEFAULT_LOCALE } from '@/lib/config';
 import { FieldRenderProps } from './index';
 
 /**
@@ -16,7 +17,7 @@ export function CurrencyField({ field, fieldKey, value, onChange, error, disable
 
   const formatValue = (val: number) => {
     if (val === null || val === undefined) return '';
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(DEFAULT_LOCALE, {
       style: 'currency',
       currency: 'USD',
     }).format(val);

@@ -173,7 +173,13 @@ export const activitySchema = defineSchema({
 
   views: {
     table: {
-      columns: ['subject', 'activity_type', 'company_id', 'assigned_to', 'due_date', 'status'],
+      columns: [
+        'subject', 'activity_type',
+        { field: 'company_id', format: { type: 'relation', entityType: 'company' } },
+        { field: 'assigned_to', format: { type: 'relation', entityType: 'person' } },
+        { field: 'due_date', format: { type: 'datetime' } },
+        { field: 'status', format: { type: 'badge', colorMap: { planned: '#3b82f6', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#6b7280' } } },
+      ],
     },
   },
 

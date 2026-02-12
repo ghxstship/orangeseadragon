@@ -137,7 +137,13 @@ export const emailTemplateSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'subject', 'category', 'is_active', 'updated_at'],
+      columns: [
+        'name',
+        'subject',
+        'category',
+        { field: 'is_active', format: { type: 'boolean' } },
+        { field: 'updated_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

@@ -184,7 +184,12 @@ export const escalationChainSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'incident_type', 'min_severity', 'step_count', 'is_active'],
+      columns: [
+        'name', 'incident_type',
+        { field: 'min_severity', format: { type: 'badge', colorMap: { low: '#3b82f6', medium: '#f59e0b', high: '#f97316', critical: '#ef4444' } } },
+        { field: 'step_count', format: { type: 'number' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
   },
 

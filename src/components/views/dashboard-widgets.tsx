@@ -69,8 +69,8 @@ export function MetricWidget({
                 <span
                   className={cn(
                     "flex items-center text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border",
-                    trend.direction === "up" && "text-green-400 border-green-500/20 bg-green-500/10 shadow-[0_0_8px_rgba(34,197,94,0.2)]",
-                    trend.direction === "down" && "text-red-400 border-red-500/20 bg-red-500/10 shadow-[0_0_8px_rgba(239,68,68,0.2)]",
+                    trend.direction === "up" && "text-emerald-400 border-emerald-500/20 bg-emerald-500/10 shadow-[0_0_8px_rgba(16,185,129,0.2)]",
+                    trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_rgba(239,68,68,0.2)]",
                     trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                   )}
                 >
@@ -116,11 +116,11 @@ export function ProgressWidget({
   const getStatusColor = () => {
     switch (status) {
       case "success":
-        return "bg-green-500";
+        return "bg-emerald-500";
       case "warning":
-        return "bg-yellow-500";
+        return "bg-amber-500";
       case "danger":
-        return "bg-red-500";
+        return "bg-destructive";
       default:
         return "bg-primary";
     }
@@ -251,8 +251,8 @@ export function ListWidget({
                     </Badge>
                   )}
                   <span className="text-sm font-black tracking-tight flex items-center gap-1.5">
-                    {item.trend === "up" && <ArrowUpRight className="h-3 w-3 text-green-400" />}
-                    {item.trend === "down" && <ArrowDownRight className="h-3 w-3 text-red-400" />}
+                    {item.trend === "up" && <ArrowUpRight className="h-3 w-3 text-emerald-400" />}
+                    {item.trend === "down" && <ArrowDownRight className="h-3 w-3 text-destructive" />}
                     {item.value}
                   </span>
                 </div>
@@ -449,8 +449,8 @@ export function SparklineWidget({
               <span
                 className={cn(
                   "flex items-center text-[10px] font-black uppercase tracking-wider mt-3 px-2 py-0.5 rounded-full border w-fit",
-                  trend.direction === "up" && "text-green-400 border-green-500/20 bg-green-500/10 shadow-[0_0_8px_rgba(34,197,94,0.1)]",
-                  trend.direction === "down" && "text-red-400 border-red-500/20 bg-red-500/10 shadow-[0_0_8px_rgba(239,68,68,0.1)]",
+                  trend.direction === "up" && "text-emerald-400 border-emerald-500/20 bg-emerald-500/10 shadow-[0_0_8px_rgba(16,185,129,0.1)]",
+                  trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_rgba(239,68,68,0.1)]",
                   trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                 )}
               >

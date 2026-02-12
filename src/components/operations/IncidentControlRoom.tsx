@@ -44,9 +44,9 @@ interface ControlRoomStats {
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
-  critical: 'bg-red-500',
+  critical: 'bg-destructive',
   high: 'bg-orange-500',
-  medium: 'bg-yellow-500',
+  medium: 'bg-amber-500',
   low: 'bg-gray-500',
 };
 
@@ -187,7 +187,7 @@ export function IncidentControlRoom() {
 
         <div className="flex items-center gap-6">
           <div className="text-3xl font-mono font-bold text-emerald-400">
-            {currentTime.toLocaleTimeString('en-US', { hour12: false })}
+            {currentTime.toLocaleTimeString(undefined, { hour12: false })}
           </div>
           
           <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export function IncidentControlRoom() {
         <Card className={cn(
           "border p-4",
           stats.critical_count > 0 
-            ? "bg-red-500/10 border-red-500/30 animate-pulse" 
+            ? "bg-destructive/10 border-destructive/30 animate-pulse" 
             : "bg-muted border-border"
         )}>
           <div className="flex items-center justify-between">
@@ -234,14 +234,14 @@ export function IncidentControlRoom() {
               <p className="text-xs text-neutral-400 uppercase tracking-wider">Critical</p>
               <p className={cn(
                 "text-3xl font-bold",
-                stats.critical_count > 0 ? "text-red-400" : "text-white"
+                stats.critical_count > 0 ? "text-destructive/80" : "text-white"
               )}>
                 {stats.critical_count}
               </p>
             </div>
             <AlertTriangle className={cn(
               "h-8 w-8",
-              stats.critical_count > 0 ? "text-red-400" : "text-neutral-600"
+              stats.critical_count > 0 ? "text-destructive/80" : "text-neutral-600"
             )} />
           </div>
         </Card>
@@ -311,7 +311,7 @@ export function IncidentControlRoom() {
                     selectedIncident?.id === incident.id 
                       ? "bg-accent" 
                       : "hover:bg-muted",
-                    incident.severity === 'critical' && "bg-red-500/5 border-l-4 border-l-red-500"
+                    incident.severity === 'critical' && "bg-destructive/5 border-l-4 border-l-red-500"
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -455,14 +455,14 @@ export function IncidentControlRoom() {
         <motion.div
           initial={{ y: 100 }}
           animate={{ y: 0 }}
-          className="absolute bottom-0 left-0 right-0 bg-red-600 text-white px-6 py-3"
+          className="absolute bottom-0 left-0 right-0 bg-destructive text-white px-6 py-3"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 animate-pulse" />
               <span className="font-bold">CRITICAL INCIDENT:</span>
               <span>{criticalIncidents[0].title}</span>
-              <span className="text-red-200">- {criticalIncidents[0].location}</span>
+              <span className="text-destructive/60">- {criticalIncidents[0].location}</span>
             </div>
             <Button
               size="sm"

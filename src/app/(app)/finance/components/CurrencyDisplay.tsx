@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowRight } from 'lucide-react';
+import { DEFAULT_LOCALE } from '@/lib/config';
 
 interface CurrencyDisplayProps {
   amount: number;
@@ -49,7 +50,7 @@ export function CurrencyDisplay({
     const decimals = CURRENCY_DECIMALS[currency] ?? 2;
     const symbol = CURRENCY_SYMBOLS[currency] || currency;
     
-    return `${symbol}${amount.toLocaleString('en-US', {
+    return `${symbol}${amount.toLocaleString(DEFAULT_LOCALE, {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     })}`;
@@ -61,7 +62,7 @@ export function CurrencyDisplay({
     const decimals = CURRENCY_DECIMALS[baseCurrency] ?? 2;
     const symbol = CURRENCY_SYMBOLS[baseCurrency] || baseCurrency;
     
-    return `${symbol}${baseCurrencyAmount.toLocaleString('en-US', {
+    return `${symbol}${baseCurrencyAmount.toLocaleString(DEFAULT_LOCALE, {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     })}`;
@@ -155,7 +156,7 @@ export function MultiCurrencyTotal({
         <span className="text-muted-foreground">{label}</span>
         <span className="text-lg font-semibold">
           {symbol}
-          {totalInBaseCurrency.toLocaleString('en-US', {
+          {totalInBaseCurrency.toLocaleString(DEFAULT_LOCALE, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
@@ -169,7 +170,7 @@ export function MultiCurrencyTotal({
               <span>{currency}</span>
               <span>
                 {CURRENCY_SYMBOLS[currency] || currency}
-                {amount.toLocaleString('en-US', {
+                {amount.toLocaleString(DEFAULT_LOCALE, {
                   minimumFractionDigits: CURRENCY_DECIMALS[currency] ?? 2,
                   maximumFractionDigits: CURRENCY_DECIMALS[currency] ?? 2,
                 })}

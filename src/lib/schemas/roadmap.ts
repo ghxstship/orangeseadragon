@@ -54,7 +54,14 @@ export const roadmapSchema = defineSchema({
     },
     form: { sections: [{ key: 'basic', title: 'Roadmap Details', fields: ['name', 'projectId', 'timeframe', 'startDate', 'endDate', 'description', 'isPublic'] }] },
   },
-  views: { table: { columns: ['name', 'projectId', 'timeframe', 'startDate', 'endDate', 'isPublic'] } },
+  views: { table: { columns: [
+        'name',
+        { field: 'projectId', format: { type: 'relation', entityType: 'project' } },
+        'timeframe',
+        { field: 'startDate', format: { type: 'date' } },
+        { field: 'endDate', format: { type: 'date' } },
+        { field: 'isPublic', format: { type: 'boolean' } },
+      ] } },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/roadmaps/${r.id}` } }],
     bulk: [],

@@ -18,6 +18,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { DEFAULT_LOCALE } from '@/lib/config';
 import { cn } from '@/lib/utils';
 
 interface BankTransaction {
@@ -102,9 +103,9 @@ export function BankReconciliation({
   const getStatusIcon = (status: BankTransaction['matchStatus']) => {
     switch (status) {
       case 'confirmed':
-        return <Check className="h-4 w-4 text-green-600" />;
+        return <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />;
       case 'suggested':
-        return <HelpCircle className="h-4 w-4 text-yellow-600" />;
+        return <HelpCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
       case 'excluded':
         return <X className="h-4 w-4 text-gray-400" />;
       default:
@@ -128,7 +129,7 @@ export function BankReconciliation({
           <div className="flex items-center gap-4">
             <div className="text-right">
               <p className="text-2xl font-bold">
-                ${connection.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ${connection.balance.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
               </p>
               <p className="text-sm text-muted-foreground">
                 Last synced: {format(connection.lastSyncAt, 'MMM d, h:mm a')}
@@ -142,7 +143,7 @@ export function BankReconciliation({
         </CardHeader>
         <CardContent>
           {connection.unmatchedCount > 0 && (
-            <div className="flex items-center gap-2 rounded-lg bg-yellow-50 p-3 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200">
+            <div className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
               <AlertCircle className="h-5 w-5" />
               <span>{connection.unmatchedCount} transactions need review</span>
             </div>
@@ -196,8 +197,8 @@ export function BankReconciliation({
                       key={tx.id}
                       className={cn(
                         'flex items-center gap-4 rounded-lg border p-4',
-                        tx.matchStatus === 'suggested' && 'border-yellow-200 bg-yellow-50/50 dark:border-yellow-800 dark:bg-yellow-900/10',
-                        tx.matchStatus === 'confirmed' && 'border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-900/10'
+                        tx.matchStatus === 'suggested' && 'border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-900/10',
+                        tx.matchStatus === 'confirmed' && 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-800 dark:bg-emerald-900/10'
                       )}
                     >
                       <div className="flex-shrink-0">
@@ -220,7 +221,7 @@ export function BankReconciliation({
 
                       <div className={cn(
                         'text-right font-mono font-medium',
-                        tx.type === 'credit' ? 'text-green-600' : 'text-red-600'
+                        tx.type === 'credit' ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'
                       )}>
                         {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
                       </div>
@@ -289,7 +290,7 @@ export function BankReconciliation({
                           </>
                         )}
                         {tx.matchStatus === 'confirmed' && (
-                          <Badge variant="default" className="bg-green-600">
+                          <Badge variant="default" className="bg-emerald-600 dark:bg-emerald-500">
                             <Check className="mr-1 h-3 w-3" />
                             Matched
                           </Badge>

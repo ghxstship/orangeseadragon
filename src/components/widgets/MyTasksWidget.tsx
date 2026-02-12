@@ -76,7 +76,7 @@ export function MyTasksWidget({ title = "My Tasks", limit = 5 }: MyTasksWidgetPr
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'todo': return 'bg-yellow-500';
+      case 'todo': return 'bg-amber-500';
       case 'in_progress': return 'bg-blue-500';
       default: return 'bg-gray-500';
     }

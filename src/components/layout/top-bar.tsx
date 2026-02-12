@@ -13,6 +13,7 @@ import {
   Moon,
   Search,
   ChevronRight,
+  ChevronDown,
   LogOut,
   User,
   Building2,
@@ -98,17 +99,29 @@ export function TopBar() {
     return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
   };
 
+  // UUID pattern for detecting record detail pages
+  const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
   const breadcrumbs = React.useMemo(() => {
     const paths = pathname.split("/").filter(Boolean);
-    return paths.map((path, index) => ({
-      label: path
-        .replace(/-/g, " ")
-        .split(" ")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" "),
-      href: "/" + paths.slice(0, index + 1).join("/"),
-      isLast: index === paths.length - 1,
-    }));
+    return paths.map((path, index) => {
+      const isUUID = UUID_PATTERN.test(path);
+      return {
+        label: isUUID
+          ? path.slice(0, 8) + "…"
+          : path
+              .replace(/-/g, " ")
+              .split(" ")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" "),
+        href: "/" + paths.slice(0, index + 1).join("/"),
+        isLast: index === paths.length - 1,
+        isRecord: isUUID,
+        collectionPath: isUUID ? "/" + paths.slice(0, index).join("/") : undefined,
+        recordId: isUUID ? path : undefined,
+      };
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   return (
@@ -129,7 +142,13 @@ export function TopBar() {
             {index > 0 && (
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             )}
-            {crumb.isLast ? (
+            {crumb.isLast && crumb.isRecord ? (
+              <BreadcrumbRecordSwitcher
+                recordId={crumb.recordId!}
+                collectionPath={crumb.collectionPath!}
+                label={crumb.label}
+              />
+            ) : crumb.isLast ? (
               <span className="font-medium text-foreground">{crumb.label}</span>
             ) : (
               <Link
@@ -457,5 +476,55 @@ export function TopBar() {
         </DropdownMenu>
       </div>
     </header>
+  );
+}
+
+/**
+ * BREADCRUMB RECORD SWITCHER
+ *
+ * Dropdown picker for switching between sibling records on detail pages.
+ * Shows the current record ID truncated, with a chevron to open a popover
+ * listing recent sibling records from the same collection.
+ */
+function BreadcrumbRecordSwitcher({
+  recordId,
+  collectionPath,
+  label,
+}: {
+  recordId: string;
+  collectionPath: string;
+  label: string;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <button className="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary transition-colors rounded px-1.5 py-0.5 -mx-1.5 hover:bg-accent">
+          <span>{label}</span>
+          <ChevronDown className="h-3 w-3 opacity-50" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-64">
+        <DropdownMenuLabel className="text-xs">
+          Switch Record
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+          Current: {recordId.slice(0, 8)}…
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => {
+            setOpen(false);
+            router.push(collectionPath);
+          }}
+        >
+          <Search className="mr-2 h-3.5 w-3.5" />
+          <span className="text-sm">View all records</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

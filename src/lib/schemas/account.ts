@@ -17,7 +17,12 @@ export const accountSchema = defineSchema({
   search: { enabled: true, fields: ['name', 'code'], placeholder: 'Search accounts...' },
   filters: { quick: [{ key: 'active', label: 'Active', query: { where: { is_active: true } } }], advanced: ['type', 'is_active'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'asset', label: 'Assets', query: { where: { type: 'asset' } }, count: true }, { key: 'liability', label: 'Liabilities', query: { where: { type: 'liability' } } }, { key: 'revenue', label: 'Revenue', query: { where: { type: 'revenue' } } }, { key: 'expense', label: 'Expenses', query: { where: { type: 'expense' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'balance', label: 'Balance', value: { type: 'field', field: 'balance' }, format: 'currency' }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Account Details', fields: ['name', 'code', 'type', 'is_active', 'description'] }] } },
-  views: { table: { columns: ['name', 'code', 'type', 'balance', 'is_active'] } },
+  views: { table: { columns: [
+    'name', 'code',
+    { field: 'type', format: { type: 'badge', colorMap: { asset: '#22c55e', liability: '#ef4444', revenue: '#3b82f6', expense: '#f97316' } } },
+    { field: 'balance', format: { type: 'currency' } },
+    { field: 'is_active', format: { type: 'boolean' } },
+  ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/accounts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Account', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

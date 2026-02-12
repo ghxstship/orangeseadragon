@@ -134,7 +134,12 @@ export const stageSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'event_id', 'venue_id', 'capacity'],
+      columns: [
+        'name',
+        { field: 'event_id', format: { type: 'relation', entityType: 'event' } },
+        { field: 'venue_id', format: { type: 'relation', entityType: 'venue' } },
+        { field: 'capacity', format: { type: 'number' } },
+      ],
     },
   },
 

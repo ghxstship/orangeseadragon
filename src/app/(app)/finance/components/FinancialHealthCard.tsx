@@ -24,7 +24,7 @@ function MetricItem({ title, value, change, trend, icon: Icon, description }: Me
             <div className="flex items-baseline space-x-2">
                 <span className="text-2xl font-bold tracking-tight">{value}</span>
                 {change !== undefined && (
-                    <span className={`text-xs font-medium flex items-center ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>
+                    <span className={`text-xs font-medium flex items-center ${trend === 'up' ? 'text-emerald-500 dark:text-emerald-400' : 'text-destructive'}`}>
                         {trend === 'up' ? <ArrowUpRight className="h-3 w-3 mr-0.5" /> : <ArrowDownRight className="h-3 w-3 mr-0.5" />}
                         {Math.abs(change)}%
                     </span>

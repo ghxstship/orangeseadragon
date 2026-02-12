@@ -171,7 +171,13 @@ export const oauthConnectionSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['provider', 'user_id', 'is_active', 'sync_status', 'last_synced_at'],
+      columns: [
+        'provider',
+        { field: 'user_id', format: { type: 'relation', entityType: 'person' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+        { field: 'sync_status', format: { type: 'badge', colorMap: { synced: '#22c55e', syncing: '#3b82f6', error: '#ef4444', pending: '#f59e0b' } } },
+        { field: 'last_synced_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

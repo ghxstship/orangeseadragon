@@ -198,7 +198,12 @@ export const meetingTypeSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'duration_minutes', 'location_type', 'is_active'],
+      columns: [
+        'name',
+        { field: 'duration_minutes', format: { type: 'number' } },
+        'location_type',
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
   },
 

@@ -167,7 +167,13 @@ export const calendarSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'event_type', 'start_time', 'end_time', 'location'],
+      columns: [
+        'title',
+        'event_type',
+        { field: 'start_time', format: { type: 'datetime' } },
+        { field: 'end_time', format: { type: 'datetime' } },
+        'location',
+      ],
     },
   },
 

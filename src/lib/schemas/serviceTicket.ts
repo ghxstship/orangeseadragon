@@ -197,7 +197,14 @@ export const serviceTicketSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['ticket_number', 'subject', 'contact_id', 'category', 'priority', 'status', 'assigned_to_id'],
+      columns: [
+        'ticket_number', 'subject',
+        { field: 'contact_id', format: { type: 'relation', entityType: 'contact' } },
+        'category',
+        { field: 'priority', format: { type: 'badge', colorMap: { urgent: '#ef4444', high: '#f97316', medium: '#f59e0b', low: '#3b82f6', none: '#6b7280' } } },
+        { field: 'status', format: { type: 'badge', colorMap: { open: '#3b82f6', in_progress: '#f59e0b', waiting: '#8b5cf6', resolved: '#22c55e', closed: '#6b7280' } } },
+        { field: 'assigned_to_id', format: { type: 'relation', entityType: 'person' } },
+      ],
     },
   },
   actions: {

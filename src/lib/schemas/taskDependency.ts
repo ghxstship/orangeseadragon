@@ -103,7 +103,12 @@ export const taskDependencySchema = defineSchema({
 
   views: {
     table: {
-      columns: ['task_id', 'depends_on_task_id', 'dependency_type', 'lag_hours'],
+      columns: [
+        { field: 'task_id', format: { type: 'relation', entityType: 'task' } },
+        { field: 'depends_on_task_id', format: { type: 'relation', entityType: 'task' } },
+        'dependency_type',
+        { field: 'lag_hours', format: { type: 'number' } },
+      ],
     },
   },
 

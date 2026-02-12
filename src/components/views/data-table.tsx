@@ -93,6 +93,8 @@ export interface DataTableProps<TData, TValue> {
   resizable?: boolean;
   grouping?: string[];
   onGroupingChange?: (grouping: string[]) => void;
+  /** Optional wrapper around each data row (e.g. RecordContextMenu) */
+  renderRowWrapper?: (row: TData, children: React.ReactNode) => React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -118,6 +120,7 @@ export function DataTable<TData, TValue>({
   resizable = true,
   grouping: externalGrouping,
   onGroupingChange,
+  renderRowWrapper,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -411,7 +414,7 @@ export function DataTable<TData, TValue>({
                     );
                   }
 
-                  return (
+                  const tableRow = (
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
@@ -446,6 +449,10 @@ export function DataTable<TData, TValue>({
                       })}
                     </TableRow>
                   );
+
+                  return renderRowWrapper
+                    ? <React.Fragment key={row.id}>{renderRowWrapper(row.original, tableRow)}</React.Fragment>
+                    : tableRow;
                 })
               ) : (
                 <TableRow>

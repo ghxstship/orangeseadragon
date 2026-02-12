@@ -139,7 +139,12 @@ export const reminderTemplateSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['name', 'triggerType', 'triggerDays', 'isActive'],
+      columns: [
+        'name',
+        'triggerType',
+        { field: 'triggerDays', format: { type: 'number' } },
+        { field: 'isActive', format: { type: 'boolean' } },
+      ],
     },
   },
   actions: {

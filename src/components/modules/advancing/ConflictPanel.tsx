@@ -72,9 +72,9 @@ const conflictTypeLabels: Record<string, string> = {
 const severityConfig = {
   blocking: {
     icon: AlertCircle,
-    color: 'text-red-500',
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/20',
+    color: 'text-destructive',
+    bg: 'bg-destructive/10',
+    border: 'border-destructive/20',
     badge: 'destructive' as const,
   },
   warning: {
@@ -316,8 +316,8 @@ export function ConflictPanel({
         <SheetHeader className="p-4 border-b">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-red-500/10">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
+              <div className="p-2 rounded-lg bg-destructive/10">
+                <AlertTriangle className="h-5 w-5 text-destructive" />
               </div>
               <div>
                 <SheetTitle>Conflicts</SheetTitle>
@@ -358,8 +358,8 @@ export function ConflictPanel({
             </div>
           ) : openConflicts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="p-4 rounded-full bg-green-500/10 mb-4">
-                <Check className="h-8 w-8 text-green-500" />
+              <div className="p-4 rounded-full bg-emerald-500/10 mb-4">
+                <Check className="h-8 w-8 text-emerald-500" />
               </div>
               <p className="font-medium">No Conflicts Detected</p>
               <p className="text-sm text-muted-foreground mt-1">

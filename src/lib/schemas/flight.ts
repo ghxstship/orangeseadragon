@@ -184,7 +184,13 @@ export const flightSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['passenger_name', 'flight_number', 'departure_airport', 'arrival_airport', 'departure_time'],
+      columns: [
+        'passenger_name',
+        'flight_number',
+        'departure_airport',
+        'arrival_airport',
+        { field: 'departure_time', format: { type: 'datetime' } },
+      ],
     },
   },
 

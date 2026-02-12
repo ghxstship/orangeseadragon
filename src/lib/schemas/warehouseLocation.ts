@@ -219,7 +219,14 @@ export const warehouseLocationSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['location_code', 'warehouse_id', 'location_type', 'zone', 'aisle', 'capacity_units', 'current_units', 'is_active'],
+      columns: [
+        'location_code',
+        { field: 'warehouse_id', format: { type: 'relation', entityType: 'warehouse' } },
+        'location_type', 'zone', 'aisle',
+        { field: 'capacity_units', format: { type: 'number' } },
+        { field: 'current_units', format: { type: 'number' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
     grid: {
       titleField: 'location_code',

@@ -119,7 +119,11 @@ export const currencySchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['code', 'name', 'symbol', 'isBaseCurrency', 'isActive'],
+      columns: [
+        'code', 'name', 'symbol',
+        { field: 'isBaseCurrency', format: { type: 'boolean' } },
+        { field: 'isActive', format: { type: 'boolean' } },
+      ],
     },
   },
   actions: {
@@ -249,7 +253,12 @@ export const exchangeRateSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['fromCurrency', 'toCurrency', 'rate', 'effectiveDate', 'source'],
+      columns: [
+        'fromCurrency', 'toCurrency',
+        { field: 'rate', format: { type: 'number', decimals: 6 } },
+        { field: 'effectiveDate', format: { type: 'date' } },
+        'source',
+      ],
     },
   },
   actions: {

@@ -165,3 +165,19 @@
     @apply border-border transition-all duration-300 hover:translate-y-[-2px] hover:shadow-2xl;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   ACCESSIBILITY: Respect user motion preferences
+   All animations and transitions are suppressed when the user
+   has enabled "Reduce motion" in their OS settings.
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

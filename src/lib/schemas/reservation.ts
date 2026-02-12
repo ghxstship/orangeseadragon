@@ -21,7 +21,14 @@ export const reservationSchema = defineSchema({
   search: { enabled: true, fields: [], placeholder: 'Search reservations...' },
   filters: { quick: [{ key: 'pending', label: 'Pending', query: { where: { status: 'pending' } } }], advanced: ['status', 'assetId', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'pending', label: 'Pending', query: { where: { status: 'pending' } }, count: true }, { key: 'approved', label: 'Approved', query: { where: { status: 'approved' } }, count: true }, { key: 'checked-out', label: 'Checked Out', query: { where: { status: 'checked_out' } } }, { key: 'completed', label: 'Completed', query: { where: { status: 'completed' } } }], defaultView: 'table', availableViews: ['table', 'calendar'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Reservation Details', fields: ['assetId', 'eventId', 'requestedBy', 'startDate', 'endDate', 'status', 'notes'] }] } },
-  views: { table: { columns: ['assetId', 'eventId', 'requestedBy', 'startDate', 'endDate', 'status'] } },
+  views: { table: { columns: [
+    { field: 'assetId', format: { type: 'relation', entityType: 'asset' } },
+    { field: 'eventId', format: { type: 'relation', entityType: 'event' } },
+    { field: 'requestedBy', format: { type: 'relation', entityType: 'person' } },
+    { field: 'startDate', format: { type: 'datetime' } },
+    { field: 'endDate', format: { type: 'datetime' } },
+    { field: 'status', format: { type: 'badge', colorMap: { pending: '#eab308', approved: '#22c55e', rejected: '#ef4444', completed: '#6b7280' } } },
+  ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/reservations/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Reservation', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

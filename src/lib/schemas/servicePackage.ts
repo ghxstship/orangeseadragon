@@ -140,7 +140,13 @@ export const servicePackageSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'package_type', 'base_price', 'discount_percent', 'is_active'],
+      columns: [
+        'name',
+        'package_type',
+        { field: 'base_price', format: { type: 'currency' } },
+        { field: 'discount_percent', format: { type: 'percentage' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
   },
 

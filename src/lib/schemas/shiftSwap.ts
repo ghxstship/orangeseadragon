@@ -158,7 +158,13 @@ export const shiftSwapRequestSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['requestingEmployeeId', 'targetEmployeeId', 'swapType', 'status', 'requestedAt'],
+      columns: [
+        { field: 'requestingEmployeeId', format: { type: 'relation', entityType: 'person' } },
+        { field: 'targetEmployeeId', format: { type: 'relation', entityType: 'person' } },
+        'swapType',
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+        { field: 'requestedAt', format: { type: 'datetime' } },
+      ],
     },
   },
   actions: {
@@ -330,7 +336,14 @@ export const openShiftSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['shiftId', 'reason', 'priority', 'status', 'bonusAmount', 'postedAt'],
+      columns: [
+        { field: 'shiftId', format: { type: 'relation', entityType: 'shift' } },
+        'reason',
+        { field: 'priority', format: { type: 'badge', colorMap: { urgent: '#ef4444', high: '#f97316', medium: '#f59e0b', low: '#3b82f6', critical: '#ef4444', none: '#6b7280' } } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+        { field: 'bonusAmount', format: { type: 'currency' } },
+        { field: 'postedAt', format: { type: 'datetime' } },
+      ],
     },
   },
   actions: {

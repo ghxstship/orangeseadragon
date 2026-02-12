@@ -85,10 +85,10 @@ const cueTypeColors: Record<string, string> = {
   action: "bg-blue-500/10 text-blue-500 border-blue-500/30",
   audio: "bg-purple-500/10 text-purple-500 border-purple-500/30",
   video: "bg-pink-500/10 text-pink-500 border-pink-500/30",
-  lighting: "bg-yellow-500/10 text-yellow-500 border-yellow-500/30",
+  lighting: "bg-amber-500/10 text-amber-500 border-amber-500/30",
   transition: "bg-cyan-500/10 text-cyan-500 border-cyan-500/30",
   break: "bg-gray-500/10 text-gray-500 border-gray-500/30",
-  speech: "bg-green-500/10 text-green-500 border-green-500/30",
+  speech: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
   presentation: "bg-orange-500/10 text-orange-500 border-orange-500/30",
   music: "bg-indigo-500/10 text-indigo-500 border-indigo-500/30",
   standby: "bg-amber-500/10 text-amber-500 border-amber-500/30",
@@ -283,7 +283,7 @@ export function ShowCallingView({
                     : cue.status === "complete"
                     ? "bg-zinc-800/50 opacity-60"
                     : cue.status === "skipped"
-                    ? "bg-red-500/10 opacity-60"
+                    ? "bg-destructive/10 opacity-60"
                     : "hover:bg-zinc-800"
                 )}
               >
@@ -354,7 +354,7 @@ export function ShowCallingView({
               <div
                 className={cn(
                   "text-2xl font-mono font-bold",
-                  isOvertime ? "text-red-500" : "text-emerald-500"
+                  isOvertime ? "text-destructive" : "text-emerald-500"
                 )}
               >
                 {cueStartTime ? formatDuration(cueElapsedTime) : "--:--"}
@@ -386,7 +386,7 @@ export function ShowCallingView({
 
           <div className="flex items-center gap-4">
             {isOvertime && (
-              <div className="flex items-center gap-2 text-red-500">
+              <div className="flex items-center gap-2 text-destructive">
                 <AlertTriangle className="h-5 w-5" />
                 <span className="font-bold">+{formatDuration(variance)} OVER</span>
               </div>
@@ -550,7 +550,7 @@ export function ShowCallingView({
           >
             <SkipForward className="h-6 w-6 mr-2" />
             SKIP
-            <kbd className="ml-2 text-xs bg-red-800 px-2 py-1 rounded">ESC</kbd>
+            <kbd className="ml-2 text-xs bg-destructive/80 px-2 py-1 rounded">ESC</kbd>
           </Button>
 
           {currentCue && currentCue.status !== "pending" && (
@@ -621,12 +621,12 @@ export function ShowCallingView({
         </div>
 
         {isLive && (
-          <div className="p-4 bg-red-500/10 border-t border-red-500/30">
-            <div className="flex items-center gap-2 text-red-500">
-              <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+          <div className="p-4 bg-destructive/10 border-t border-destructive/30">
+            <div className="flex items-center gap-2 text-destructive">
+              <span className="h-2 w-2 rounded-full bg-destructive animate-pulse" />
               <span className="font-bold">LIVE</span>
             </div>
-            <p className="text-xs text-red-400 mt-1">
+            <p className="text-xs text-destructive/80 mt-1">
               Show started {showStartTime ? formatDistanceToNow(showStartTime, { addSuffix: true }) : ""}
             </p>
           </div>

@@ -43,9 +43,9 @@ interface TimelineDotProps extends React.HTMLAttributes<HTMLDivElement> {
 const dotVariants = {
   default: "bg-primary border-primary",
   outline: "bg-background border-border",
-  success: "bg-green-500 border-green-500",
-  warning: "bg-yellow-500 border-yellow-500",
-  error: "bg-red-500 border-red-500",
+  success: "bg-emerald-500 border-emerald-500",
+  warning: "bg-amber-500 border-amber-500",
+  error: "bg-destructive border-destructive",
 };
 
 const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(

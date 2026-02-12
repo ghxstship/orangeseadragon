@@ -129,15 +129,15 @@ export function AssetUtilizationDashboard({
   }, [filteredAssets]);
 
   const getUtilizationColor = (rate: number): string => {
-    if (rate >= 80) return 'bg-green-500';
-    if (rate >= 50) return 'bg-yellow-500';
+    if (rate >= 80) return 'bg-emerald-500';
+    if (rate >= 50) return 'bg-amber-500';
     if (rate >= 20) return 'bg-orange-500';
-    return 'bg-red-500';
+    return 'bg-destructive';
   };
 
   const getUtilizationBadge = (rate: number) => {
-    if (rate >= 80) return <Badge variant="default" className="bg-green-500">High</Badge>;
-    if (rate >= 50) return <Badge variant="default" className="bg-yellow-500">Medium</Badge>;
+    if (rate >= 80) return <Badge variant="default" className="bg-emerald-500">High</Badge>;
+    if (rate >= 50) return <Badge variant="default" className="bg-amber-500">Medium</Badge>;
     if (rate >= 20) return <Badge variant="default" className="bg-orange-500">Low</Badge>;
     return <Badge variant="destructive">Critical</Badge>;
   };
@@ -213,7 +213,7 @@ export function AssetUtilizationDashboard({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${overallStats.totalRevenue.toLocaleString()}</div>
-            <div className="flex items-center text-xs text-green-600">
+            <div className="flex items-center text-xs text-emerald-600">
               <TrendingUp className="mr-1 h-3 w-3" />
               +12% from last period
             </div>
@@ -226,7 +226,7 @@ export function AssetUtilizationDashboard({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${overallStats.totalMaintenance.toLocaleString()}</div>
-            <div className="flex items-center text-xs text-red-600">
+            <div className="flex items-center text-xs text-destructive">
               <TrendingDown className="mr-1 h-3 w-3" />
               -5% from last period
             </div>
@@ -346,8 +346,8 @@ export function AssetUtilizationDashboard({
                       </div>
                     </td>
                     <td className="py-3 text-right">{asset.days_deployed}</td>
-                    <td className="py-3 text-right text-green-600">${asset.revenue_generated.toLocaleString()}</td>
-                    <td className="py-3 text-right text-red-600">${asset.maintenance_cost.toLocaleString()}</td>
+                    <td className="py-3 text-right text-emerald-600">${asset.revenue_generated.toLocaleString()}</td>
+                    <td className="py-3 text-right text-destructive">${asset.maintenance_cost.toLocaleString()}</td>
                     <td className="py-3 text-right font-medium">${asset.net_contribution.toLocaleString()}</td>
                   </tr>
                 ))}

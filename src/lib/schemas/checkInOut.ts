@@ -24,7 +24,13 @@ export const checkInOutSchema = defineSchema({
   search: { enabled: true, fields: [], placeholder: 'Search records...' },
   filters: { quick: [], advanced: ['type', 'assetId', 'personId', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'check-out', label: 'Check Out', query: { where: { type: 'check-out' } }, count: true }, { key: 'check-in', label: 'Check In', query: { where: { type: 'check-in' } } }, { key: 'today', label: 'Today', query: { where: { timestamp: { gte: 'today', lt: 'tomorrow' } } }, count: true }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Check In/Out Details', fields: ['assetId', 'personId', 'eventId', 'type', 'timestamp', 'condition', 'notes'] }] } },
-  views: { table: { columns: ['assetId', 'personId', 'type', 'timestamp', 'condition'] } },
+  views: { table: { columns: [
+    { field: 'assetId', format: { type: 'relation', entityType: 'asset' } },
+    { field: 'personId', format: { type: 'relation', entityType: 'person' } },
+    { field: 'type', format: { type: 'badge', colorMap: { 'check-out': '#f59e0b', 'check-in': '#22c55e' } } },
+    { field: 'timestamp', format: { type: 'datetime' } },
+    { field: 'condition', format: { type: 'badge', colorMap: { good: '#22c55e', fair: '#eab308', poor: '#f59e0b', damaged: '#ef4444' } } },
+  ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/check/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Record', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

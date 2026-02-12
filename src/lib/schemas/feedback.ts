@@ -159,7 +159,13 @@ export const feedbackSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['subject', 'recipient_id', 'feedback_type', 'rating', 'created_at'],
+      columns: [
+        'subject',
+        { field: 'recipient_id', format: { type: 'relation', entityType: 'person' } },
+        'feedback_type',
+        { field: 'rating', format: { type: 'number' } },
+        { field: 'created_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

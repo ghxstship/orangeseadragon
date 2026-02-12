@@ -97,18 +97,18 @@ export function CurfewCountdown({
       badge: "bg-amber-500/20 text-amber-400",
     },
     critical: {
-      bg: "bg-red-500/10",
-      border: "border-red-500/40",
-      text: "text-red-400",
+      bg: "bg-destructive/10",
+      border: "border-destructive/40",
+      text: "text-destructive/80",
       glow: "shadow-[0_0_30px_rgba(239,68,68,0.2)]",
-      badge: "bg-red-500/20 text-red-400",
+      badge: "bg-destructive/20 text-destructive/80",
     },
     expired: {
-      bg: "bg-red-500/20",
-      border: "border-red-500/60",
-      text: "text-red-300",
+      bg: "bg-destructive/20",
+      border: "border-destructive/60",
+      text: "text-destructive/70",
       glow: "shadow-[0_0_40px_rgba(239,68,68,0.3)]",
-      badge: "bg-red-500/30 text-red-300",
+      badge: "bg-destructive/30 text-destructive/70",
     },
   };
 

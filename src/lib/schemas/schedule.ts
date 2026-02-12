@@ -17,7 +17,13 @@ export const scheduleSchema = defineSchema({
   search: { enabled: true, fields: ['name'], placeholder: 'Search schedules...' },
   filters: { quick: [], advanced: ['status', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'active', label: 'Active', query: { where: { startDate: { lte: 'now' }, endDate: { gte: 'now' } } }, count: true }, { key: 'upcoming', label: 'Upcoming', query: { where: { startDate: { gte: 'now' } } }, count: true }, { key: 'draft', label: 'Draft', query: { where: { status: 'draft' } }, count: true }, { key: 'published', label: 'Published', query: { where: { status: 'published' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Details', fields: ['name', 'eventId', 'startDate', 'endDate', 'status', 'notes'] }] } },
-  views: { table: { columns: ['name', 'eventId', 'startDate', 'endDate', 'status'] } },
+  views: { table: { columns: [
+        'name',
+        { field: 'eventId', format: { type: 'relation', entityType: 'event' } },
+        { field: 'startDate', format: { type: 'date' } },
+        { field: 'endDate', format: { type: 'date' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+      ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/schedules/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Schedule', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

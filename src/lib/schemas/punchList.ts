@@ -174,7 +174,14 @@ export const punchListSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'location', 'priority', 'status', 'assigned_to', 'due_date'],
+      columns: [
+        'title',
+        'location',
+        { field: 'priority', format: { type: 'badge', colorMap: { urgent: '#ef4444', high: '#f97316', medium: '#f59e0b', low: '#3b82f6', critical: '#ef4444', none: '#6b7280' } } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
+        { field: 'assigned_to', format: { type: 'relation', entityType: 'person' } },
+        { field: 'due_date', format: { type: 'date' } },
+      ],
     },
     kanban: {
       columnField: 'status',

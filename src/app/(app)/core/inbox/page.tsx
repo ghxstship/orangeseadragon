@@ -6,7 +6,6 @@ import {
   Bell,
   Check,
   CheckCircle2,
-  Filter,
   Clock,
   MessageSquare,
   AtSign,
@@ -15,6 +14,9 @@ import {
   FileText,
   Zap,
   Inbox,
+  RefreshCw,
+  Settings,
+  Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -25,8 +27,11 @@ import {
   Sheet,
   SheetContent,
 } from '@/components/ui/sheet';
+import { StatCard, StatGrid } from '@/components/common/stat-card';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { InboxItemRow } from '@/components/common/inbox-item-row';
 import { InboxItemDetail } from '@/components/common/inbox-item-detail';
+import { cn } from '@/lib/utils';
 
 type InboxItemType = 'approval' | 'mention' | 'alert' | 'assignment' | 'comment' | 'update';
 type InboxItemStatus = 'unread' | 'read' | 'actioned' | 'dismissed';
@@ -48,6 +53,12 @@ interface InboxItem {
     name: string;
     avatar_url?: string;
   };
+}
+
+interface TimeGroup {
+  key: string;
+  label: string;
+  items: InboxItem[];
 }
 
 const TYPE_ICONS: Record<InboxItemType, React.ElementType> = {
@@ -77,16 +88,43 @@ const SOURCE_PATHS: Record<SourceEntity, (id: string) => string> = {
   production: (id) => `/productions/${id}`,
 };
 
+function getTimeGroupKey(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const itemDate = new Date(date);
+  itemDate.setHours(0, 0, 0, 0);
+  const diffDays = Math.floor((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'today';
+  if (diffDays === 1) return 'yesterday';
+  if (diffDays <= 7) return 'this_week';
+  if (diffDays <= 14) return 'last_week';
+  return 'older';
+}
+
+const TIME_GROUP_LABELS: Record<string, string> = {
+  today: 'Today',
+  yesterday: 'Yesterday',
+  this_week: 'Earlier This Week',
+  last_week: 'Last Week',
+  older: 'Older',
+};
+
+const TIME_GROUP_ORDER = ['today', 'yesterday', 'this_week', 'last_week', 'older'];
+
 export default function InboxPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = React.useState('all');
   const [items, setItems] = React.useState<InboxItem[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
   const [detailItem, setDetailItem] = React.useState<InboxItem | null>(null);
 
   const fetchInboxItems = React.useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams();
       if (activeTab === 'unread') params.set('status', 'unread');
@@ -95,12 +133,12 @@ export default function InboxPage() {
       if (activeTab === 'alerts') params.set('type', 'alert');
 
       const response = await fetch(`/api/inbox?${params}`);
-      if (response.ok) {
-        const data = await response.json();
-        setItems(data.data || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch inbox items:', error);
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
+      const data = await response.json();
+      setItems(data.data || []);
+    } catch (err) {
+      console.error('Failed to fetch inbox items:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load notifications');
     } finally {
       setLoading(false);
     }
@@ -109,6 +147,31 @@ export default function InboxPage() {
   React.useEffect(() => {
     fetchInboxItems();
   }, [fetchInboxItems]);
+
+  // Keyboard shortcuts
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'r' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+        e.preventDefault();
+        if (selectedIds.size > 0) {
+          handleMarkRead(Array.from(selectedIds));
+        } else {
+          handleMarkAllRead();
+        }
+      }
+      if (e.key === 'Backspace' && (e.metaKey || e.ctrlKey) && selectedIds.size > 0) {
+        e.preventDefault();
+        handleDismiss(Array.from(selectedIds));
+      }
+      if (e.key === 'Escape') {
+        setSelectedIds(new Set());
+        setDetailItem(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIds]);
 
   const handleMarkRead = async (ids: string[]) => {
     try {
@@ -123,8 +186,8 @@ export default function InboxPage() {
         )
       );
       setSelectedIds(new Set());
-    } catch (error) {
-      console.error('Failed to mark as read:', error);
+    } catch (err) {
+      console.error('Failed to mark as read:', err);
     }
   };
 
@@ -142,8 +205,8 @@ export default function InboxPage() {
         prev.map((i) => (i.id === item.id ? { ...i, status: 'actioned' as InboxItemStatus } : i))
       );
       setDetailItem(null);
-    } catch (error) {
-      console.error('Failed to approve:', error);
+    } catch (err) {
+      console.error('Failed to approve:', err);
     }
   };
 
@@ -154,8 +217,8 @@ export default function InboxPage() {
         prev.map((i) => (i.id === item.id ? { ...i, status: 'actioned' as InboxItemStatus } : i))
       );
       setDetailItem(null);
-    } catch (error) {
-      console.error('Failed to reject:', error);
+    } catch (err) {
+      console.error('Failed to reject:', err);
     }
   };
 
@@ -168,8 +231,8 @@ export default function InboxPage() {
       });
       setItems((prev) => prev.filter((item) => !ids.includes(item.id)));
       setSelectedIds(new Set());
-    } catch (error) {
-      console.error('Failed to dismiss:', error);
+    } catch (err) {
+      console.error('Failed to dismiss:', err);
     }
   };
 
@@ -202,6 +265,7 @@ export default function InboxPage() {
 
   const unreadCount = items.filter((i) => i.status === 'unread').length;
   const approvalCount = items.filter((i) => i.type === 'approval' && i.status !== 'actioned').length;
+  const urgentCount = items.filter((i) => i.priority === 'urgent' && i.status === 'unread').length;
 
   const tabCounts: Record<string, number> = {
     all: items.length,
@@ -211,58 +275,149 @@ export default function InboxPage() {
     alerts: items.filter((i) => i.type === 'alert').length,
   };
 
+  // Group items by time
+  const timeGroups = React.useMemo<TimeGroup[]>(() => {
+    const groups: Record<string, InboxItem[]> = {};
+    TIME_GROUP_ORDER.forEach((key) => (groups[key] = []));
+
+    items.forEach((item) => {
+      const groupKey = getTimeGroupKey(item.created_at);
+      groups[groupKey].push(item);
+    });
+
+    return TIME_GROUP_ORDER
+      .filter((key) => groups[key].length > 0)
+      .map((key) => ({
+        key,
+        label: TIME_GROUP_LABELS[key],
+        items: groups[key],
+      }));
+  }, [items]);
+
+  if (error && !loading) {
+    return (
+      <div className="flex flex-col h-full bg-background">
+        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Inbox</h1>
+              <p className="text-sm text-muted-foreground">Notifications, approvals & action items</p>
+            </div>
+          </div>
+        </header>
+        <div className="flex-1 flex items-center justify-center p-8">
+          <ContextualEmptyState
+            type="error"
+            title="Failed to load notifications"
+            description={error}
+            actionLabel="Try again"
+            onAction={fetchInboxItems}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header — Layout A */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
         <div className="flex items-center justify-between px-6 py-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Inbox</h1>
-          <p className="text-sm text-muted-foreground">
-            Notifications, approvals & action items
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {selectedIds.size > 0 ? (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleMarkRead(Array.from(selectedIds))}
-              >
-                <Check className="mr-2 h-4 w-4" />
-                Mark Read ({selectedIds.size})
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleDismiss(Array.from(selectedIds))}
-              >
-                Dismiss ({selectedIds.size})
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleMarkAllRead}
-                disabled={unreadCount === 0}
-              >
-                <Check className="mr-2 h-4 w-4" />
-                Mark all read
-              </Button>
-              <Button variant="outline" size="icon">
-                <Filter className="h-4 w-4" />
-              </Button>
-            </>
-          )}
-        </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Inbox</h1>
+            <p className="text-sm text-muted-foreground">
+              Notifications, approvals & action items
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {selectedIds.size > 0 ? (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleMarkRead(Array.from(selectedIds))}
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Mark Read ({selectedIds.size})
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDismiss(Array.from(selectedIds))}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Dismiss ({selectedIds.size})
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedIds(new Set())}
+                >
+                  Clear
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={fetchInboxItems}
+                  disabled={loading}
+                >
+                  <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleMarkAllRead}
+                  disabled={unreadCount === 0}
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Mark all read
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => router.push('/account/notifications')}
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </header>
 
       {/* Content */}
       <div className="flex-1 overflow-auto p-6 space-y-6">
+        {/* KPI Stats */}
+        <StatGrid columns={4}>
+          <StatCard
+            title="Unread"
+            value={loading ? '...' : String(unreadCount)}
+            icon={Bell}
+            trend={unreadCount > 10 ? { value: unreadCount, isPositive: false } : undefined}
+          />
+          <StatCard
+            title="Pending Approvals"
+            value={loading ? '...' : String(approvalCount)}
+            icon={CheckCircle2}
+            trend={approvalCount > 0 ? { value: approvalCount, isPositive: false } : undefined}
+            description={approvalCount > 0 ? 'action required' : 'all clear'}
+          />
+          <StatCard
+            title="Urgent"
+            value={loading ? '...' : String(urgentCount)}
+            icon={AlertTriangle}
+            trend={urgentCount > 0 ? { value: urgentCount, isPositive: false } : undefined}
+          />
+          <StatCard
+            title="Total"
+            value={loading ? '...' : String(items.length)}
+            icon={Inbox}
+          />
+        </StatGrid>
+
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList variant="underline">
@@ -292,9 +447,19 @@ export default function InboxPage() {
             </TabsTrigger>
             <TabsTrigger value="mentions" className="gap-2">
               Mentions
+              {tabCounts.mentions > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  {tabCounts.mentions}
+                </Badge>
+              )}
             </TabsTrigger>
             <TabsTrigger value="alerts" className="gap-2">
               Alerts
+              {tabCounts.alerts > 0 && (
+                <Badge variant="secondary" className="text-xs">
+                  {tabCounts.alerts}
+                </Badge>
+              )}
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -302,7 +467,7 @@ export default function InboxPage() {
         {/* Loading State */}
         {loading && (
           <div className="space-y-2">
-            {[1, 2, 3].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <Skeleton key={i} className="h-16 w-full" />
             ))}
           </div>
@@ -310,18 +475,16 @@ export default function InboxPage() {
 
         {/* Empty State */}
         {!loading && items.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-center">
-            <Inbox className="h-12 w-12 text-muted-foreground/50 mb-4" />
-            <h3 className="text-lg font-medium">You&apos;re all caught up!</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              New notifications will appear here.
-            </p>
-          </div>
+          <ContextualEmptyState
+            type="no-data"
+            title="You're all caught up!"
+            description="New notifications will appear here when you receive mentions, approvals, or alerts."
+          />
         )}
 
-        {/* Item List */}
+        {/* Time-Grouped Item List */}
         {!loading && items.length > 0 && (
-          <div className="space-y-1">
+          <div className="space-y-6">
             {/* Select all header */}
             <div className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground">
               <Checkbox
@@ -329,21 +492,38 @@ export default function InboxPage() {
                 onCheckedChange={toggleSelectAll}
               />
               <span>Select all</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider opacity-40 ml-auto">
+                ⌘⇧R mark read · ⌘⌫ dismiss · Esc clear
+              </span>
             </div>
 
-            {/* Items */}
-            {items.map((item) => (
-              <InboxItemRow
-                key={item.id}
-                item={item}
-                isSelected={selectedIds.has(item.id)}
-                typeIcon={TYPE_ICONS[item.type]}
-                onToggleSelect={() => toggleSelect(item.id)}
-                onMarkRead={() => handleMarkRead([item.id])}
-                onDismiss={() => handleDismiss([item.id])}
-                onViewDetail={() => setDetailItem(item)}
-                onNavigate={() => handleNavigateToSource(item)}
-              />
+            {/* Time Groups */}
+            {timeGroups.map((group) => (
+              <div key={group.key}>
+                <div className="flex items-center gap-2 mb-2 px-3">
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-50">
+                    {group.label}
+                  </h3>
+                  <Badge variant="secondary" className="text-[10px] h-5 px-1.5">
+                    {group.items.length}
+                  </Badge>
+                </div>
+                <div className="space-y-1">
+                  {group.items.map((item) => (
+                    <InboxItemRow
+                      key={item.id}
+                      item={item}
+                      isSelected={selectedIds.has(item.id)}
+                      typeIcon={TYPE_ICONS[item.type]}
+                      onToggleSelect={() => toggleSelect(item.id)}
+                      onMarkRead={() => handleMarkRead([item.id])}
+                      onDismiss={() => handleDismiss([item.id])}
+                      onViewDetail={() => setDetailItem(item)}
+                      onNavigate={() => handleNavigateToSource(item)}
+                    />
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         )}

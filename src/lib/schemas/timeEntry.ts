@@ -169,7 +169,14 @@ export const timeEntrySchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['date', 'project_id', 'user_id', 'hours', 'billable', 'status'],
+      columns: [
+        { field: 'date', format: { type: 'date' } },
+        { field: 'project_id', format: { type: 'relation', entityType: 'project' } },
+        { field: 'user_id', format: { type: 'relation', entityType: 'person' } },
+        { field: 'hours', format: { type: 'number', decimals: 1 } },
+        { field: 'billable', format: { type: 'boolean', trueLabel: 'Billable', falseLabel: 'Non-billable' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', submitted: '#3b82f6', approved: '#22c55e', rejected: '#ef4444' } } },
+      ],
     },
   },
   actions: {

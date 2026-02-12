@@ -64,7 +64,7 @@ export function TimeClock({
   }, []);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
+    return date.toLocaleTimeString(undefined, {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
@@ -73,7 +73,7 @@ export function TimeClock({
   };
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(undefined, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',

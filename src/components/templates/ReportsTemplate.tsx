@@ -120,8 +120,8 @@ export function ReportsTemplate({
 
   const getTrendIcon = (change?: number) => {
     if (!change) return <Minus className="h-4 w-4 text-muted-foreground" />;
-    if (change > 0) return <TrendingUp className="h-4 w-4 text-green-500" />;
-    return <TrendingDown className="h-4 w-4 text-red-500" />;
+    if (change > 0) return <TrendingUp className="h-4 w-4 text-emerald-500" />;
+    return <TrendingDown className="h-4 w-4 text-destructive" />;
   };
 
   return (
@@ -216,7 +216,7 @@ export function ReportsTemplate({
                       {metric.change !== undefined && (
                         <p className={cn(
                           'text-xs',
-                          metric.change > 0 ? 'text-green-500' : metric.change < 0 ? 'text-red-500' : 'text-muted-foreground'
+                          metric.change > 0 ? 'text-emerald-500' : metric.change < 0 ? 'text-destructive' : 'text-muted-foreground'
                         )}>
                           {metric.change > 0 ? '+' : ''}{metric.change}% {metric.changeLabel || 'from last period'}
                         </p>

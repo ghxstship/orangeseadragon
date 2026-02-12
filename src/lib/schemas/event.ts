@@ -187,7 +187,15 @@ export const eventSchema = defineSchema({
   // Views
   views: {
     table: {
-      columns: ['name', 'eventType', 'startDate', 'endDate', 'venueId', 'budget', 'phase'],
+      columns: [
+        'name',
+        { field: 'eventType', format: { type: 'badge', colorMap: { concert: '#3b82f6', festival: '#8b5cf6', corporate: '#f59e0b', conference: '#22c55e', private: '#ec4899', other: '#6b7280' } } },
+        { field: 'startDate', format: { type: 'date' } },
+        { field: 'endDate', format: { type: 'date' } },
+        { field: 'venueId', format: { type: 'relation', entityType: 'venue' } },
+        { field: 'budget', format: { type: 'currency' } },
+        { field: 'phase', format: { type: 'badge', colorMap: { planning: '#6b7280', pre_production: '#3b82f6', production: '#eab308', wrap: '#f59e0b', complete: '#22c55e', cancelled: '#ef4444' } } },
+      ],
     }
   },
 

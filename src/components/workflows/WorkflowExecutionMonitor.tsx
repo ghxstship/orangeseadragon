@@ -25,16 +25,16 @@ interface WorkflowExecutionMonitorProps {
 const statusConfig: Record<ExecutionStatus, { icon: React.ReactNode; color: string; label: string }> = {
   pending: { icon: <Clock className="h-4 w-4" />, color: "text-muted-foreground", label: "Pending" },
   running: { icon: <RefreshCw className="h-4 w-4 animate-spin" />, color: "text-blue-500", label: "Running" },
-  completed: { icon: <CheckCircle className="h-4 w-4" />, color: "text-green-500", label: "Completed" },
-  failed: { icon: <XCircle className="h-4 w-4" />, color: "text-red-500", label: "Failed" },
-  cancelled: { icon: <AlertCircle className="h-4 w-4" />, color: "text-yellow-500", label: "Cancelled" },
+  completed: { icon: <CheckCircle className="h-4 w-4" />, color: "text-emerald-500", label: "Completed" },
+  failed: { icon: <XCircle className="h-4 w-4" />, color: "text-destructive", label: "Failed" },
+  cancelled: { icon: <AlertCircle className="h-4 w-4" />, color: "text-amber-500", label: "Cancelled" },
 };
 
 const stepStatusConfig: Record<StepStatus, { icon: React.ReactNode; color: string }> = {
   pending: { icon: <Clock className="h-3 w-3" />, color: "text-muted-foreground" },
   running: { icon: <RefreshCw className="h-3 w-3 animate-spin" />, color: "text-blue-500" },
-  completed: { icon: <CheckCircle className="h-3 w-3" />, color: "text-green-500" },
-  failed: { icon: <XCircle className="h-3 w-3" />, color: "text-red-500" },
+  completed: { icon: <CheckCircle className="h-3 w-3" />, color: "text-emerald-500" },
+  failed: { icon: <XCircle className="h-3 w-3" />, color: "text-destructive" },
   skipped: { icon: <AlertCircle className="h-3 w-3" />, color: "text-muted-foreground" },
 };
 

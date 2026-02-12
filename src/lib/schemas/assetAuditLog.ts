@@ -165,7 +165,13 @@ export const assetAuditLogSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['asset_id', 'action', 'performed_by', 'performed_at', 'notes'],
+      columns: [
+        { field: 'asset_id', format: { type: 'relation', entityType: 'asset' } },
+        'action',
+        { field: 'performed_by', format: { type: 'relation', entityType: 'person' } },
+        { field: 'performed_at', format: { type: 'datetime' } },
+        'notes',
+      ],
     },
     list: {
       titleField: 'action',

@@ -17,7 +17,12 @@ export const zoneSchema = defineSchema({
   search: { enabled: true, fields: ['name'], placeholder: 'Search zones...' },
   filters: { quick: [], advanced: ['type', 'venueId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'public', label: 'Public', query: { where: { type: 'public' } } }, { key: 'vip', label: 'VIP', query: { where: { type: 'vip' } } }, { key: 'backstage', label: 'Backstage', query: { where: { type: 'backstage' } } }, { key: 'restricted', label: 'Restricted', query: { where: { type: 'restricted' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'capacity', label: 'Capacity', value: { type: 'field', field: 'capacity' } }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Zone Details', fields: ['name', 'venueId', 'type', 'capacity', 'color', 'description'] }] } },
-  views: { table: { columns: ['name', 'venueId', 'type', 'capacity'] } },
+  views: { table: { columns: [
+        'name',
+        { field: 'venueId', format: { type: 'relation', entityType: 'venue' } },
+        'type',
+        { field: 'capacity', format: { type: 'number' } },
+      ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/zones/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Zone', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
   permissions: { create: true, read: true, update: true, delete: true },
 });

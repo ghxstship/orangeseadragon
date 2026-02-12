@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { DEFAULT_LOCALE } from '@/lib/config';
 import { TrendingUp, TrendingDown, Target, DollarSign, Calendar } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -40,7 +41,7 @@ interface ForecastData {
     }[];
 }
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
+const currencyFormatter = new Intl.NumberFormat(DEFAULT_LOCALE, {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
@@ -63,8 +64,8 @@ function ForecastCard({
 }) {
     const variantStyles = {
         default: '',
-        success: 'border-green-200 dark:border-green-800',
-        warning: 'border-yellow-200 dark:border-yellow-800',
+        success: 'border-emerald-200 dark:border-emerald-800',
+        warning: 'border-amber-200 dark:border-amber-800',
         primary: 'border-primary/50',
     };
 
@@ -87,12 +88,12 @@ function ForecastCard({
                 </div>
                 {trend && (
                     <div className="flex items-center gap-1 mt-2">
-                        {trend.direction === 'up' && <TrendingUp className="w-3 h-3 text-green-600" />}
-                        {trend.direction === 'down' && <TrendingDown className="w-3 h-3 text-red-600" />}
+                        {trend.direction === 'up' && <TrendingUp className="w-3 h-3 text-emerald-600" />}
+                        {trend.direction === 'down' && <TrendingDown className="w-3 h-3 text-destructive" />}
                         <span className={cn(
                             "text-xs font-medium",
-                            trend.direction === 'up' && "text-green-600",
-                            trend.direction === 'down' && "text-red-600"
+                            trend.direction === 'up' && "text-emerald-600",
+                            trend.direction === 'down' && "text-destructive"
                         )}>
                             {trend.value}
                         </span>
@@ -136,8 +137,8 @@ function QuotaProgress({
                 value={percentage} 
                 className={cn(
                     "h-2",
-                    isOnTrack && "[&>div]:bg-green-500",
-                    isAtRisk && "[&>div]:bg-red-500"
+                    isOnTrack && "[&>div]:bg-emerald-500",
+                    isAtRisk && "[&>div]:bg-destructive"
                 )}
             />
         </div>
@@ -161,7 +162,7 @@ function ForecastScenarios({
             <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500" />
+                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
                         <span className="text-sm">Best Case</span>
                     </div>
                     <span className="font-semibold">{currencyFormatter.format(bestCase)}</span>
@@ -185,7 +186,7 @@ function ForecastScenarios({
                 <div className="pt-2">
                     <div className="relative h-8 bg-muted rounded-lg overflow-hidden">
                         <div 
-                            className="absolute h-full bg-gradient-to-r from-orange-500/30 via-blue-500/50 to-green-500/30"
+                            className="absolute h-full bg-gradient-to-r from-orange-500/30 via-blue-500/50 to-emerald-500/30"
                             style={{ left: '10%', right: '10%' }}
                         />
                         <div 

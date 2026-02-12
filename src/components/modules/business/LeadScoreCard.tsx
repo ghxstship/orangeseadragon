@@ -28,11 +28,11 @@ interface LeadScore {
 const scoreConfig = {
     hot: {
         icon: Flame,
-        color: 'text-red-500',
-        bgColor: 'bg-red-500/10',
-        borderColor: 'border-red-500/30',
+        color: 'text-destructive',
+        bgColor: 'bg-destructive/10',
+        borderColor: 'border-destructive/30',
         label: 'Hot Lead',
-        progressColor: '[&>div]:bg-red-500',
+        progressColor: '[&>div]:bg-destructive',
     },
     warm: {
         icon: Thermometer,
@@ -63,7 +63,7 @@ const scoreConfig = {
 function TrendIndicator({ direction, change }: { direction: string; change: number }) {
     if (direction === 'up') {
         return (
-            <div className="flex items-center gap-1 text-green-600">
+            <div className="flex items-center gap-1 text-emerald-600">
                 <TrendingUp className="w-3 h-3" />
                 <span className="text-xs font-medium">+{change}</span>
             </div>
@@ -71,7 +71,7 @@ function TrendIndicator({ direction, change }: { direction: string; change: numb
     }
     if (direction === 'down') {
         return (
-            <div className="flex items-center gap-1 text-red-600">
+            <div className="flex items-center gap-1 text-destructive">
                 <TrendingDown className="w-3 h-3" />
                 <span className="text-xs font-medium">{change}</span>
             </div>

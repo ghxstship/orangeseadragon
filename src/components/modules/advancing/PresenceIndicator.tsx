@@ -26,7 +26,7 @@ const sizeClasses = {
 
 const ringColors = {
   viewing: 'ring-blue-500',
-  editing: 'ring-green-500',
+  editing: 'ring-emerald-500',
 };
 
 export function PresenceIndicator({
@@ -60,7 +60,7 @@ export function PresenceIndicator({
                   </AvatarFallback>
                 </Avatar>
                 {user.action === 'editing' && (
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-background" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
                 )}
               </div>
             </TooltipTrigger>

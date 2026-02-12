@@ -13,7 +13,7 @@ export function LiveClockWidget() {
     }, []);
 
     // Format: 21:09:45
-    const timeString = time.toLocaleTimeString('en-US', {
+    const timeString = time.toLocaleTimeString(undefined, {
         hour12: false,
         hour: '2-digit',
         minute: '2-digit',
@@ -21,7 +21,7 @@ export function LiveClockWidget() {
     });
 
     // Format: WED 24 OCT
-    const dateString = time.toLocaleDateString('en-US', {
+    const dateString = time.toLocaleDateString(undefined, {
         weekday: 'short',
         day: 'numeric',
         month: 'short',

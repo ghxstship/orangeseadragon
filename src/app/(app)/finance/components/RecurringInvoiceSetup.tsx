@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, RefreshCw } from 'lucide-react';
 import { format, addMonths, addWeeks, addYears } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { DEFAULT_LOCALE } from '@/lib/config';
 
 interface RecurringInvoiceSetupProps {
   onSubmit: (data: RecurringInvoiceData) => void;
@@ -306,7 +307,7 @@ export function RecurringInvoiceSetup({ onSubmit, onCancel, initialData }: Recur
                   <li key={i} className="flex items-center justify-between">
                     <span>{format(date, 'MMMM d, yyyy')}</span>
                     <span className="font-medium">
-                      ${formData.amount?.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      ${formData.amount?.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
                     </span>
                   </li>
                 ))}

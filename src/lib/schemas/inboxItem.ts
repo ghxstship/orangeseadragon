@@ -188,7 +188,13 @@ export const inboxItemSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'type', 'status', 'priority', 'due_at', 'from_user_id'],
+      columns: [
+        'title', 'type',
+        { field: 'status', format: { type: 'badge', colorMap: { unread: '#3b82f6', read: '#6b7280', actioned: '#22c55e', archived: '#6b7280' } } },
+        { field: 'priority', format: { type: 'badge', colorMap: { urgent: '#ef4444', high: '#f97316', medium: '#f59e0b', low: '#3b82f6', none: '#6b7280' } } },
+        { field: 'due_at', format: { type: 'datetime' } },
+        { field: 'from_user_id', format: { type: 'relation', entityType: 'person' } },
+      ],
     },
     list: {
       titleField: 'title',

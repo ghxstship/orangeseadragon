@@ -162,7 +162,15 @@ export const productionAdvanceSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['advance_code', 'event_id', 'advance_type', 'status', 'priority', 'due_date', 'assigned_to'],
+      columns: [
+        'advance_code',
+        { field: 'event_id', format: { type: 'relation', entityType: 'event' } },
+        'advance_type',
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', in_progress: '#f59e0b', pending_review: '#3b82f6', completed: '#22c55e', cancelled: '#ef4444' } } },
+        { field: 'priority', format: { type: 'badge', colorMap: { urgent: '#ef4444', high: '#f97316', medium: '#f59e0b', low: '#3b82f6' } } },
+        { field: 'due_date', format: { type: 'date' } },
+        { field: 'assigned_to', format: { type: 'relation', entityType: 'person' } },
+      ],
     },
     list: {
       titleField: 'advance_code',
@@ -397,7 +405,15 @@ export const advanceItemSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['item_name', 'category_id', 'vendor_id', 'status', 'scheduled_delivery', 'location', 'is_critical_path'],
+      columns: [
+        'item_name',
+        { field: 'category_id', format: { type: 'relation', entityType: 'category' } },
+        { field: 'vendor_id', format: { type: 'relation', entityType: 'company' } },
+        { field: 'status', format: { type: 'badge', colorMap: { pending: '#f59e0b', ordered: '#3b82f6', shipped: '#8b5cf6', delivered: '#22c55e', cancelled: '#ef4444' } } },
+        { field: 'scheduled_delivery', format: { type: 'date' } },
+        'location',
+        { field: 'is_critical_path', format: { type: 'boolean' } },
+      ],
     },
   },
 
@@ -546,7 +562,14 @@ export const advanceItemFulfillmentSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['advance_item_id', 'fulfillment_stage', 'percentage_complete', 'expected_completion', 'actual_completion', 'assigned_to'],
+      columns: [
+        { field: 'advance_item_id', format: { type: 'relation', entityType: 'advance_item' } },
+        'fulfillment_stage',
+        { field: 'percentage_complete', format: { type: 'percentage' } },
+        { field: 'expected_completion', format: { type: 'date' } },
+        { field: 'actual_completion', format: { type: 'date' } },
+        { field: 'assigned_to', format: { type: 'relation', entityType: 'person' } },
+      ],
     },
   },
 
@@ -709,7 +732,16 @@ export const vendorRatingSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['vendor_id', 'event_id', 'overall_rating', 'quality_rating', 'communication_rating', 'on_time_delivery', 'would_recommend', 'rated_at'],
+      columns: [
+        { field: 'vendor_id', format: { type: 'relation', entityType: 'company' } },
+        { field: 'event_id', format: { type: 'relation', entityType: 'event' } },
+        { field: 'overall_rating', format: { type: 'number' } },
+        { field: 'quality_rating', format: { type: 'number' } },
+        { field: 'communication_rating', format: { type: 'number' } },
+        { field: 'on_time_delivery', format: { type: 'boolean' } },
+        { field: 'would_recommend', format: { type: 'boolean' } },
+        { field: 'rated_at', format: { type: 'datetime' } },
+      ],
     },
   },
 
@@ -851,7 +883,12 @@ export const advanceCategorySchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'code', 'parent_category_id', 'color', 'is_active'],
+      columns: [
+        'name', 'code',
+        { field: 'parent_category_id', format: { type: 'relation', entityType: 'category' } },
+        'color',
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
   },
 
@@ -989,7 +1026,12 @@ export const advancingCatalogItemSchema = defineSchema({
       cardFields: ['category_id'],
     },
     table: {
-      columns: ['name', 'category_id', 'base_unit_cost', 'is_available'],
+      columns: [
+        'name',
+        { field: 'category_id', format: { type: 'relation', entityType: 'category' } },
+        { field: 'base_unit_cost', format: { type: 'currency' } },
+        { field: 'is_available', format: { type: 'boolean' } },
+      ],
     }
   },
 

@@ -482,6 +482,7 @@ export interface TableColumnDefinition {
   minWidth?: number;
   frozen?: 'left' | 'right';
   align?: 'left' | 'center' | 'right';
+  format?: ColumnFormat;
 }
 
 export interface KanbanViewConfig {
@@ -608,6 +609,7 @@ export type ColumnFormat =
   | { type: 'badge'; colorMap?: Record<string, string> }
   | { type: 'link'; hrefField?: string }
   | { type: 'avatar'; fallbackField?: string }
+  | { type: 'relation'; entityType: string; hrefPrefix?: string }
   | { type: 'custom'; render?: string };
 
 export interface MapViewConfig {

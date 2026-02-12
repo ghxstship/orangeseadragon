@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Download, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { DEFAULT_LOCALE } from '@/lib/config';
 
 interface PaymentDetails {
   invoiceNumber: string;
@@ -53,11 +54,11 @@ function PaymentSuccessContent() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-green-50 to-white p-4 dark:from-green-950/20 dark:to-background">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-emerald-50 to-white p-4 dark:from-emerald-950/20 dark:to-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-            <CheckCircle2 className="h-10 w-10 text-green-600" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
+            <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
           </div>
           <CardTitle className="text-2xl">Payment Successful!</CardTitle>
           <CardDescription>
@@ -75,7 +76,7 @@ function PaymentSuccessContent() {
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Amount Paid</dt>
                   <dd className="font-medium">
-                    {paymentDetails.currency} {paymentDetails.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {paymentDetails.currency} {paymentDetails.amount.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
                   </dd>
                 </div>
                 <div className="flex justify-between">
@@ -85,7 +86,7 @@ function PaymentSuccessContent() {
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Date</dt>
                   <dd className="font-medium">
-                    {new Date(paymentDetails.paidAt).toLocaleDateString('en-US', {
+                    {new Date(paymentDetails.paidAt).toLocaleDateString(undefined, {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',

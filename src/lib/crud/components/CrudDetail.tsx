@@ -6,6 +6,7 @@ import { EntitySchema, EntityRecord } from '@/lib/schema/types';
 import { useCrud } from '../hooks/useCrud';
 import { DetailLayout } from '@/lib/layouts';
 import { TabRenderer } from './TabRenderer';
+import { SidebarRenderer } from './SidebarRenderer';
 import { LoadingState, ErrorState, EmptyState } from '@/components/states/AsyncStates';
 
 interface CrudDetailProps<T extends EntityRecord = EntityRecord> {
@@ -19,6 +20,7 @@ interface CrudDetailProps<T extends EntityRecord = EntityRecord> {
  *
  * Renders ANY entity detail view based on schema configuration.
  * Uses the unified DetailLayout which accepts EntitySchema directly.
+ * Renders sidebar content from schema.layouts.detail.sidebar config.
  */
 export function CrudDetail<T extends EntityRecord>({
   schema,
@@ -56,6 +58,8 @@ export function CrudDetail<T extends EntityRecord>({
     }
   };
 
+  const sidebarConfig = schema.layouts.detail.sidebar;
+
   return (
     <DetailLayout
       schema={schema}
@@ -66,6 +70,15 @@ export function CrudDetail<T extends EntityRecord>({
       onBack={handleBack}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      sidebarContent={
+        sidebarConfig ? (
+          <SidebarRenderer
+            schema={schema as unknown as EntitySchema<EntityRecord>}
+            record={record}
+            onTabChange={setCurrentTab}
+          />
+        ) : undefined
+      }
     >
       <TabRenderer
         schema={schema as unknown as EntitySchema<EntityRecord>}

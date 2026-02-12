@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { DEFAULT_LOCALE } from "@/lib/config";
 import {
   DollarSign,
   Clock,
@@ -85,7 +86,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: str
   draft: { label: "Draft", color: "text-muted-foreground", bgColor: "bg-muted" },
   sent: { label: "Sent", color: "text-blue-500", bgColor: "bg-blue-500/10" },
   paid: { label: "Paid", color: "text-emerald-500", bgColor: "bg-emerald-500/10" },
-  overdue: { label: "Overdue", color: "text-red-500", bgColor: "bg-red-500/10" },
+  overdue: { label: "Overdue", color: "text-destructive", bgColor: "bg-destructive/10" },
   partially_paid: { label: "Partial", color: "text-amber-500", bgColor: "bg-amber-500/10" },
 };
 
@@ -144,7 +145,7 @@ export default function InvoiceOverviewPage() {
   }, [invoices]);
 
   const fmt = (n: number) =>
-    n.toLocaleString("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0 });
+    n.toLocaleString(DEFAULT_LOCALE, { style: "currency", currency: "USD", minimumFractionDigits: 0 });
 
   if (isLoading) {
     return (
@@ -232,8 +233,8 @@ export default function InvoiceOverviewPage() {
                 { key: "current", label: "Current", color: "bg-emerald-500" },
                 { key: "1-30", label: "1–30 days", color: "bg-amber-400" },
                 { key: "31-60", label: "31–60 days", color: "bg-orange-500" },
-                { key: "61-90", label: "61–90 days", color: "bg-red-400" },
-                { key: "90+", label: "90+ days", color: "bg-red-600" },
+                { key: "61-90", label: "61–90 days", color: "bg-destructive/70" },
+                { key: "90+", label: "90+ days", color: "bg-destructive" },
               ].map((bucket) => {
                 const items = stats?.aging?.[bucket.key as keyof typeof stats.aging] ?? [];
                 const amount = items.reduce((s, i) => s + i.amount, 0);

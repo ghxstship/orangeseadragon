@@ -46,15 +46,15 @@ const actionIcons: Record<ActivityAction, React.ReactNode> = {
 };
 
 const actionColors: Record<ActivityAction, string> = {
-  created: "bg-green-500/10 text-green-600",
+  created: "bg-emerald-500/10 text-emerald-600",
   updated: "bg-blue-500/10 text-blue-600",
-  deleted: "bg-red-500/10 text-red-600",
+  deleted: "bg-destructive/10 text-destructive",
   status_changed: "bg-purple-500/10 text-purple-600",
   assigned: "bg-amber-500/10 text-amber-600",
   commented: "bg-sky-500/10 text-sky-600",
   mentioned: "bg-pink-500/10 text-pink-600",
   approved: "bg-emerald-500/10 text-emerald-600",
-  rejected: "bg-red-500/10 text-red-600",
+  rejected: "bg-destructive/10 text-destructive",
   completed: "bg-emerald-500/10 text-emerald-600",
   started: "bg-blue-500/10 text-blue-600",
   paused: "bg-amber-500/10 text-amber-600",

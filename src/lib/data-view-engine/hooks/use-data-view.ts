@@ -41,6 +41,46 @@ export interface UseDataViewOptions {
   defaultPageSize?: number;
   defaultColumns?: string[];
   onStateChange?: (state: DataViewState) => void;
+  /** When set, persists viewType, density, pageSize, sorts, visibleColumns, grouping to localStorage */
+  persistKey?: string;
+}
+
+interface PersistedViewPrefs {
+  viewType?: ViewType;
+  density?: "comfortable" | "compact";
+  pageSize?: number;
+  sorts?: SortDefinition[];
+  visibleColumns?: string[];
+  grouping?: string[];
+}
+
+const STORAGE_PREFIX = "atlvs-view-";
+
+function loadPersistedPrefs(key: string): PersistedViewPrefs | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(STORAGE_PREFIX + key);
+    return raw ? (JSON.parse(raw) as PersistedViewPrefs) : null;
+  } catch {
+    return null;
+  }
+}
+
+function savePersistedPrefs(key: string, state: DataViewState): void {
+  if (typeof window === "undefined") return;
+  try {
+    const prefs: PersistedViewPrefs = {
+      viewType: state.viewType,
+      density: state.density,
+      pageSize: state.pageSize,
+      sorts: state.sorts,
+      visibleColumns: state.visibleColumns,
+      grouping: state.grouping,
+    };
+    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(prefs));
+  } catch {
+    // Silently fail if storage is full or unavailable
+  }
 }
 
 const DEFAULT_STATE: DataViewState = {
@@ -66,25 +106,31 @@ export function useDataView(options: UseDataViewOptions = {}): {
     defaultPageSize = 10,
     defaultColumns = [],
     onStateChange,
+    persistKey,
   } = options;
 
-  const [state, setState] = React.useState<DataViewState>(() => ({
-    ...DEFAULT_STATE,
-    viewType: defaultViewType,
-    pageSize: defaultPageSize,
-    visibleColumns: defaultColumns,
-    ...initialState,
-  }));
+  const [state, setState] = React.useState<DataViewState>(() => {
+    const persisted = persistKey ? loadPersistedPrefs(persistKey) : null;
+    return {
+      ...DEFAULT_STATE,
+      viewType: defaultViewType,
+      pageSize: defaultPageSize,
+      visibleColumns: defaultColumns,
+      ...initialState,
+      ...(persisted ?? {}),
+    };
+  });
 
   const updateState = React.useCallback(
     (updates: Partial<DataViewState>) => {
       setState((prev) => {
         const newState = { ...prev, ...updates };
         onStateChange?.(newState);
+        if (persistKey) savePersistedPrefs(persistKey, newState);
         return newState;
       });
     },
-    [onStateChange]
+    [onStateChange, persistKey]
   );
 
   const actions: DataViewActions = React.useMemo(
@@ -185,8 +231,10 @@ export function useFilteredData<T>({
 
     if (state.filters?.filters && state.filters.filters.length > 0) {
       const { logic, filters } = state.filters;
-      result = result.filter((item: any) => {
-        const results = filters.map((f: any) => {
+      const rec = result as Record<string, unknown>[];
+      result = rec.filter((item) => {
+        const results = filters.map((f) => {
+          if ("logic" in f) return true; // skip nested groups in client filter
           const value = item[f.field];
           const filterValue = f.value;
 
@@ -201,11 +249,11 @@ export function useFilteredData<T>({
         });
 
         return logic === "or" ? results.some(r => r) : results.every(r => r);
-      });
+      }) as T[];
     }
 
     return result;
-  }, [data, state.search, searchFields]);
+  }, [data, state.search, state.filters, searchFields]);
 
   const totalCount = filteredData.length;
   const totalPages = Math.ceil(totalCount / state.pageSize);

@@ -70,7 +70,14 @@ export const sprintSchema = defineSchema({
       ],
     },
   },
-  views: { table: { columns: ['name', 'projectId', 'status', 'startDate', 'endDate', 'velocity'] } },
+  views: { table: { columns: [
+    'name',
+    { field: 'projectId', format: { type: 'relation', entityType: 'project' } },
+    { field: 'status', format: { type: 'badge', colorMap: { planning: '#6b7280', active: '#3b82f6', completed: '#22c55e', cancelled: '#ef4444' } } },
+    { field: 'startDate', format: { type: 'date' } },
+    { field: 'endDate', format: { type: 'date' } },
+    { field: 'velocity', format: { type: 'number' } },
+  ] } },
   actions: {
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/sprints/${r.id}` } }],
     bulk: [],

@@ -184,7 +184,14 @@ export const payrollRunSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['name', 'pay_period_start', 'pay_date', 'employee_count', 'net_pay', 'status'],
+      columns: [
+        'name',
+        { field: 'pay_period_start', format: { type: 'date' } },
+        { field: 'pay_date', format: { type: 'date' } },
+        { field: 'employee_count', format: { type: 'number' } },
+        { field: 'net_pay', format: { type: 'currency' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', processing: '#3b82f6', completed: '#22c55e', failed: '#ef4444' } } },
+      ],
     },
   },
   actions: {

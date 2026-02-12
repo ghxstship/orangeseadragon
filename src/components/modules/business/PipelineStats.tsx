@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { DEFAULT_LOCALE } from '@/lib/config';
 import { TrendingUp, TrendingDown, AlertTriangle, DollarSign, Target } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -29,7 +30,7 @@ interface DealStats {
     winRate: number;
 }
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
+const currencyFormatter = new Intl.NumberFormat(DEFAULT_LOCALE, {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
@@ -54,16 +55,16 @@ function StatCard({
 }) {
     const variantStyles = {
         default: 'bg-background',
-        success: 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800',
-        warning: 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800',
-        danger: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
+        success: 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800',
+        warning: 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
+        danger: 'bg-destructive/5 dark:bg-destructive/10 border-destructive/20 dark:border-destructive/30',
     };
 
     const iconStyles = {
         default: 'text-primary',
-        success: 'text-green-600',
-        warning: 'text-yellow-600',
-        danger: 'text-red-600',
+        success: 'text-emerald-600 dark:text-emerald-400',
+        warning: 'text-amber-600 dark:text-amber-400',
+        danger: 'text-destructive',
     };
 
     return (
@@ -80,12 +81,12 @@ function StatCard({
                         )}
                         {trend && trendValue && (
                             <div className="flex items-center gap-1 mt-2">
-                                {trend === 'up' && <TrendingUp className="w-3 h-3 text-green-600" />}
-                                {trend === 'down' && <TrendingDown className="w-3 h-3 text-red-600" />}
+                                {trend === 'up' && <TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />}
+                                {trend === 'down' && <TrendingDown className="w-3 h-3 text-destructive" />}
                                 <span className={cn(
                                     "text-xs font-medium",
-                                    trend === 'up' && "text-green-600",
-                                    trend === 'down' && "text-red-600",
+                                    trend === 'up' && "text-emerald-600 dark:text-emerald-400",
+                                    trend === 'down' && "text-destructive",
                                     trend === 'neutral' && "text-muted-foreground"
                                 )}>
                                     {trendValue}
@@ -218,13 +219,13 @@ export function PipelineStats({ pipelineId, className }: PipelineStatsProps) {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-muted-foreground">Won This Month</span>
-                                    <Badge variant="outline" className="text-green-600 border-green-200">
+                                    <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-700">
                                         {stats.wonThisMonth}
                                     </Badge>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-muted-foreground">Lost This Month</span>
-                                    <Badge variant="outline" className="text-red-600 border-red-200">
+                                    <Badge variant="outline" className="text-destructive border-destructive/30">
                                         {stats.lostThisMonth}
                                     </Badge>
                                 </div>

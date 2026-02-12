@@ -12,8 +12,10 @@ import { MapView, MapMarker } from "./map-view";
 import { MatrixView } from "./matrix-view";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { RecordHoverPreview } from "@/components/common/record-hover-preview";
 /* eslint-disable @next/next/no-img-element */
 import { cn } from "@/lib/utils";
+import { DEFAULT_LOCALE } from "@/lib/config";
 import type { ViewType, DataViewState } from "@/lib/data-view-engine/hooks";
 import type {
   TableViewConfig,
@@ -66,6 +68,7 @@ export interface DataViewProps<T extends object> {
   getRowId: (item: T) => string;
   loading?: boolean;
   emptyMessage?: string;
+  renderRowWrapper?: (row: T, children: React.ReactNode) => React.ReactNode;
 }
 
 function haveSameIds(a: string[], b: string[]) {
@@ -85,6 +88,7 @@ export function DataView<T extends object>({
   getRowId,
   loading = false,
   emptyMessage = "No data found.",
+  renderRowWrapper,
 }: DataViewProps<T>) {
   // Cast to internal type for renderer compatibility
   type R = Record<string, unknown>;
@@ -118,6 +122,7 @@ export function DataView<T extends object>({
           getRowId={typedGetRowId}
           loading={loading}
           emptyMessage={emptyMessage}
+          renderRowWrapper={renderRowWrapper as ((row: Record<string, unknown>, children: React.ReactNode) => React.ReactNode) | undefined}
         />
       );
 
@@ -231,7 +236,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
     case "number":
       return (
         <span className="font-mono text-xs font-bold tracking-tight">
-          {new Intl.NumberFormat("en-US", {
+          {new Intl.NumberFormat(DEFAULT_LOCALE, {
             minimumFractionDigits: format.decimals ?? 0,
             maximumFractionDigits: format.decimals ?? 0,
           }).format(value as number)}
@@ -241,7 +246,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
     case "currency":
       return (
         <span className="font-mono text-xs font-black text-emerald-600 dark:text-emerald-400">
-          {new Intl.NumberFormat("en-US", {
+          {new Intl.NumberFormat(DEFAULT_LOCALE, {
             style: "currency",
             currency: format.currency ?? "USD",
           }).format(value as number)}
@@ -300,6 +305,50 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
         </Badge>
       );
 
+    case "link": {
+      const href = String(value);
+      if (!href || href === 'null' || href === 'undefined') {
+        return <span className="opacity-20">-</span>;
+      }
+      const display = href.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+      return (
+        <a
+          href={href.startsWith('http') ? href : `https://${href}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-medium text-primary underline-offset-2 hover:underline truncate max-w-[200px] inline-block"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {display}
+        </a>
+      );
+    }
+
+    case "avatar": {
+      const name = String(value);
+      const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      return (
+        <div className="flex items-center gap-2">
+          <div className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold">
+            {initials}
+          </div>
+          <span className="text-sm font-medium">{name}</span>
+        </div>
+      );
+    }
+
+    case "relation": {
+      const displayText = String(value);
+      if (!displayText || displayText === 'null' || displayText === 'undefined') {
+        return <span className="opacity-20">-</span>;
+      }
+      return (
+        <RecordHoverPreview entityType={format.entityType}>
+          <span className="text-sm font-medium text-primary">{displayText}</span>
+        </RecordHoverPreview>
+      );
+    }
+
     default:
       return <span className="text-sm font-medium">{String(value)}</span>;
   }
@@ -315,6 +364,7 @@ interface TableRendererProps<T extends Record<string, unknown>> {
   getRowId: (item: T) => string;
   loading: boolean;
   emptyMessage: string;
+  renderRowWrapper?: (row: T, children: React.ReactNode) => React.ReactNode;
 }
 
 function TableRenderer<T extends Record<string, unknown>>({
@@ -327,6 +377,7 @@ function TableRenderer<T extends Record<string, unknown>>({
   getRowId,
   loading,
   emptyMessage,
+  renderRowWrapper,
 }: TableRendererProps<T>) {
   const columns = React.useMemo<ColumnDef<T, unknown>[]>(() => {
     if (!config?.columns) return [];
@@ -392,6 +443,7 @@ function TableRenderer<T extends Record<string, unknown>>({
       showColumnToggle={false}
       density={state.density}
       grouping={state.grouping}
+      renderRowWrapper={renderRowWrapper}
     />
   );
 }

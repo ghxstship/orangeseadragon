@@ -78,8 +78,8 @@ export default function MagicLinkPage() {
     return (
       <div className="space-y-6">
         <div className="text-center space-y-4">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
-            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/20">
+            <CheckCircle className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Check your email</h1>
           <p className="text-muted-foreground">

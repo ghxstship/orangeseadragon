@@ -134,7 +134,13 @@ export const workflowTriggerSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'trigger_type', 'workflow_id', 'is_active', 'last_triggered_at'],
+      columns: [
+        'name',
+        'trigger_type',
+        { field: 'workflow_id', format: { type: 'relation', entityType: 'workflow' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+        { field: 'last_triggered_at', format: { type: 'datetime' } },
+      ],
     },
   },
 

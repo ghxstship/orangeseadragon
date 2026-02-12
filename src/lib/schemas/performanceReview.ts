@@ -207,7 +207,14 @@ export const performanceReviewSchema = defineSchema({
   },
   views: {
     table: {
-      columns: ['employee_id', 'reviewer_id', 'review_type', 'review_period_end', 'overall_rating', 'status'],
+      columns: [
+        { field: 'employee_id', format: { type: 'relation', entityType: 'person' } },
+        { field: 'reviewer_id', format: { type: 'relation', entityType: 'person' } },
+        'review_type',
+        { field: 'review_period_end', format: { type: 'date' } },
+        { field: 'overall_rating', format: { type: 'number' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', in_progress: '#f59e0b', submitted: '#3b82f6', completed: '#22c55e', cancelled: '#ef4444' } } },
+      ],
     },
   },
   actions: {

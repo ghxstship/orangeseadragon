@@ -144,7 +144,13 @@ export const kitItemSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['asset_id', 'category_id', 'quantity', 'is_optional', 'is_substitutable'],
+      columns: [
+        { field: 'asset_id', format: { type: 'relation', entityType: 'asset' } },
+        { field: 'category_id', format: { type: 'relation', entityType: 'category' } },
+        { field: 'quantity', format: { type: 'number' } },
+        { field: 'is_optional', format: { type: 'boolean' } },
+        { field: 'is_substitutable', format: { type: 'boolean' } },
+      ],
     },
   },
 

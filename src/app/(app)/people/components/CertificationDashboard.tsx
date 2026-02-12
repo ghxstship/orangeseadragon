@@ -156,23 +156,23 @@ export function CertificationDashboard() {
       }
       if (days <= 30) {
         return (
-          <Badge variant="default" className="bg-yellow-500">
+          <Badge variant="default" className="bg-amber-500 dark:bg-amber-400">
             Expires in {days}d
           </Badge>
         );
       }
     }
-    return <Badge variant="default" className="bg-green-600">Valid</Badge>;
+    return <Badge variant="default" className="bg-emerald-600 dark:bg-emerald-500">Valid</Badge>;
   };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
       case 'expired':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-destructive" />;
       case 'expiring_soon':
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
+        return <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-amber-400" />;
       case 'missing_required':
-        return <Clock className="h-4 w-4 text-orange-500" />;
+        return <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
       default:
         return <Bell className="h-4 w-4" />;
     }
@@ -214,10 +214,10 @@ export function CertificationDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Valid</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <CheckCircle2 className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{summary.valid}</div>
+            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{summary.valid}</div>
             <p className="text-xs text-muted-foreground">Active certifications</p>
           </CardContent>
         </Card>
@@ -225,10 +225,10 @@ export function CertificationDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Expiring Soon</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+            <AlertTriangle className="h-4 w-4 text-amber-500 dark:text-amber-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{summary.expiringSoon}</div>
+            <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{summary.expiringSoon}</div>
             <p className="text-xs text-muted-foreground">Within 30 days</p>
           </CardContent>
         </Card>
@@ -236,10 +236,10 @@ export function CertificationDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Expired</CardTitle>
-            <XCircle className="h-4 w-4 text-red-500" />
+            <XCircle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{summary.expired}</div>
+            <div className="text-2xl font-bold text-destructive">{summary.expired}</div>
             <p className="text-xs text-muted-foreground">Need renewal</p>
           </CardContent>
         </Card>
@@ -247,10 +247,10 @@ export function CertificationDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Missing</CardTitle>
-            <Clock className="h-4 w-4 text-orange-500" />
+            <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{summary.missing}</div>
+            <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{summary.missing}</div>
             <p className="text-xs text-muted-foreground">Required certs</p>
           </CardContent>
         </Card>
@@ -293,7 +293,7 @@ export function CertificationDashboard() {
           {alerts.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
-                <CheckCircle2 className="mx-auto h-12 w-12 text-green-500 mb-4" />
+                <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500 dark:text-emerald-400 mb-4" />
                 <h3 className="text-lg font-medium">All Clear!</h3>
                 <p className="text-muted-foreground">No certification alerts at this time.</p>
               </CardContent>
@@ -436,7 +436,7 @@ export function CertificationDashboard() {
                   if (index === 0) {
                     return (
                       <div key={daysOffset} className="space-y-2">
-                        <h4 className="font-medium text-red-600">Next 30 Days</h4>
+                        <h4 className="font-medium text-destructive">Next 30 Days</h4>
                         {certsInRange.length === 0 ? (
                           <p className="text-sm text-muted-foreground">No expirations</p>
                         ) : (

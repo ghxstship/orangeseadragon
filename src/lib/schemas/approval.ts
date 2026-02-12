@@ -150,7 +150,13 @@ export const approvalSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['title', 'entity_type', 'status', 'requested_by', 'due_date'],
+      columns: [
+        'title',
+        { field: 'entity_type', format: { type: 'badge', colorMap: { budget: '#3b82f6', expense: '#8b5cf6', invoice: '#f59e0b', contract: '#22c55e', timesheet: '#ec4899' } } },
+        { field: 'status', format: { type: 'badge', colorMap: { pending: '#eab308', approved: '#22c55e', rejected: '#ef4444', escalated: '#f59e0b' } } },
+        { field: 'requested_by', format: { type: 'relation', entityType: 'person' } },
+        { field: 'due_date', format: { type: 'date' } },
+      ],
     },
   },
 

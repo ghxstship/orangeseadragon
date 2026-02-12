@@ -126,8 +126,8 @@ export function AuthTemplate({
   if (success && successMessage) {
     return (
       <div className="space-y-6 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-          <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100">
+          <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>

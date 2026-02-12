@@ -368,11 +368,12 @@ export const budgetSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-        { key: 'line-items', label: 'Line Items', content: { type: 'related', entity: 'budget_line_items', foreignKey: 'budget_id' } },
-        { key: 'phases', label: 'Phases', content: { type: 'related', entity: 'budget_phases', foreignKey: 'budget_id' } },
-        { key: 'milestones', label: 'Payment Milestones', content: { type: 'related', entity: 'payment_milestones', foreignKey: 'budget_id' } },
-        { key: 'expenses', label: 'Expenses', content: { type: 'related', entity: 'expenses', foreignKey: 'budget_id' } },
-        { key: 'invoices', label: 'Invoices', content: { type: 'related', entity: 'invoices', foreignKey: 'project_id' } },
+        { key: 'line-items', label: 'Line Items', content: { type: 'related', entity: 'budget_line_items', foreignKey: 'budget_id', allowCreate: true } },
+        { key: 'phases', label: 'Phases', content: { type: 'related', entity: 'budget_phases', foreignKey: 'budget_id', allowCreate: true } },
+        { key: 'milestones', label: 'Payment Milestones', content: { type: 'related', entity: 'payment_milestones', foreignKey: 'budget_id', allowCreate: true } },
+        { key: 'expenses', label: 'Expenses', content: { type: 'related', entity: 'expenses', foreignKey: 'budget_id', defaultView: 'table', allowCreate: true } },
+        { key: 'invoices', label: 'Invoices', content: { type: 'related', entity: 'invoices', foreignKey: 'project_id', defaultView: 'table' } },
+        { key: 'files', label: 'Files', content: { type: 'files' } },
         { key: 'activity', label: 'Activity', content: { type: 'activity' } },
       ],
       overview: {
@@ -388,6 +389,17 @@ export const budgetSchema = defineSchema({
           { key: 'billing', title: 'Billing Status', content: { type: 'fields', fields: ['invoiced_amount', 'draft_invoice_amount'] } },
           { key: 'markup', title: 'Markup & Fees', content: { type: 'fields', fields: ['markup_type', 'markup_value', 'agency_fee_amount'] } },
           { key: 'thresholds', title: 'Alert Thresholds', content: { type: 'fields', fields: ['alert_threshold_warning', 'alert_threshold_critical'] } },
+        ],
+      },
+      sidebar: {
+        width: 320,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          { key: 'properties', title: 'Properties', content: { type: 'stats', stats: ['budget_type', 'status', 'project_id', 'start_date', 'end_date'] } },
+          { key: 'health', title: 'Budget Health', content: { type: 'stats', stats: ['total_amount', 'cost_amount', 'revenue_amount'] } },
+          { key: 'quick_actions', title: 'Quick Actions', content: { type: 'quick-actions', actions: ['submit-expense', 'generate-invoice'] } },
+          { key: 'recent_activity', title: 'Recent Activity', content: { type: 'activity', limit: 5 }, collapsible: true },
         ],
       },
     },
@@ -440,7 +452,18 @@ export const budgetSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'budget_type', 'project_id', 'total_amount', 'cost_amount', 'profit_amount', 'profit_margin', 'burn_percentage', 'health_status', 'status'],
+      columns: [
+        'name',
+        { field: 'budget_type', format: { type: 'badge', colorMap: { project: '#3b82f6', department: '#8b5cf6', event: '#f59e0b', overhead: '#6b7280' } } },
+        { field: 'project_id', format: { type: 'relation', entityType: 'project' } },
+        { field: 'total_amount', format: { type: 'currency' } },
+        { field: 'cost_amount', format: { type: 'currency' } },
+        { field: 'profit_amount', format: { type: 'currency' } },
+        { field: 'profit_margin', format: { type: 'percentage' } },
+        { field: 'burn_percentage', format: { type: 'percentage' } },
+        { field: 'health_status', format: { type: 'badge', colorMap: { healthy: '#22c55e', warning: '#eab308', critical: '#ef4444', over_budget: '#dc2626' } } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending_approval: '#eab308', approved: '#3b82f6', active: '#22c55e', closed: '#6b7280' } } },
+      ],
     },
     kanban: {
       columnField: 'status',

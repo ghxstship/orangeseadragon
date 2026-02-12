@@ -273,7 +273,7 @@ export function ListView<T extends ListItem>({
                               e.stopPropagation();
                               action.onClick();
                             }}
-                            className={cn("text-[10px] font-bold uppercase tracking-wider", action.destructive ? "text-red-400 focus:text-red-400" : "")}
+                            className={cn("text-[10px] font-bold uppercase tracking-wider", action.destructive ? "text-destructive/80 focus:text-destructive/80" : "")}
                           >
                             {action.label}
                           </DropdownMenuItem>

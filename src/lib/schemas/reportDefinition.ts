@@ -238,7 +238,11 @@ export const reportDefinitionSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'category', 'report_type', 'visibility', 'is_favorite'],
+      columns: [
+        'name', 'category', 'report_type',
+        { field: 'visibility', format: { type: 'badge', colorMap: { public: '#22c55e', private: '#6b7280', team: '#3b82f6' } } },
+        { field: 'is_favorite', format: { type: 'boolean' } },
+      ],
     },
   },
 

@@ -121,11 +121,11 @@ export function WorkloadView({
   const getLoadColor = (status: "normal" | "warning" | "overloaded"): string => {
     switch (status) {
       case "overloaded":
-        return "bg-red-500";
+        return "bg-destructive";
       case "warning":
-        return "bg-yellow-500";
+        return "bg-amber-500";
       default:
-        return "bg-green-500";
+        return "bg-emerald-500";
     }
   };
 
@@ -156,11 +156,11 @@ export function WorkloadView({
   const getPriorityColor = (priority?: string): string => {
     switch (priority) {
       case "urgent":
-        return "bg-red-500";
+        return "bg-destructive";
       case "high":
         return "bg-orange-500";
       case "medium":
-        return "bg-yellow-500";
+        return "bg-amber-500";
       case "low":
         return "bg-blue-500";
       default:
@@ -261,8 +261,8 @@ export function WorkloadView({
                                 <span
                                   className={cn(
                                     "font-medium",
-                                    weeklyStatus === "overloaded" && "text-red-500",
-                                    weeklyStatus === "warning" && "text-yellow-600"
+                                    weeklyStatus === "overloaded" && "text-destructive",
+                                    weeklyStatus === "warning" && "text-amber-600 dark:text-amber-400"
                                   )}
                                 >
                                   {weeklyStats.percentage}%
@@ -279,7 +279,7 @@ export function WorkloadView({
                               {weeklyStats.hours}h / {weeklyStats.capacity}h capacity
                             </p>
                             {weeklyStatus === "overloaded" && (
-                              <p className="text-red-400 flex items-center gap-1">
+                              <p className="text-destructive flex items-center gap-1">
                                 <AlertTriangle className="h-3 w-3" />
                                 Overloaded
                               </p>
@@ -376,15 +376,15 @@ export function WorkloadView({
         <div className="border-t p-3 flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-green-500" />
+              <div className="w-3 h-3 rounded bg-emerald-500" />
               <span>Normal (&lt;{capacityThresholds.warning}%)</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-yellow-500" />
+              <div className="w-3 h-3 rounded bg-amber-500" />
               <span>Warning ({capacityThresholds.warning}-{capacityThresholds.overloaded}%)</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-red-500" />
+              <div className="w-3 h-3 rounded bg-destructive" />
               <span>Overloaded (&gt;{capacityThresholds.overloaded}%)</span>
             </div>
           </div>

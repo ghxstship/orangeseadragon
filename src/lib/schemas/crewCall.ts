@@ -145,7 +145,14 @@ export const crewCallSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'event_id', 'date', 'call_time', 'crew_count', 'status'],
+      columns: [
+        'name',
+        { field: 'event_id', format: { type: 'relation', entityType: 'event' } },
+        { field: 'date', format: { type: 'date' } },
+        'call_time',
+        { field: 'crew_count', format: { type: 'number' } },
+        { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', published: '#3b82f6', confirmed: '#22c55e', active: '#f59e0b', completed: '#6b7280', cancelled: '#ef4444' } } },
+      ],
     },
   },
 

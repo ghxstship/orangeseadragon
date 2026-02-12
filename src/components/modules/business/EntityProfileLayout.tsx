@@ -119,7 +119,7 @@ export function EntityProfileLayout({
                         <div className="grid grid-cols-2 gap-2">
                             <div className="bg-background border rounded-md p-2">
                                 <div className="text-[10px] text-muted-foreground">Health</div>
-                                <div className="text-sm font-medium text-green-500">Good</div>
+                                <div className="text-sm font-medium text-emerald-500">Good</div>
                             </div>
                             <div className="bg-background border rounded-md p-2">
                                 <div className="text-[10px] text-muted-foreground">Touches</div>

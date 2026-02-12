@@ -45,10 +45,10 @@ const CUE_TYPE_COLORS: Record<string, string> = {
   action: 'bg-blue-500',
   audio: 'bg-purple-500',
   video: 'bg-pink-500',
-  lighting: 'bg-yellow-500',
+  lighting: 'bg-amber-500',
   transition: 'bg-cyan-500',
   break: 'bg-gray-500',
-  speech: 'bg-green-500',
+  speech: 'bg-emerald-500',
   presentation: 'bg-orange-500',
   music: 'bg-indigo-500',
   standby: 'bg-amber-500',
@@ -196,7 +196,7 @@ export function RunsheetShowMode({
         <div className="flex items-center gap-6">
           {showClock && (
             <div className="text-3xl font-mono font-bold text-emerald-400">
-              {currentTime.toLocaleTimeString('en-US', { hour12: false })}
+              {currentTime.toLocaleTimeString(undefined, { hour12: false })}
             </div>
           )}
           <Button

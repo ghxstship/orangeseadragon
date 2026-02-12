@@ -161,7 +161,13 @@ export const savedViewSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'entity_type', 'view_type', 'is_shared', 'is_default'],
+      columns: [
+        'name',
+        'entity_type',
+        'view_type',
+        { field: 'is_shared', format: { type: 'boolean' } },
+        { field: 'is_default', format: { type: 'boolean' } },
+      ],
     },
   },
 

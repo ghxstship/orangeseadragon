@@ -258,16 +258,35 @@ export const assetSchema = defineSchema({
     detail: {
       tabs: [
         { key: 'overview', label: 'Overview', content: { type: 'overview' } },
+        { key: 'maintenance', label: 'Maintenance', content: { type: 'related', entity: 'maintenance', foreignKey: 'asset_id', defaultView: 'table', allowCreate: true } },
+        { key: 'reservations', label: 'Reservations', content: { type: 'related', entity: 'reservation', foreignKey: 'asset_id', defaultView: 'table', allowCreate: true } },
+        { key: 'check-history', label: 'Check In/Out', content: { type: 'related', entity: 'checkInOut', foreignKey: 'asset_id', defaultView: 'table' } },
+        { key: 'depreciation', label: 'Depreciation', content: { type: 'fields', fields: ['depreciation_method', 'useful_life_months', 'salvage_value', 'book_value', 'accumulated_depreciation'], editable: true } },
+        { key: 'warranty', label: 'Warranty', content: { type: 'fields', fields: ['warranty_expiry', 'warranty_provider', 'warranty_terms', 'insurance_policy_id', 'insured_value'], editable: true } },
+        { key: 'files', label: 'Files', content: { type: 'files' } },
         { key: 'history', label: 'History', content: { type: 'activity' } },
       ],
       overview: {
         stats: [
           { key: 'value', label: 'Current Value', value: { type: 'field', field: 'current_value' }, format: 'currency' },
+          { key: 'purchase', label: 'Purchase Price', value: { type: 'field', field: 'purchase_price' }, format: 'currency' },
+          { key: 'book', label: 'Book Value', value: { type: 'field', field: 'book_value' }, format: 'currency' },
         ],
         blocks: [
-          { key: 'details', title: 'Asset Details', content: { type: 'fields', fields: ['serial_number', 'purchase_date', 'purchase_price', 'location'] } },
+          { key: 'details', title: 'Asset Details', content: { type: 'fields', fields: ['serial_number', 'barcode', 'purchase_date', 'location'] } },
+          { key: 'specs', title: 'Specifications', content: { type: 'fields', fields: ['specifications'] } },
         ]
-      }
+      },
+      sidebar: {
+        width: 300,
+        collapsible: true,
+        defaultState: 'open',
+        sections: [
+          { key: 'properties', title: 'Properties', content: { type: 'stats', stats: ['asset_type', 'status', 'condition', 'location'] } },
+          { key: 'financial', title: 'Financial', content: { type: 'stats', stats: ['current_value', 'purchase_price'] } },
+          { key: 'recent_activity', title: 'Recent Activity', content: { type: 'activity', limit: 5 }, collapsible: true },
+        ],
+      },
     },
     form: {
       sections: [
@@ -312,7 +331,14 @@ export const assetSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'asset_type', 'status', 'serial_number', 'location', 'current_value'],
+      columns: [
+        'name',
+        { field: 'asset_type', format: { type: 'badge', colorMap: { audio: '#3b82f6', lighting: '#eab308', video: '#8b5cf6', staging: '#f59e0b', rigging: '#ef4444', power: '#22c55e', comms: '#06b6d4', other: '#6b7280' } } },
+        { field: 'status', format: { type: 'badge', colorMap: { available: '#22c55e', in_use: '#3b82f6', maintenance: '#eab308', retired: '#6b7280', lost: '#ef4444' } } },
+        'serial_number',
+        'location',
+        { field: 'current_value', format: { type: 'currency' } },
+      ],
     },
     list: {
       titleField: 'name',

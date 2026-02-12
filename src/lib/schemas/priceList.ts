@@ -138,7 +138,14 @@ export const priceListSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'currency', 'effective_date', 'expiration_date', 'is_default', 'is_active'],
+      columns: [
+        'name',
+        'currency',
+        { field: 'effective_date', format: { type: 'date' } },
+        { field: 'expiration_date', format: { type: 'date' } },
+        { field: 'is_default', format: { type: 'boolean' } },
+        { field: 'is_active', format: { type: 'boolean' } },
+      ],
     },
   },
 
