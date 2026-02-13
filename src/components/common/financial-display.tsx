@@ -55,7 +55,7 @@ export function CurrencyDisplay({
     <span
       className={cn(
         isNegative && 'text-destructive',
-        showSign && !isNegative && amount > 0 && 'text-emerald-600 dark:text-emerald-400',
+        showSign && !isNegative && amount > 0 && 'text-semantic-success',
         className,
       )}
     >
@@ -83,8 +83,8 @@ export function MarginIndicator({ revenue, cost, compact = false, className }: M
 
   const variant = marginPct >= 20 ? 'healthy' : marginPct >= 0 ? 'warning' : 'danger';
   const colorClass = {
-    healthy: 'text-emerald-600 dark:text-emerald-400',
-    warning: 'text-amber-600 dark:text-amber-400',
+    healthy: 'text-semantic-success',
+    warning: 'text-semantic-warning',
     danger: 'text-destructive',
   }[variant];
 
@@ -128,7 +128,7 @@ export function VarianceIndicator({ estimated, actual, format = 'currency', clas
   const colorClass = isOver
     ? 'text-destructive'
     : isUnder
-      ? 'text-emerald-600 dark:text-emerald-400'
+      ? 'text-semantic-success'
       : 'text-muted-foreground';
 
   return (
@@ -221,7 +221,7 @@ export function AgingBadge({ dueDate, className }: AgingBadgeProps) {
 
   if (diffDays === 0) {
     return (
-      <Badge variant="outline" className={cn('gap-1 border-amber-500 text-amber-600', className)}>
+      <Badge variant="outline" className={cn('gap-1 border-semantic-warning text-semantic-warning', className)}>
         <Clock className="h-3 w-3" />
         Due Today
       </Badge>
@@ -230,7 +230,7 @@ export function AgingBadge({ dueDate, className }: AgingBadgeProps) {
 
   if (diffDays <= 15) {
     return (
-      <Badge variant="outline" className={cn('gap-1 border-amber-500 text-amber-600', className)}>
+      <Badge variant="outline" className={cn('gap-1 border-semantic-warning text-semantic-warning', className)}>
         <AlertTriangle className="h-3 w-3" />
         {diffDays}d overdue
       </Badge>

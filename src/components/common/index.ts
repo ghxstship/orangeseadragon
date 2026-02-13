@@ -2,6 +2,7 @@ export { LoadingSpinner, LoadingOverlay, PageLoader } from "./loading-spinner";
 export { PageHeader, PageSection } from "./page-header";
 export { StatusBadge, PriorityBadge } from "./status-badge";
 export { ConfirmDialog, DeleteConfirmDialog } from "./confirm-dialog";
+export { ConfirmationDialog, useConfirmation } from "./confirmation-dialog";
 export { StatCard, StatGrid } from "./stat-card";
 export { FileUpload } from "./file-upload";
 export { TagInput } from "./tag-input";

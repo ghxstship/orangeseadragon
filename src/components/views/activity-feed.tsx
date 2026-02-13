@@ -101,19 +101,19 @@ const activityIcons: Record<ActivityType, React.ReactNode> = {
 };
 
 const activityColors: Record<ActivityType, string> = {
-  created: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
-  updated: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-  deleted: "bg-destructive/10 text-destructive dark:bg-destructive/80/30 dark:text-destructive/80",
-  commented: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
-  assigned: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
-  status_changed: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
-  uploaded: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
-  downloaded: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
-  completed: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
-  approved: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
-  rejected: "bg-destructive/10 text-destructive dark:bg-destructive/80/30 dark:text-destructive/80",
-  mentioned: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
-  settings_changed: "bg-gray-100 text-gray-600 dark:bg-gray-900/30 dark:text-gray-400",
+  created: "bg-semantic-success/10 text-semantic-success",
+  updated: "bg-semantic-info/10 text-semantic-info",
+  deleted: "bg-destructive/10 text-destructive",
+  commented: "bg-semantic-purple/10 text-semantic-purple",
+  assigned: "bg-semantic-orange/10 text-semantic-orange",
+  status_changed: "bg-semantic-warning/10 text-semantic-warning",
+  uploaded: "bg-semantic-cyan/10 text-semantic-cyan",
+  downloaded: "bg-semantic-cyan/10 text-semantic-cyan",
+  completed: "bg-semantic-success/10 text-semantic-success",
+  approved: "bg-semantic-success/10 text-semantic-success",
+  rejected: "bg-destructive/10 text-destructive",
+  mentioned: "bg-semantic-purple/10 text-semantic-purple",
+  settings_changed: "bg-muted text-muted-foreground",
 };
 
 function getActivityDescription(activity: ActivityItem): React.ReactNode {

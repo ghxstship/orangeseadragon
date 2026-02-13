@@ -9,31 +9,31 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { sidebarNavigation, type NavSection, type NavItem } from "@/config/navigation";
+import { useUIStore } from "@/stores/ui-store";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
 }
 
-export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+function SidebarContent({ collapsed, onToggle, onNavigate }: SidebarProps & { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
     <TooltipProvider delayDuration={0}>
-      <motion.aside
-        initial={false}
-        animate={{ width: collapsed ? 64 : 256 }}
-        className={cn(
-          "fixed left-0 top-14 z-30 flex h-[calc(100vh-3.5rem)] flex-col border-r border-border bg-background/5 backdrop-blur-3xl transition-all duration-500 shadow-2xl overflow-hidden",
-          collapsed ? "w-16" : "w-64"
-        )}
-      >
+      <>
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent pointer-events-none" />
         <ScrollArea className="flex-1 py-2">
           <nav className="space-y-1 px-2">
@@ -43,6 +43,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 section={section}
                 collapsed={collapsed}
                 pathname={pathname}
+                onNavigate={onNavigate}
               />
             ))}
           </nav>
@@ -61,8 +62,44 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
             )}
           </Button>
         </div>
-      </motion.aside>
+      </>
     </TooltipProvider>
+  );
+}
+
+export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+  return (
+    <motion.aside
+      role="navigation"
+      aria-label="Main navigation"
+      initial={false}
+      animate={{ width: collapsed ? 64 : 256 }}
+      className={cn(
+        "fixed left-0 top-14 z-30 hidden md:flex h-[calc(100vh-3.5rem)] flex-col border-r border-border bg-background/5 backdrop-blur-3xl transition-all duration-500 shadow-2xl overflow-hidden",
+        collapsed ? "w-16" : "w-64"
+      )}
+    >
+      <SidebarContent collapsed={collapsed} onToggle={onToggle} />
+    </motion.aside>
+  );
+}
+
+export function MobileSidebar() {
+  const { mobileSidebarOpen, setMobileSidebarOpen } = useUIStore();
+
+  return (
+    <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+      <SheetContent side="left" className="w-72 p-0 flex flex-col">
+        <VisuallyHidden>
+          <SheetTitle>Navigation</SheetTitle>
+        </VisuallyHidden>
+        <SidebarContent
+          collapsed={false}
+          onToggle={() => setMobileSidebarOpen(false)}
+          onNavigate={() => setMobileSidebarOpen(false)}
+        />
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -70,16 +107,17 @@ interface SidebarSectionProps {
   section: NavSection;
   collapsed: boolean;
   pathname: string;
+  onNavigate?: () => void;
 }
 
-function SidebarSection({ section, collapsed, pathname }: SidebarSectionProps) {
+function SidebarSection({ section, collapsed, pathname, onNavigate }: SidebarSectionProps) {
   const [expanded, setExpanded] = React.useState(section.defaultExpanded ?? true);
 
   if (collapsed) {
     return (
       <div className="space-y-1">
         {section.items.map((item) => (
-          <SidebarItemCollapsed key={item.path} item={item} pathname={pathname} />
+          <SidebarItemCollapsed key={item.path} item={item} pathname={pathname} onNavigate={onNavigate} />
         ))}
       </div>
     );
@@ -108,7 +146,7 @@ function SidebarSection({ section, collapsed, pathname }: SidebarSectionProps) {
             className="space-y-0.5 overflow-hidden"
           >
             {section.items.map((item) => (
-              <SidebarItem key={item.path} item={item} pathname={pathname} />
+              <SidebarItem key={item.path} item={item} pathname={pathname} onNavigate={onNavigate} />
             ))}
           </motion.div>
         )}
@@ -120,9 +158,10 @@ function SidebarSection({ section, collapsed, pathname }: SidebarSectionProps) {
 interface SidebarItemProps {
   item: NavItem;
   pathname: string;
+  onNavigate?: () => void;
 }
 
-function SidebarItem({ item, pathname }: SidebarItemProps) {
+function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
   const hasSubpages = item.subpages && item.subpages.length > 0;
   const isActive = pathname === item.path || pathname.startsWith(item.path + "/");
   const Icon = item.icon;
@@ -162,6 +201,7 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
                   <Link
                     key={subpage.path}
                     href={subpage.path}
+                    onClick={onNavigate}
                     className={cn(
                       "block rounded-lg px-3 py-2 text-[11px] font-bold uppercase tracking-wider transition-all",
                       isSubActive
@@ -183,6 +223,7 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
   return (
     <Link
       href={item.path}
+      onClick={onNavigate}
       className={cn(
         "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
         isActive
@@ -201,7 +242,7 @@ function SidebarItem({ item, pathname }: SidebarItemProps) {
   );
 }
 
-function SidebarItemCollapsed({ item, pathname }: SidebarItemProps) {
+function SidebarItemCollapsed({ item, pathname, onNavigate }: SidebarItemProps) {
   const isActive = pathname === item.path || pathname.startsWith(item.path + "/");
   const Icon = item.icon;
 
@@ -210,6 +251,7 @@ function SidebarItemCollapsed({ item, pathname }: SidebarItemProps) {
       <TooltipTrigger asChild>
         <Link
           href={item.path}
+          onClick={onNavigate}
           className={cn(
             "flex h-10 w-10 items-center justify-center rounded-md transition-colors mx-auto",
             isActive

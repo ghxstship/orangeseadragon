@@ -25,8 +25,8 @@ const sizeClasses = {
 };
 
 const statusColors = {
-  viewing: "bg-emerald-500",
-  editing: "bg-amber-500",
+  viewing: "bg-semantic-success",
+  editing: "bg-semantic-warning",
 };
 
 export function PresenceIndicator({
@@ -127,11 +127,11 @@ export function PresenceBadge({ count, className }: PresenceBadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600",
+        "inline-flex items-center gap-1 rounded-full bg-semantic-success/10 px-2 py-0.5 text-xs font-medium text-semantic-success",
         className
       )}
     >
-      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-semantic-success" />
       {count} {count === 1 ? "user" : "users"} online
     </span>
   );

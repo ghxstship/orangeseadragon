@@ -24,11 +24,37 @@ export default function OnboardingProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // TODO: Save profile data
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    router.push("/onboarding/organization");
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+      await supabase.auth.updateUser({
+        data: {
+          full_name: fullName,
+          job_title: formData.jobTitle,
+          bio: formData.bio,
+          avatar_url: formData.avatarUrl,
+        },
+      });
+
+      await supabase
+        .from('users')
+        .update({
+          full_name: fullName,
+          avatar_url: formData.avatarUrl || null,
+        })
+        .eq('id', user.id);
+
+      router.push("/onboarding/organization");
+    } catch (err) {
+      console.error('[Onboarding] Profile save failed:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const initials = `${formData.firstName?.[0] || ""}${formData.lastName?.[0] || ""}`.toUpperCase() || "?";

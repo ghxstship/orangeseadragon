@@ -1,6 +1,9 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
+import { useUser } from '@/hooks/use-supabase';
+import { useShifts } from '@/hooks/use-shifts';
 
 interface CrewStatusWidgetProps {
   title?: string;
@@ -8,14 +11,20 @@ interface CrewStatusWidgetProps {
 }
 
 export function CrewStatusWidget({ title = "Crew Status", limit = 5 }: CrewStatusWidgetProps) {
-  // Mock data for now - in real app would use crew/assignment hooks
-  const mockCrew = [
-    { id: 1, name: 'John Smith', status: 'checked_in', role: 'Lighting Tech' },
-    { id: 2, name: 'Sarah Johnson', status: 'checked_out', role: 'Audio Engineer' },
-    { id: 3, name: 'Mike Davis', status: 'scheduled', role: 'Stage Manager' },
-  ];
+  const { user } = useUser();
+  const organizationId = user?.user_metadata?.organization_id || null;
+  const { data: shifts } = useShifts(organizationId);
 
-  const crewMembers = mockCrew.slice(0, limit);
+  const today = new Date().toISOString().split('T')[0];
+  const crewMembers = (shifts ?? [])
+    .filter((s) => s.date === today || s.scheduled_start?.startsWith(today))
+    .map((s) => ({
+      id: s.id,
+      name: s.user_name ?? 'Unassigned',
+      status: s.status ?? 'scheduled',
+      role: s.event_name ?? 'Crew',
+    }))
+    .slice(0, limit);
 
   if (!crewMembers.length) {
     return (
@@ -29,15 +38,6 @@ export function CrewStatusWidget({ title = "Crew Status", limit = 5 }: CrewStatu
       </Card>
     );
   }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'checked_in': return 'bg-emerald-500';
-      case 'checked_out': return 'bg-destructive';
-      case 'scheduled': return 'bg-amber-500';
-      default: return 'bg-gray-500';
-    }
-  };
 
   return (
     <Card>
@@ -53,7 +53,7 @@ export function CrewStatusWidget({ title = "Crew Status", limit = 5 }: CrewStatu
                 <p className="text-sm text-muted-foreground">{crew.role}</p>
               </div>
               <Badge variant="outline" className="flex items-center space-x-1">
-                <div className={`h-2 w-2 rounded-full ${getStatusColor(crew.status)}`} />
+                <div className={`h-2 w-2 rounded-full ${getStatusSolidClass(crew.status)}`} />
                 <span>{crew.status.replace('_', ' ')}</span>
               </Badge>
             </div>

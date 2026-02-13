@@ -1,6 +1,6 @@
-import type { TranslationKeys } from "./en";
+import type { PartialTranslationKeys } from "./en";
 
-export const zh: TranslationKeys = {
+export const zh: PartialTranslationKeys = {
   common: {
     save: "保存",
     cancel: "取消",

@@ -43,9 +43,9 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                     {/* Status Indicator Glow */}
                     <div className={cn(
                         "absolute top-0 right-0 h-24 w-24 rounded-full blur-3xl opacity-20 -mr-6 -mt-6 transition-colors duration-500",
-                        person.status === 'online' && "bg-emerald-500",
-                        person.status === 'away' && "bg-amber-500",
-                        person.status === 'on-leave' && "bg-rose-500",
+                        person.status === 'online' && "bg-semantic-success",
+                        person.status === 'away' && "bg-semantic-warning",
+                        person.status === 'on-leave' && "bg-destructive",
                         person.status === 'offline' && "bg-zinc-500",
                     )} />
 
@@ -91,9 +91,9 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                             <span className="flex items-center gap-2">
                                 <span className={cn(
                                     "w-2 h-2 rounded-full",
-                                    person.status === 'online' && "bg-emerald-500 animate-pulse",
-                                    person.status === 'away' && "bg-amber-500",
-                                    person.status === 'on-leave' && "bg-rose-500",
+                                    person.status === 'online' && "bg-semantic-success animate-pulse",
+                                    person.status === 'away' && "bg-semantic-warning",
+                                    person.status === 'on-leave' && "bg-destructive",
                                     person.status === 'offline' && "bg-zinc-600",
                                 )} />
                                 {person.status.replace('-', ' ').toUpperCase()}

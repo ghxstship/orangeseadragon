@@ -2,6 +2,7 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatStatus } from "@/lib/formatters";
+import { getStatusBadgeClasses, getPriorityBadgeClasses } from "@/lib/tokens/semantic-colors";
 
 interface StatusBadgeProps {
   status: string;
@@ -9,79 +10,20 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-const defaultColorMap: Record<string, string> = {
-  // General statuses
-  draft: "bg-muted text-muted-foreground border-border",
-  pending: "bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]",
-  active: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.2)]",
-  completed: "bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.2)]",
-  cancelled: "bg-destructive/10 text-destructive border-destructive/20 shadow-[0_0_10px_rgba(239,68,68,0.2)]",
-  archived: "bg-muted text-muted-foreground border-border opacity-60",
-
-  // Project statuses
-  planning: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20 shadow-[0_0_10px_rgba(6,182,212,0.2)]",
-  on_hold: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-
-  // Task statuses
-  backlog: "bg-muted text-muted-foreground/40 border-border",
-  todo: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  in_progress: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  in_review: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  blocked: "bg-destructive/10 text-destructive border-destructive/20",
-  done: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-
-  // Asset statuses
-  available: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  in_use: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  maintenance: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  reserved: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  retired: "bg-muted text-muted-foreground border-border",
-  lost: "bg-destructive/10 text-destructive border-destructive/20",
-  damaged: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-
-  // Invoice statuses
-  sent: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  viewed: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
-  partially_paid: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  paid: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  overdue: "bg-destructive/10 text-destructive border-destructive/20",
-  disputed: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-
-  // Event phases
-  concept: "bg-muted text-muted-foreground border-border",
-  pre_production: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  setup: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  live: "bg-destructive/10 text-destructive border-destructive/20 font-black tracking-[0.3em]",
-  teardown: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  post_mortem: "bg-indigo-500/10 text-indigo-500 border-indigo-500/20",
-
-  // Deal stages
-  lead: "bg-muted text-muted-foreground border-border",
-  qualified: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  proposal: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  negotiation: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  won: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-
-  // Booking status
-  confirmed: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  tentative: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-
-  // Approval status
-  approved: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  rejected: "bg-destructive/10 text-destructive border-destructive/20",
-  review: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-};
+const BADGE_BASE = "text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-lg border shadow-lg";
 
 export function StatusBadge({
   status,
   colorMap = {},
   className,
 }: StatusBadgeProps) {
-  const mergedColorMap = { ...defaultColorMap, ...colorMap };
-  const colorClass = mergedColorMap[status.toLowerCase()] || "bg-gray-500";
+  const override = colorMap[status.toLowerCase()];
+  const colorClass = override || getStatusBadgeClasses(status);
+  const extra = status.toLowerCase() === "live" ? "font-black tracking-[0.3em]" : "";
+  const dimmed = status.toLowerCase() === "archived" ? "opacity-60" : "";
 
   return (
-    <Badge className={cn(colorClass, "text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-lg border shadow-lg", className)}>
+    <Badge className={cn(colorClass, BADGE_BASE, extra, dimmed, className)}>
       {formatStatus(status)}
     </Badge>
   );
@@ -92,20 +34,11 @@ interface PriorityBadgeProps {
   className?: string;
 }
 
-const priorityColorMap: Record<string, string> = {
-  urgent: "bg-destructive/10 text-destructive border-destructive/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
-  critical: "bg-destructive/10 text-destructive border-destructive/20 shadow-[0_0_10px_rgba(239,68,68,0.3)]",
-  high: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-  medium: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  low: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  none: "bg-muted text-muted-foreground border-border",
-};
-
 export function PriorityBadge({ priority, className }: PriorityBadgeProps) {
-  const colorClass = priorityColorMap[priority.toLowerCase()] || "bg-gray-500";
+  const colorClass = getPriorityBadgeClasses(priority);
 
   return (
-    <Badge className={cn(colorClass, "text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-lg border shadow-lg", className)}>
+    <Badge className={cn(colorClass, BADGE_BASE, className)}>
       {formatStatus(priority)}
     </Badge>
   );

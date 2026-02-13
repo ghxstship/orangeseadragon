@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-supabase';
 
 interface AuditEntry {
   id: string;
@@ -30,48 +32,89 @@ interface AuditEntry {
   details: string;
 }
 
-const mockEntries: AuditEntry[] = [
-  { id: '1', timestamp: '2026-02-11 08:32:14', actor: 'Julian C.', action: 'Updated', entity: 'Project: Summer Festival 2026', module: 'Productions', details: 'Changed phase from Pre-Production to Load-In' },
-  { id: '2', timestamp: '2026-02-11 08:28:01', actor: 'Sarah M.', action: 'Created', entity: 'Invoice #INV-2026-0042', module: 'Finance', details: 'New invoice for Acme Corp — $24,500.00' },
-  { id: '3', timestamp: '2026-02-11 08:15:33', actor: 'Mike R.', action: 'Approved', entity: 'Budget: Q1 Corporate Tour', module: 'Finance', details: 'Budget approved — total $185,000' },
-  { id: '4', timestamp: '2026-02-11 07:58:22', actor: 'Julian C.', action: 'Assigned', entity: 'Task: Finalize vendor contracts', module: 'Projects', details: 'Assigned to Sarah M.' },
-  { id: '5', timestamp: '2026-02-11 07:45:10', actor: 'System', action: 'Triggered', entity: 'Automation: Invoice Reminder', module: 'System', details: 'Sent 3 payment reminders for overdue invoices' },
-  { id: '6', timestamp: '2026-02-10 18:22:45', actor: 'Alex K.', action: 'Deleted', entity: 'Contact: John Doe (Draft)', module: 'Business', details: 'Permanently deleted draft contact record' },
-  { id: '7', timestamp: '2026-02-10 17:14:30', actor: 'Sarah M.', action: 'Exported', entity: 'Report: Revenue by Client', module: 'Analytics', details: 'Exported as PDF — 12 pages' },
-  { id: '8', timestamp: '2026-02-10 16:55:18', actor: 'Mike R.', action: 'Checked Out', entity: 'Asset: QSC K12.2 (x4)', module: 'Assets', details: 'Checked out for Project: Brand Launch' },
-  { id: '9', timestamp: '2026-02-10 15:30:00', actor: 'Julian C.', action: 'Updated', entity: 'Organization Settings', module: 'Admin', details: 'Changed default currency to USD' },
-  { id: '10', timestamp: '2026-02-10 14:12:44', actor: 'System', action: 'Synced', entity: 'Integration: QuickBooks', module: 'System', details: 'Synced 14 invoices and 8 payments' },
-];
-
 const actionColors: Record<string, string> = {
-  Created: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
-  Updated: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
-  Deleted: 'bg-destructive/10 text-destructive',
-  Approved: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
-  Assigned: 'bg-purple-500/10 text-purple-700 dark:text-purple-400',
-  Exported: 'bg-orange-500/10 text-orange-700 dark:text-orange-400',
-  Triggered: 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
-  Synced: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-400',
-  'Checked Out': 'bg-indigo-500/10 text-indigo-700 dark:text-indigo-400',
+  created: 'bg-semantic-success/10 text-semantic-success',
+  updated: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
+  deleted: 'bg-destructive/10 text-destructive',
+  approved: 'bg-semantic-success/10 text-semantic-success',
+  assigned: 'bg-purple-500/10 text-purple-700 dark:text-purple-400',
+  exported: 'bg-orange-500/10 text-orange-700 dark:text-orange-400',
+  triggered: 'bg-semantic-warning/10 text-semantic-warning',
+  synced: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-400',
+  insert: 'bg-semantic-success/10 text-semantic-success',
+  update: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
+  delete: 'bg-destructive/10 text-destructive',
 };
 
+function useAuditLog(orgId: string | null) {
+  const [entries, setEntries] = React.useState<AuditEntry[]>([]);
+
+  React.useEffect(() => {
+    if (!orgId) return;
+    const supabase = createClient();
+
+    const fetchData = async () => {
+      const { data } = await supabase
+        .from('audit_logs')
+        .select('id, action, entity_type, entity_id, created_at, user_id, new_values')
+        .eq('organization_id', orgId)
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      // Fetch user names for actors
+      const userIds = Array.from(new Set((data ?? []).map(d => d.user_id).filter(Boolean))) as string[];
+      const { data: users } = userIds.length > 0
+        ? await supabase.from('users').select('id, full_name').in('id', userIds)
+        : { data: [] };
+      const userMap = new Map((users ?? []).map(u => [u.id, u.full_name ?? 'Unknown']));
+
+      const mapped: AuditEntry[] = (data ?? []).map((row) => {
+        const ts = row.created_at ? new Date(row.created_at).toLocaleString() : '';
+        const actionLabel = row.action.charAt(0).toUpperCase() + row.action.slice(1);
+        const entityLabel = row.entity_type.replace(/_/g, ' ');
+        const details = row.new_values
+          ? (typeof row.new_values === 'object' ? Object.keys(row.new_values as Record<string, unknown>).join(', ') : '')
+          : '';
+        return {
+          id: row.id,
+          timestamp: ts,
+          actor: row.user_id ? (userMap.get(row.user_id) ?? 'Unknown') : 'System',
+          action: actionLabel,
+          entity: `${entityLabel}: ${row.entity_id.slice(0, 8)}`,
+          module: row.entity_type.split('_')[0] ?? '',
+          details: details ? `Changed: ${details}` : '',
+        };
+      });
+
+      setEntries(mapped);
+    };
+
+    fetchData();
+  }, [orgId]);
+
+  return entries;
+}
+
 export default function AuditLogPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
+  const allEntries = useAuditLog(orgId);
   const [search, setSearch] = React.useState('');
   const [moduleFilter, setModuleFilter] = React.useState('all');
   const [actionFilter, setActionFilter] = React.useState('all');
 
-  const filtered = mockEntries.filter((e) => {
+  const filtered = allEntries.filter((e) => {
     const matchesSearch = !search ||
       e.actor.toLowerCase().includes(search.toLowerCase()) ||
       e.entity.toLowerCase().includes(search.toLowerCase()) ||
       e.details.toLowerCase().includes(search.toLowerCase());
     const matchesModule = moduleFilter === 'all' || e.module === moduleFilter;
-    const matchesAction = actionFilter === 'all' || e.action === actionFilter;
+    const matchesAction = actionFilter === 'all' || e.action.toLowerCase() === actionFilter.toLowerCase();
     return matchesSearch && matchesModule && matchesAction;
   });
 
-  const modules = Array.from(new Set(mockEntries.map((e) => e.module)));
-  const actions = Array.from(new Set(mockEntries.map((e) => e.action)));
+  const modules = Array.from(new Set(allEntries.map((e) => e.module)));
+  const actions = Array.from(new Set(allEntries.map((e) => e.action)));
 
   return (
     <div className="flex flex-col h-full">

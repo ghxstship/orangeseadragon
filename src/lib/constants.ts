@@ -32,50 +32,16 @@ export {
   DEAL_STAGE as DEAL_STAGES,
 } from "./enums";
 
-export const STATUS_COLORS: Record<string, string> = {
-  // Project statuses
-  draft: "bg-gray-500",
-  planning: "bg-blue-500",
-  active: "bg-green-500",
-  on_hold: "bg-yellow-500",
-  completed: "bg-purple-500",
-  cancelled: "bg-red-500",
-  archived: "bg-gray-400",
-
-  // Task statuses
-  backlog: "bg-gray-500",
-  todo: "bg-blue-500",
-  in_progress: "bg-yellow-500",
-  in_review: "bg-purple-500",
-  blocked: "bg-red-500",
-  done: "bg-green-500",
-
-  // Asset statuses
-  available: "bg-green-500",
-  in_use: "bg-blue-500",
-  maintenance: "bg-yellow-500",
-  reserved: "bg-purple-500",
-  retired: "bg-gray-500",
-  lost: "bg-red-500",
-  damaged: "bg-orange-500",
-
-  // Invoice statuses
-  sent: "bg-blue-500",
-  viewed: "bg-cyan-500",
-  partially_paid: "bg-yellow-500",
-  paid: "bg-green-500",
-  overdue: "bg-red-500",
-  disputed: "bg-orange-500",
-};
-
-export const PRIORITY_COLORS: Record<string, string> = {
-  urgent: "bg-red-500",
-  critical: "bg-red-500",
-  high: "bg-orange-500",
-  medium: "bg-yellow-500",
-  low: "bg-blue-500",
-  none: "bg-gray-500",
-};
+// Status & priority color resolution — delegates to SSOT semantic tokens
+export {
+  getStatusSolidClass,
+  getStatusBadgeClasses,
+  getStatusTextClass,
+  getPrioritySolidClass,
+  getPriorityBadgeClasses,
+  STATUS_INTENT_MAP,
+  PRIORITY_INTENT_MAP,
+} from "./tokens/semantic-colors";
 
 export const DATE_FORMATS = {
   SHORT: "MMM d, yyyy",

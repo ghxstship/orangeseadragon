@@ -79,9 +79,9 @@ const severityConfig = {
   },
   warning: {
     icon: AlertTriangle,
-    color: 'text-amber-500',
-    bg: 'bg-amber-500/10',
-    border: 'border-amber-500/20',
+    color: 'text-semantic-warning',
+    bg: 'bg-semantic-warning/10',
+    border: 'border-semantic-warning/20',
     badge: 'warning' as const,
   },
 };
@@ -358,8 +358,8 @@ export function ConflictPanel({
             </div>
           ) : openConflicts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="p-4 rounded-full bg-emerald-500/10 mb-4">
-                <Check className="h-8 w-8 text-emerald-500" />
+              <div className="p-4 rounded-full bg-semantic-success/10 mb-4">
+                <Check className="h-8 w-8 text-semantic-success" />
               </div>
               <p className="font-medium">No Conflicts Detected</p>
               <p className="text-sm text-muted-foreground mt-1">

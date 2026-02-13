@@ -29,8 +29,8 @@ interface StrengthConfig {
 const STRENGTH_CONFIG: Record<StrengthLevel, StrengthConfig> = {
   weak: { label: "Weak", color: "bg-destructive", bgColor: "text-destructive" },
   fair: { label: "Fair", color: "bg-orange-500", bgColor: "text-orange-500" },
-  good: { label: "Good", color: "bg-amber-500", bgColor: "text-amber-500" },
-  strong: { label: "Strong", color: "bg-emerald-500", bgColor: "text-emerald-500" },
+  good: { label: "Good", color: "bg-semantic-warning", bgColor: "text-semantic-warning" },
+  strong: { label: "Strong", color: "bg-semantic-success", bgColor: "text-semantic-success" },
 };
 
 function calculateStrength(password: string): { level: StrengthLevel; score: number } {
@@ -91,7 +91,7 @@ export function PasswordStrength({
                 key={req.key}
                 className={cn(
                   "flex items-center gap-2 text-xs transition-colors",
-                  passed ? "text-emerald-500" : "text-muted-foreground"
+                  passed ? "text-semantic-success" : "text-muted-foreground"
                 )}
               >
                 {passed ? (

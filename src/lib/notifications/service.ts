@@ -386,13 +386,22 @@ export class NotificationService {
       throw new Error("Email not configured");
     }
 
-    // In production, integrate with actual email provider
-    console.log(`[EMAIL] To: ${notification.recipient.email}`);
-    console.log(`[EMAIL] Subject: ${notification.subject || notification.title}`);
-    console.log(`[EMAIL] Body: ${notification.body}`);
+    const response = await fetch("/api/notifications/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: notification.recipient.email,
+        subject: notification.subject || notification.title,
+        body: notification.body,
+        html: notification.htmlBody,
+        notification_id: notification.id,
+      }),
+    });
 
-    // Simulate send delay
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || `Email send failed: ${response.status}`);
+    }
   }
 
   private async sendPush(notification: Notification): Promise<void> {

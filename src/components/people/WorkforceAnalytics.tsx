@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import { motion } from 'framer-motion';
 import { 
   Brain, 
@@ -67,86 +68,114 @@ interface DepartmentMetric {
 }
 
 interface WorkforceAnalyticsProps {
+  organizationId?: string | null;
   onRefresh?: () => void;
   onInsightAction?: (insightId: string, action: string) => void;
 }
 
 const INSIGHT_CONFIG: Record<InsightType, { icon: React.ElementType; color: string; bgColor: string }> = {
-  warning: { icon: AlertTriangle, color: 'text-rose-400', bgColor: 'bg-rose-500/20' },
-  opportunity: { icon: Lightbulb, color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
-  trend: { icon: TrendingUp, color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
-  prediction: { icon: Brain, color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
+  warning: { icon: AlertTriangle, color: 'text-destructive', bgColor: 'bg-destructive/20' },
+  opportunity: { icon: Lightbulb, color: 'text-semantic-success', bgColor: 'bg-semantic-success/20' },
+  trend: { icon: TrendingUp, color: 'text-semantic-info', bgColor: 'bg-semantic-info/20' },
+  prediction: { icon: Brain, color: 'text-semantic-purple', bgColor: 'bg-semantic-purple/20' },
 };
 
-const MOCK_METRICS: MetricCard[] = [
-  { id: '1', title: 'Total Headcount', value: 247, change: 12, changeLabel: 'vs last quarter', trend: 'up', isPositive: true },
-  { id: '2', title: 'Turnover Rate', value: '8.2%', change: -2.1, changeLabel: 'vs last quarter', trend: 'down', isPositive: true },
-  { id: '3', title: 'Avg. Tenure', value: '3.4 yrs', change: 0.3, changeLabel: 'vs last year', trend: 'up', isPositive: true },
-  { id: '4', title: 'Engagement Score', value: 78, change: 5, changeLabel: 'vs last survey', trend: 'up', isPositive: true },
-  { id: '5', title: 'Time to Hire', value: '32 days', change: -8, changeLabel: 'vs last quarter', trend: 'down', isPositive: true },
-  { id: '6', title: 'Training Hours', value: '24.5 hrs', change: 6.2, changeLabel: 'per employee', trend: 'up', isPositive: true },
+const FALLBACK_METRICS: MetricCard[] = [
+  { id: '1', title: 'Total Headcount', value: 0, change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+  { id: '2', title: 'Turnover Rate', value: '0%', change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+  { id: '3', title: 'Avg. Tenure', value: '0 yrs', change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+  { id: '4', title: 'Active Staff', value: 0, change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+  { id: '5', title: 'Departments', value: 0, change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+  { id: '6', title: 'Avg. Salary', value: '$0', change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
 ];
 
-const MOCK_INSIGHTS: Insight[] = [
-  { 
-    id: '1', 
-    type: 'warning', 
-    priority: 'high',
-    title: 'Elevated Attrition Risk in Engineering',
-    description: 'Based on engagement scores and tenure patterns, 3 senior engineers show signs of potential departure within 90 days.',
-    metric: '23% higher risk than baseline',
-    action: 'Schedule retention conversations',
-    confidence: 87
-  },
-  { 
-    id: '2', 
-    type: 'prediction', 
-    priority: 'medium',
-    title: 'Q2 Hiring Needs Forecast',
-    description: 'Projected growth and planned departures suggest 15-18 new hires needed across Product and Engineering by end of Q2.',
-    metric: 'Based on 94% accurate historical model',
-    action: 'Review hiring pipeline',
-    confidence: 94
-  },
-  { 
-    id: '3', 
-    type: 'opportunity', 
-    priority: 'medium',
-    title: 'Skills Gap in Data Analytics',
-    description: 'Team capability analysis shows 40% gap in advanced analytics skills. Internal training could address 60% of this gap.',
-    metric: '12 employees identified for upskilling',
-    action: 'Launch training program',
-    confidence: 82
-  },
-  { 
-    id: '4', 
-    type: 'trend', 
-    priority: 'low',
-    title: 'Remote Work Productivity Increase',
-    description: 'Employees with hybrid schedules show 12% higher productivity scores compared to fully in-office counterparts.',
-    metric: 'Consistent over 6 months',
-    action: 'Expand hybrid policy',
-    confidence: 91
-  },
-];
 
-const MOCK_DEPARTMENTS: DepartmentMetric[] = [
-  { department: 'Engineering', headcount: 82, turnoverRate: 6.5, avgTenure: 2.8, engagementScore: 76, productivityIndex: 92 },
-  { department: 'Product', headcount: 24, turnoverRate: 4.2, avgTenure: 3.1, engagementScore: 82, productivityIndex: 88 },
-  { department: 'Design', headcount: 18, turnoverRate: 8.3, avgTenure: 2.4, engagementScore: 79, productivityIndex: 85 },
-  { department: 'Sales', headcount: 45, turnoverRate: 12.1, avgTenure: 1.9, engagementScore: 71, productivityIndex: 94 },
-  { department: 'Operations', headcount: 38, turnoverRate: 5.8, avgTenure: 4.2, engagementScore: 74, productivityIndex: 87 },
-  { department: 'Finance', headcount: 22, turnoverRate: 3.2, avgTenure: 5.1, engagementScore: 80, productivityIndex: 91 },
-  { department: 'HR', headcount: 18, turnoverRate: 2.8, avgTenure: 4.8, engagementScore: 85, productivityIndex: 89 },
-];
 
 export function WorkforceAnalytics({
+  organizationId,
   onRefresh,
   onInsightAction,
 }: WorkforceAnalyticsProps) {
   const [activeTab, setActiveTab] = useState('overview');
   const [timeRange, setTimeRange] = useState('quarter');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [metrics, setMetrics] = useState<MetricCard[]>(FALLBACK_METRICS);
+  const [departments, setDepartments] = useState<DepartmentMetric[]>([]);
+  const insights: Insight[] = [];
+
+  useEffect(() => {
+    if (!organizationId) return;
+    const supabase = createClient();
+
+    const fetchData = async () => {
+      const { data: staff } = await supabase
+        .from('staff_members')
+        .select('id, hire_date, termination_date, is_active, department_id, salary')
+        .eq('organization_id', organizationId);
+
+      const { data: depts } = await supabase
+        .from('departments')
+        .select('id, name')
+        .eq('organization_id', organizationId);
+
+      const deptMap = new Map((depts ?? []).map(d => [d.id, d.name]));
+      const rows = staff ?? [];
+      const active = rows.filter(s => s.is_active !== false && !s.termination_date);
+      const terminated = rows.filter(s => !!s.termination_date);
+      const now = Date.now();
+      const avgTenure = active.length > 0
+        ? active.reduce((s, r) => {
+            const hire = r.hire_date ? new Date(r.hire_date).getTime() : now;
+            return s + (now - hire) / (365.25 * 24 * 60 * 60 * 1000);
+          }, 0) / active.length
+        : 0;
+      const turnoverRate = rows.length > 0 ? (terminated.length / rows.length) * 100 : 0;
+      const avgSalary = active.length > 0
+        ? active.reduce((s, r) => s + (r.salary ?? 0), 0) / active.length
+        : 0;
+      const uniqueDepts = new Set(active.map(s => s.department_id).filter(Boolean));
+
+      setMetrics([
+        { id: '1', title: 'Total Headcount', value: rows.length, change: active.length - terminated.length, changeLabel: 'net active', trend: 'up', isPositive: true },
+        { id: '2', title: 'Turnover Rate', value: `${turnoverRate.toFixed(1)}%`, change: 0, changeLabel: '', trend: turnoverRate > 10 ? 'up' : 'down', isPositive: turnoverRate <= 10 },
+        { id: '3', title: 'Avg. Tenure', value: `${avgTenure.toFixed(1)} yrs`, change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+        { id: '4', title: 'Active Staff', value: active.length, change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+        { id: '5', title: 'Departments', value: uniqueDepts.size, change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+        { id: '6', title: 'Avg. Salary', value: `$${Math.round(avgSalary).toLocaleString()}`, change: 0, changeLabel: '', trend: 'neutral', isPositive: true },
+      ]);
+
+      // Department breakdown
+      const deptGroups = new Map<string, typeof rows>();
+      for (const s of active) {
+        const key = s.department_id ?? 'unassigned';
+        if (!deptGroups.has(key)) deptGroups.set(key, []);
+        deptGroups.get(key)!.push(s);
+      }
+      const deptMetrics: DepartmentMetric[] = Array.from(deptGroups.entries()).map(([deptId, members]) => {
+        const deptTerminated = rows.filter(r => r.department_id === deptId && !!r.termination_date);
+        const deptTurnover = (members.length + deptTerminated.length) > 0
+          ? (deptTerminated.length / (members.length + deptTerminated.length)) * 100
+          : 0;
+        const deptTenure = members.length > 0
+          ? members.reduce((s, r) => {
+              const hire = r.hire_date ? new Date(r.hire_date).getTime() : now;
+              return s + (now - hire) / (365.25 * 24 * 60 * 60 * 1000);
+            }, 0) / members.length
+          : 0;
+        return {
+          department: deptMap.get(deptId) ?? deptId,
+          headcount: members.length,
+          turnoverRate: Math.round(deptTurnover * 10) / 10,
+          avgTenure: Math.round(deptTenure * 10) / 10,
+          engagementScore: 0,
+          productivityIndex: 0,
+        };
+      });
+      setDepartments(deptMetrics.sort((a, b) => b.headcount - a.headcount));
+    };
+
+    fetchData();
+  }, [organizationId]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -155,9 +184,9 @@ export function WorkforceAnalytics({
   };
 
   const getScoreColor = (score: number, thresholds: { good: number; warning: number }) => {
-    if (score >= thresholds.good) return 'text-emerald-400';
-    if (score >= thresholds.warning) return 'text-amber-400';
-    return 'text-rose-400';
+    if (score >= thresholds.good) return 'text-semantic-success';
+    if (score >= thresholds.warning) return 'text-semantic-warning';
+    return 'text-destructive';
   };
 
   return (
@@ -202,7 +231,7 @@ export function WorkforceAnalytics({
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {MOCK_METRICS.map((metric, index) => (
+        {metrics.map((metric, index) => (
           <motion.div
             key={metric.id}
             initial={{ opacity: 0, y: 20 }}
@@ -215,7 +244,7 @@ export function WorkforceAnalytics({
                 <p className="text-2xl font-bold text-white mt-1">{metric.value}</p>
                 <div className={cn(
                   "flex items-center gap-1 mt-2 text-xs",
-                  metric.isPositive ? "text-emerald-400" : "text-rose-400"
+                  metric.isPositive ? "text-semantic-success" : "text-destructive"
                 )}>
                   {metric.trend === 'up' ? (
                     <ArrowUpRight className="w-3 h-3" />
@@ -242,16 +271,16 @@ export function WorkforceAnalytics({
         <TabsContent value="overview" className="mt-6 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Zap className="w-5 h-5 text-amber-400" />
+              <Zap className="w-5 h-5 text-semantic-warning" />
               AI-Generated Insights
             </h3>
             <p className="text-sm text-zinc-500">
-              {MOCK_INSIGHTS.length} insights generated
+              {insights.length} insight{insights.length !== 1 ? 's' : ''} generated
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {MOCK_INSIGHTS.map((insight, index) => {
+            {insights.map((insight, index) => {
               const config = INSIGHT_CONFIG[insight.type];
               const Icon = config.icon;
 
@@ -337,7 +366,7 @@ export function WorkforceAnalytics({
                     </tr>
                   </thead>
                   <tbody>
-                    {MOCK_DEPARTMENTS.map((dept, index) => (
+                    {departments.map((dept, index) => (
                       <motion.tr
                         key={dept.department}
                         initial={{ opacity: 0 }}
@@ -385,29 +414,29 @@ export function WorkforceAnalytics({
             <Card className="bg-zinc-900/60 border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-emerald-400" />
+                  <TrendingUp className="w-5 h-5 text-semantic-success" />
                   Positive Trends
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                <div className="p-4 rounded-lg bg-semantic-success/10 border border-semantic-success/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Employee Retention</span>
-                    <span className="text-emerald-400 font-medium">+15%</span>
+                    <span className="text-semantic-success font-medium">+15%</span>
                   </div>
                   <p className="text-xs text-zinc-500">Retention improved significantly after implementing flexible work policies</p>
                 </div>
-                <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                <div className="p-4 rounded-lg bg-semantic-success/10 border border-semantic-success/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Training Completion</span>
-                    <span className="text-emerald-400 font-medium">+28%</span>
+                    <span className="text-semantic-success font-medium">+28%</span>
                   </div>
                   <p className="text-xs text-zinc-500">New LMS platform driving higher course completion rates</p>
                 </div>
-                <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                <div className="p-4 rounded-lg bg-semantic-success/10 border border-semantic-success/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Internal Mobility</span>
-                    <span className="text-emerald-400 font-medium">+22%</span>
+                    <span className="text-semantic-success font-medium">+22%</span>
                   </div>
                   <p className="text-xs text-zinc-500">More employees moving between departments and roles</p>
                 </div>
@@ -417,29 +446,29 @@ export function WorkforceAnalytics({
             <Card className="bg-zinc-900/60 border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
-                  <TrendingDown className="w-5 h-5 text-rose-400" />
+                  <TrendingDown className="w-5 h-5 text-destructive" />
                   Areas of Concern
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Sales Team Turnover</span>
-                    <span className="text-rose-400 font-medium">12.1%</span>
+                    <span className="text-destructive font-medium">12.1%</span>
                   </div>
                   <p className="text-xs text-zinc-500">Above industry average of 8%. Review compensation and workload.</p>
                 </div>
-                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                <div className="p-4 rounded-lg bg-semantic-warning/10 border border-semantic-warning/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Overtime Hours</span>
-                    <span className="text-amber-400 font-medium">+18%</span>
+                    <span className="text-semantic-warning font-medium">+18%</span>
                   </div>
                   <p className="text-xs text-zinc-500">Engineering team averaging 8+ overtime hours per week</p>
                 </div>
-                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                <div className="p-4 rounded-lg bg-semantic-warning/10 border border-semantic-warning/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Open Positions</span>
-                    <span className="text-amber-400 font-medium">23 roles</span>
+                    <span className="text-semantic-warning font-medium">23 roles</span>
                   </div>
                   <p className="text-xs text-zinc-500">Average time-to-fill increasing. Consider expanding sourcing channels.</p>
                 </div>
@@ -477,13 +506,13 @@ export function WorkforceAnalytics({
 
                 <div className="p-6 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20">
                   <div className="flex items-center gap-2 mb-3">
-                    <Target className="w-5 h-5 text-emerald-400" />
+                    <Target className="w-5 h-5 text-semantic-success" />
                     <span className="text-sm font-medium text-white">Retention Rate</span>
                   </div>
                   <p className="text-3xl font-bold text-white">93%</p>
                   <p className="text-xs text-zinc-400 mt-1">Expected next 12 months</p>
                   <div className="mt-3 flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs border-emerald-500/50 text-emerald-400">
+                    <Badge variant="outline" className="text-xs border-semantic-success/50 text-semantic-success">
                       89% confidence
                     </Badge>
                   </div>
@@ -491,13 +520,13 @@ export function WorkforceAnalytics({
 
                 <div className="p-6 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/20">
                   <div className="flex items-center gap-2 mb-3">
-                    <Clock className="w-5 h-5 text-amber-400" />
+                    <Clock className="w-5 h-5 text-semantic-warning" />
                     <span className="text-sm font-medium text-white">Hiring Needs</span>
                   </div>
                   <p className="text-3xl font-bold text-white">42</p>
                   <p className="text-xs text-zinc-400 mt-1">New hires needed in 2026</p>
                   <div className="mt-3 flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400">
+                    <Badge variant="outline" className="text-xs border-semantic-warning/50 text-semantic-warning">
                       86% confidence
                     </Badge>
                   </div>
@@ -506,7 +535,7 @@ export function WorkforceAnalytics({
 
               <div className="p-4 rounded-lg bg-zinc-800/50 border border-border">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-purple-500/20">
+                  <div className="p-2 rounded-lg bg-semantic-purple/20">
                     <Sparkles className="w-5 h-5 text-purple-400" />
                   </div>
                   <div>

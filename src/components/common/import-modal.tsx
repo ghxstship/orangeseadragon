@@ -505,18 +505,18 @@ export function ImportModal({
             </div>
 
             {validationErrors.length > 0 && (
-              <div className="rounded-lg border border-amber-500/50 bg-amber-500/5 p-3 max-h-[120px] overflow-y-auto">
-                <div className="flex items-center gap-2 text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">
+              <div className="rounded-lg border border-semantic-warning/50 bg-semantic-warning/5 p-3 max-h-[120px] overflow-y-auto">
+                <div className="flex items-center gap-2 text-sm font-medium text-semantic-warning mb-1">
                   <AlertTriangle className="h-4 w-4" />
                   {validationErrors.length} validation warnings
                 </div>
                 {validationErrors.slice(0, 10).map((err, i) => (
-                  <p key={i} className="text-xs text-amber-600/80 dark:text-amber-400/80">
+                  <p key={i} className="text-xs text-semantic-warning/80">
                     Row {err.row}: {err.message}
                   </p>
                 ))}
                 {validationErrors.length > 10 && (
-                  <p className="text-xs text-amber-600/60 dark:text-amber-400/60 mt-1">
+                  <p className="text-xs text-semantic-warning/60 mt-1">
                     ...and {validationErrors.length - 10} more
                   </p>
                 )}
@@ -550,14 +550,14 @@ export function ImportModal({
               className={cn(
                 "h-16 w-16 rounded-full flex items-center justify-center",
                 importResult.failed === 0
-                  ? "bg-emerald-500/10"
-                  : "bg-amber-500/10"
+                  ? "bg-semantic-success/10"
+                  : "bg-semantic-warning/10"
               )}
             >
               {importResult.failed === 0 ? (
-                <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+                <CheckCircle2 className="h-8 w-8 text-semantic-success" />
               ) : (
-                <AlertTriangle className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+                <AlertTriangle className="h-8 w-8 text-semantic-warning" />
               )}
             </div>
 

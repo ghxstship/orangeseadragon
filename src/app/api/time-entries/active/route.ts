@@ -1,6 +1,8 @@
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, serverError } from '@/lib/api/response';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const auth = await requireAuth();

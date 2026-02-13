@@ -88,11 +88,11 @@ function ForecastCard({
                 </div>
                 {trend && (
                     <div className="flex items-center gap-1 mt-2">
-                        {trend.direction === 'up' && <TrendingUp className="w-3 h-3 text-emerald-600" />}
+                        {trend.direction === 'up' && <TrendingUp className="w-3 h-3 text-semantic-success" />}
                         {trend.direction === 'down' && <TrendingDown className="w-3 h-3 text-destructive" />}
                         <span className={cn(
                             "text-xs font-medium",
-                            trend.direction === 'up' && "text-emerald-600",
+                            trend.direction === 'up' && "text-semantic-success",
                             trend.direction === 'down' && "text-destructive"
                         )}>
                             {trend.value}
@@ -137,7 +137,7 @@ function QuotaProgress({
                 value={percentage} 
                 className={cn(
                     "h-2",
-                    isOnTrack && "[&>div]:bg-emerald-500",
+                    isOnTrack && "[&>div]:bg-semantic-success",
                     isAtRisk && "[&>div]:bg-destructive"
                 )}
             />
@@ -162,7 +162,7 @@ function ForecastScenarios({
             <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <div className="w-2 h-2 rounded-full bg-semantic-success" />
                         <span className="text-sm">Best Case</span>
                     </div>
                     <span className="font-semibold">{currencyFormatter.format(bestCase)}</span>

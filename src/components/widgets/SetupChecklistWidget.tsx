@@ -156,7 +156,7 @@ export function SetupChecklistWidget({
                     className={cn(
                       "flex h-5 w-5 items-center justify-center rounded-full border transition-colors",
                       item.completed
-                        ? "border-emerald-500 bg-emerald-500 text-white"
+                        ? "border-semantic-success bg-semantic-success text-white"
                         : "border-muted-foreground/30"
                     )}
                   >
@@ -173,9 +173,9 @@ export function SetupChecklistWidget({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-md bg-emerald-500/10 p-3 text-center"
+            className="rounded-md bg-semantic-success/10 p-3 text-center"
           >
-            <p className="text-sm font-medium text-emerald-600">
+            <p className="text-sm font-medium text-semantic-success">
               🎉 All done! You&apos;re all set.
             </p>
             <Button
@@ -237,7 +237,7 @@ export function SetupChecklistWidget({
                   className={cn(
                     "flex items-center gap-3 rounded-lg border p-3 transition-all",
                     item.completed
-                      ? "border-emerald-500/20 bg-emerald-500/5"
+                      ? "border-semantic-success/20 bg-semantic-success/5"
                       : "hover:border-primary/50 hover:bg-accent"
                   )}
                 >
@@ -245,7 +245,7 @@ export function SetupChecklistWidget({
                     className={cn(
                       "flex h-8 w-8 items-center justify-center rounded-full transition-colors",
                       item.completed
-                        ? "bg-emerald-500 text-white"
+                        ? "bg-semantic-success text-white"
                         : "bg-muted text-muted-foreground"
                     )}
                   >
@@ -290,7 +290,7 @@ export function SetupChecklistWidget({
             className="rounded-lg bg-gradient-to-r from-emerald-500/10 to-emerald-500/10 p-4 text-center"
           >
             <div className="text-2xl mb-2">🎉</div>
-            <p className="text-sm font-medium text-emerald-600">
+            <p className="text-sm font-medium text-semantic-success">
               Congratulations! You&apos;re all set up.
             </p>
             <Button

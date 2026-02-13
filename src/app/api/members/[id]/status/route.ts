@@ -36,7 +36,23 @@ export async function POST(
             return notFound('Member');
         }
 
-        // TODO: Add permission check (only admins/owners can change status)
+        // Permission check: only admins/owners can change member status
+        const { data: callerMembership } = await supabase
+            .from('organization_members')
+            .select('role')
+            .eq('organization_id', member.organization_id)
+            .eq('user_id', user.id)
+            .single();
+
+        const ADMIN_ROLES = ['owner', 'admin'];
+        if (!callerMembership || !ADMIN_ROLES.includes(callerMembership.role)) {
+            return badRequest('Insufficient permissions: only admins and owners can change member status');
+        }
+
+        // Prevent self-deactivation for owners
+        if (member.user_id === user.id && targetStatus === 'deactivated' && callerMembership.role === 'owner') {
+            return badRequest('Owners cannot deactivate themselves');
+        }
 
         // Update status
         const { data, error } = await supabase

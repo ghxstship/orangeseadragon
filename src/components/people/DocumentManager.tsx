@@ -64,30 +64,21 @@ interface DocumentManagerProps {
 }
 
 const CATEGORY_CONFIG: Record<DocumentCategory, { label: string; color: string }> = {
-  contract: { label: 'Contract', color: 'bg-blue-500' },
-  policy: { label: 'Policy', color: 'bg-purple-500' },
-  certification: { label: 'Certification', color: 'bg-emerald-500' },
-  personal: { label: 'Personal', color: 'bg-amber-500' },
-  tax: { label: 'Tax', color: 'bg-rose-500' },
+  contract: { label: 'Contract', color: 'bg-semantic-info' },
+  policy: { label: 'Policy', color: 'bg-semantic-purple' },
+  certification: { label: 'Certification', color: 'bg-semantic-success' },
+  personal: { label: 'Personal', color: 'bg-semantic-warning' },
+  tax: { label: 'Tax', color: 'bg-destructive' },
   other: { label: 'Other', color: 'bg-zinc-500' },
 };
 
 const STATUS_CONFIG: Record<DocumentStatus, { label: string; icon: React.ElementType; color: string }> = {
-  valid: { label: 'Valid', icon: CheckCircle2, color: 'text-emerald-400' },
-  pending: { label: 'Pending Review', icon: Clock, color: 'text-amber-400' },
-  expired: { label: 'Expired', icon: AlertTriangle, color: 'text-rose-400' },
-  requires_signature: { label: 'Needs Signature', icon: FileText, color: 'text-blue-400' },
+  valid: { label: 'Valid', icon: CheckCircle2, color: 'text-semantic-success' },
+  pending: { label: 'Pending Review', icon: Clock, color: 'text-semantic-warning' },
+  expired: { label: 'Expired', icon: AlertTriangle, color: 'text-destructive' },
+  requires_signature: { label: 'Needs Signature', icon: FileText, color: 'text-semantic-info' },
 };
 
-const MOCK_DOCUMENTS: Document[] = [
-  { id: '1', name: 'Employment Contract.pdf', category: 'contract', fileType: 'pdf', fileSize: 245000, uploadedAt: new Date('2023-06-15'), status: 'valid', uploadedBy: 'HR System', isRequired: true },
-  { id: '2', name: 'NDA Agreement.pdf', category: 'contract', fileType: 'pdf', fileSize: 128000, uploadedAt: new Date('2023-06-15'), status: 'valid', uploadedBy: 'HR System', isRequired: true },
-  { id: '3', name: 'Safety Certification.pdf', category: 'certification', fileType: 'pdf', fileSize: 512000, uploadedAt: new Date('2024-01-10'), expiresAt: new Date('2026-01-10'), status: 'valid', uploadedBy: 'Training Dept' },
-  { id: '4', name: 'First Aid Certificate.jpg', category: 'certification', fileType: 'jpg', fileSize: 1024000, uploadedAt: new Date('2024-06-01'), expiresAt: new Date('2026-03-15'), status: 'valid', uploadedBy: 'Sarah Chen' },
-  { id: '5', name: 'W-4 Form 2026.pdf', category: 'tax', fileType: 'pdf', fileSize: 89000, uploadedAt: new Date('2026-01-05'), status: 'pending', uploadedBy: 'Sarah Chen' },
-  { id: '6', name: 'Performance Review 2025.pdf', category: 'personal', fileType: 'pdf', fileSize: 156000, uploadedAt: new Date('2025-12-15'), status: 'requires_signature', uploadedBy: 'HR System' },
-  { id: '7', name: 'Company Handbook v3.pdf', category: 'policy', fileType: 'pdf', fileSize: 2048000, uploadedAt: new Date('2025-01-01'), status: 'valid', uploadedBy: 'HR System', isRequired: true },
-];
 
 const getFileIcon = (fileType: string) => {
   switch (fileType.toLowerCase()) {
@@ -114,7 +105,7 @@ const formatFileSize = (bytes: number) => {
 };
 
 export function DocumentManager({
-  documents = MOCK_DOCUMENTS,
+  documents = [],
   onUpload,
   onDownload,
   onDelete,
@@ -175,24 +166,24 @@ export function DocumentManager({
             <p className="text-2xl font-bold text-white">{documents.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-emerald-500/10 border-emerald-500/20">
+        <Card className="bg-semantic-success/10 border-semantic-success/20">
           <CardContent className="pt-4">
-            <p className="text-sm text-emerald-300/70">Required Complete</p>
-            <p className="text-2xl font-bold text-emerald-400">
+            <p className="text-sm text-semantic-success/70">Required Complete</p>
+            <p className="text-2xl font-bold text-semantic-success">
               {requiredDocs.filter(d => d.status === 'valid').length}/{requiredDocs.length}
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-amber-500/10 border-amber-500/20">
+        <Card className="bg-semantic-warning/10 border-semantic-warning/20">
           <CardContent className="pt-4">
-            <p className="text-sm text-amber-300/70">Pending Action</p>
-            <p className="text-2xl font-bold text-amber-400">{pendingDocs.length}</p>
+            <p className="text-sm text-semantic-warning/70">Pending Action</p>
+            <p className="text-2xl font-bold text-semantic-warning">{pendingDocs.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-rose-500/10 border-rose-500/20">
+        <Card className="bg-destructive/10 border-destructive/20">
           <CardContent className="pt-4">
-            <p className="text-sm text-rose-300/70">Expiring Soon</p>
-            <p className="text-2xl font-bold text-rose-400">{expiringDocs.length}</p>
+            <p className="text-sm text-destructive/70">Expiring Soon</p>
+            <p className="text-2xl font-bold text-destructive">{expiringDocs.length}</p>
           </CardContent>
         </Card>
       </div>
@@ -292,7 +283,7 @@ export function DocumentManager({
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-white truncate">{doc.name}</p>
                       {doc.isRequired && (
-                        <Badge variant="outline" className="text-xs border-amber-500/50 text-amber-400">
+                        <Badge variant="outline" className="text-xs border-semantic-warning/50 text-semantic-warning">
                           Required
                         </Badge>
                       )}
@@ -348,7 +339,7 @@ export function DocumentManager({
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={() => onDelete?.(doc.id)}
-                          className="text-rose-400 focus:text-rose-400"
+                          className="text-destructive focus:text-destructive"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Delete

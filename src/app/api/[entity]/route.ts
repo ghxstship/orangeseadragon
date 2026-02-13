@@ -104,18 +104,16 @@ export async function POST(
 
     try {
         const body = await request.json();
-        console.log(`[API POST] Entity: ${entity}, Body:`, JSON.stringify(body, null, 2));
-        
         const { data, error } = await supabase.from(tableName).insert(body).select().single();
 
         if (error) {
-            console.error(`[API POST] Supabase error for ${entity}:`, error);
+            console.error(`[API] Insert failed for ${tableName}:`, error.message);
             return supabaseError(error);
         }
 
         return apiCreated(data);
     } catch (e) {
-        console.error(`[API POST] Exception for ${entity}:`, e);
+        console.error(`[API] Invalid request body for ${tableName}:`, e instanceof Error ? e.message : 'unknown');
         return badRequest('Invalid request body');
     }
 }

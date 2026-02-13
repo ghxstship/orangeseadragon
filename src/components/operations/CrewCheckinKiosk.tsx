@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
@@ -51,40 +52,16 @@ interface KioskConfig {
   allow_manual_entry: boolean;
 }
 
-const mockConfig: KioskConfig = {
-  event_id: 'evt-001',
-  event_name: 'Summer Music Festival 2026',
-  venue_name: 'Central Park Amphitheater',
-  geofence_enabled: true,
+const defaultConfig: KioskConfig = {
+  event_id: '',
+  event_name: 'Loading...',
+  venue_name: '',
+  geofence_enabled: false,
   geofence_radius_meters: 500,
-  geofence_center: { lat: 40.7829, lng: -73.9654 },
+  geofence_center: { lat: 0, lng: 0 },
   photo_required: false,
   allow_manual_entry: true,
 };
-
-const mockRecentCheckins: CheckinRecord[] = [
-  {
-    id: '1',
-    crew_member: { id: 'cm-1', name: 'Alex Johnson', role: 'Stage Manager', department: 'Production' },
-    status: 'checked_in',
-    check_in_time: new Date(Date.now() - 300000).toISOString(),
-    geofence_valid: true,
-  },
-  {
-    id: '2',
-    crew_member: { id: 'cm-2', name: 'Sarah Chen', role: 'Sound Engineer', department: 'Audio' },
-    status: 'on_break',
-    check_in_time: new Date(Date.now() - 3600000).toISOString(),
-    geofence_valid: true,
-  },
-  {
-    id: '3',
-    crew_member: { id: 'cm-3', name: 'Mike Torres', role: 'Security Lead', department: 'Security' },
-    status: 'checked_in',
-    check_in_time: new Date(Date.now() - 7200000).toISOString(),
-    geofence_valid: true,
-  },
-];
 
 type KioskMode = 'idle' | 'scanning' | 'success' | 'error' | 'action';
 
@@ -98,8 +75,8 @@ interface ScanResult {
 
 export function CrewCheckinKiosk() {
   const [mode, setMode] = useState<KioskMode>('idle');
-  const [config] = useState<KioskConfig>(mockConfig);
-  const [recentCheckins, setRecentCheckins] = useState<CheckinRecord[]>(mockRecentCheckins);
+  const [config, setConfig] = useState<KioskConfig>(defaultConfig);
+  const [recentCheckins, setRecentCheckins] = useState<CheckinRecord[]>([]);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -111,6 +88,58 @@ export function CrewCheckinKiosk() {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Fetch real crew assignments from Supabase
+  useEffect(() => {
+    const supabase = createClient();
+    const fetchData = async () => {
+      // Get the most recent event to use as kiosk context
+      const { data: events } = await supabase
+        .from('events')
+        .select('id, name, venue_id')
+        .gte('end_date', new Date().toISOString().split('T')[0])
+        .order('start_date', { ascending: true })
+        .limit(1);
+
+      if (events && events.length > 0) {
+        const evt = events[0];
+        setConfig(prev => ({ ...prev, event_id: evt.id, event_name: evt.name }));
+      }
+
+      // Fetch recent crew assignments with check-in data
+      const { data: assignments } = await supabase
+        .from('crew_assignments')
+        .select('id, user_id, checked_in_at, checked_out_at, status')
+        .not('checked_in_at', 'is', null)
+        .order('checked_in_at', { ascending: false })
+        .limit(10);
+
+      if (assignments && assignments.length > 0) {
+        const userIds = assignments.map(a => a.user_id);
+        const { data: users } = await supabase
+          .from('users')
+          .select('id, full_name')
+          .in('id', userIds);
+        const userMap = new Map((users ?? []).map(u => [u.id, u.full_name ?? 'Unknown']));
+
+        const mapped: CheckinRecord[] = assignments.map(a => ({
+          id: a.id,
+          crew_member: {
+            id: a.user_id,
+            name: userMap.get(a.user_id) ?? 'Unknown',
+            role: '',
+            department: '',
+          },
+          status: a.checked_out_at ? 'checked_out' : 'checked_in',
+          check_in_time: a.checked_in_at!,
+          check_out_time: a.checked_out_at ?? undefined,
+          geofence_valid: true,
+        }));
+        setRecentCheckins(mapped);
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -273,7 +302,7 @@ export function CrewCheckinKiosk() {
 
         <div className="flex items-center gap-6">
           <div className="text-right">
-            <div className="text-3xl font-mono font-bold text-emerald-400">
+            <div className="text-3xl font-mono font-bold text-semantic-success">
               {formatTime(currentTime)}
             </div>
             <div className="text-sm text-neutral-400">
@@ -284,7 +313,7 @@ export function CrewCheckinKiosk() {
           {config.geofence_enabled && (
             <div className={cn(
               "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm",
-              locationValid === true ? "bg-emerald-500/20 text-emerald-400" :
+              locationValid === true ? "bg-semantic-success/20 text-semantic-success" :
               locationValid === false ? "bg-destructive/20 text-destructive/80" :
               "bg-neutral-500/20 text-neutral-400"
             )}>
@@ -322,7 +351,7 @@ export function CrewCheckinKiosk() {
                   className="w-80 h-80 mx-auto mb-8 rounded-3xl border-4 border-dashed border-border flex items-center justify-center cursor-pointer hover:border-emerald-500/50 transition-colors group"
                 >
                   <div className="text-center">
-                    <QrCode className="h-24 w-24 mx-auto mb-4 text-neutral-600 group-hover:text-emerald-400 transition-colors" />
+                    <QrCode className="h-24 w-24 mx-auto mb-4 text-neutral-600 group-hover:text-semantic-success transition-colors" />
                     <p className="text-xl text-neutral-400 group-hover:text-white transition-colors">
                       Scan QR Code
                     </p>
@@ -352,10 +381,10 @@ export function CrewCheckinKiosk() {
                     animate={{ y: ['-100%', '100%'] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   />
-                  <Camera className="h-24 w-24 text-emerald-400" />
+                  <Camera className="h-24 w-24 text-semantic-success" />
                 </div>
                 
-                <p className="text-emerald-400 text-xl animate-pulse">
+                <p className="text-semantic-success text-xl animate-pulse">
                   Scanning...
                 </p>
                 
@@ -379,8 +408,8 @@ export function CrewCheckinKiosk() {
               >
                 <Card className="bg-muted border-border p-8">
                   <div className="text-center mb-6">
-                    <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                      <UserCheck className="h-10 w-10 text-emerald-400" />
+                    <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-semantic-success/20 flex items-center justify-center">
+                      <UserCheck className="h-10 w-10 text-semantic-success" />
                     </div>
                     <h2 className="text-2xl font-bold">{scanResult.crew_member.name}</h2>
                     <p className="text-neutral-400">{scanResult.crew_member.role}</p>
@@ -389,7 +418,7 @@ export function CrewCheckinKiosk() {
                     </Badge>
                     
                     {scanResult.is_late && (
-                      <div className="mt-3 text-amber-400 text-sm">
+                      <div className="mt-3 text-semantic-warning text-sm">
                         ⚠️ {scanResult.minutes_late} minutes late
                       </div>
                     )}
@@ -399,7 +428,7 @@ export function CrewCheckinKiosk() {
                     {!scanResult.current_status && (
                       <Button
                         onClick={handleCheckIn}
-                        className="w-full h-14 text-lg bg-emerald-600 hover:bg-emerald-700"
+                        className="w-full h-14 text-lg bg-semantic-success hover:bg-semantic-success/90"
                       >
                         <UserCheck className="h-6 w-6 mr-2" />
                         Check In
@@ -411,7 +440,7 @@ export function CrewCheckinKiosk() {
                         <Button
                           onClick={handleBreak}
                           variant="outline"
-                          className="w-full h-14 text-lg border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                          className="w-full h-14 text-lg border-semantic-warning/50 text-semantic-warning hover:bg-semantic-warning/10"
                         >
                           <Coffee className="h-6 w-6 mr-2" />
                           Start Break
@@ -430,7 +459,7 @@ export function CrewCheckinKiosk() {
                     {scanResult.current_status === 'on_break' && (
                       <Button
                         onClick={handleCheckIn}
-                        className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700"
+                        className="w-full h-14 text-lg bg-semantic-info hover:bg-semantic-info/90"
                       >
                         <RefreshCw className="h-6 w-6 mr-2" />
                         End Break
@@ -461,11 +490,11 @@ export function CrewCheckinKiosk() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', damping: 10 }}
-                  className="w-32 h-32 mx-auto mb-6 rounded-full bg-emerald-500 flex items-center justify-center"
+                  className="w-32 h-32 mx-auto mb-6 rounded-full bg-semantic-success flex items-center justify-center"
                 >
                   <CheckCircle2 className="h-16 w-16 text-white" />
                 </motion.div>
-                <h2 className="text-3xl font-bold text-emerald-400">Success!</h2>
+                <h2 className="text-3xl font-bold text-semantic-success">Success!</h2>
                 <p className="text-neutral-400 mt-2">
                   {scanResult?.crew_member.name} has been checked in
                 </p>
@@ -513,14 +542,14 @@ export function CrewCheckinKiosk() {
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     "w-10 h-10 rounded-full flex items-center justify-center",
-                    checkin.status === 'checked_in' ? "bg-emerald-500/20" :
-                    checkin.status === 'on_break' ? "bg-amber-500/20" :
+                    checkin.status === 'checked_in' ? "bg-semantic-success/20" :
+                    checkin.status === 'on_break' ? "bg-semantic-warning/20" :
                     "bg-neutral-500/20"
                   )}>
                     {checkin.status === 'checked_in' ? (
-                      <UserCheck className="h-5 w-5 text-emerald-400" />
+                      <UserCheck className="h-5 w-5 text-semantic-success" />
                     ) : checkin.status === 'on_break' ? (
-                      <Coffee className="h-5 w-5 text-amber-400" />
+                      <Coffee className="h-5 w-5 text-semantic-warning" />
                     ) : (
                       <UserX className="h-5 w-5 text-neutral-400" />
                     )}
@@ -536,8 +565,8 @@ export function CrewCheckinKiosk() {
                       variant="outline"
                       className={cn(
                         "text-[10px]",
-                        checkin.status === 'checked_in' ? "text-emerald-400 border-emerald-500/30" :
-                        checkin.status === 'on_break' ? "text-amber-400 border-amber-500/30" :
+                        checkin.status === 'checked_in' ? "text-semantic-success border-semantic-success/30" :
+                        checkin.status === 'on_break' ? "text-semantic-warning border-semantic-warning/30" :
                         "text-neutral-400"
                       )}
                     >
@@ -557,13 +586,13 @@ export function CrewCheckinKiosk() {
           <div className="px-4 py-3 border-t border-border bg-muted">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
-                <p className="text-2xl font-bold text-emerald-400">
+                <p className="text-2xl font-bold text-semantic-success">
                   {recentCheckins.filter((c) => c.status === 'checked_in').length}
                 </p>
                 <p className="text-xs text-neutral-500">On Site</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-amber-400">
+                <p className="text-2xl font-bold text-semantic-warning">
                   {recentCheckins.filter((c) => c.status === 'on_break').length}
                 </p>
                 <p className="text-xs text-neutral-500">On Break</p>

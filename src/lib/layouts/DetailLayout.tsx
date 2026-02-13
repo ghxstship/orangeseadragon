@@ -138,37 +138,37 @@ export function DetailLayout<T extends object>({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             {onBack && (
-              <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 flex-shrink-0">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             )}
             
             {imageUrl && (
-              <Avatar className="h-12 w-12">
+              <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
                 <AvatarImage src={imageUrl} />
                 <AvatarFallback>{title.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
             )}
             
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-semibold">{title}</h1>
+                <h1 className="text-lg font-semibold sm:text-xl truncate">{title}</h1>
                 {badge && (
-                  <Badge variant={(badge.variant as "default" | "secondary" | "destructive" | "outline") || "secondary"}>
+                  <Badge variant={(badge.variant as "default" | "secondary" | "destructive" | "outline") || "secondary"} className="flex-shrink-0">
                     {badge.label}
                   </Badge>
                 )}
               </div>
               {subtitle && (
-                <p className="text-sm text-muted-foreground">{subtitle}</p>
+                <p className="text-sm text-muted-foreground truncate">{subtitle}</p>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {onEdit && (
               <Button variant="outline" size="sm" onClick={onEdit}>
                 <Edit className="h-4 w-4 mr-2" />
@@ -223,7 +223,7 @@ export function DetailLayout<T extends object>({
 
         {/* Tabs */}
         {detailConfig.tabs.length > 1 && (
-          <div className="px-6 border-t bg-muted/30">
+          <div className="px-4 sm:px-6 border-t bg-muted/30 overflow-x-auto scrollbar-hide">
             <Tabs value={activeTab} onValueChange={onTabChange}>
               <TabsList variant="underline">
                 {detailConfig.tabs.map((tab) => (
@@ -244,7 +244,7 @@ export function DetailLayout<T extends object>({
       <div className="flex flex-1 overflow-hidden">
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          <div className="p-6">{children}</div>
+          <div className="p-4 sm:p-6">{children}</div>
         </main>
 
         {/* Sidebar */}

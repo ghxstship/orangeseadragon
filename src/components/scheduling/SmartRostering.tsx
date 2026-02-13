@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { DndContext } from '@dnd-kit/core';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -8,26 +8,103 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { Clock, AlertCircle } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
-// Mock Data
-const MOCK_SHIFTS = [
-    { id: 's1', resourceId: 'r1', start: 8, duration: 8, label: 'Main Stage Setup' },
-    { id: 's2', resourceId: 'r2', start: 10, duration: 6, label: 'Audio Check' },
-    { id: 's3', resourceId: 'r3', start: 14, duration: 4, label: 'Lighting Rig' },
-    { id: 's4', resourceId: 'r1', start: 18, duration: 4, label: 'Evening Run', conflict: true }, // Artificial conflict
-];
+interface Shift {
+    id: string;
+    resourceId: string;
+    start: number;
+    duration: number;
+    label: string;
+    conflict?: boolean;
+}
 
-const RESOURCES = [
-    { id: 'r1', name: 'Sarah Jenkis', role: 'Stage Mgr' },
-    { id: 'r2', name: 'Mike Ross', role: 'Audio Eng' },
-    { id: 'r3', name: 'Jessica Lee', role: 'Lighting' },
-    { id: 'r4', name: 'Tom Hiddleston', role: 'Runner' },
-];
+interface Resource {
+    id: string;
+    name: string;
+    role: string;
+}
 
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6am to 10pm
 
 export function SmartRostering() {
-    const [shifts, _setShifts] = useState(MOCK_SHIFTS);
+    const [shifts, setShifts] = useState<Shift[]>([]);
+    const [resources, setResources] = useState<Resource[]>([]);
+
+    useEffect(() => {
+        const supabase = createClient();
+        const fetchData = async () => {
+            // Fetch staff members as resources
+            const { data: staff } = await supabase
+                .from('staff_members')
+                .select('id, user_id')
+                .eq('is_active', true)
+                .limit(20);
+
+            const userIds = (staff ?? []).map(s => s.user_id).filter(Boolean);
+            const { data: users } = userIds.length > 0
+                ? await supabase.from('users').select('id, full_name').in('id', userIds)
+                : { data: [] };
+            const userMap = new Map((users ?? []).map(u => [u.id, u.full_name ?? 'Unknown']));
+
+            const mappedResources: Resource[] = (staff ?? []).map(s => ({
+                id: s.id,
+                name: userMap.get(s.user_id) ?? 'Unknown',
+                role: '',
+            }));
+            setResources(mappedResources);
+
+            // Fetch crew assignments as shifts
+            const staffIds = (staff ?? []).map(s => s.user_id);
+            if (staffIds.length === 0) return;
+
+            const { data: assignments } = await supabase
+                .from('crew_assignments')
+                .select('id, user_id, checked_in_at, checked_out_at, notes')
+                .in('user_id', staffIds)
+                .not('checked_in_at', 'is', null)
+                .order('checked_in_at', { ascending: true })
+                .limit(50);
+
+            // Map staff user_id to staff id
+            const userToStaffMap = new Map((staff ?? []).map(s => [s.user_id, s.id]));
+
+            const mappedShifts: Shift[] = (assignments ?? []).map(a => {
+                const checkinHour = a.checked_in_at ? new Date(a.checked_in_at).getHours() : 8;
+                const checkoutHour = a.checked_out_at ? new Date(a.checked_out_at).getHours() : checkinHour + 8;
+                const duration = Math.max(1, checkoutHour - checkinHour);
+                return {
+                    id: a.id,
+                    resourceId: userToStaffMap.get(a.user_id) ?? a.user_id,
+                    start: Math.max(6, Math.min(21, checkinHour)),
+                    duration: Math.min(duration, 22 - checkinHour),
+                    label: a.notes ?? 'Shift',
+                };
+            });
+
+            // Detect conflicts (overlapping shifts for same resource)
+            const byResource = new Map<string, Shift[]>();
+            for (const s of mappedShifts) {
+                if (!byResource.has(s.resourceId)) byResource.set(s.resourceId, []);
+                byResource.get(s.resourceId)!.push(s);
+            }
+            for (const [, resShifts] of Array.from(byResource)) {
+                for (let i = 0; i < resShifts.length; i++) {
+                    for (let j = i + 1; j < resShifts.length; j++) {
+                        const a = resShifts[i];
+                        const b = resShifts[j];
+                        if (a.start < b.start + b.duration && b.start < a.start + a.duration) {
+                            a.conflict = true;
+                            b.conflict = true;
+                        }
+                    }
+                }
+            }
+
+            setShifts(mappedShifts);
+        };
+        fetchData();
+    }, []);
 
     // Simplified Dnd implementation placeholder - full implementation would handle coordinate mapping
 
@@ -57,7 +134,7 @@ export function SmartRostering() {
                     {/* Resources Rows */}
                     <DndContext>
                         <div className="divide-y divide-border">
-                            {RESOURCES.map(resource => (
+                            {resources.map(resource => (
                                 <div key={resource.id} className="flex group bg-zinc-900/20 hover:bg-zinc-800/30 transition-colors">
                                     {/* Resource Info */}
                                     <div className="w-48 p-4 shrink-0 flex items-center gap-3">
@@ -93,7 +170,7 @@ export function SmartRostering() {
                                                     className={cn(
                                                         "absolute top-2 bottom-2 rounded-md border text-xs flex items-center px-2 cursor-pointer hover:brightness-110 shadow-lg",
                                                         shift.conflict
-                                                            ? "bg-rose-500/20 border-rose-500/50 text-rose-200 shadow-[0_0_15px_-3px_rgba(244,63,94,0.4)]"
+                                                            ? "bg-destructive/20 border-destructive/50 text-destructive/80 shadow-[0_0_15px_-3px_hsl(var(--destructive)/0.4)]"
                                                             : "bg-indigo-500/30 border-indigo-400/30 text-indigo-100"
                                                     )}
                                                     style={{
@@ -105,7 +182,7 @@ export function SmartRostering() {
                                                     <span className="truncate font-medium">{shift.label}</span>
 
                                                     {shift.conflict && (
-                                                        <div className="absolute -top-1 -right-1 bg-rose-500 text-white rounded-full p-0.5">
+                                                        <div className="absolute -top-1 -right-1 bg-destructive text-white rounded-full p-0.5">
                                                             <AlertCircle className="w-3 h-3" />
                                                         </div>
                                                     )}

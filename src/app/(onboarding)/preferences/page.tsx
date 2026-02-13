@@ -48,11 +48,37 @@ export default function OnboardingPreferencesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // TODO: Save preferences
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    router.push("/onboarding/integrations");
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      await supabase.auth.updateUser({
+        data: {
+          theme: formData.theme,
+          timezone: formData.timezone,
+          date_format: formData.dateFormat,
+        },
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
+        .from('notification_preferences')
+        .upsert({
+          user_id: user.id,
+          email_enabled: formData.emailNotifications,
+          push_enabled: formData.pushNotifications,
+          weekly_digest: formData.weeklyDigest,
+        }, { onConflict: 'user_id' });
+
+      router.push("/onboarding/integrations");
+    } catch (err) {
+      console.error('[Onboarding] Preferences save failed:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

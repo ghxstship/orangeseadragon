@@ -1,6 +1,103 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// ============================================================================
+// RATE LIMITING (middleware-level, in-memory token bucket)
+// ============================================================================
+
+interface RateLimitEntry {
+  tokens: number;
+  lastRefill: number;
+}
+
+const rateLimitStore = new Map<string, RateLimitEntry>();
+let lastRateLimitCleanup = Date.now();
+
+function getClientIp(request: NextRequest): string {
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "unknown"
+  );
+}
+
+function checkMiddlewareRateLimit(
+  ip: string,
+  prefix: string,
+  maxTokens: number,
+  refillRate: number
+): { allowed: boolean; retryAfter?: number } {
+  const now = Date.now();
+
+  // Cleanup stale entries every 5 minutes
+  if (now - lastRateLimitCleanup > 300_000) {
+    lastRateLimitCleanup = now;
+    const stale = now - 60_000;
+    Array.from(rateLimitStore.entries()).forEach(([key, entry]) => {
+      if (entry.lastRefill < stale) rateLimitStore.delete(key);
+    });
+  }
+
+  const key = `${prefix}:${ip}`;
+  let entry = rateLimitStore.get(key);
+
+  if (!entry) {
+    entry = { tokens: maxTokens, lastRefill: now };
+    rateLimitStore.set(key, entry);
+  }
+
+  const elapsed = (now - entry.lastRefill) / 1000;
+  entry.tokens = Math.min(maxTokens, entry.tokens + elapsed * refillRate);
+  entry.lastRefill = now;
+
+  if (entry.tokens < 1) {
+    return { allowed: false, retryAfter: Math.ceil((1 - entry.tokens) / refillRate) };
+  }
+
+  entry.tokens -= 1;
+  return { allowed: true };
+}
+
+// ============================================================================
+// CSRF ORIGIN VALIDATION
+// ============================================================================
+
+const MUTATION_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+function validateOrigin(request: NextRequest): boolean {
+  const origin = request.headers.get("origin");
+  const host = request.headers.get("host");
+
+  // Non-browser clients (curl, Postman) won't send Origin — allow if no origin
+  if (!origin) return true;
+
+  try {
+    const originHost = new URL(origin).host;
+    return originHost === host;
+  } catch {
+    return false;
+  }
+}
+
+// ============================================================================
+// PUBLIC API ROUTES (no auth required)
+// ============================================================================
+
+const PUBLIC_API_PREFIXES = [
+  "/api/auth",
+  "/api/webhooks",
+  "/api/health",
+  "/api/public",
+];
+
+function isPublicApiRoute(pathname: string): boolean {
+  return PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+// ============================================================================
+// MIDDLEWARE
+// ============================================================================
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -29,11 +126,72 @@ export async function middleware(request: NextRequest) {
     }
   );
 
+  // Always refresh the Supabase session (keeps cookies alive for API + page routes)
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+
+  // ========================================================================
+  // STATIC ASSETS — pass through immediately
+  // ========================================================================
+  if (pathname.startsWith("/_next") || pathname.includes(".")) {
+    return supabaseResponse;
+  }
+
+  // ========================================================================
+  // API ROUTES — CSRF + rate limiting + session refresh (auth enforced per-route)
+  // ========================================================================
+  if (pathname.startsWith("/api")) {
+    const method = request.method;
+
+    // CSRF origin validation for mutation requests
+    if (MUTATION_METHODS.has(method) && !isPublicApiRoute(pathname)) {
+      if (!validateOrigin(request)) {
+        return NextResponse.json(
+          { error: { code: "CSRF_REJECTED", message: "Origin validation failed" } },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Rate limiting: stricter for auth endpoints, standard for writes
+    const ip = getClientIp(request);
+
+    if (pathname.startsWith("/api/auth")) {
+      const result = checkMiddlewareRateLimit(ip, "auth", 10, 0.167);
+      if (!result.allowed) {
+        return NextResponse.json(
+          { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
+          { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+        );
+      }
+    } else if (MUTATION_METHODS.has(method)) {
+      const result = checkMiddlewareRateLimit(ip, "write", 60, 1);
+      if (!result.allowed) {
+        return NextResponse.json(
+          { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
+          { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+        );
+      }
+    } else {
+      const result = checkMiddlewareRateLimit(ip, "read", 120, 2);
+      if (!result.allowed) {
+        return NextResponse.json(
+          { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
+          { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+        );
+      }
+    }
+
+    // Return with refreshed session cookies — individual route guards handle auth
+    return supabaseResponse;
+  }
+
+  // ========================================================================
+  // PAGE ROUTES — authentication + onboarding enforcement
+  // ========================================================================
 
   // Public routes that don't require authentication
   const publicRoutes = [
@@ -41,9 +199,13 @@ export async function middleware(request: NextRequest) {
     "/register",
     "/forgot-password",
     "/reset-password",
+    "/verify-email",
+    "/verify-mfa",
+    "/magic-link",
     "/invite",
     "/terms",
     "/privacy",
+    "/auth/callback",
     "/",
     "/p",
   ];
@@ -53,15 +215,6 @@ export async function middleware(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
-  // Static assets and API routes should pass through
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    pathname.includes(".") // Static files
-  ) {
-    return supabaseResponse;
-  }
-
   // Not authenticated - redirect to login (except for public routes)
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
@@ -70,52 +223,36 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Authenticated user on auth pages - redirect to dashboard or onboarding
-  if (user && (pathname === "/login" || pathname === "/register")) {
-    // Check if user needs onboarding
-    const { data: userData } = await supabase
-      .from("users")
-      .select("onboarding_completed_at")
-      .eq("id", user.id)
-      .single();
+  // Authenticated user — single onboarding check for all page routes
+  if (user) {
+    const isAuthPage = pathname === "/login" || pathname === "/register";
+    const isOnboardingPage = pathname.startsWith("/onboarding");
+    const needsOnboardingCheck = isAuthPage || isOnboardingPage || (!isPublicRoute && pathname.startsWith("/"));
 
-    const url = request.nextUrl.clone();
-    if (!userData?.onboarding_completed_at) {
-      url.pathname = "/onboarding/welcome";
-    } else {
-      url.pathname = "/dashboard";
-    }
-    return NextResponse.redirect(url);
-  }
+    if (needsOnboardingCheck) {
+      const { data: userData } = await supabase
+        .from("users")
+        .select("onboarding_completed_at")
+        .eq("id", user.id)
+        .single();
 
-  // Authenticated user accessing app routes - check onboarding status
-  if (user && pathname.startsWith("/") && !pathname.startsWith("/onboarding") && !isPublicRoute) {
-    const { data: userData } = await supabase
-      .from("users")
-      .select("onboarding_completed_at")
-      .eq("id", user.id)
-      .single();
-
-    // Redirect to onboarding if not completed
-    if (!userData?.onboarding_completed_at) {
+      const onboardingDone = !!userData?.onboarding_completed_at;
       const url = request.nextUrl.clone();
-      url.pathname = "/onboarding/welcome";
-      return NextResponse.redirect(url);
-    }
-  }
 
-  // User on onboarding pages who has completed onboarding - redirect to dashboard
-  if (user && pathname.startsWith("/onboarding")) {
-    const { data: userData } = await supabase
-      .from("users")
-      .select("onboarding_completed_at")
-      .eq("id", user.id)
-      .single();
+      if (isAuthPage) {
+        url.pathname = onboardingDone ? "/dashboard" : "/onboarding/welcome";
+        return NextResponse.redirect(url);
+      }
 
-    if (userData?.onboarding_completed_at) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
+      if (!onboardingDone && !isOnboardingPage && !isPublicRoute) {
+        url.pathname = "/onboarding/welcome";
+        return NextResponse.redirect(url);
+      }
+
+      if (onboardingDone && isOnboardingPage) {
+        url.pathname = "/dashboard";
+        return NextResponse.redirect(url);
+      }
     }
   }
 

@@ -69,47 +69,32 @@ interface PerformanceReviewDashboardProps {
 
 const STATUS_CONFIG: Record<ReviewStatus, { label: string; color: string; bgColor: string }> = {
   not_started: { label: 'Not Started', color: 'text-zinc-400', bgColor: 'bg-zinc-500/20' },
-  self_review: { label: 'Self Review', color: 'text-blue-400', bgColor: 'bg-blue-500/20' },
-  manager_review: { label: 'Manager Review', color: 'text-amber-400', bgColor: 'bg-amber-500/20' },
-  calibration: { label: 'Calibration', color: 'text-purple-400', bgColor: 'bg-purple-500/20' },
-  completed: { label: 'Completed', color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
+  self_review: { label: 'Self Review', color: 'text-semantic-info', bgColor: 'bg-semantic-info/20' },
+  manager_review: { label: 'Manager Review', color: 'text-semantic-warning', bgColor: 'bg-semantic-warning/20' },
+  calibration: { label: 'Calibration', color: 'text-semantic-purple', bgColor: 'bg-semantic-purple/20' },
+  completed: { label: 'Completed', color: 'text-semantic-success', bgColor: 'bg-semantic-success/20' },
 };
 
 const GOAL_STATUS_CONFIG: Record<GoalStatus, { label: string; color: string }> = {
-  on_track: { label: 'On Track', color: 'text-emerald-400' },
-  at_risk: { label: 'At Risk', color: 'text-amber-400' },
-  behind: { label: 'Behind', color: 'text-rose-400' },
-  completed: { label: 'Completed', color: 'text-blue-400' },
+  on_track: { label: 'On Track', color: 'text-semantic-success' },
+  at_risk: { label: 'At Risk', color: 'text-semantic-warning' },
+  behind: { label: 'Behind', color: 'text-destructive' },
+  completed: { label: 'Completed', color: 'text-semantic-info' },
 };
 
-const MOCK_CYCLE: ReviewCycle = {
-  id: '1',
-  name: 'Q1 2026 Performance Review',
-  startDate: new Date('2026-01-15'),
-  endDate: new Date('2026-02-28'),
-  status: 'active',
-  completionRate: 45,
+const DEFAULT_CYCLE: ReviewCycle = {
+  id: '',
+  name: 'No Active Cycle',
+  startDate: new Date(),
+  endDate: new Date(),
+  status: 'upcoming',
+  completionRate: 0,
 };
-
-const MOCK_REVIEWS: EmployeeReview[] = [
-  { id: '1', employeeId: 'e1', employeeName: 'Sarah Chen', department: 'Engineering', status: 'completed', selfReviewComplete: true, managerReviewComplete: true, overallRating: 4.5, dueDate: new Date('2026-02-15') },
-  { id: '2', employeeId: 'e2', employeeName: 'Tom Wilson', department: 'Engineering', status: 'manager_review', selfReviewComplete: true, managerReviewComplete: false, dueDate: new Date('2026-02-15') },
-  { id: '3', employeeId: 'e3', employeeName: 'Jane Martinez', department: 'Design', status: 'self_review', selfReviewComplete: false, managerReviewComplete: false, dueDate: new Date('2026-02-15') },
-  { id: '4', employeeId: 'e4', employeeName: 'Mike Roberts', department: 'Finance', status: 'not_started', selfReviewComplete: false, managerReviewComplete: false, dueDate: new Date('2026-02-15') },
-  { id: '5', employeeId: 'e5', employeeName: 'Lisa Anderson', department: 'Operations', status: 'calibration', selfReviewComplete: true, managerReviewComplete: true, dueDate: new Date('2026-02-15') },
-];
-
-const MOCK_GOALS: Goal[] = [
-  { id: '1', title: 'Increase team velocity by 20%', progress: 75, status: 'on_track', dueDate: new Date('2026-03-31'), keyResults: [{ title: 'Reduce cycle time', progress: 80 }, { title: 'Improve sprint completion', progress: 70 }] },
-  { id: '2', title: 'Launch new product feature', progress: 45, status: 'at_risk', dueDate: new Date('2026-02-28'), keyResults: [{ title: 'Complete development', progress: 60 }, { title: 'User testing', progress: 30 }] },
-  { id: '3', title: 'Complete leadership training', progress: 100, status: 'completed', dueDate: new Date('2026-01-31') },
-  { id: '4', title: 'Mentor 2 junior developers', progress: 50, status: 'on_track', dueDate: new Date('2026-06-30') },
-];
 
 export function PerformanceReviewDashboard({
-  currentCycle = MOCK_CYCLE,
-  reviews = MOCK_REVIEWS,
-  goals = MOCK_GOALS,
+  currentCycle = DEFAULT_CYCLE,
+  reviews = [],
+  goals = [],
   isManager = true,
   onStartReview,
   onViewReview,
@@ -131,9 +116,9 @@ export function PerformanceReviewDashboard({
             className={cn(
               "w-4 h-4",
               star <= Math.floor(rating) 
-                ? "fill-amber-400 text-amber-400" 
+                ? "fill-semantic-warning text-semantic-warning" 
                 : star - 0.5 <= rating 
-                  ? "fill-amber-400/50 text-amber-400" 
+                  ? "fill-semantic-warning/50 text-semantic-warning" 
                   : "text-zinc-600"
             )}
           />
@@ -156,7 +141,7 @@ export function PerformanceReviewDashboard({
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="outline" className={cn(
-            daysRemaining <= 7 ? "border-rose-500/50 text-rose-400" : "border-amber-500/50 text-amber-400"
+            daysRemaining <= 7 ? "border-destructive/50 text-destructive" : "border-semantic-warning/50 text-semantic-warning"
           )}>
             <Clock className="w-3 h-3 mr-1" />
             {daysRemaining} days remaining
@@ -186,26 +171,26 @@ export function PerformanceReviewDashboard({
           </CardContent>
         </Card>
 
-        <Card className="bg-emerald-500/10 border-emerald-500/20">
+        <Card className="bg-semantic-success/10 border-semantic-success/20">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-emerald-300/70">Completed</p>
-                <p className="text-3xl font-bold text-emerald-400">{completedReviews}</p>
+                <p className="text-sm text-semantic-success/70">Completed</p>
+                <p className="text-3xl font-bold text-semantic-success">{completedReviews}</p>
               </div>
-              <CheckCircle2 className="w-8 h-8 text-emerald-400/50" />
+              <CheckCircle2 className="w-8 h-8 text-semantic-success/50" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-amber-500/10 border-amber-500/20">
+        <Card className="bg-semantic-warning/10 border-semantic-warning/20">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-amber-300/70">In Progress</p>
-                <p className="text-3xl font-bold text-amber-400">{pendingReviews}</p>
+                <p className="text-sm text-semantic-warning/70">In Progress</p>
+                <p className="text-3xl font-bold text-semantic-warning">{pendingReviews}</p>
               </div>
-              <Clock className="w-8 h-8 text-amber-400/50" />
+              <Clock className="w-8 h-8 text-semantic-warning/50" />
             </div>
           </CardContent>
         </Card>
@@ -242,12 +227,12 @@ export function PerformanceReviewDashboard({
                   <div className="flex items-center gap-4 mb-4">
                     <div className={cn(
                       "w-10 h-10 rounded-full flex items-center justify-center",
-                      reviews[0]?.selfReviewComplete ? "bg-emerald-500/20" : "bg-amber-500/20"
+                      reviews[0]?.selfReviewComplete ? "bg-semantic-success/20" : "bg-semantic-warning/20"
                     )}>
                       {reviews[0]?.selfReviewComplete ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        <CheckCircle2 className="w-5 h-5 text-semantic-success" />
                       ) : (
-                        <Clock className="w-5 h-5 text-amber-400" />
+                        <Clock className="w-5 h-5 text-semantic-warning" />
                       )}
                     </div>
                     <div>
@@ -260,10 +245,10 @@ export function PerformanceReviewDashboard({
                   <div className="flex items-center gap-4">
                     <div className={cn(
                       "w-10 h-10 rounded-full flex items-center justify-center",
-                      reviews[0]?.managerReviewComplete ? "bg-emerald-500/20" : "bg-zinc-700"
+                      reviews[0]?.managerReviewComplete ? "bg-semantic-success/20" : "bg-zinc-700"
                     )}>
                       {reviews[0]?.managerReviewComplete ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                        <CheckCircle2 className="w-5 h-5 text-semantic-success" />
                       ) : (
                         <Users className="w-5 h-5 text-zinc-500" />
                       )}
@@ -297,7 +282,7 @@ export function PerformanceReviewDashboard({
               <span>Request Feedback</span>
             </Button>
             <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border">
-              <Award className="w-6 h-6 text-amber-400" />
+              <Award className="w-6 h-6 text-semantic-warning" />
               <span>View Achievements</span>
             </Button>
           </div>

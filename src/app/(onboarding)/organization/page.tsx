@@ -42,11 +42,61 @@ export default function OnboardingOrganizationPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // TODO: Save organization data
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    router.push("/onboarding/team");
+
+    try {
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const orgId = user.user_metadata?.organization_id;
+      if (orgId) {
+        await supabase
+          .from('organizations')
+          .update({
+            name: formData.name,
+            website: formData.website || null,
+            industry: formData.industry || null,
+            company_size: formData.size || null,
+            logo_url: formData.logoUrl || null,
+          })
+          .eq('id', orgId);
+      } else {
+        const slug = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const { data: org, error: orgError } = await supabase
+          .from('organizations')
+          .insert({
+            name: formData.name,
+            slug,
+            website: formData.website || null,
+            industry: formData.industry || null,
+            company_size: formData.size || null,
+            logo_url: formData.logoUrl || null,
+          })
+          .select('id')
+          .single();
+
+        if (orgError) throw orgError;
+
+        await supabase.from('organization_members').insert({
+          organization_id: org.id,
+          user_id: user.id,
+          role_id: null as unknown as string,
+          is_owner: true,
+          status: 'active',
+        });
+
+        await supabase.auth.updateUser({
+          data: { organization_id: org.id },
+        });
+      }
+
+      router.push("/onboarding/team");
+    } catch (err) {
+      console.error('[Onboarding] Organization save failed:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

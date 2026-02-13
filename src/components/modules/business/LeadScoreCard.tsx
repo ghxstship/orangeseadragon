@@ -63,7 +63,7 @@ const scoreConfig = {
 function TrendIndicator({ direction, change }: { direction: string; change: number }) {
     if (direction === 'up') {
         return (
-            <div className="flex items-center gap-1 text-emerald-600">
+            <div className="flex items-center gap-1 text-semantic-success">
                 <TrendingUp className="w-3 h-3" />
                 <span className="text-xs font-medium">+{change}</span>
             </div>

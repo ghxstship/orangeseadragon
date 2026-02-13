@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { getLeaveTypeTextClass } from '@/lib/tokens/semantic-colors';
 
 type LeaveType = 'annual' | 'sick' | 'parental' | 'bereavement' | 'study' | 'unpaid';
 
@@ -52,13 +53,13 @@ interface LeaveRequestData {
   attachment?: File;
 }
 
-const LEAVE_TYPES: { value: LeaveType; label: string; icon: React.ElementType; color: string }[] = [
-  { value: 'annual', label: 'Annual Leave', icon: Palmtree, color: 'text-emerald-400' },
-  { value: 'sick', label: 'Sick Leave', icon: Stethoscope, color: 'text-rose-400' },
-  { value: 'parental', label: 'Parental Leave', icon: Baby, color: 'text-purple-400' },
-  { value: 'bereavement', label: 'Bereavement', icon: Heart, color: 'text-zinc-400' },
-  { value: 'study', label: 'Study Leave', icon: GraduationCap, color: 'text-blue-400' },
-  { value: 'unpaid', label: 'Unpaid Leave', icon: Briefcase, color: 'text-amber-400' },
+const LEAVE_TYPES: { value: LeaveType; label: string; icon: React.ElementType; getColor: () => string }[] = [
+  { value: 'annual', label: 'Annual Leave', icon: Palmtree, getColor: () => getLeaveTypeTextClass('annual') },
+  { value: 'sick', label: 'Sick Leave', icon: Stethoscope, getColor: () => getLeaveTypeTextClass('sick') },
+  { value: 'parental', label: 'Parental Leave', icon: Baby, getColor: () => getLeaveTypeTextClass('parental') },
+  { value: 'bereavement', label: 'Bereavement', icon: Heart, getColor: () => getLeaveTypeTextClass('bereavement') },
+  { value: 'study', label: 'Study Leave', icon: GraduationCap, getColor: () => getLeaveTypeTextClass('study') },
+  { value: 'unpaid', label: 'Unpaid Leave', icon: Briefcase, getColor: () => getLeaveTypeTextClass('unpaid') },
 ];
 
 const DEFAULT_BALANCES: LeaveBalance[] = [
@@ -181,7 +182,7 @@ export function LeaveRequestForm({
                   )}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <Icon className={cn("w-4 h-4", type.color)} />
+                    <Icon className={cn("w-4 h-4", type.getColor())} />
                     <span className="text-sm font-medium text-white">{type.label}</span>
                   </div>
                   {balance && type.value !== 'unpaid' && (
@@ -206,11 +207,11 @@ export function LeaveRequestForm({
               onChange={(e) => setStartDate(e.target.value)}
               className={cn(
                 "bg-zinc-800/50 border-border",
-                errors.startDate && "border-rose-500"
+                errors.startDate && "border-destructive"
               )}
             />
             {errors.startDate && (
-              <p className="text-xs text-rose-400">{errors.startDate}</p>
+              <p className="text-xs text-destructive">{errors.startDate}</p>
             )}
             <Select value={startHalfDay} onValueChange={(v) => setStartHalfDay(v as typeof startHalfDay)}>
               <SelectTrigger className="bg-zinc-800/50 border-border">
@@ -233,11 +234,11 @@ export function LeaveRequestForm({
               onChange={(e) => setEndDate(e.target.value)}
               className={cn(
                 "bg-zinc-800/50 border-border",
-                errors.endDate && "border-rose-500"
+                errors.endDate && "border-destructive"
               )}
             />
             {errors.endDate && (
-              <p className="text-xs text-rose-400">{errors.endDate}</p>
+              <p className="text-xs text-destructive">{errors.endDate}</p>
             )}
             <Select value={endHalfDay} onValueChange={(v) => setEndHalfDay(v as typeof endHalfDay)}>
               <SelectTrigger className="bg-zinc-800/50 border-border">
@@ -257,7 +258,7 @@ export function LeaveRequestForm({
           <div className={cn(
             "p-4 rounded-lg border",
             hasInsufficientBalance 
-              ? "bg-rose-500/10 border-rose-500/20" 
+              ? "bg-destructive/10 border-destructive/20" 
               : "bg-zinc-800/50 border-border"
           )}>
             <div className="flex items-center justify-between">
@@ -270,7 +271,7 @@ export function LeaveRequestForm({
                   <p className="text-sm text-zinc-400">Remaining After</p>
                   <p className={cn(
                     "text-2xl font-bold",
-                    hasInsufficientBalance ? "text-rose-400" : "text-emerald-400"
+                    hasInsufficientBalance ? "text-destructive" : "text-semantic-success"
                   )}>
                     {selectedBalance.available - requestedDays} days
                   </p>
@@ -278,7 +279,7 @@ export function LeaveRequestForm({
               )}
             </div>
             {hasInsufficientBalance && (
-              <div className="flex items-center gap-2 mt-3 text-rose-400">
+              <div className="flex items-center gap-2 mt-3 text-destructive">
                 <AlertCircle className="w-4 h-4" />
                 <span className="text-sm">{errors.balance}</span>
               </div>

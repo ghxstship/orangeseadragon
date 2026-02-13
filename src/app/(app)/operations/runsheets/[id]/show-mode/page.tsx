@@ -1,109 +1,110 @@
 'use client';
 
+import * as React from 'react';
 import { useParams } from 'next/navigation';
 import { RunsheetShowMode } from '@/components/operations/RunsheetShowMode';
-
-const mockCues = [
-  {
-    id: '1',
-    sequence: 1,
-    name: 'House Open - Background Music',
-    description: 'Start ambient music as doors open',
-    cue_type: 'audio',
-    duration_seconds: 1800,
-    scheduled_time: '18:30:00',
-    status: 'complete' as const,
-    notes: 'Volume at 40%',
-  },
-  {
-    id: '2',
-    sequence: 2,
-    name: 'Welcome Video',
-    description: 'Play sponsor welcome video on main screens',
-    cue_type: 'video',
-    duration_seconds: 180,
-    scheduled_time: '19:00:00',
-    status: 'pending' as const,
-  },
-  {
-    id: '3',
-    sequence: 3,
-    name: 'MC Introduction',
-    description: 'MC takes stage for opening remarks',
-    cue_type: 'speech',
-    duration_seconds: 300,
-    scheduled_time: '19:03:00',
-    status: 'pending' as const,
-    assigned_to: 'Sarah Johnson',
-    notes: 'Cue spotlight on stage left entrance',
-  },
-  {
-    id: '4',
-    sequence: 4,
-    name: 'CEO Keynote',
-    description: 'Main keynote presentation',
-    cue_type: 'presentation',
-    duration_seconds: 2700,
-    scheduled_time: '19:08:00',
-    status: 'pending' as const,
-    assigned_to: 'John Smith',
-    script_text: 'Good evening everyone, and welcome to our annual conference...',
-  },
-  {
-    id: '5',
-    sequence: 5,
-    name: 'Transition - Stage Reset',
-    description: 'Dim lights, change stage setup for panel',
-    cue_type: 'transition',
-    duration_seconds: 120,
-    scheduled_time: '19:53:00',
-    status: 'pending' as const,
-  },
-  {
-    id: '6',
-    sequence: 6,
-    name: 'Panel Discussion',
-    description: 'Industry leaders panel on stage',
-    cue_type: 'action',
-    duration_seconds: 2400,
-    scheduled_time: '19:55:00',
-    status: 'pending' as const,
-  },
-  {
-    id: '7',
-    sequence: 7,
-    name: 'Networking Break',
-    description: 'Break music and refreshments',
-    cue_type: 'break',
-    duration_seconds: 1200,
-    scheduled_time: '20:35:00',
-    status: 'pending' as const,
-  },
-];
+import { createClient } from '@/lib/supabase/client';
 
 export default function ShowModePage() {
   const params = useParams();
   const runsheetId = params.id as string;
 
-  const handleCueGo = (cueId: string) => {
-    console.log('GO cue:', cueId);
+  const [runsheetName, setRunsheetName] = React.useState('');
+  const [startTime, setStartTime] = React.useState('');
+  const [cues, setCues] = React.useState<Array<{
+    id: string;
+    sequence: number;
+    name: string;
+    description?: string;
+    cue_type: string;
+    duration_seconds: number;
+    scheduled_time: string;
+    status: 'pending' | 'complete' | 'skipped';
+    notes?: string;
+    assigned_to?: string;
+    script_text?: string;
+  }>>([]);
+
+  React.useEffect(() => {
+    const supabase = createClient();
+
+    const fetchData = async () => {
+      // Fetch runsheet details
+      const { data: runsheet } = await supabase
+        .from('runsheets')
+        .select('name, date')
+        .eq('id', runsheetId)
+        .single();
+
+      if (runsheet) {
+        setRunsheetName(runsheet.name);
+      }
+
+      // Fetch runsheet items as cues
+      const { data: items } = await supabase
+        .from('runsheet_items')
+        .select('id, title, description, item_type, duration_minutes, scheduled_start, status, notes, position, technical_notes')
+        .eq('runsheet_id', runsheetId)
+        .order('position', { ascending: true });
+
+      if (items) {
+        const mapped = items.map((item) => {
+          const time = item.scheduled_start
+            ? new Date(item.scheduled_start).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+            : '';
+          if (!startTime && time) setStartTime(time);
+          return {
+            id: item.id,
+            sequence: item.position,
+            name: item.title,
+            description: item.description ?? undefined,
+            cue_type: item.item_type ?? 'action',
+            duration_seconds: (item.duration_minutes ?? 0) * 60,
+            scheduled_time: time,
+            status: (item.status === 'completed' ? 'complete' : item.status === 'skipped' ? 'skipped' : 'pending') as 'pending' | 'complete' | 'skipped',
+            notes: item.notes ?? item.technical_notes ?? undefined,
+          };
+        });
+        setCues(mapped);
+        if (mapped.length > 0 && !startTime) {
+          setStartTime(mapped[0].scheduled_time);
+        }
+      }
+    };
+
+    fetchData();
+  }, [runsheetId, startTime]);
+
+  const handleCueGo = async (cueId: string) => {
+    const supabase = createClient();
+    await supabase
+      .from('runsheet_items')
+      .update({ status: 'in_progress', actual_start: new Date().toISOString() })
+      .eq('id', cueId);
+    setCues(prev => prev.map(c => c.id === cueId ? { ...c, status: 'complete' as const } : c));
   };
 
-  const handleCueSkip = (cueId: string) => {
-    console.log('SKIP cue:', cueId);
+  const handleCueSkip = async (cueId: string) => {
+    const supabase = createClient();
+    await supabase
+      .from('runsheet_items')
+      .update({ status: 'skipped' })
+      .eq('id', cueId);
+    setCues(prev => prev.map(c => c.id === cueId ? { ...c, status: 'skipped' as const } : c));
   };
 
   const handleCueStandby = (cueId: string) => {
-    console.log('STANDBY cue:', cueId);
+    // Standby is a UI-only state, no DB update needed
+    void cueId;
   };
 
   return (
     <div className="h-screen">
       <RunsheetShowMode
         runsheetId={runsheetId}
-        runsheetName="Tech Summit 2026 - Opening Ceremony"
-        startTime="19:00"
-        cues={mockCues}
+        runsheetName={runsheetName}
+        startTime={startTime}
+        cues={cues}
         onCueGo={handleCueGo}
         onCueSkip={handleCueSkip}
         onCueStandby={handleCueStandby}

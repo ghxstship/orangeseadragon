@@ -353,7 +353,7 @@ export function ScannerModal({
                         className="rounded-full bg-black/50 hover:bg-black/70"
                         onClick={toggleTorch}
                       >
-                        <Flashlight className={cn("h-4 w-4", torchOn && "text-amber-400")} />
+                        <Flashlight className={cn("h-4 w-4", torchOn && "text-semantic-warning")} />
                       </Button>
                     </div>
                   </>
@@ -436,16 +436,16 @@ export function ScannerModal({
                 <div className={cn(
                   "p-4 rounded-lg border",
                   scanResult.success 
-                    ? "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-800" 
+                    ? "bg-semantic-success/10 border-semantic-success/20" 
                     : "bg-destructive/5 border-destructive/20 dark:bg-destructive/90/20 dark:border-destructive/40"
                 )}>
                   <div className="flex items-start gap-3">
                     <div className={cn(
                       "p-2 rounded-full",
-                      scanResult.success ? "bg-emerald-100 dark:bg-emerald-900" : "bg-destructive/10 dark:bg-destructive/80"
+                      scanResult.success ? "bg-semantic-success/20" : "bg-destructive/10"
                     )}>
                       {scanResult.success ? (
-                        <Check className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                        <Check className="h-5 w-5 text-semantic-success" />
                       ) : (
                         <X className="h-5 w-5 text-destructive dark:text-destructive/80" />
                       )}
@@ -454,7 +454,7 @@ export function ScannerModal({
                     <div className="flex-1 min-w-0">
                       <h4 className={cn(
                         "font-semibold",
-                        scanResult.success ? "text-emerald-800 dark:text-emerald-200" : "text-destructive dark:text-destructive/60"
+                        scanResult.success ? "text-semantic-success" : "text-destructive"
                       )}>
                         {scanResult.success ? 'Scan Successful' : 'Scan Failed'}
                       </h4>

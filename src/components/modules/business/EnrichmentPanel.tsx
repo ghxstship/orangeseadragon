@@ -48,9 +48,9 @@ interface EnrichmentData {
 }
 
 const statusConfig = {
-    pending: { label: 'Pending', color: 'bg-amber-500', icon: RefreshCw },
+    pending: { label: 'Pending', color: 'bg-semantic-warning', icon: RefreshCw },
     processing: { label: 'Processing', color: 'bg-blue-500', icon: Loader2 },
-    success: { label: 'Enriched', color: 'bg-emerald-500', icon: Check },
+    success: { label: 'Enriched', color: 'bg-semantic-success', icon: Check },
     partial: { label: 'Partial', color: 'bg-orange-500', icon: AlertCircle },
     failed: { label: 'Failed', color: 'bg-destructive', icon: X },
     not_found: { label: 'Not Found', color: 'bg-gray-500', icon: AlertCircle },
@@ -156,7 +156,7 @@ export function EnrichmentPanel({ entityType, entityId, className }: EnrichmentP
                         variant="outline" 
                         className={cn(
                             "text-xs",
-                            status === 'success' && "border-emerald-500 text-emerald-600",
+                            status === 'success' && "border-semantic-success text-semantic-success",
                             status === 'failed' && "border-destructive text-destructive"
                         )}
                     >

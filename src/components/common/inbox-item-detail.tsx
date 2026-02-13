@@ -90,10 +90,10 @@ export function InboxItemDetail({
 
         {/* SLA warning */}
         {item.due_at && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
-            <Clock className="h-4 w-4 text-amber-600" />
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-semantic-warning/10 border border-semantic-warning/20">
+            <Clock className="h-4 w-4 text-semantic-warning" />
             <div className="text-sm">
-              <span className="font-medium text-amber-800 dark:text-amber-200">
+              <span className="font-medium text-semantic-warning">
                 Due {formatDistanceToNow(new Date(item.due_at), { addSuffix: true })}
               </span>
             </div>
@@ -116,9 +116,9 @@ export function InboxItemDetail({
 
         {/* Actioned state */}
         {item.status === 'actioned' && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800">
-            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-            <span className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-semantic-success/10 border border-semantic-success/20">
+            <CheckCircle2 className="h-4 w-4 text-semantic-success" />
+            <span className="text-sm font-medium text-semantic-success">
               This item has been actioned
             </span>
           </div>

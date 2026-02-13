@@ -67,8 +67,11 @@ export async function createServiceClient() {
   
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!serviceRoleKey) {
-    console.warn("SUPABASE_SERVICE_ROLE_KEY not set, falling back to anon key (RLS will apply)");
-    return createUntypedClient();
+    throw new Error(
+      "SUPABASE_SERVICE_ROLE_KEY is not set. " +
+      "Service client requires the service role key to bypass RLS. " +
+      "Set SUPABASE_SERVICE_ROLE_KEY in your environment variables."
+    );
   }
 
   return createClient(

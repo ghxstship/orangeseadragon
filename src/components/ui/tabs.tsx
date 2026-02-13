@@ -13,11 +13,11 @@ const TabsVariantContext = React.createContext<TabsVariant>("default");
 
 const tabsListStyles: Record<TabsVariant, string> = {
   default:
-    "inline-flex h-10 items-center justify-center rounded-xl bg-muted p-1 text-muted-foreground border border-border",
+    "inline-flex h-10 items-center justify-start rounded-xl bg-muted p-1 text-muted-foreground border border-border overflow-x-auto scrollbar-hide max-w-full",
   underline:
-    "inline-flex h-12 items-center gap-0 bg-transparent p-0 text-muted-foreground",
+    "inline-flex h-12 items-center gap-0 bg-transparent p-0 text-muted-foreground overflow-x-auto scrollbar-hide max-w-full",
   spatial:
-    "inline-flex h-11 items-center justify-center rounded-2xl bg-muted backdrop-blur-3xl p-1 text-muted-foreground border border-border shadow-2xl",
+    "inline-flex h-11 items-center justify-start rounded-2xl bg-muted backdrop-blur-3xl p-1 text-muted-foreground border border-border shadow-2xl overflow-x-auto scrollbar-hide max-w-full",
 };
 
 const tabsTriggerBase =

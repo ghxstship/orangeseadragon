@@ -64,8 +64,8 @@ export function OnboardingComplete({ user, accountType, onComplete }: Onboarding
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader className="text-center">
-        <div className="mx-auto w-20 h-20 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mb-4">
-          <CheckCircle className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+        <div className="mx-auto w-20 h-20 bg-semantic-success/10 rounded-full flex items-center justify-center mb-4">
+          <CheckCircle className="w-12 h-12 text-semantic-success" />
         </div>
         <CardTitle className="text-3xl mb-2">Setup Complete!</CardTitle>
         <p className="text-xl text-muted-foreground">{getWelcomeMessage()}</p>
@@ -98,8 +98,8 @@ export function OnboardingComplete({ user, accountType, onComplete }: Onboarding
           </div>
         </div>
 
-        <div className="bg-amber-50 dark:bg-amber-950 p-4 rounded-lg">
-          <p className="text-sm text-amber-800 dark:text-amber-200">
+        <div className="bg-semantic-warning/10 p-4 rounded-lg">
+          <p className="text-sm text-semantic-warning">
             <strong>Need help?</strong> Visit our help center or contact support if you have any questions.
             We&apos;re here to ensure you have a great experience with ATLVS.
           </p>

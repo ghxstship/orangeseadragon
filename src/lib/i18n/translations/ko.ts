@@ -1,6 +1,6 @@
-import type { TranslationKeys } from "./en";
+import type { PartialTranslationKeys } from "./en";
 
-export const ko: TranslationKeys = {
+export const ko: PartialTranslationKeys = {
   common: {
     save: "저장",
     cancel: "취소",

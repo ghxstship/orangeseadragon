@@ -47,11 +47,25 @@ export default function OnboardingTeamPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // TODO: Send invitations
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    router.push("/onboarding/preferences");
+
+    try {
+      if (invites.length > 0) {
+        const response = await fetch('/api/invitations/batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ invites: invites.map(({ email, role }) => ({ email, role })) }),
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          console.error('[Onboarding] Invite send failed:', err);
+        }
+      }
+      router.push("/onboarding/preferences");
+    } catch (err) {
+      console.error('[Onboarding] Team invite failed:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

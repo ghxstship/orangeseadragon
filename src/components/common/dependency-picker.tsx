@@ -210,13 +210,13 @@ export function DependencyPicker({
 
       {/* Blocking warning */}
       {blockedDependencies.length > 0 && (
-        <div className="flex items-start gap-2 p-2 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800">
-          <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5" />
+        <div className="flex items-start gap-2 p-2 rounded-md bg-semantic-warning/10 border border-semantic-warning/20">
+          <AlertTriangle className="h-4 w-4 text-semantic-warning mt-0.5" />
           <div className="text-xs">
-            <p className="font-medium text-amber-800 dark:text-amber-200">
+            <p className="font-medium text-semantic-warning">
               Blocked by {blockedDependencies.length} incomplete task{blockedDependencies.length > 1 ? 's' : ''}
             </p>
-            <p className="text-amber-700 dark:text-amber-300">
+            <p className="text-semantic-warning/80">
               Complete dependencies to unblock this task
             </p>
           </div>
@@ -258,7 +258,7 @@ function DependencyItem({ dependency, onRemove }: DependencyItemProps) {
     <div
       className={cn(
         'flex items-center gap-2 p-2 rounded-md border',
-        isBlocking ? 'border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-950/10' : 'border-border'
+        isBlocking ? 'border-semantic-warning/20 bg-semantic-warning/5' : 'border-border'
       )}
     >
       <div className="flex-1 min-w-0">

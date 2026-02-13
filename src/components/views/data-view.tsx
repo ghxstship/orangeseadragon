@@ -13,6 +13,7 @@ import { MatrixView } from "./matrix-view";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RecordHoverPreview } from "@/components/common/record-hover-preview";
+import { InlineEditCell } from "@/components/views/inline-edit-cell";
 /* eslint-disable @next/next/no-img-element */
 import { cn } from "@/lib/utils";
 import { DEFAULT_LOCALE } from "@/lib/config";
@@ -69,6 +70,8 @@ export interface DataViewProps<T extends object> {
   loading?: boolean;
   emptyMessage?: string;
   renderRowWrapper?: (row: T, children: React.ReactNode) => React.ReactNode;
+  onCellEdit?: (rowId: string, fieldKey: string, value: unknown) => Promise<void> | void;
+  editableFields?: string[];
 }
 
 function haveSameIds(a: string[], b: string[]) {
@@ -89,6 +92,8 @@ export function DataView<T extends object>({
   loading = false,
   emptyMessage = "No data found.",
   renderRowWrapper,
+  onCellEdit,
+  editableFields,
 }: DataViewProps<T>) {
   // Cast to internal type for renderer compatibility
   type R = Record<string, unknown>;
@@ -123,6 +128,8 @@ export function DataView<T extends object>({
           loading={loading}
           emptyMessage={emptyMessage}
           renderRowWrapper={renderRowWrapper as ((row: Record<string, unknown>, children: React.ReactNode) => React.ReactNode) | undefined}
+          onCellEdit={onCellEdit as ((rowId: string, fieldKey: string, value: unknown) => Promise<void> | void) | undefined}
+          editableFields={editableFields}
         />
       );
 
@@ -227,7 +234,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
 
   if (!format) {
     if (typeof value === 'boolean') {
-      return value ? <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20">TRUE</Badge> : <Badge variant="outline" className="opacity-50">FALSE</Badge>;
+      return value ? <Badge className="bg-semantic-success/10 text-semantic-success border-semantic-success/20 hover:bg-semantic-success/20">TRUE</Badge> : <Badge variant="outline" className="opacity-50">FALSE</Badge>;
     }
     return <span className="text-sm font-medium">{String(value)}</span>;
   }
@@ -245,7 +252,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
 
     case "currency":
       return (
-        <span className="font-mono text-xs font-black text-emerald-600 dark:text-emerald-400">
+        <span className="font-mono text-xs font-black text-semantic-success">
           {new Intl.NumberFormat(DEFAULT_LOCALE, {
             style: "currency",
             currency: format.currency ?? "USD",
@@ -261,8 +268,8 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
             <div
               className={cn(
                 "h-full transition-all duration-500",
-                pct > 80 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" :
-                  pct > 40 ? "bg-amber-500" : "bg-rose-500"
+                pct > 80 ? "bg-semantic-success shadow-[0_0_8px_hsl(var(--semantic-success)/0.4)]" :
+                  pct > 40 ? "bg-semantic-warning" : "bg-destructive"
               )}
               style={{ width: `${pct}%` }}
             />
@@ -283,7 +290,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
 
     case "boolean":
       return (value as boolean)
-        ? <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20">{format.trueLabel ?? "Yes"}</Badge>
+        ? <Badge className="bg-semantic-success/10 text-semantic-success border-semantic-success/20">{format.trueLabel ?? "Yes"}</Badge>
         : <Badge variant="outline" className="opacity-40">{format.falseLabel ?? "No"}</Badge>;
 
     case "badge":
@@ -365,6 +372,8 @@ interface TableRendererProps<T extends Record<string, unknown>> {
   loading: boolean;
   emptyMessage: string;
   renderRowWrapper?: (row: T, children: React.ReactNode) => React.ReactNode;
+  onCellEdit?: (rowId: string, fieldKey: string, value: unknown) => Promise<void> | void;
+  editableFields?: string[];
 }
 
 function TableRenderer<T extends Record<string, unknown>>({
@@ -378,6 +387,8 @@ function TableRenderer<T extends Record<string, unknown>>({
   loading,
   emptyMessage,
   renderRowWrapper,
+  onCellEdit,
+  editableFields,
 }: TableRendererProps<T>) {
   const columns = React.useMemo<ColumnDef<T, unknown>[]>(() => {
     if (!config?.columns) return [];
@@ -407,11 +418,28 @@ function TableRenderer<T extends Record<string, unknown>>({
       header: col.label,
       cell: ({ row }) => {
         const value = row.getValue(col.field);
-        return formatValue(value, col.format, col.field);
+        const formatted = formatValue(value, col.format, col.field);
+        const isEditable = onCellEdit && editableFields?.includes(col.field);
+
+        if (isEditable) {
+          const rowId = getRowId(row.original);
+          return (
+            <InlineEditCell
+              value={value}
+              fieldKey={col.field}
+              rowId={rowId}
+              onSave={onCellEdit}
+              displayNode={formatted}
+              cellType={col.format?.type === "number" || col.format?.type === "currency" || col.format?.type === "percentage" ? "number" : "text"}
+            />
+          );
+        }
+
+        return formatted;
       },
       enableSorting: col.sortable !== false,
     }));
-  }, [config?.columns, state.visibleColumns]);
+  }, [config?.columns, state.visibleColumns, onCellEdit, editableFields, getRowId]);
 
   const tableRowActions = React.useMemo<RowAction<T>[] | undefined>(() => {
     if (!rowActions) return undefined;

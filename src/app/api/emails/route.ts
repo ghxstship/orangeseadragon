@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const auth = await requireAuth();

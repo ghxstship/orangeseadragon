@@ -35,23 +35,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-supabase';
 
 interface FinanceKpi {
   label: string;
   value: string;
   change: number;
   icon: React.ElementType;
-  format?: string;
 }
-
-const kpis: FinanceKpi[] = [
-  { label: 'Revenue MTD', value: '$342,500', change: 14.2, icon: DollarSign },
-  { label: 'Profit Margin', value: '28.4%', change: 2.1, icon: TrendingUp },
-  { label: 'Outstanding AR', value: '$187,200', change: -8.5, icon: Receipt },
-  { label: 'Outstanding AP', value: '$94,300', change: 12.3, icon: CreditCard },
-  { label: 'Cash Forecast (30d)', value: '$456,800', change: 5.7, icon: TrendingUp },
-  { label: 'Avg Days to Pay', value: '24 days', change: -3.2, icon: Clock },
-];
 
 interface AgingBucket {
   label: string;
@@ -60,48 +52,163 @@ interface AgingBucket {
   color: string;
 }
 
-const revenueVsExpenses = [
-  { month: 'Jul', revenue: 285000, expenses: 198000 },
-  { month: 'Aug', revenue: 312000, expenses: 215000 },
-  { month: 'Sep', revenue: 298000, expenses: 205000 },
-  { month: 'Oct', revenue: 345000, expenses: 228000 },
-  { month: 'Nov', revenue: 320000, expenses: 218000 },
-  { month: 'Dec', revenue: 342500, expenses: 245000 },
-];
+function useFinanceDashboard(orgId: string | null) {
+  const [data, setData] = React.useState<{
+    kpis: FinanceKpi[];
+    revenueVsExpenses: { month: string; revenue: number; expenses: number }[];
+    profitByClient: { client: string; profit: number }[];
+    budgetHealth: { name: string; value: number; color: string }[];
+    cashFlow: { week: string; inflow: number; outflow: number }[];
+    arAging: AgingBucket[];
+  } | null>(null);
 
-const profitByClient = [
-  { client: 'Acme Corp', profit: 82000 },
-  { client: 'TechStart', profit: 64000 },
-  { client: 'GlobalFest', profit: 51000 },
-  { client: 'MediaPro', profit: 38000 },
-  { client: 'EventCo', profit: 27000 },
-];
+  React.useEffect(() => {
+    if (!orgId) return;
+    const supabase = createClient();
 
-const budgetHealth = [
-  { name: 'On Track', value: 14, color: '#22c55e' },
-  { name: 'At Risk', value: 5, color: '#eab308' },
-  { name: 'Over Budget', value: 3, color: '#ef4444' },
-];
+    const fetchData = async () => {
+      // Fetch invoices for revenue/AR
+      const { data: invoices } = await supabase
+        .from('invoices')
+        .select('id, total_amount, status, due_date, paid_at, company_id, created_at')
+        .eq('organization_id', orgId);
 
-const cashFlow = [
-  { week: 'W1', inflow: 85000, outflow: 62000 },
-  { week: 'W2', inflow: 92000, outflow: 71000 },
-  { week: 'W3', inflow: 78000, outflow: 65000 },
-  { week: 'W4', inflow: 105000, outflow: 74000 },
-  { week: 'W5', inflow: 88000, outflow: 68000 },
-  { week: 'W6', inflow: 95000, outflow: 72000 },
-];
+      // Fetch expenses
+      const { data: expenses } = await supabase
+        .from('expenses')
+        .select('id, amount, status, created_at')
+        .eq('organization_id', orgId);
 
-const arAging: AgingBucket[] = [
-  { label: 'Current', amount: '$62,400', count: 8, color: 'bg-emerald-500 dark:bg-emerald-400' },
-  { label: '1-15 days', amount: '$45,800', count: 5, color: 'bg-amber-500 dark:bg-amber-400' },
-  { label: '16-30 days', amount: '$38,200', count: 4, color: 'bg-amber-600 dark:bg-amber-500' },
-  { label: '31-60 days', amount: '$28,600', count: 3, color: 'bg-destructive/70' },
-  { label: '60+ days', amount: '$12,200', count: 2, color: 'bg-destructive' },
-];
+      // Fetch budgets for health
+      const { data: budgets } = await supabase
+        .from('budgets')
+        .select('id, total_amount, status')
+        .eq('organization_id', orgId);
+
+      // Fetch companies for client names
+      const { data: companies } = await supabase
+        .from('companies')
+        .select('id, name')
+        .eq('organization_id', orgId);
+
+      const companyMap = new Map((companies ?? []).map(c => [c.id, c.name]));
+      const now = new Date();
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+      // KPIs
+      const paidInvoices = (invoices ?? []).filter(i => i.status === 'paid');
+      const mtdRevenue = paidInvoices
+        .filter(i => i.paid_at && new Date(i.paid_at) >= monthStart)
+        .reduce((sum, i) => sum + (i.total_amount ?? 0), 0);
+      const mtdExpenses = (expenses ?? [])
+        .filter(e => e.created_at && new Date(e.created_at) >= monthStart)
+        .reduce((sum, e) => sum + (e.amount ?? 0), 0);
+      const margin = mtdRevenue > 0 ? ((mtdRevenue - mtdExpenses) / mtdRevenue) * 100 : 0;
+      const outstandingAR = (invoices ?? [])
+        .filter(i => i.status === 'sent' || i.status === 'overdue')
+        .reduce((sum, i) => sum + (i.total_amount ?? 0), 0);
+      const outstandingAP = (expenses ?? [])
+        .filter(e => e.status === 'submitted' || e.status === 'approved')
+        .reduce((sum, e) => sum + (e.amount ?? 0), 0);
+
+      const fmt = (v: number) => `$${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+      const computedKpis: FinanceKpi[] = [
+        { label: 'Revenue MTD', value: fmt(mtdRevenue), change: 0, icon: DollarSign },
+        { label: 'Profit Margin', value: `${margin.toFixed(1)}%`, change: 0, icon: TrendingUp },
+        { label: 'Outstanding AR', value: fmt(outstandingAR), change: 0, icon: Receipt },
+        { label: 'Outstanding AP', value: fmt(outstandingAP), change: 0, icon: CreditCard },
+        { label: 'Cash Forecast (30d)', value: fmt(mtdRevenue - mtdExpenses), change: 0, icon: TrendingUp },
+        { label: 'Avg Days to Pay', value: `${paidInvoices.length > 0 ? Math.round(paidInvoices.reduce((sum, i) => {
+          const due = i.due_date ? new Date(i.due_date).getTime() : 0;
+          const paid = i.paid_at ? new Date(i.paid_at).getTime() : 0;
+          return sum + Math.max(0, (paid - due) / (1000 * 60 * 60 * 24));
+        }, 0) / paidInvoices.length) : 0} days`, change: 0, icon: Clock },
+      ];
+
+      // Revenue vs Expenses by month (last 6 months)
+      const months: { month: string; revenue: number; expenses: number }[] = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+        const label = d.toLocaleString(undefined, { month: 'short' });
+        const rev = paidInvoices
+          .filter(inv => inv.paid_at && new Date(inv.paid_at) >= d && new Date(inv.paid_at) <= end)
+          .reduce((s, inv) => s + (inv.total_amount ?? 0), 0);
+        const exp = (expenses ?? [])
+          .filter(e => e.created_at && new Date(e.created_at) >= d && new Date(e.created_at) <= end)
+          .reduce((s, e) => s + (e.amount ?? 0), 0);
+        months.push({ month: label, revenue: rev, expenses: exp });
+      }
+
+      // Profit by client (top 5)
+      const clientProfits = new Map<string, number>();
+      for (const inv of paidInvoices) {
+        const name = companyMap.get(inv.company_id ?? '') ?? 'Unknown';
+        clientProfits.set(name, (clientProfits.get(name) ?? 0) + (inv.total_amount ?? 0));
+      }
+      const topClients = Array.from(clientProfits.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([client, profit]) => ({ client, profit }));
+
+      // Budget health (based on status since we don't have spent_amount)
+      const allBudgets = budgets ?? [];
+      const onTrack = allBudgets.filter(b => b.status === 'active' || b.status === 'approved').length;
+      const atRisk = allBudgets.filter(b => b.status === 'pending_approval' || b.status === 'draft').length;
+      const overBudget = allBudgets.filter(b => b.status === 'closed').length;
+
+      // AR Aging
+      const openInvoices = (invoices ?? []).filter(i => i.status === 'sent' || i.status === 'overdue');
+      const agingBuckets: AgingBucket[] = [
+        { label: 'Current', amount: '$0', count: 0, color: 'bg-semantic-success' },
+        { label: '1-15 days', amount: '$0', count: 0, color: 'bg-semantic-warning' },
+        { label: '16-30 days', amount: '$0', count: 0, color: 'bg-semantic-warning/80' },
+        { label: '31-60 days', amount: '$0', count: 0, color: 'bg-destructive/70' },
+        { label: '60+ days', amount: '$0', count: 0, color: 'bg-destructive' },
+      ];
+      for (const inv of openInvoices) {
+        const daysOverdue = inv.due_date
+          ? Math.max(0, Math.floor((now.getTime() - new Date(inv.due_date).getTime()) / (1000 * 60 * 60 * 24)))
+          : 0;
+        const idx = daysOverdue === 0 ? 0 : daysOverdue <= 15 ? 1 : daysOverdue <= 30 ? 2 : daysOverdue <= 60 ? 3 : 4;
+        agingBuckets[idx].count++;
+        const prev = parseFloat(agingBuckets[idx].amount.replace(/[$,]/g, '')) || 0;
+        agingBuckets[idx].amount = fmt(prev + (inv.total_amount ?? 0));
+      }
+
+      setData({
+        kpis: computedKpis,
+        revenueVsExpenses: months,
+        profitByClient: topClients,
+        budgetHealth: [
+          { name: 'On Track', value: onTrack, color: 'hsl(var(--semantic-success))' },
+          { name: 'At Risk', value: atRisk, color: 'hsl(var(--semantic-warning))' },
+          { name: 'Over Budget', value: overBudget, color: 'hsl(var(--destructive))' },
+        ],
+        cashFlow: months.map((m, i) => ({ week: `W${i + 1}`, inflow: m.revenue, outflow: m.expenses })),
+        arAging: agingBuckets,
+      });
+    };
+
+    fetchData();
+  }, [orgId]);
+
+  return data;
+}
 
 export default function FinancialDashboardPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
+  const dashData = useFinanceDashboard(orgId);
   const [period, setPeriod] = React.useState('month');
+
+  const kpis = dashData?.kpis ?? [];
+  const revenueVsExpenses = dashData?.revenueVsExpenses ?? [];
+  const profitByClient = dashData?.profitByClient ?? [];
+  const budgetHealth = dashData?.budgetHealth ?? [];
+  const cashFlow = dashData?.cashFlow ?? [];
+  const arAging = dashData?.arAging ?? [];
 
   return (
     <div className="flex flex-col h-full">
@@ -142,7 +249,7 @@ export default function FinancialDashboardPage() {
                     <Icon className="h-3.5 w-3.5 text-muted-foreground" />
                   </div>
                   <div className="text-xl font-bold">{kpi.value}</div>
-                  <div className={`flex items-center gap-1 text-[10px] mt-1 ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>
+                  <div className={`flex items-center gap-1 text-[10px] mt-1 ${isPositive ? 'text-semantic-success' : 'text-destructive'}`}>
                     {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                     {Math.abs(kpi.change)}%
                   </div>
@@ -179,7 +286,7 @@ export default function FinancialDashboardPage() {
                   <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                   <YAxis type="category" dataKey="client" tick={{ fontSize: 11 }} className="fill-muted-foreground" width={100} />
                   <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, 'Profit']} />
-                  <Bar dataKey="profit" fill="#22c55e" radius={[0, 4, 4, 0]} />
+                  <Bar dataKey="profit" fill="hsl(var(--semantic-success))" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -235,8 +342,8 @@ export default function FinancialDashboardPage() {
                   <XAxis dataKey="week" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
                   <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                   <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]} />
-                  <Area type="monotone" dataKey="inflow" stackId="1" stroke="#22c55e" fill="#22c55e" fillOpacity={0.3} name="Cash In" />
-                  <Area type="monotone" dataKey="outflow" stackId="2" stroke="#ef4444" fill="#ef4444" fillOpacity={0.3} name="Cash Out" />
+                  <Area type="monotone" dataKey="inflow" stackId="1" stroke="hsl(var(--semantic-success))" fill="hsl(var(--semantic-success))" fillOpacity={0.3} name="Cash In" />
+                  <Area type="monotone" dataKey="outflow" stackId="2" stroke="hsl(var(--destructive))" fill="hsl(var(--destructive))" fillOpacity={0.3} name="Cash Out" />
                   <Legend />
                 </AreaChart>
               </ResponsiveContainer>

@@ -42,16 +42,16 @@ interface RunsheetShowModeProps {
 }
 
 const CUE_TYPE_COLORS: Record<string, string> = {
-  action: 'bg-blue-500',
-  audio: 'bg-purple-500',
+  action: 'bg-semantic-info',
+  audio: 'bg-semantic-purple',
   video: 'bg-pink-500',
-  lighting: 'bg-amber-500',
-  transition: 'bg-cyan-500',
-  break: 'bg-gray-500',
-  speech: 'bg-emerald-500',
-  presentation: 'bg-orange-500',
-  music: 'bg-indigo-500',
-  standby: 'bg-amber-500',
+  lighting: 'bg-semantic-warning',
+  transition: 'bg-semantic-cyan',
+  break: 'bg-muted-foreground',
+  speech: 'bg-semantic-success',
+  presentation: 'bg-semantic-orange',
+  music: 'bg-semantic-indigo',
+  standby: 'bg-semantic-warning',
 };
 
 function formatDuration(seconds: number): string {
@@ -195,7 +195,7 @@ export function RunsheetShowMode({
         
         <div className="flex items-center gap-6">
           {showClock && (
-            <div className="text-3xl font-mono font-bold text-emerald-400">
+            <div className="text-3xl font-mono font-bold text-semantic-success">
               {currentTime.toLocaleTimeString(undefined, { hour12: false })}
             </div>
           )}
@@ -218,8 +218,8 @@ export function RunsheetShowMode({
             <ChevronUp className="h-4 w-4" />
             <span className="text-sm">PREVIOUS:</span>
             <span className="font-medium">{previousCue.name}</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-500 ml-auto" />
-            <span className="text-emerald-500 text-sm">COMPLETE</span>
+            <CheckCircle2 className="h-4 w-4 text-semantic-success ml-auto" />
+            <span className="text-semantic-success text-sm">COMPLETE</span>
           </div>
         )}
 
@@ -236,9 +236,9 @@ export function RunsheetShowMode({
               <Card className={cn(
                 "h-full p-8 border-2 transition-all duration-300",
                 isRunning 
-                  ? "border-emerald-500 bg-emerald-500/10 shadow-[0_0_30px_rgba(16,185,129,0.3)]"
+                  ? "border-semantic-success bg-semantic-success/10 shadow-[0_0_30px_hsl(var(--semantic-success)/0.3)]"
                   : "border-border bg-muted",
-                isOvertime && "border-rose-500 bg-rose-500/10 shadow-[0_0_30px_rgba(244,63,94,0.3)]"
+                isOvertime && "border-destructive bg-destructive/10 shadow-[0_0_30px_hsl(var(--destructive)/0.3)]"
               )}>
                 <div className="flex flex-col h-full">
                   {/* Cue Header */}
@@ -271,13 +271,13 @@ export function RunsheetShowMode({
                     <div className="text-center">
                       <p className={cn(
                         "text-sm uppercase tracking-wider mb-2",
-                        isOvertime ? "text-rose-400" : "text-neutral-400"
+                        isOvertime ? "text-destructive" : "text-neutral-400"
                       )}>
                         {isOvertime ? 'OVERTIME' : isRunning ? 'REMAINING' : 'DURATION'}
                       </p>
                       <p className={cn(
                         "text-8xl font-mono font-bold",
-                        isOvertime ? "text-rose-500 animate-pulse" : isRunning ? "text-emerald-400" : "text-white"
+                        isOvertime ? "text-destructive animate-pulse" : isRunning ? "text-semantic-success" : "text-white"
                       )}>
                         {isOvertime 
                           ? `+${formatDuration(elapsedSeconds - currentCue.duration_seconds)}`
@@ -291,7 +291,7 @@ export function RunsheetShowMode({
                           <motion.div
                             className={cn(
                               "h-full rounded-full",
-                              isOvertime ? "bg-rose-500" : "bg-emerald-500"
+                              isOvertime ? "bg-destructive" : "bg-semantic-success"
                             )}
                             initial={{ width: 0 }}
                             animate={{ width: `${Math.min(progressPercent, 100)}%` }}
@@ -304,9 +304,9 @@ export function RunsheetShowMode({
 
                   {/* Notes */}
                   {currentCue.notes && (
-                    <div className="mt-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                      <p className="text-amber-400 text-sm font-medium mb-1">NOTES</p>
-                      <p className="text-amber-200">{currentCue.notes}</p>
+                    <div className="mt-6 p-4 bg-semantic-warning/10 border border-semantic-warning/30 rounded-lg">
+                      <p className="text-semantic-warning text-sm font-medium mb-1">NOTES</p>
+                      <p className="text-semantic-warning/80">{currentCue.notes}</p>
                     </div>
                   )}
                 </div>
@@ -351,7 +351,7 @@ export function RunsheetShowMode({
             variant="outline"
             size="lg"
             onClick={handleStandby}
-            className="border-amber-500/50 text-amber-400 hover:bg-amber-500/20 px-8"
+            className="border-semantic-warning/50 text-semantic-warning hover:bg-semantic-warning/20 px-8"
           >
             <AlertCircle className="h-5 w-5 mr-2" />
             STANDBY
@@ -364,8 +364,8 @@ export function RunsheetShowMode({
             className={cn(
               "px-16 py-6 text-2xl font-bold transition-all",
               isRunning
-                ? "bg-emerald-600 hover:bg-emerald-700 shadow-[0_0_20px_rgba(16,185,129,0.5)]"
-                : "bg-emerald-500 hover:bg-emerald-600"
+                ? "bg-semantic-success hover:bg-semantic-success/90 shadow-[0_0_20px_hsl(var(--semantic-success)/0.5)]"
+                : "bg-semantic-success/90 hover:bg-semantic-success"
             )}
           >
             <Play className="h-6 w-6 mr-2 fill-current" />
@@ -376,7 +376,7 @@ export function RunsheetShowMode({
             variant="outline"
             size="lg"
             onClick={handleSkip}
-            className="border-rose-500/50 text-rose-400 hover:bg-rose-500/20 px-8"
+            className="border-destructive/50 text-destructive hover:bg-destructive/20 px-8"
           >
             <SkipForward className="h-5 w-5 mr-2" />
             SKIP

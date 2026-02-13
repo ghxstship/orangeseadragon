@@ -150,7 +150,7 @@ export function SavedViewSelector({
                 {currentView.is_default && <Star className="h-3 w-3 fill-current" />}
                 <span className="max-w-32 truncate">{currentView.name}</span>
                 {hasUnsavedChanges && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-semantic-warning" />
                 )}
               </>
             ) : (
@@ -348,7 +348,7 @@ function ViewMenuItem({
         {!isSelected && <div className="w-4" />}
         <span className="truncate text-sm">{view.name}</span>
         {view.is_default && (
-          <Star className="h-3 w-3 text-amber-500 fill-current shrink-0" />
+          <Star className="h-3 w-3 text-semantic-warning fill-current shrink-0" />
         )}
         {view.is_shared && (
           <Users className="h-3 w-3 text-muted-foreground shrink-0" />

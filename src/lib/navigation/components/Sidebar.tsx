@@ -5,10 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { informationArchitecture, SidebarGroupDefinition, PageDefinition } from '../ia-structure';
 import { cn } from '@/lib/utils';
-
-// Mock hooks - replace with actual implementations when available
-const usePermissions = () => ({ hasPermission: (_permission?: string) => true });
-const useSWR = () => ({ data: null });
+import { usePermissions } from '@/hooks/use-permissions';
+import { useBadgeCounts } from '@/hooks/use-badge-counts';
 
 /**
  * CONSOLIDATED SIDEBAR
@@ -110,13 +108,17 @@ function SidebarPage({ page, isActive }: SidebarPageProps) {
 }
 
 function PageBadge({ config }: { config: PageDefinition['badge'] }) {
-  const { data } = useSWR();
+  const { counts } = useBadgeCounts();
 
-  if (!data) return null;
+  if (!config) return null;
+
+  const count = (counts as unknown as Record<string, number>)[config.source] ?? 0;
+
+  if (config.type === 'count' && count === 0) return null;
 
   return (
-    <span className={cn('sidebar-badge', `sidebar-badge-${config?.type}`)}>
-      {config?.type === 'count' ? (data as { count: number }).count : ''}
+    <span className={cn('sidebar-badge', `sidebar-badge-${config.type}`)}>
+      {config.type === 'count' ? count : ''}
     </span>
   );
 }

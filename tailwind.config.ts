@@ -90,6 +90,16 @@ const config: Config = {
           high: "hsl(var(--priority-high))",
           urgent: "hsl(var(--priority-urgent))",
         },
+        semantic: {
+          success: "hsl(var(--semantic-success))",
+          warning: "hsl(var(--semantic-warning))",
+          info: "hsl(var(--semantic-info))",
+          accent: "hsl(var(--semantic-accent))",
+          purple: "hsl(var(--semantic-purple))",
+          cyan: "hsl(var(--semantic-cyan))",
+          orange: "hsl(var(--semantic-orange))",
+          indigo: "hsl(var(--semantic-indigo))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

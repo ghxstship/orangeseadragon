@@ -8,6 +8,7 @@ import { DetailLayout } from '@/lib/layouts';
 import { TabRenderer } from './TabRenderer';
 import { SidebarRenderer } from './SidebarRenderer';
 import { LoadingState, ErrorState, EmptyState } from '@/components/states/AsyncStates';
+import { useConfirmation } from '@/components/common/confirmation-dialog';
 
 interface CrudDetailProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
@@ -31,6 +32,7 @@ export function CrudDetail<T extends EntityRecord>({
   const [currentTab, setCurrentTab] = useState(initialTab || schema.layouts.detail.tabs[0]?.key || 'overview');
   const crud = useCrud(schema);
   const { data: record, isLoading: loading, error, refetch: refresh } = crud.useRecord(id);
+  const { confirm, ConfirmDialog } = useConfirmation();
 
   if (loading) return <LoadingState />;
   if (error) return <ErrorState description={error.message} retry={refresh} />;
@@ -47,7 +49,12 @@ export function CrudDetail<T extends EntityRecord>({
   };
 
   const handleDelete = async () => {
-    const confirmed = window.confirm(`Are you sure you want to delete this ${schema.identity.name}? This action cannot be undone.`);
+    const confirmed = await confirm({
+      title: `Delete ${schema.identity.name}`,
+      description: `Are you sure you want to delete this ${schema.identity.name}? This action cannot be undone.`,
+      confirmLabel: "Delete",
+      variant: "destructive",
+    });
     if (confirmed) {
       try {
         await crud.delete(id);
@@ -61,31 +68,34 @@ export function CrudDetail<T extends EntityRecord>({
   const sidebarConfig = schema.layouts.detail.sidebar;
 
   return (
-    <DetailLayout
-      schema={schema}
-      record={record as T}
-      loading={loading}
-      currentTab={currentTab}
-      onTabChange={setCurrentTab}
-      onBack={handleBack}
-      onEdit={handleEdit}
-      onDelete={handleDelete}
-      sidebarContent={
-        sidebarConfig ? (
-          <SidebarRenderer
-            schema={schema as unknown as EntitySchema<EntityRecord>}
-            record={record}
-            onTabChange={setCurrentTab}
-          />
-        ) : undefined
-      }
-    >
-      <TabRenderer
-        schema={schema as unknown as EntitySchema<EntityRecord>}
-        tabConfig={tabConfig}
-        record={record}
-        onRefresh={refresh}
-      />
-    </DetailLayout>
+    <>
+      <ConfirmDialog />
+      <DetailLayout
+        schema={schema}
+        record={record as T}
+        loading={loading}
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        onBack={handleBack}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        sidebarContent={
+          sidebarConfig ? (
+            <SidebarRenderer
+              schema={schema as unknown as EntitySchema<EntityRecord>}
+              record={record}
+              onTabChange={setCurrentTab}
+            />
+          ) : undefined
+        }
+      >
+        <TabRenderer
+          schema={schema as unknown as EntitySchema<EntityRecord>}
+          tabConfig={tabConfig}
+          record={record}
+          onRefresh={refresh}
+        />
+      </DetailLayout>
+    </>
   );
 }

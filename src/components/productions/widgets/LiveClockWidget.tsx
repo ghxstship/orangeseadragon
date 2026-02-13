@@ -34,7 +34,7 @@ export function LiveClockWidget() {
                     <Clock className="w-4 h-4" />
                     <span>Local Time</span>
                 </div>
-                <div className="text-5xl font-mono font-bold tracking-tighter text-emerald-500 tabular-nums">
+                <div className="text-5xl font-mono font-bold tracking-tighter text-semantic-success tabular-nums">
                     {timeString}
                 </div>
                 <div className="text-lg font-medium text-zinc-400 tracking-widest">

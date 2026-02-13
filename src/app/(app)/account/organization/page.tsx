@@ -1,6 +1,7 @@
 'use client';
 
 import { SettingsTemplate, SettingsTab } from '@/components/templates/SettingsTemplate';
+import { createClient } from '@/lib/supabase/client';
 
 const organizationTabs: SettingsTab[] = [
   {
@@ -35,8 +36,24 @@ const organizationTabs: SettingsTab[] = [
 ];
 
 export default function OrganizationSettingsPage() {
-  const handleSave = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const handleSave = async (data: Record<string, unknown>) => {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const orgId = user.user_metadata?.organization_id;
+    if (!orgId) throw new Error('No organization found');
+
+    await supabase
+      .from('organizations')
+      .update({
+        name: (data.name as string) || undefined,
+        website: (data.website as string) || undefined,
+        industry: (data.industry as string) || undefined,
+        company_size: (data.size as string) || undefined,
+        description: (data.description as string) || undefined,
+      })
+      .eq('id', orgId);
   };
 
   return (

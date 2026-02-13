@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
@@ -45,70 +46,12 @@ interface ControlRoomStats {
 
 const SEVERITY_COLORS: Record<string, string> = {
   critical: 'bg-destructive',
-  high: 'bg-orange-500',
-  medium: 'bg-amber-500',
-  low: 'bg-gray-500',
+  high: 'bg-semantic-orange',
+  medium: 'bg-semantic-warning',
+  low: 'bg-muted-foreground',
 };
 
 
-const mockIncidents: Incident[] = [
-  {
-    id: '1',
-    incident_number: 'INC-2026-0142',
-    title: 'Medical Emergency - Section B',
-    type: 'medical',
-    severity: 'critical',
-    status: 'dispatched',
-    location: 'Section B, Row 12',
-    location_coordinates: { lat: 40.7128, lng: -74.006 },
-    reported_at: new Date(Date.now() - 180000).toISOString(),
-    assigned_to: 'Medical Team Alpha',
-    description: 'Patron collapsed, possible cardiac event',
-  },
-  {
-    id: '2',
-    incident_number: 'INC-2026-0143',
-    title: 'Crowd Surge - Main Gate',
-    type: 'crowd',
-    severity: 'high',
-    status: 'on-scene',
-    location: 'Main Entrance Gate 1',
-    location_coordinates: { lat: 40.7138, lng: -74.007 },
-    reported_at: new Date(Date.now() - 300000).toISOString(),
-    assigned_to: 'Security Team Bravo',
-    description: 'Large crowd buildup at main gate, flow control needed',
-  },
-  {
-    id: '3',
-    incident_number: 'INC-2026-0144',
-    title: 'Lost Child Report',
-    type: 'security',
-    severity: 'medium',
-    status: 'in-progress',
-    location: 'Family Area',
-    reported_at: new Date(Date.now() - 600000).toISOString(),
-    assigned_to: 'Guest Services',
-    description: '8-year-old separated from parents',
-  },
-  {
-    id: '4',
-    incident_number: 'INC-2026-0145',
-    title: 'Spill Hazard - Concourse',
-    type: 'safety',
-    severity: 'low',
-    status: 'open',
-    location: 'West Concourse near Stand 4',
-    reported_at: new Date(Date.now() - 60000).toISOString(),
-    description: 'Large beverage spill creating slip hazard',
-  },
-];
-
-const mockStats: ControlRoomStats = {
-  active_incidents: 4,
-  critical_count: 1,
-  avg_response_time: 142,
-  teams_deployed: 3,
-};
 
 function formatTimeAgo(dateString: string): string {
   const seconds = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
@@ -125,14 +68,63 @@ function formatDuration(seconds: number): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+function mapSeverity(s: string | null): Incident['severity'] {
+  if (s === 'critical') return 'critical';
+  if (s === 'high') return 'high';
+  if (s === 'medium') return 'medium';
+  return 'low';
+}
+
+function mapIncidentType(t: string | null): Incident['type'] {
+  const valid: Incident['type'][] = ['medical', 'security', 'safety', 'fire', 'weather', 'crowd', 'technical', 'other'];
+  if (t && valid.includes(t as Incident['type'])) return t as Incident['type'];
+  return 'other';
+}
+
+function mapStatus(s: string | null): Incident['status'] {
+  const valid: Incident['status'][] = ['open', 'dispatched', 'on-scene', 'in-progress', 'resolved', 'closed'];
+  if (s && valid.includes(s as Incident['status'])) return s as Incident['status'];
+  return 'open';
+}
+
 export function IncidentControlRoom() {
-  const [incidents, setIncidents] = useState<Incident[]>(mockIncidents);
-  const [stats] = useState<ControlRoomStats>(mockStats);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
   const [filterSeverity, setFilterSeverity] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Fetch real incidents from Supabase
+  useEffect(() => {
+    const supabase = createClient();
+    const fetchIncidents = async () => {
+      const { data } = await supabase
+        .from('compliance_incidents')
+        .select('id, title, incident_number, incident_type, severity, status, occurred_at, reported_by, description, affected_systems')
+        .in('status', ['open', 'investigating', 'in_progress', 'dispatched', 'on_scene'])
+        .order('occurred_at', { ascending: false })
+        .limit(50);
+
+      const mapped: Incident[] = (data ?? []).map((d) => ({
+        id: d.id,
+        incident_number: d.incident_number ?? d.id.slice(0, 12),
+        title: d.title,
+        type: mapIncidentType(d.incident_type),
+        severity: mapSeverity(d.severity),
+        status: mapStatus(d.status),
+        location: d.affected_systems?.[0] ?? '',
+        reported_at: d.occurred_at ?? new Date().toISOString(),
+        assigned_to: d.reported_by ?? undefined,
+        description: d.description ?? '',
+      }));
+      setIncidents(mapped);
+    };
+    fetchIncidents();
+    // Poll every 10 seconds for live updates
+    const interval = setInterval(fetchIncidents, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -141,12 +133,15 @@ export function IncidentControlRoom() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIncidents((prev) => [...prev]);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+  const stats: ControlRoomStats = useMemo(() => {
+    const active = incidents.filter(i => ['open', 'dispatched', 'on-scene', 'in-progress'].includes(i.status));
+    return {
+      active_incidents: active.length,
+      critical_count: active.filter(i => i.severity === 'critical').length,
+      avg_response_time: 0,
+      teams_deployed: new Set(active.map(i => i.assigned_to).filter(Boolean)).size,
+    };
+  }, [incidents]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -177,16 +172,16 @@ export function IncidentControlRoom() {
       <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-black/50">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Activity className="h-6 w-6 text-emerald-400" />
+            <Activity className="h-6 w-6 text-semantic-success" />
             <h1 className="text-xl font-bold">Control Room</h1>
           </div>
-          <Badge variant="outline" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+          <Badge variant="outline" className="bg-semantic-success/20 text-semantic-success border-semantic-success/30">
             LIVE
           </Badge>
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="text-3xl font-mono font-bold text-emerald-400">
+          <div className="text-3xl font-mono font-bold text-semantic-success">
             {currentTime.toLocaleTimeString(undefined, { hour12: false })}
           </div>
           
@@ -219,7 +214,7 @@ export function IncidentControlRoom() {
               <p className="text-xs text-neutral-400 uppercase tracking-wider">Active Incidents</p>
               <p className="text-3xl font-bold text-white">{stats.active_incidents}</p>
             </div>
-            <AlertTriangle className="h-8 w-8 text-amber-400" />
+            <AlertTriangle className="h-8 w-8 text-semantic-warning" />
           </div>
         </Card>
         
@@ -262,7 +257,7 @@ export function IncidentControlRoom() {
               <p className="text-xs text-neutral-400 uppercase tracking-wider">Teams Deployed</p>
               <p className="text-3xl font-bold text-white">{stats.teams_deployed}</p>
             </div>
-            <Users className="h-8 w-8 text-emerald-400" />
+            <Users className="h-8 w-8 text-semantic-success" />
           </div>
         </Card>
       </div>
@@ -345,7 +340,7 @@ export function IncidentControlRoom() {
                       </div>
                       
                       {incident.assigned_to && (
-                        <div className="flex items-center gap-1 mt-2 text-xs text-emerald-400">
+                        <div className="flex items-center gap-1 mt-2 text-xs text-semantic-success">
                           <User className="h-3 w-3" />
                           {incident.assigned_to}
                         </div>
@@ -408,8 +403,8 @@ export function IncidentControlRoom() {
                 <div className="mb-6">
                   <h3 className="text-sm font-medium text-neutral-400 mb-2">Assigned To</h3>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                      <User className="h-4 w-4 text-emerald-400" />
+                    <div className="w-8 h-8 rounded-full bg-semantic-success/20 flex items-center justify-center">
+                      <User className="h-4 w-4 text-semantic-success" />
                     </div>
                     <span className="font-medium">{selectedIncident.assigned_to}</span>
                   </div>
@@ -418,7 +413,7 @@ export function IncidentControlRoom() {
 
               <div className="flex gap-3">
                 {selectedIncident.status === 'open' && (
-                  <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700">
+                  <Button className="flex-1 bg-semantic-success hover:bg-semantic-success/90">
                     <Radio className="h-4 w-4 mr-2" />
                     Dispatch Team
                   </Button>
@@ -429,12 +424,12 @@ export function IncidentControlRoom() {
                       <Phone className="h-4 w-4 mr-2" />
                       Contact Team
                     </Button>
-                    <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                    <Button className="flex-1 bg-semantic-info hover:bg-semantic-info/90">
                       Mark Resolved
                     </Button>
                   </>
                 )}
-                <Button variant="outline" className="border-amber-500/50 text-amber-400">
+                <Button variant="outline" className="border-semantic-warning/50 text-semantic-warning">
                   Escalate
                 </Button>
               </div>

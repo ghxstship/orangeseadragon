@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/hooks/use-supabase';
 import { useTasks } from '@/hooks/use-tasks';
+import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
 
 interface MyTasksWidgetProps {
   title?: string;
@@ -74,14 +75,6 @@ export function MyTasksWidget({ title = "My Tasks", limit = 5 }: MyTasksWidgetPr
     );
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'todo': return 'bg-amber-500';
-      case 'in_progress': return 'bg-blue-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -91,7 +84,7 @@ export function MyTasksWidget({ title = "My Tasks", limit = 5 }: MyTasksWidgetPr
         <div className="space-y-3">
           {myTasks.map((task) => (
             <div key={task.id} className="flex items-start space-x-3">
-              <div className={`h-2 w-2 rounded-full mt-2 ${getStatusColor(task.status ?? 'pending')}`} />
+              <div className={`h-2 w-2 rounded-full mt-2 ${getStatusSolidClass(task.status ?? 'pending')}`} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{task.title}</p>
                 <div className="flex items-center space-x-2 mt-1">

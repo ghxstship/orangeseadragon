@@ -53,7 +53,7 @@ function MetricWidget({ widget }: { widget: DashboardWidget }) {
         {widget.change !== undefined && (
           <p className={cn(
             'text-xs',
-            widget.change > 0 ? 'text-emerald-500' : widget.change < 0 ? 'text-destructive' : 'text-muted-foreground'
+            widget.change > 0 ? 'text-semantic-success' : widget.change < 0 ? 'text-destructive' : 'text-muted-foreground'
           )}>
             {widget.change > 0 ? '+' : ''}{widget.change}% {widget.changeLabel || 'from last period'}
           </p>

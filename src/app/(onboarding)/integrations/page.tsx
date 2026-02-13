@@ -60,21 +60,38 @@ export default function OnboardingIntegrationsPage() {
 
   const handleConnect = async (id: string) => {
     setConnecting(id);
-    
-    // TODO: Implement actual OAuth flow
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    
-    setConnected([...connected, id]);
-    setConnecting(null);
+    try {
+      const response = await fetch(`/api/integrations/${id}/connect`, { method: 'POST' });
+      if (response.ok) {
+        const result = await response.json();
+        if (result.data?.redirect_url) {
+          window.location.href = result.data.redirect_url;
+          return;
+        }
+        setConnected([...connected, id]);
+      }
+    } catch (err) {
+      console.error(`[Onboarding] Failed to connect ${id}:`, err);
+    } finally {
+      setConnecting(null);
+    }
   };
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    
-    // TODO: Save integration preferences
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    
-    router.push("/onboarding/tour");
+    try {
+      await fetch('/api/onboarding/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ connected_integrations: connected }),
+      });
+      router.push("/onboarding/tour");
+    } catch (err) {
+      console.error('[Onboarding] Complete step failed:', err);
+      router.push("/onboarding/tour");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

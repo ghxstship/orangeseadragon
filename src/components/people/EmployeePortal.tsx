@@ -91,10 +91,10 @@ const DEFAULT_PENDING: PendingItem[] = [
 ];
 
 const QUICK_ACTIONS: QuickAction[] = [
-  { id: 'pto', label: 'Request Time Off', icon: Palmtree, href: '/people/leave/new', color: 'text-emerald-400' },
-  { id: 'schedule', label: 'View Schedule', icon: Calendar, href: '/people/scheduling', color: 'text-blue-400' },
-  { id: 'profile', label: 'Update Profile', icon: User, href: '/people/profile', color: 'text-purple-400' },
-  { id: 'payslips', label: 'View Payslips', icon: CreditCard, href: '/people/payslips', color: 'text-amber-400' },
+  { id: 'pto', label: 'Request Time Off', icon: Palmtree, href: '/people/leave/new', color: 'text-semantic-success' },
+  { id: 'schedule', label: 'View Schedule', icon: Calendar, href: '/people/scheduling', color: 'text-semantic-info' },
+  { id: 'profile', label: 'Update Profile', icon: User, href: '/people/profile', color: 'text-semantic-purple' },
+  { id: 'payslips', label: 'View Payslips', icon: CreditCard, href: '/people/payslips', color: 'text-semantic-warning' },
 ];
 
 export function EmployeePortal({
@@ -110,9 +110,9 @@ export function EmployeePortal({
   
   const getPriorityColor = (priority: PendingItem['priority']) => {
     switch (priority) {
-      case 'high': return 'text-rose-400 bg-rose-500/10 border-rose-500/20';
-      case 'medium': return 'text-amber-400 bg-amber-500/10 border-amber-500/20';
-      case 'low': return 'text-blue-400 bg-blue-500/10 border-blue-500/20';
+      case 'high': return 'text-destructive bg-destructive/10 border-destructive/20';
+      case 'medium': return 'text-semantic-warning bg-semantic-warning/10 border-semantic-warning/20';
+      case 'low': return 'text-semantic-info bg-semantic-info/10 border-semantic-info/20';
     }
   };
 
@@ -156,7 +156,7 @@ export function EmployeePortal({
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="w-5 h-5" />
                 {pendingItems.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 rounded-full text-[10px] flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[10px] flex items-center justify-center">
                     {pendingItems.length}
                   </span>
                 )}
@@ -183,8 +183,8 @@ export function EmployeePortal({
                   <p className="text-sm text-zinc-400">PTO Balance</p>
                   <p className="text-3xl font-bold text-white">{totalPtoAvailable} days</p>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                  <Palmtree className="w-6 h-6 text-emerald-400" />
+                <div className="h-12 w-12 rounded-full bg-semantic-success/20 flex items-center justify-center">
+                  <Palmtree className="w-6 h-6 text-semantic-success" />
                 </div>
               </div>
             </CardContent>
@@ -208,7 +208,7 @@ export function EmployeePortal({
                     {nextShift?.location || 'Main Office'}
                   </p>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <div className="h-12 w-12 rounded-full bg-semantic-info/20 flex items-center justify-center">
                   <Clock className="w-6 h-6 text-blue-400" />
                 </div>
               </div>
@@ -229,8 +229,8 @@ export function EmployeePortal({
                   <p className="text-3xl font-bold text-white">{pendingItems.length}</p>
                   <p className="text-xs text-zinc-500">items need attention</p>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-amber-500/20 flex items-center justify-center">
-                  <AlertCircle className="w-6 h-6 text-amber-400" />
+                <div className="h-12 w-12 rounded-full bg-semantic-warning/20 flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-semantic-warning" />
                 </div>
               </div>
             </CardContent>
@@ -341,23 +341,23 @@ export function EmployeePortal({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+            <div className="p-4 rounded-lg bg-semantic-success/10 border border-semantic-success/20">
               <div className="flex items-center gap-2 mb-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm font-medium text-emerald-300">Valid</span>
+                <CheckCircle2 className="w-4 h-4 text-semantic-success" />
+                <span className="text-sm font-medium text-semantic-success">Valid</span>
               </div>
               <p className="text-white font-medium">Safety Certification</p>
               <p className="text-xs text-zinc-500">Expires Dec 2026</p>
             </div>
-            <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+            <div className="p-4 rounded-lg bg-semantic-warning/10 border border-semantic-warning/20">
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-amber-400" />
-                <span className="text-sm font-medium text-amber-300">Expiring</span>
+                <Clock className="w-4 h-4 text-semantic-warning" />
+                <span className="text-sm font-medium text-semantic-warning">Expiring</span>
               </div>
               <p className="text-white font-medium">First Aid</p>
               <p className="text-xs text-zinc-500">Expires in 30 days</p>
             </div>
-            <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+            <div className="p-4 rounded-lg bg-semantic-info/10 border border-semantic-info/20">
               <div className="flex items-center gap-2 mb-2">
                 <BookOpen className="w-4 h-4 text-blue-400" />
                 <span className="text-sm font-medium text-blue-300">In Progress</span>

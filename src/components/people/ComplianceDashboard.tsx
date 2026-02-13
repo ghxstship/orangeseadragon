@@ -82,13 +82,13 @@ export function ComplianceDashboard({
   const getStatusConfig = (status: ComplianceItem['status']) => {
     switch (status) {
       case 'valid':
-        return { icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' };
+        return { icon: CheckCircle2, color: 'text-semantic-success', bg: 'bg-semantic-success/10', border: 'border-semantic-success/20' };
       case 'expiring':
-        return { icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' };
+        return { icon: Clock, color: 'text-semantic-warning', bg: 'bg-semantic-warning/10', border: 'border-semantic-warning/20' };
       case 'expired':
-        return { icon: AlertTriangle, color: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/20' };
+        return { icon: AlertTriangle, color: 'text-destructive', bg: 'bg-destructive/10', border: 'border-destructive/20' };
       case 'pending':
-        return { icon: FileText, color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' };
+        return { icon: FileText, color: 'text-semantic-info', bg: 'bg-semantic-info/10', border: 'border-semantic-info/20' };
     }
   };
 
@@ -129,15 +129,15 @@ export function ComplianceDashboard({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0 }}
         >
-          <Card className="bg-emerald-500/10 border-emerald-500/20">
+          <Card className="bg-semantic-success/10 border-semantic-success/20">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-emerald-300/70">Compliant</p>
-                  <p className="text-3xl font-bold text-emerald-400">{stats.compliant}</p>
+                  <p className="text-sm text-semantic-success/70">Compliant</p>
+                  <p className="text-3xl font-bold text-semantic-success">{stats.compliant}</p>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                <div className="h-12 w-12 rounded-full bg-semantic-success/20 flex items-center justify-center">
+                  <CheckCircle2 className="w-6 h-6 text-semantic-success" />
                 </div>
               </div>
             </CardContent>
@@ -149,15 +149,15 @@ export function ComplianceDashboard({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="bg-amber-500/10 border-amber-500/20">
+          <Card className="bg-semantic-warning/10 border-semantic-warning/20">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-amber-300/70">Expiring Soon</p>
-                  <p className="text-3xl font-bold text-amber-400">{stats.expiring}</p>
+                  <p className="text-sm text-semantic-warning/70">Expiring Soon</p>
+                  <p className="text-3xl font-bold text-semantic-warning">{stats.expiring}</p>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-amber-500/20 flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-amber-400" />
+                <div className="h-12 w-12 rounded-full bg-semantic-warning/20 flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-semantic-warning" />
                 </div>
               </div>
             </CardContent>
@@ -169,15 +169,15 @@ export function ComplianceDashboard({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="bg-rose-500/10 border-rose-500/20">
+          <Card className="bg-destructive/10 border-destructive/20">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-rose-300/70">Expired</p>
-                  <p className="text-3xl font-bold text-rose-400">{stats.expired}</p>
+                  <p className="text-sm text-destructive/70">Expired</p>
+                  <p className="text-3xl font-bold text-destructive">{stats.expired}</p>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-rose-500/20 flex items-center justify-center">
-                  <AlertTriangle className="w-6 h-6 text-rose-400" />
+                <div className="h-12 w-12 rounded-full bg-destructive/20 flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-destructive" />
                 </div>
               </div>
             </CardContent>
@@ -189,14 +189,14 @@ export function ComplianceDashboard({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <Card className="bg-blue-500/10 border-blue-500/20">
+          <Card className="bg-semantic-info/10 border-semantic-info/20">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-blue-300/70">Pending</p>
                   <p className="text-3xl font-bold text-blue-400">{stats.pending}</p>
                 </div>
-                <div className="h-12 w-12 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <div className="h-12 w-12 rounded-full bg-semantic-info/20 flex items-center justify-center">
                   <FileText className="w-6 h-6 text-blue-400" />
                 </div>
               </div>
@@ -282,9 +282,9 @@ export function ComplianceDashboard({
                     {item.daysUntilExpiry !== undefined && (
                       <p className={cn(
                         "text-sm font-medium",
-                        item.daysUntilExpiry < 0 ? "text-rose-400" : 
-                        item.daysUntilExpiry <= 7 ? "text-rose-400" :
-                        item.daysUntilExpiry <= 30 ? "text-amber-400" : "text-zinc-400"
+                        item.daysUntilExpiry < 0 ? "text-destructive" : 
+                        item.daysUntilExpiry <= 7 ? "text-destructive" :
+                        item.daysUntilExpiry <= 30 ? "text-semantic-warning" : "text-zinc-400"
                       )}>
                         {item.daysUntilExpiry < 0 
                           ? `Expired ${Math.abs(item.daysUntilExpiry)} days ago`

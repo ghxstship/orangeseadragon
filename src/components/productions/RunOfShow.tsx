@@ -35,12 +35,12 @@ export function RunOfShow({ items }: RunOfShowProps) {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Play className="w-5 h-5 text-emerald-500 fill-emerald-500" />
+                    <Play className="w-5 h-5 text-semantic-success fill-semantic-success" />
                     Live Run of Show
                 </h3>
                 <div className="flex items-center gap-4 text-sm font-mono text-zinc-400">
                     <span>START: 20:00</span>
-                    <span className="text-emerald-500 font-bold">CURRENT: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span className="text-semantic-success font-bold">CURRENT: {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
             </div>
 
@@ -65,7 +65,7 @@ export function RunOfShow({ items }: RunOfShowProps) {
                             {/* Time Column */}
                             <div className="w-20 text-right pr-4 pt-1 font-mono text-sm font-medium z-10 flex flex-col items-end">
                                 <span className={cn(
-                                    isActive ? "text-emerald-400 font-bold text-lg" : "text-zinc-500"
+                                    isActive ? "text-semantic-success font-bold text-lg" : "text-zinc-500"
                                 )}>
                                     {item.startTime}
                                 </span>
@@ -75,7 +75,7 @@ export function RunOfShow({ items }: RunOfShowProps) {
                             {/* Timeline Node */}
                             <div className="relative z-10 flex flex-col items-center mr-4 pt-1">
                                 {isActive ? (
-                                    <div className="w-4 h-4 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)] animate-pulse border-2 border-zinc-950" />
+                                    <div className="w-4 h-4 rounded-full bg-semantic-success shadow-[0_0_15px_hsl(var(--semantic-success)/0.6)] animate-pulse border-2 border-zinc-950" />
                                 ) : isCompleted ? (
                                     <div className="w-3 h-3 rounded-full bg-zinc-800 border-2 border-zinc-600" />
                                 ) : (
@@ -103,7 +103,7 @@ export function RunOfShow({ items }: RunOfShowProps) {
                                     <div className="flex flex-col items-end gap-2">
                                         <Badge variant="outline" className={cn(
                                             "uppercase text-[10px] tracking-wider",
-                                            item.type === 'cue' ? "border-amber-500/30 text-amber-500" : "border-zinc-700 text-zinc-500"
+                                            item.type === 'cue' ? "border-semantic-warning/30 text-semantic-warning" : "border-zinc-700 text-zinc-500"
                                         )}>{item.type}</Badge>
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@ export function RunOfShow({ items }: RunOfShowProps) {
                                 {/* Progress Bar (Mock) for Active Items */}
                                 {isActive && (
                                     <div className="mt-3 h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-                                        <div className="h-full bg-emerald-500 w-1/3 animate-[progress_10s_linear_infinite]" />
+                                        <div className="h-full bg-semantic-success w-1/3 animate-[progress_10s_linear_infinite]" />
                                     </div>
                                 )}
                             </div>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useUser } from '@/hooks/use-supabase';
+import { useCalendarEvents } from '@/hooks/use-calendar-events';
 
 interface TodayScheduleWidgetProps {
   title?: string;
@@ -8,14 +10,21 @@ interface TodayScheduleWidgetProps {
 }
 
 export function TodayScheduleWidget({ title = "Today's Schedule", limit = 5 }: TodayScheduleWidgetProps) {
-  // Mock data for now - in real app would use schedule/events hooks
-  const mockSchedule = [
-    { id: 1, time: '09:00', event: 'Load-in begins', location: 'Venue A' },
-    { id: 2, time: '13:00', event: 'Tech rehearsal', location: 'Stage' },
-    { id: 3, time: '18:00', event: 'Show time', location: 'Main Stage' },
-  ];
+  const { user } = useUser();
+  const organizationId = user?.user_metadata?.organization_id || null;
+  const today = new Date();
+  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
+  const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59).toISOString();
+  const { data: calendarEvents } = useCalendarEvents(organizationId, startOfDay, endOfDay);
 
-  const todayEvents = mockSchedule.slice(0, limit);
+  const todayEvents = (calendarEvents ?? [])
+    .map((e) => ({
+      id: e.id,
+      time: e.start_time ? new Date(e.start_time).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) : 'All day',
+      event: e.title,
+      location: e.location ?? '',
+    }))
+    .slice(0, limit);
 
   if (!todayEvents.length) {
     return (

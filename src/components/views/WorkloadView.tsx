@@ -82,13 +82,13 @@ function getCapacityStatus(utilization: number): {
   bgColor: string;
 } {
   if (utilization <= capacityThresholds.underloaded) {
-    return { status: "underloaded", color: "text-blue-500", bgColor: "bg-blue-500" };
+    return { status: "underloaded", color: "text-semantic-info", bgColor: "bg-semantic-info" };
   }
   if (utilization <= capacityThresholds.optimal) {
-    return { status: "optimal", color: "text-emerald-500", bgColor: "bg-emerald-500" };
+    return { status: "optimal", color: "text-semantic-success", bgColor: "bg-semantic-success" };
   }
   if (utilization <= capacityThresholds.overloaded) {
-    return { status: "overloaded", color: "text-amber-500", bgColor: "bg-amber-500" };
+    return { status: "overloaded", color: "text-semantic-warning", bgColor: "bg-semantic-warning" };
   }
   return { status: "critical", color: "text-destructive", bgColor: "bg-destructive" };
 }
@@ -243,7 +243,7 @@ export function WorkloadView({
         {/* Summary Stats */}
         <div className="flex items-center gap-4 mt-2 text-sm">
           <div className="flex items-center gap-1">
-            <CheckCircle className="h-4 w-4 text-emerald-500" />
+            <CheckCircle className="h-4 w-4 text-semantic-success" />
             <span>{summaryStats.optimal} optimal</span>
           </div>
           <div className="flex items-center gap-1">
@@ -399,15 +399,15 @@ export function WorkloadView({
         <div className="p-2 border-t bg-muted/30 flex items-center gap-4 text-xs">
           <span className="text-muted-foreground">Capacity:</span>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-blue-500" />
+            <div className="w-3 h-3 rounded-full bg-semantic-info" />
             <span>&lt;50% Underloaded</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-emerald-500" />
+            <div className="w-3 h-3 rounded-full bg-semantic-success" />
             <span>50-80% Optimal</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-amber-500" />
+            <div className="w-3 h-3 rounded-full bg-semantic-warning" />
             <span>80-100% Near Capacity</span>
           </div>
           <div className="flex items-center gap-1">

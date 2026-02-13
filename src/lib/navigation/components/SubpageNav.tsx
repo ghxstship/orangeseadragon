@@ -2,12 +2,9 @@
 
 import { EntitySchema } from '@/lib/schema/types';
 import { cn } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
+import { useSupabase } from '@/hooks/use-supabase';
 
-// Mock hooks - replace with actual implementations when available
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const useSWR = (_key: string | null) => ({ data: null });
-
-// Mock type - replace with actual schema types when available
 interface SubpageDefinition {
   key: string;
   label: string;
@@ -19,10 +16,6 @@ interface SubpageDefinition {
     orderBy?: { field: string; direction: 'asc' | 'desc' };
   };
 }
-
-// Mock function - replace with actual utility when available
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const buildQueryString = (_query: Record<string, unknown>) => '';
 
 /**
  * SUBPAGE NAVIGATION
@@ -65,12 +58,27 @@ interface SubpageTabProps {
 }
 
 function SubpageTab({ subpage, isActive, onClick, schema }: SubpageTabProps) {
-  // Fetch count if enabled
-  const { data: countData } = useSWR(
-    subpage.showCount
-      ? `${(schema as { data?: { endpoint?: string } }).data?.endpoint}/count?${buildQueryString(subpage.query)}`
-      : null
-  );
+  const supabase = useSupabase();
+  const endpoint = (schema as { data?: { endpoint?: string } }).data?.endpoint;
+  const table = endpoint?.replace('/api/', '').replace(/\//g, '_') ?? null;
+
+  const { data: count } = useQuery({
+    queryKey: ['subpage-count', table, subpage.key],
+    queryFn: async () => {
+      if (!table) return 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let query = (supabase.from as any)(table).select('id', { count: 'exact', head: true });
+      if (subpage.query?.where) {
+        for (const [field, value] of Object.entries(subpage.query.where)) {
+          query = query.eq(field, value as string);
+        }
+      }
+      const { count: c } = await query;
+      return c ?? 0;
+    },
+    enabled: !!subpage.showCount && !!table,
+    staleTime: 60 * 1000,
+  });
 
   return (
     <li>
@@ -80,18 +88,17 @@ function SubpageTab({ subpage, isActive, onClick, schema }: SubpageTabProps) {
         aria-pressed={isActive}
       >
         {subpage.icon && (
-          /* Icon component - placeholder */
           <div className="subpage-tab-icon">{subpage.icon}</div>
         )}
         <span className="subpage-tab-label">{subpage.label}</span>
-        {subpage.showCount && countData && (
+        {subpage.showCount && count != null && count > 0 && (
           <span
             className={cn(
               'subpage-tab-count',
-              subpage.countHighlight === 'when-nonzero' && (countData as { count: number }).count > 0 && 'highlighted'
+              subpage.countHighlight === 'when-nonzero' && count > 0 && 'highlighted'
             )}
           >
-            {(countData as { count: number }).count}
+            {count}
           </span>
         )}
       </button>

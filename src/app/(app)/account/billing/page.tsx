@@ -24,8 +24,16 @@ const billingTabs: SettingsTab[] = [
 ];
 
 export default function BillingSettingsPage() {
-  const handleSave = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const handleSave = async (data: Record<string, unknown>) => {
+    const response = await fetch('/api/billing/subscription', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: data.planType }),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message ?? 'Failed to update billing');
+    }
   };
 
   return (

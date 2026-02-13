@@ -24,6 +24,8 @@ import {
   Clock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-supabase';
 
 interface ActivityEntry {
   id: string;
@@ -35,33 +37,82 @@ interface ActivityEntry {
   details?: string;
 }
 
-const activities: ActivityEntry[] = [
-  { id: '1', action: 'updated', module: 'Finance', entity: 'budget', entityName: 'Acme Festival 2026', timestamp: '2026-02-11T08:30:00Z', details: 'Updated line items: Staging, Lighting' },
-  { id: '2', action: 'approved', module: 'Finance', entity: 'expense', entityName: 'Travel - NYC Site Visit', timestamp: '2026-02-11T08:15:00Z' },
-  { id: '3', action: 'created', module: 'Productions', entity: 'task', entityName: 'Confirm lighting vendor', timestamp: '2026-02-11T07:45:00Z' },
-  { id: '4', action: 'viewed', module: 'Business', entity: 'deal', entityName: 'TechStart Launch Package', timestamp: '2026-02-10T17:30:00Z' },
-  { id: '5', action: 'exported', module: 'Finance', entity: 'invoice', entityName: 'INV-2026-0042', timestamp: '2026-02-10T16:00:00Z', details: 'Exported as PDF' },
-  { id: '6', action: 'updated', module: 'People', entity: 'person', entityName: 'Alex Rivera', timestamp: '2026-02-10T14:20:00Z', details: 'Updated certifications' },
-  { id: '7', action: 'submitted', module: 'Core', entity: 'timesheet', entityName: 'Week of Feb 3', timestamp: '2026-02-10T12:00:00Z', details: '38.5 hours' },
-  { id: '8', action: 'created', module: 'Productions', entity: 'project', entityName: 'GlobalFest 2026', timestamp: '2026-02-10T10:00:00Z' },
-  { id: '9', action: 'imported', module: 'Assets', entity: 'asset', entityName: 'Q1 Inventory Update', timestamp: '2026-02-09T16:30:00Z', details: '47 records imported' },
-  { id: '10', action: 'deleted', module: 'Core', entity: 'task', entityName: 'Draft: placeholder task', timestamp: '2026-02-09T14:00:00Z' },
-  { id: '11', action: 'approved', module: 'Finance', entity: 'invoice', entityName: 'INV-2026-0039', timestamp: '2026-02-09T11:00:00Z' },
-  { id: '12', action: 'viewed', module: 'Analytics', entity: 'report', entityName: 'Monthly Revenue Summary', timestamp: '2026-02-09T09:30:00Z' },
-];
+const ACTION_MAP: Record<string, ActivityEntry['action']> = {
+  insert: 'created',
+  create: 'created',
+  created: 'created',
+  update: 'updated',
+  updated: 'updated',
+  delete: 'deleted',
+  deleted: 'deleted',
+  approved: 'approved',
+  exported: 'exported',
+  imported: 'imported',
+  submitted: 'submitted',
+  viewed: 'viewed',
+};
 
 const actionConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
-  created: { icon: Plus, color: 'text-emerald-500', label: 'Created' },
+  created: { icon: Plus, color: 'text-semantic-success', label: 'Created' },
   updated: { icon: FileEdit, color: 'text-blue-500', label: 'Updated' },
   deleted: { icon: Trash2, color: 'text-destructive', label: 'Deleted' },
   viewed: { icon: Eye, color: 'text-muted-foreground', label: 'Viewed' },
   exported: { icon: Download, color: 'text-purple-500', label: 'Exported' },
-  imported: { icon: Upload, color: 'text-amber-500', label: 'Imported' },
-  approved: { icon: CheckCircle, color: 'text-emerald-500', label: 'Approved' },
+  imported: { icon: Upload, color: 'text-semantic-warning', label: 'Imported' },
+  approved: { icon: CheckCircle, color: 'text-semantic-success', label: 'Approved' },
   submitted: { icon: Clock, color: 'text-blue-500', label: 'Submitted' },
 };
 
+function useMyActivity(userId: string | null, orgId: string | null) {
+  const [activities, setActivities] = React.useState<ActivityEntry[]>([]);
+
+  React.useEffect(() => {
+    if (!userId || !orgId) return;
+    const supabase = createClient();
+
+    const fetchData = async () => {
+      const { data } = await supabase
+        .from('audit_logs')
+        .select('id, action, entity_type, entity_id, created_at, new_values')
+        .eq('organization_id', orgId)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      const mapped: ActivityEntry[] = (data ?? []).map((row) => {
+        const actionKey = row.action.toLowerCase();
+        const action = ACTION_MAP[actionKey] ?? 'updated';
+        const entityType = row.entity_type.replace(/_/g, ' ');
+        const modName = row.entity_type.split('_')[0] ?? '';
+        const moduleLabel = modName.charAt(0).toUpperCase() + modName.slice(1);
+        const details = row.new_values
+          ? (typeof row.new_values === 'object' ? `Changed: ${Object.keys(row.new_values as Record<string, unknown>).join(', ')}` : '')
+          : undefined;
+        return {
+          id: row.id,
+          action,
+          module: moduleLabel,
+          entity: entityType,
+          entityName: row.entity_id.slice(0, 8),
+          timestamp: row.created_at ?? '',
+          details: details || undefined,
+        };
+      });
+
+      setActivities(mapped);
+    };
+
+    fetchData();
+  }, [userId, orgId]);
+
+  return activities;
+}
+
 export default function HistoryPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
+  const userId = user?.id || null;
+  const activities = useMyActivity(userId, orgId);
   const [search, setSearch] = React.useState('');
   const [moduleFilter, setModuleFilter] = React.useState('all');
   const [actionFilter, setActionFilter] = React.useState('all');
@@ -76,7 +127,7 @@ export default function HistoryPage() {
       }
       return true;
     });
-  }, [search, moduleFilter, actionFilter]);
+  }, [search, moduleFilter, actionFilter, activities]);
 
   const formatTimestamp = (ts: string) => {
     const d = new Date(ts);

@@ -85,13 +85,13 @@ const cueTypeColors: Record<string, string> = {
   action: "bg-blue-500/10 text-blue-500 border-blue-500/30",
   audio: "bg-purple-500/10 text-purple-500 border-purple-500/30",
   video: "bg-pink-500/10 text-pink-500 border-pink-500/30",
-  lighting: "bg-amber-500/10 text-amber-500 border-amber-500/30",
+  lighting: "bg-semantic-warning/10 text-semantic-warning border-semantic-warning/30",
   transition: "bg-cyan-500/10 text-cyan-500 border-cyan-500/30",
   break: "bg-gray-500/10 text-gray-500 border-gray-500/30",
-  speech: "bg-emerald-500/10 text-emerald-500 border-emerald-500/30",
+  speech: "bg-semantic-success/10 text-semantic-success border-semantic-success/30",
   presentation: "bg-orange-500/10 text-orange-500 border-orange-500/30",
   music: "bg-indigo-500/10 text-indigo-500 border-indigo-500/30",
-  standby: "bg-amber-500/10 text-amber-500 border-amber-500/30",
+  standby: "bg-semantic-warning/10 text-semantic-warning border-semantic-warning/30",
 };
 
 function formatDuration(seconds: number): string {
@@ -279,7 +279,7 @@ export function ShowCallingView({
                 className={cn(
                   "w-full text-left p-3 rounded-lg transition-colors",
                   index === currentCueIndex
-                    ? "bg-emerald-500/20 border border-emerald-500"
+                    ? "bg-semantic-success/20 border border-semantic-success"
                     : cue.status === "complete"
                     ? "bg-zinc-800/50 opacity-60"
                     : cue.status === "skipped"
@@ -354,7 +354,7 @@ export function ShowCallingView({
               <div
                 className={cn(
                   "text-2xl font-mono font-bold",
-                  isOvertime ? "text-destructive" : "text-emerald-500"
+                  isOvertime ? "text-destructive" : "text-semantic-success"
                 )}
               >
                 {cueStartTime ? formatDuration(cueElapsedTime) : "--:--"}
@@ -366,7 +366,7 @@ export function ShowCallingView({
             {!isLive ? (
               <Button
                 size="lg"
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="bg-semantic-success hover:bg-semantic-success/90"
                 onClick={handleStartShow}
               >
                 <Play className="h-5 w-5 mr-2" />
@@ -392,7 +392,7 @@ export function ShowCallingView({
               </div>
             )}
             {!isOvertime && variance < 0 && currentCue && (
-              <div className="flex items-center gap-2 text-emerald-500">
+              <div className="flex items-center gap-2 text-semantic-success">
                 <CheckCircle2 className="h-5 w-5" />
                 <span className="font-bold">{formatDuration(Math.abs(variance))} remaining</span>
               </div>
@@ -473,9 +473,9 @@ export function ShowCallingView({
                   )}
 
                   {currentCue.notes && (
-                    <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                      <div className="text-sm text-amber-500 mb-1">Notes</div>
-                      <p className="text-amber-200">{currentCue.notes}</p>
+                    <div className="p-4 bg-semantic-warning/10 border border-semantic-warning/30 rounded-lg">
+                      <div className="text-sm text-semantic-warning mb-1">Notes</div>
+                      <p className="text-semantic-warning/80">{currentCue.notes}</p>
                     </div>
                   )}
                 </CardContent>
@@ -532,13 +532,13 @@ export function ShowCallingView({
 
           <Button
             size="lg"
-            className="h-20 px-16 text-2xl bg-emerald-600 hover:bg-emerald-700"
+            className="h-20 px-16 text-2xl bg-semantic-success hover:bg-semantic-success/90"
             onClick={handleGo}
             disabled={!currentCue || currentCue.status === "complete" || !isLive}
           >
             <Play className="h-8 w-8 mr-3" />
             GO
-            <kbd className="ml-3 text-sm bg-emerald-800 px-2 py-1 rounded">SPACE</kbd>
+            <kbd className="ml-3 text-sm bg-semantic-success/80 px-2 py-1 rounded">SPACE</kbd>
           </Button>
 
           <Button

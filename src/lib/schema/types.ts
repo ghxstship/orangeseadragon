@@ -59,6 +59,44 @@ export type FieldType =
   // Custom
   | 'custom';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA CLASSIFICATION (GDPR / Privacy by Design)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type DataSensitivity = 'public' | 'internal' | 'confidential' | 'restricted' | 'pii';
+
+export type DataPurpose =
+  | 'authentication'
+  | 'authorization'
+  | 'contact'
+  | 'billing'
+  | 'operational'
+  | 'analytics'
+  | 'marketing'
+  | 'legal'
+  | 'audit';
+
+export type RetentionPolicy =
+  | 'session'
+  | 'account-lifetime'
+  | 'account-plus-30d'
+  | '1-year'
+  | '3-years'
+  | '7-years'
+  | 'permanent';
+
+export interface DataClassification {
+  sensitivity: DataSensitivity;
+  purpose: DataPurpose;
+  retention: RetentionPolicy;
+  piiCategory?: 'direct' | 'indirect' | 'sensitive' | 'none';
+  encryptAtRest?: boolean;
+  maskInLogs?: boolean;
+  excludeFromExport?: boolean;
+  requiresConsent?: boolean;
+  legalBasis?: 'consent' | 'contract' | 'legal-obligation' | 'legitimate-interest' | 'vital-interest' | 'public-task';
+}
+
 export interface FieldDefinition {
   type: FieldType;
   label: string;
@@ -147,6 +185,11 @@ export interface FieldDefinition {
   format?: (value: unknown, record: Record<string, unknown>) => string | React.ReactNode;
   formatTable?: (value: unknown, record: Record<string, unknown>) => React.ReactNode;
   formatDetail?: (value: unknown, record: Record<string, unknown>) => React.ReactNode;
+
+  // ─────────────────────────────────────────────────────────────
+  // DATA CLASSIFICATION (GDPR / Privacy by Design)
+  // ─────────────────────────────────────────────────────────────
+  privacy?: DataClassification;
 
   // ─────────────────────────────────────────────────────────────
   // CUSTOM RENDERING (escape hatch - use sparingly)

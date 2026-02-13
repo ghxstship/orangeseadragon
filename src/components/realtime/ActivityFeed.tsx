@@ -46,19 +46,19 @@ const actionIcons: Record<ActivityAction, React.ReactNode> = {
 };
 
 const actionColors: Record<ActivityAction, string> = {
-  created: "bg-emerald-500/10 text-emerald-600",
-  updated: "bg-blue-500/10 text-blue-600",
+  created: "bg-semantic-success/10 text-semantic-success",
+  updated: "bg-semantic-info/10 text-semantic-info",
   deleted: "bg-destructive/10 text-destructive",
-  status_changed: "bg-purple-500/10 text-purple-600",
-  assigned: "bg-amber-500/10 text-amber-600",
-  commented: "bg-sky-500/10 text-sky-600",
-  mentioned: "bg-pink-500/10 text-pink-600",
-  approved: "bg-emerald-500/10 text-emerald-600",
+  status_changed: "bg-semantic-purple/10 text-semantic-purple",
+  assigned: "bg-semantic-warning/10 text-semantic-warning",
+  commented: "bg-semantic-cyan/10 text-semantic-cyan",
+  mentioned: "bg-semantic-purple/10 text-semantic-purple",
+  approved: "bg-semantic-success/10 text-semantic-success",
   rejected: "bg-destructive/10 text-destructive",
-  completed: "bg-emerald-500/10 text-emerald-600",
-  started: "bg-blue-500/10 text-blue-600",
-  paused: "bg-amber-500/10 text-amber-600",
-  resumed: "bg-blue-500/10 text-blue-600",
+  completed: "bg-semantic-success/10 text-semantic-success",
+  started: "bg-semantic-info/10 text-semantic-info",
+  paused: "bg-semantic-warning/10 text-semantic-warning",
+  resumed: "bg-semantic-info/10 text-semantic-info",
 };
 
 const actionLabels: Record<ActivityAction, string> = {

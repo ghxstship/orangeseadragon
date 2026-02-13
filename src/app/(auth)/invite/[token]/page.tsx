@@ -29,12 +29,15 @@ export default function AcceptInvitePage() {
   React.useEffect(() => {
     const validateInvite = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const response = await fetch(`/api/invitations/${token}`);
+        if (!response.ok) throw new Error('Invalid or expired invitation');
+        const result = await response.json();
+        const inv = result.data ?? result;
         setInviteData({
-          organizationName: 'Acme Productions',
-          inviterName: 'John Smith',
-          email: 'invited@example.com',
-          role: 'Team Member',
+          organizationName: inv.organization_name ?? inv.organizationName ?? 'Organization',
+          inviterName: inv.inviter_name ?? inv.inviterName ?? 'A team member',
+          email: inv.email ?? '',
+          role: inv.role ?? 'Team Member',
         });
       } catch {
         setError('This invitation link is invalid or has expired.');
@@ -45,8 +48,19 @@ export default function AcceptInvitePage() {
     validateInvite();
   }, [token]);
 
-  const handleSubmit = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const handleSubmit = async (formData: Record<string, string | boolean>) => {
+    const response = await fetch(`/api/invitations/${token}/accept`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.name,
+        password: formData.password,
+      }),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message ?? 'Failed to accept invitation');
+    }
     router.push('/core/dashboard');
   };
 

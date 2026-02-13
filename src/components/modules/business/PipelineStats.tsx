@@ -55,15 +55,15 @@ function StatCard({
 }) {
     const variantStyles = {
         default: 'bg-background',
-        success: 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800',
-        warning: 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
+        success: 'bg-semantic-success/10 border-semantic-success/20',
+        warning: 'bg-semantic-warning/10 border-semantic-warning/20',
         danger: 'bg-destructive/5 dark:bg-destructive/10 border-destructive/20 dark:border-destructive/30',
     };
 
     const iconStyles = {
         default: 'text-primary',
-        success: 'text-emerald-600 dark:text-emerald-400',
-        warning: 'text-amber-600 dark:text-amber-400',
+        success: 'text-semantic-success',
+        warning: 'text-semantic-warning',
         danger: 'text-destructive',
     };
 
@@ -81,11 +81,11 @@ function StatCard({
                         )}
                         {trend && trendValue && (
                             <div className="flex items-center gap-1 mt-2">
-                                {trend === 'up' && <TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />}
+                                {trend === 'up' && <TrendingUp className="w-3 h-3 text-semantic-success" />}
                                 {trend === 'down' && <TrendingDown className="w-3 h-3 text-destructive" />}
                                 <span className={cn(
                                     "text-xs font-medium",
-                                    trend === 'up' && "text-emerald-600 dark:text-emerald-400",
+                                    trend === 'up' && "text-semantic-success",
                                     trend === 'down' && "text-destructive",
                                     trend === 'neutral' && "text-muted-foreground"
                                 )}>
@@ -219,7 +219,7 @@ export function PipelineStats({ pipelineId, className }: PipelineStatsProps) {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-muted-foreground">Won This Month</span>
-                                    <Badge variant="outline" className="text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-700">
+                                    <Badge variant="outline" className="text-semantic-success border-semantic-success/30">
                                         {stats.wonThisMonth}
                                     </Badge>
                                 </div>

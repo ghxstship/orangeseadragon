@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { format, addDays, startOfWeek, endOfWeek, isSameDay, isWithinInterval } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -88,17 +89,8 @@ interface CrewSchedulerProps {
   className?: string;
 }
 
-const statusColors: Record<string, string> = {
-  pending: 'bg-amber-500',
-  invited: 'bg-blue-500',
-  confirmed: 'bg-emerald-500',
-  declined: 'bg-destructive',
-  checked_in: 'bg-purple-500',
-  checked_out: 'bg-gray-500',
-  completed: 'bg-emerald-600',
-  cancelled: 'bg-gray-400',
-  no_show: 'bg-destructive',
-};
+// Status colors resolved via SSOT semantic tokens
+const statusColors = (status: string) => getStatusSolidClass(status);
 
 const ROLES = [
   'Audio Engineer',
@@ -304,7 +296,7 @@ export function CrewScheduler({ eventId, advanceId, className }: CrewSchedulerPr
                       <div className="font-medium text-sm truncate flex items-center gap-1">
                         {crew.full_name}
                         {crew.rating && crew.rating >= 4.5 && (
-                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                          <Star className="h-3 w-3 text-semantic-warning fill-semantic-warning" />
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground truncate">
@@ -366,7 +358,7 @@ export function CrewScheduler({ eventId, advanceId, className }: CrewSchedulerPr
                                       key={assignment.id}
                                       className={cn(
                                         "text-xs p-1 rounded truncate text-white",
-                                        statusColors[assignment.status] || 'bg-gray-500'
+                                        statusColors(assignment.status)
                                       )}
                                     >
                                       <div className="font-medium truncate">
@@ -412,9 +404,9 @@ export function CrewScheduler({ eventId, advanceId, className }: CrewSchedulerPr
 
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-4 text-xs">
-        {Object.entries(statusColors).slice(0, 5).map(([status, color]) => (
+        {['confirmed', 'pending', 'invited', 'checked_in', 'declined'].map((status) => (
           <div key={status} className="flex items-center gap-1">
-            <div className={cn("w-3 h-3 rounded", color)} />
+            <div className={cn("w-3 h-3 rounded", statusColors(status))} />
             <span className="capitalize">{status.replace('_', ' ')}</span>
           </div>
         ))}

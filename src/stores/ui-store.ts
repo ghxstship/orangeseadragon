@@ -6,6 +6,14 @@ interface ModalState {
   data: Record<string, unknown> | null;
 }
 
+interface CopilotContext {
+  entityType?: string;
+  entityId?: string;
+  entityName?: string;
+  pagePath?: string;
+  module?: string;
+}
+
 interface UIState {
   modal: ModalState;
   openModal: (type: string, data?: Record<string, unknown>) => void;
@@ -22,6 +30,16 @@ interface UIState {
   quickAddTaskOpen: boolean;
   setQuickAddTaskOpen: (open: boolean) => void;
   toggleQuickAddTask: () => void;
+
+  mobileSidebarOpen: boolean;
+  setMobileSidebarOpen: (open: boolean) => void;
+  toggleMobileSidebar: () => void;
+
+  copilotOpen: boolean;
+  setCopilotOpen: (open: boolean) => void;
+  toggleCopilot: () => void;
+  copilotContext: CopilotContext;
+  setCopilotContext: (context: CopilotContext) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -65,6 +83,20 @@ export const useUIStore = create<UIState>((set) => ({
   setQuickAddTaskOpen: (open) => set({ quickAddTaskOpen: open }),
   toggleQuickAddTask: () =>
     set((state) => ({ quickAddTaskOpen: !state.quickAddTaskOpen })),
+
+  // Mobile sidebar drawer
+  mobileSidebarOpen: false,
+  setMobileSidebarOpen: (open) => set({ mobileSidebarOpen: open }),
+  toggleMobileSidebar: () =>
+    set((state) => ({ mobileSidebarOpen: !state.mobileSidebarOpen })),
+
+  // AI Copilot drawer
+  copilotOpen: false,
+  setCopilotOpen: (open) => set({ copilotOpen: open }),
+  toggleCopilot: () =>
+    set((state) => ({ copilotOpen: !state.copilotOpen })),
+  copilotContext: {},
+  setCopilotContext: (context) => set({ copilotContext: context }),
 }));
 
 // Selector hooks

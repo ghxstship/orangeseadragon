@@ -225,7 +225,7 @@ export function AvailabilityTimeline({
                       className={cn(
                         "flex flex-col items-center min-w-[48px] p-2 rounded-lg border transition-all",
                         available 
-                          ? "border-emerald-200 bg-emerald-50 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/30" 
+                          ? "border-semantic-success/20 bg-semantic-success/10 hover:bg-semantic-success/15" 
                           : "border-destructive/30 bg-destructive/5 hover:bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/10",
                         isToday && "ring-2 ring-primary ring-offset-2",
                         isSelected && "ring-2 ring-blue-500 ring-offset-2"
@@ -236,7 +236,7 @@ export function AvailabilityTimeline({
                       </span>
                       <span className={cn(
                         "text-lg font-bold",
-                        available ? "text-emerald-600 dark:text-emerald-400" : "text-destructive"
+                        available ? "text-semantic-success" : "text-destructive"
                       )}>
                         {format(day, 'd')}
                       </span>
@@ -246,7 +246,7 @@ export function AvailabilityTimeline({
                       
                       <div className="mt-1">
                         {available ? (
-                          <Check className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                          <Check className="h-4 w-4 text-semantic-success" />
                         ) : (
                           <X className="h-4 w-4 text-destructive" />
                         )}
@@ -259,7 +259,7 @@ export function AvailabilityTimeline({
                         {format(day, 'EEEE, MMMM d, yyyy')}
                       </p>
                       {available ? (
-                        <p className="text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-1">
+                        <p className="text-semantic-success text-sm flex items-center gap-1">
                           <Check className="h-3 w-3" />
                           Available for booking
                         </p>
@@ -288,7 +288,7 @@ export function AvailabilityTimeline({
       {/* Legend */}
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 rounded bg-emerald-500" />
+          <div className="w-3 h-3 rounded bg-semantic-success" />
           <span>Available</span>
         </div>
         <div className="flex items-center gap-1">
@@ -309,7 +309,7 @@ export function AvailabilityTimeline({
           </h4>
           
           {isDateAvailable(selectedDate) ? (
-            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+            <div className="flex items-center gap-2 text-semantic-success">
               <Check className="h-4 w-4" />
               <span>This date is available for booking</span>
             </div>

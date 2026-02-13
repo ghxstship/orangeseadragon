@@ -3,10 +3,11 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { TopBar } from "./top-bar";
-import { Sidebar } from "./sidebar";
+import { Sidebar, MobileSidebar } from "./sidebar";
 import { CommandPalette } from "@/components/common/command-palette";
 import { NotificationCenter } from "@/components/common/notification-center";
 import { QuickAddTask } from "@/components/common/quick-add-task";
+import { CopilotDrawer, CopilotTrigger } from "@/components/common/copilot-drawer";
 import type { LayoutType } from "@/lib/layouts/types";
 
 interface AppShellProps {
@@ -45,6 +46,13 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <LayoutContext.Provider value={contextValue}>
       <div className="min-h-screen bg-background">
+        {/* WCAG 2.4.1 — Skip navigation link */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+        >
+          Skip to main content
+        </a>
         <TopBar />
 
         {/* Only show sidebar for traditional pages */}
@@ -56,10 +64,13 @@ export function AppShell({ children }: AppShellProps) {
         )}
 
         <main
+          id="main-content"
+          role="main"
+          tabIndex={-1}
           className={cn(
-            "min-h-[calc(100vh-3.5rem)] pt-14 transition-all duration-300",
+            "min-h-[calc(100vh-3.5rem)] pt-14 transition-all duration-300 focus:outline-none",
             // Traditional layout with sidebar
-            !useFullWidth && (sidebarCollapsed ? "pl-16" : "pl-64"),
+            !useFullWidth && (sidebarCollapsed ? "md:pl-16" : "md:pl-64"),
             // Full-width layout for new system
             useFullWidth && "pl-0"
           )}
@@ -73,9 +84,12 @@ export function AppShell({ children }: AppShellProps) {
           )}
         </main>
 
+        <MobileSidebar />
         <CommandPalette />
         <NotificationCenter />
         <QuickAddTask />
+        <CopilotDrawer />
+        <CopilotTrigger />
       </div>
     </LayoutContext.Provider>
   );

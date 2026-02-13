@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer base {
   :root {
     --background: 210 20% 98%;
@@ -77,6 +87,25 @@
     /* Spatial Shadows */
     --shadow-spatial: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
     --shadow-ambient: 0 0 20px rgba(var(--primary), 0.05);
+
+    /* Glass Morphism Tokens */
+    --glass-bg: 0 0% 100% / 0.8;
+    --glass-bg-elevated: 0 0% 100% / 0.7;
+    --glass-bg-floating: 0 0% 100% / 0.6;
+    --glass-border: 0 0% 100% / 0.2;
+    --glass-blur: 20px;
+    --glass-blur-elevated: 40px;
+    --glass-blur-floating: 60px;
+
+    /* Semantic Intent Colors — overridable per tenant */
+    --semantic-success: 142 71% 45%;
+    --semantic-warning: 45 93% 47%;
+    --semantic-info: 217 91% 60%;
+    --semantic-accent: 210 40% 96%;
+    --semantic-purple: 270 67% 47%;
+    --semantic-cyan: 187 86% 47%;
+    --semantic-orange: 25 95% 53%;
+    --semantic-indigo: 239 84% 67%;
   }
 
   .dark {
@@ -141,6 +170,25 @@
 
     /* Spatial Shadows - Dark */
     --shadow-spatial: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+
+    /* Glass Morphism Tokens - Dark */
+    --glass-bg: 224 71% 4% / 0.8;
+    --glass-bg-elevated: 224 71% 4% / 0.7;
+    --glass-bg-floating: 224 71% 4% / 0.6;
+    --glass-border: 0 0% 100% / 0.08;
+    --glass-blur: 20px;
+    --glass-blur-elevated: 40px;
+    --glass-blur-floating: 60px;
+
+    /* Semantic Intent Colors - Dark */
+    --semantic-success: 142 71% 45%;
+    --semantic-warning: 48 96% 53%;
+    --semantic-info: 217 91% 60%;
+    --semantic-accent: 217 33% 18%;
+    --semantic-purple: 270 67% 47%;
+    --semantic-cyan: 187 86% 47%;
+    --semantic-orange: 25 95% 53%;
+    --semantic-indigo: 239 84% 67%;
   }
 }
 
@@ -160,10 +208,130 @@
     @apply backdrop-blur-3xl bg-background/5 border border-border shadow-2xl;
   }
 
+  .glass {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid hsl(var(--glass-border));
+  }
+
+  .glass-elevated {
+    background: hsl(var(--glass-bg-elevated));
+    backdrop-filter: blur(var(--glass-blur-elevated));
+    -webkit-backdrop-filter: blur(var(--glass-blur-elevated));
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.12);
+  }
+
+  .glass-floating {
+    background: hsl(var(--glass-bg-floating));
+    backdrop-filter: blur(var(--glass-blur-floating));
+    -webkit-backdrop-filter: blur(var(--glass-blur-floating));
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: 0 16px 48px -12px rgba(0, 0, 0, 0.2);
+  }
+
   .spatial-card {
     box-shadow: var(--shadow-spatial);
     @apply border-border transition-all duration-300 hover:translate-y-[-2px] hover:shadow-2xl;
   }
+
+  .dot-grid {
+    background-image: radial-gradient(circle, hsl(var(--border)) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .noise-bg {
+    position: relative;
+  }
+  .noise-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   INTERNATIONALIZATION: RTL layout support
+   Logical properties ensure margins, paddings, and borders
+   flip correctly when dir="rtl" is set on the document.
+   ───────────────────────────────────────────────────────────── */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="rtl"] .ml-auto {
+  margin-left: unset;
+  margin-right: auto;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: unset;
+  margin-left: auto;
+}
+
+/* Flip fixed sidebar from left to right in RTL */
+[dir="rtl"] .fixed.left-0 {
+  left: unset;
+  right: 0;
+}
+
+/* Flip sidebar padding on main content */
+[dir="rtl"] .pl-16 {
+  padding-left: unset;
+  padding-right: 4rem;
+}
+
+[dir="rtl"] .pl-64 {
+  padding-left: unset;
+  padding-right: 16rem;
+}
+
+[dir="rtl"] .pl-0 {
+  padding-left: unset;
+  padding-right: 0;
+}
+
+/* Flip border-left to border-right in RTL */
+[dir="rtl"] .border-l {
+  border-left: none;
+  border-right: 1px solid;
+  border-right-color: inherit;
+}
+
+[dir="rtl"] .border-r {
+  border-right: none;
+  border-left: 1px solid;
+  border-left-color: inherit;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   INTERNATIONALIZATION: CJK and Arabic font families
+   Uses Noto Sans font families loaded via next/font/google
+   in layout.tsx with CSS variable fallbacks.
+   ───────────────────────────────────────────────────────────── */
+[lang="ja"] body,
+[lang="ja"] * {
+  font-family: var(--font-noto-jp), var(--font-inter), system-ui, sans-serif;
+}
+
+[lang="ko"] body,
+[lang="ko"] * {
+  font-family: var(--font-noto-kr), var(--font-inter), system-ui, sans-serif;
+}
+
+[lang="zh"] body,
+[lang="zh"] * {
+  font-family: var(--font-noto-sc), var(--font-inter), system-ui, sans-serif;
+}
+
+[lang="ar"] body,
+[lang="ar"] * {
+  font-family: var(--font-noto-ar), var(--font-inter), system-ui, sans-serif;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -180,4 +348,64 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE: Touch target sizing (WCAG 2.5.8)
+   Ensures all interactive elements meet 44×44px minimum on
+   touch devices for accessibility compliance.
+   ───────────────────────────────────────────────────────────── */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a,
+  input[type="checkbox"],
+  input[type="radio"],
+  select,
+  summary {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE: Safe area insets for notched devices
+   Uses env() to pad content away from device notches,
+   home indicators, and rounded corners.
+   ───────────────────────────────────────────────────────────── */
+@supports (padding: env(safe-area-inset-top)) {
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right);
+  }
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE: Fluid typography with clamp()
+   Headings scale fluidly between mobile and desktop sizes.
+   ───────────────────────────────────────────────────────────── */
+h1 {
+  font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+}
+
+h2 {
+  font-size: clamp(1.25rem, 1.1rem + 1vw, 1.875rem);
+}
+
+h3 {
+  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
 }

@@ -55,10 +55,10 @@ const notificationIcons: Record<NotificationType, React.ElementType> = {
 };
 
 const notificationColors: Record<NotificationType, string> = {
-  info: "text-blue-500 bg-blue-50 dark:bg-blue-950",
-  success: "text-emerald-500 bg-emerald-50 dark:bg-emerald-950",
-  warning: "text-amber-500 bg-amber-50 dark:bg-amber-950",
-  error: "text-destructive bg-destructive/5 dark:bg-destructive/90",
+  info: "text-semantic-info bg-semantic-info/10",
+  success: "text-semantic-success bg-semantic-success/10",
+  warning: "text-semantic-warning bg-semantic-warning/10",
+  error: "text-destructive bg-destructive/10",
 };
 
 function mapApiNotification(notification: ApiNotification): Notification {

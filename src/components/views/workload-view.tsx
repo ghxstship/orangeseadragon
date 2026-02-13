@@ -123,9 +123,9 @@ export function WorkloadView({
       case "overloaded":
         return "bg-destructive";
       case "warning":
-        return "bg-amber-500";
+        return "bg-semantic-warning";
       default:
-        return "bg-emerald-500";
+        return "bg-semantic-success";
     }
   };
 
@@ -158,11 +158,11 @@ export function WorkloadView({
       case "urgent":
         return "bg-destructive";
       case "high":
-        return "bg-orange-500";
+        return "bg-semantic-orange";
       case "medium":
-        return "bg-amber-500";
+        return "bg-semantic-warning";
       case "low":
-        return "bg-blue-500";
+        return "bg-semantic-info";
       default:
         return "bg-primary";
     }
@@ -262,7 +262,7 @@ export function WorkloadView({
                                   className={cn(
                                     "font-medium",
                                     weeklyStatus === "overloaded" && "text-destructive",
-                                    weeklyStatus === "warning" && "text-amber-600 dark:text-amber-400"
+                                    weeklyStatus === "warning" && "text-semantic-warning"
                                   )}
                                 >
                                   {weeklyStats.percentage}%
@@ -376,11 +376,11 @@ export function WorkloadView({
         <div className="border-t p-3 flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-emerald-500" />
+              <div className="w-3 h-3 rounded bg-semantic-success" />
               <span>Normal (&lt;{capacityThresholds.warning}%)</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded bg-amber-500" />
+              <div className="w-3 h-3 rounded bg-semantic-warning" />
               <span>Warning ({capacityThresholds.warning}-{capacityThresholds.overloaded}%)</span>
             </div>
             <div className="flex items-center gap-1">

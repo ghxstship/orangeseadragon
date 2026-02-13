@@ -114,12 +114,12 @@ const DEFAULT_ORG_DATA: OrgNode = {
 };
 
 const DEPARTMENT_COLORS: Record<string, string> = {
-  'Executive': 'border-purple-500/50 bg-purple-500/10',
-  'Engineering': 'border-blue-500/50 bg-blue-500/10',
+  'Executive': 'border-semantic-purple/50 bg-semantic-purple/10',
+  'Engineering': 'border-semantic-info/50 bg-semantic-info/10',
   'Design': 'border-pink-500/50 bg-pink-500/10',
-  'Finance': 'border-emerald-500/50 bg-emerald-500/10',
-  'Operations': 'border-amber-500/50 bg-amber-500/10',
-  'Human Resources': 'border-rose-500/50 bg-rose-500/10',
+  'Finance': 'border-semantic-success/50 bg-semantic-success/10',
+  'Operations': 'border-semantic-warning/50 bg-semantic-warning/10',
+  'Human Resources': 'border-destructive/50 bg-destructive/10',
 };
 
 function OrgNodeCard({ 

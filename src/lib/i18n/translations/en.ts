@@ -31,6 +31,70 @@ export const en = {
     no: "No",
     or: "or",
     and: "and",
+    actions: "Actions",
+    duplicate: "Duplicate",
+    archive: "Archive",
+    restore: "Restore",
+    refresh: "Refresh",
+    download: "Download",
+    upload: "Upload",
+    print: "Print",
+    share: "Share",
+    copy: "Copy",
+    paste: "Paste",
+    undo: "Undo",
+    redo: "Redo",
+    apply: "Apply",
+    done: "Done",
+    add: "Add",
+    remove: "Remove",
+    update: "Update",
+    view: "View",
+    details: "Details",
+    overview: "Overview",
+    all: "All",
+    none: "None",
+    selected: "{count} selected",
+    of: "of",
+    items: "items",
+    item: "item",
+    page: "Page",
+    rows: "rows",
+    columns: "Columns",
+    sortBy: "Sort by",
+    groupBy: "Group by",
+    filterBy: "Filter by",
+    ascending: "Ascending",
+    descending: "Descending",
+    noData: "No data available",
+    emptyState: "Nothing here yet",
+    getStarted: "Get started",
+    learnMore: "Learn more",
+    processing: "Processing...",
+    saving: "Saving...",
+    deleting: "Deleting...",
+    uploading: "Uploading...",
+    success: "Success",
+    error: "Error",
+    warning: "Warning",
+    info: "Info",
+    new: "New",
+    status: "Status",
+    type: "Type",
+    name: "Name",
+    description: "Description",
+    date: "Date",
+    amount: "Amount",
+    total: "Total",
+    notes: "Notes",
+    tags: "Tags",
+    category: "Category",
+    priority: "Priority",
+    assignee: "Assignee",
+    dueDate: "Due date",
+    createdAt: "Created",
+    updatedAt: "Updated",
+    createdBy: "Created by",
   },
   nav: {
     dashboard: "Dashboard",
@@ -45,6 +109,15 @@ export const en = {
     notifications: "Notifications",
     inbox: "Inbox",
     search: "Search or type a command...",
+    productions: "Productions",
+    people: "People",
+    assets: "Assets",
+    finance: "Finance",
+    operations: "Operations",
+    business: "Business",
+    advancing: "Advancing",
+    network: "Network",
+    account: "Account",
   },
   topBar: {
     language: "Language",
@@ -74,6 +147,175 @@ export const en = {
     switchOrganization: "Switch organization",
     preferences: "Preferences",
     signOut: "Sign out",
+    noNotifications: "No notifications",
+    markAllRead: "Mark all read",
+    inboxEmpty: "Your inbox is empty",
+    viewAllMessages: "View all messages",
+    searchLabel: "Search",
+    helpAndSupport: "Help and support",
+    switchToLight: "Switch to light mode",
+    switchToDark: "Switch to dark mode",
+    skipToContent: "Skip to main content",
+  },
+  modules: {
+    productions: "Productions",
+    people: "People",
+    assets: "Assets",
+    finance: "Finance",
+    operations: "Operations",
+    business: "Business",
+    advancing: "Advancing",
+    network: "Network",
+    analytics: "Analytics",
+    account: "Account",
+  },
+  entities: {
+    project: "Project",
+    projects: "Projects",
+    task: "Task",
+    tasks: "Tasks",
+    person: "Person",
+    people: "People",
+    asset: "Asset",
+    assets: "Assets",
+    invoice: "Invoice",
+    invoices: "Invoices",
+    budget: "Budget",
+    budgets: "Budgets",
+    company: "Company",
+    companies: "Companies",
+    contact: "Contact",
+    contacts: "Contacts",
+    deal: "Deal",
+    deals: "Deals",
+    event: "Event",
+    events: "Events",
+    document: "Document",
+    documents: "Documents",
+    venue: "Venue",
+    venues: "Venues",
+    expense: "Expense",
+    expenses: "Expenses",
+    timeEntry: "Time Entry",
+    timeEntries: "Time Entries",
+    production: "Production",
+    productions: "Productions",
+  },
+  dataView: {
+    table: "Table",
+    list: "List",
+    grid: "Grid",
+    kanban: "Kanban",
+    calendar: "Calendar",
+    timeline: "Timeline",
+    gallery: "Gallery",
+    map: "Map",
+    density: "Density",
+    compact: "Compact",
+    comfortable: "Comfortable",
+    spacious: "Spacious",
+    showColumns: "Show columns",
+    hideColumn: "Hide column",
+    freezeColumn: "Freeze column",
+    resetView: "Reset view",
+    saveView: "Save view",
+    savedViews: "Saved views",
+    rowsPerPage: "Rows per page",
+    showingOf: "Showing {from}-{to} of {total}",
+    noMatchingRecords: "No matching records found",
+    adjustFilters: "Try adjusting your search or filters",
+  },
+  form: {
+    createNew: "Create new {entity}",
+    editExisting: "Edit {entity}",
+    fieldRequired: "This field is required",
+    invalidEmail: "Please enter a valid email address",
+    invalidUrl: "Please enter a valid URL",
+    minLength: "Must be at least {min} characters",
+    maxLength: "Must be at most {max} characters",
+    minValue: "Must be at least {min}",
+    maxValue: "Must be at most {max}",
+    invalidPattern: "Invalid format",
+    unsavedChanges: "You have unsaved changes",
+    discardChanges: "Discard changes?",
+    saveAndClose: "Save and close",
+    saveAndNew: "Save and create another",
+  },
+  confirm: {
+    deleteTitle: "Delete {entity}?",
+    deleteDescription: "This action cannot be undone. This will permanently delete this {entity}.",
+    archiveTitle: "Archive {entity}?",
+    archiveDescription: "This {entity} will be moved to the archive.",
+    bulkDeleteTitle: "Delete {count} items?",
+    bulkDeleteDescription: "This action cannot be undone.",
+  },
+  emptyState: {
+    noData: "No {entity} yet",
+    noDataDescription: "Get started by creating your first {entity}.",
+    noResults: "No results found",
+    noResultsDescription: "Try adjusting your search or filters to find what you're looking for.",
+    errorTitle: "Something went wrong",
+    errorDescription: "We couldn't load this data. Please try again.",
+    createFirst: "Create your first {entity}",
+  },
+  privacy: {
+    title: "Privacy & Data",
+    description: "Manage your privacy preferences, cookie consent, and personal data.",
+    cookiePreferences: "Cookie Preferences",
+    cookieDescription: "Control which types of cookies and tracking technologies are used.",
+    lastUpdated: "Last updated",
+    essential: "Essential",
+    essentialDescription: "Required for authentication, security, and core platform functionality. Cannot be disabled.",
+    functional: "Functional",
+    functionalDescription: "Enable saved preferences, language settings, and personalized layouts.",
+    analyticsLabel: "Analytics",
+    analyticsDescription: "Help us understand usage patterns to improve the platform experience.",
+    marketing: "Marketing",
+    marketingDescription: "Used to deliver relevant product updates and feature announcements.",
+    dataExport: "Data Export",
+    dataExportDescription: "Download a copy of all your personal data in JSON format.",
+    exportMyData: "Export My Data",
+    dataDeletion: "Data Deletion",
+    dataDeletionDescription: "Request permanent deletion of all your personal data.",
+    requestDeletion: "Request Data Deletion",
+    deletionWarning: "This action is irreversible after 30 days",
+    coolingOff: "Your data will be deleted after the 30-day cooling-off period.",
+    consentBannerTitle: "Privacy Preferences",
+    consentBannerDescription: "We use cookies and similar technologies to provide essential functionality and improve your experience.",
+    acceptAll: "Accept All",
+    essentialOnly: "Essential Only",
+    customize: "Customize",
+    savePreferences: "Save Preferences",
+    hideDetails: "Hide Details",
+    resetPreferences: "Reset Preferences",
+    compliance: "Compliance",
+    privacyPolicy: "Privacy Policy",
+    termsOfService: "Terms of Service",
+  },
+  accessibility: {
+    skipToContent: "Skip to main content",
+    mainNavigation: "Main navigation",
+    breadcrumb: "Breadcrumb",
+    applicationHeader: "Application header",
+    closeDialog: "Close dialog",
+    expandSection: "Expand section",
+    collapseSection: "Collapse section",
+    toggleSidebar: "Toggle sidebar",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    selectRow: "Select row",
+    selectAll: "Select all",
+    sortAscending: "Sort ascending",
+    sortDescending: "Sort descending",
+    pagination: "Pagination",
+    goToPage: "Go to page {page}",
+    previousPage: "Go to previous page",
+    nextPage: "Go to next page",
+    morePages: "More pages",
+    passwordStrength: "Password strength: {level}",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
+    cookieConsent: "Cookie consent",
   },
   localization: {
     title: "Localization",
@@ -121,6 +363,14 @@ export const en = {
     rememberMe: "Remember me",
     noAccount: "Don't have an account?",
     hasAccount: "Already have an account?",
+    welcomeBack: "Welcome back",
+    createAccount: "Create an account",
+    resetPassword: "Reset password",
+    newPassword: "New password",
+    confirmPassword: "Confirm password",
+    passwordRequirements: "Password requirements",
+    verifyEmail: "Verify your email",
+    checkInbox: "Check your inbox for a verification link",
   },
   errors: {
     generic: "Something went wrong",
@@ -131,6 +381,16 @@ export const en = {
     networkError: "Network error",
     validationError: "Validation error",
     tryAgain: "Please try again",
+    pageNotFound: "Page not found",
+    pageNotFoundDescription: "The page you're looking for doesn't exist or has been moved.",
+    goHome: "Go to dashboard",
+    rateLimited: "Too many requests. Please try again later.",
+    csrfRejected: "Request rejected for security reasons. Please refresh and try again.",
+    exportFailed: "Failed to export data",
+    importFailed: "Failed to import data",
+    deleteFailed: "Failed to delete",
+    saveFailed: "Failed to save",
+    loadFailed: "Failed to load data",
   },
   time: {
     justNow: "Just now",
@@ -152,156 +412,13 @@ export const en = {
   },
 };
 
-export type TranslationKeys = {
-  common: {
-    save: string;
-    cancel: string;
-    delete: string;
-    edit: string;
-    create: string;
-    search: string;
-    filter: string;
-    export: string;
-    import: string;
-    loading: string;
-    noResults: string;
-    confirm: string;
-    back: string;
-    next: string;
-    previous: string;
-    close: string;
-    open: string;
-    submit: string;
-    reset: string;
-    clear: string;
-    selectAll: string;
-    deselectAll: string;
-    viewAll: string;
-    showMore: string;
-    showLess: string;
-    required: string;
-    optional: string;
-    yes: string;
-    no: string;
-    or: string;
-    and: string;
-  };
-  nav: {
-    dashboard: string;
-    projects: string;
-    tasks: string;
-    calendar: string;
-    reports: string;
-    analytics: string;
-    settings: string;
-    help: string;
-    profile: string;
-    notifications: string;
-    inbox: string;
-    search: string;
-  };
-  topBar: {
-    language: string;
-    notifications: string;
-    viewAllNotifications: string;
-    inbox: string;
-    messages: string;
-    approvalsPending: string;
-    reviewRequests: string;
-    mentions: string;
-    settings: string;
-    workspaceSettings: string;
-    integrations: string;
-    apiKeys: string;
-    webhooks: string;
-    importExport: string;
-    support: string;
-    documentation: string;
-    videoTutorials: string;
-    contactSupport: string;
-    reportBug: string;
-    featureRequest: string;
-    systemStatus: string;
-    viewProfile: string;
-    accountSettings: string;
-    activityLog: string;
-    switchOrganization: string;
-    preferences: string;
-    signOut: string;
-  };
-  localization: {
-    title: string;
-    description: string;
-    saveChanges: string;
-    regionalSettings: string;
-    regionalDescription: string;
-    primaryLanguage: string;
-    timezone: string;
-    currency: string;
-    dateFormat: string;
-    formatPreferences: string;
-    formatDescription: string;
-    use24Hour: string;
-    use24HourDescription: string;
-    weekStartsOn: string;
-    weekStartsOnDescription: string;
-    numberFormat: string;
-    numberFormatDescription: string;
-    measurementUnits: string;
-    measurementUnitsDescription: string;
-    imperial: string;
-    metric: string;
-    availableLanguages: string;
-    availableLanguagesDescription: string;
-    translation: string;
-    active: string;
-    beta: string;
-    comingSoon: string;
-  };
-  preferences: {
-    title: string;
-    description: string;
-    language: string;
-    timezone: string;
-    currency: string;
-  };
-  auth: {
-    signIn: string;
-    signOut: string;
-    signUp: string;
-    email: string;
-    password: string;
-    forgotPassword: string;
-    rememberMe: string;
-    noAccount: string;
-    hasAccount: string;
-  };
-  errors: {
-    generic: string;
-    notFound: string;
-    unauthorized: string;
-    forbidden: string;
-    serverError: string;
-    networkError: string;
-    validationError: string;
-    tryAgain: string;
-  };
-  time: {
-    justNow: string;
-    minutesAgo: string;
-    hoursAgo: string;
-    daysAgo: string;
-    weeksAgo: string;
-    monthsAgo: string;
-    yearsAgo: string;
-  };
-  days: {
-    sunday: string;
-    monday: string;
-    tuesday: string;
-    wednesday: string;
-    thursday: string;
-    friday: string;
-    saturday: string;
+// Full type inferred from the en object — the authoritative schema
+export type TranslationKeys = typeof en;
+
+// Partial type for non-English locales — allows incremental translation
+// Missing keys fall back to English at runtime via useTranslation()
+export type PartialTranslationKeys = {
+  [K in keyof TranslationKeys]?: {
+    [P in keyof TranslationKeys[K]]?: TranslationKeys[K][P];
   };
 };

@@ -112,7 +112,7 @@ export function ChecklistWidget({
           )}
         </div>
         {totalCount > 0 && progressPercent === 100 && (
-          <div className="flex items-center gap-1 text-xs text-emerald-600">
+          <div className="flex items-center gap-1 text-xs text-semantic-success">
             <Check className="h-3 w-3" />
             Complete
           </div>

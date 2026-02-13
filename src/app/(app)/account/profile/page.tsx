@@ -1,6 +1,7 @@
 'use client';
 
 import { SettingsTemplate, SettingsTab } from '@/components/templates/SettingsTemplate';
+import { createClient } from '@/lib/supabase/client';
 
 const profileTabs: SettingsTab[] = [
   {
@@ -118,8 +119,31 @@ const profileTabs: SettingsTab[] = [
 ];
 
 export default function ProfileSettingsPage() {
-  const handleSave = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const handleSave = async (data: Record<string, unknown>) => {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
+    await supabase.auth.updateUser({
+      data: {
+        full_name: fullName || undefined,
+        job_title: data.jobTitle || undefined,
+        bio: data.bio || undefined,
+        phone: data.phone || undefined,
+        theme: data.theme || undefined,
+        timezone: data.timezone || undefined,
+        date_format: data.date_format || undefined,
+      },
+    });
+
+    await supabase
+      .from('users')
+      .update({
+        full_name: fullName || undefined,
+        avatar_url: (data.avatar as string) || undefined,
+      })
+      .eq('id', user.id);
   };
 
   return (

@@ -13,10 +13,9 @@ import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/common/status-badge';
 import { Search, Filter, MoreHorizontal, Eye, Download } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
-import { useState } from 'react';
-
-// Mock data integration would normally happen via props or a query hook
-// For this component we will define the interface and assume data is passed or mocked
+import { useState, useMemo } from 'react';
+import { useInvoices } from '@/hooks/use-invoices';
+import { useUser } from '@/hooks/use-supabase';
 
 interface Invoice {
     id: string;
@@ -28,21 +27,41 @@ interface Invoice {
     status: 'paid' | 'pending' | 'overdue' | 'draft';
 }
 
-const MOCK_INVOICES: Invoice[] = [
-    { id: '1', invoice_number: 'INV-2024-001', customer_name: 'Acme Corp', issue_date: '2024-02-01', due_date: '2024-02-15', amount: 12500.00, status: 'paid' },
-    { id: '2', invoice_number: 'INV-2024-002', customer_name: 'Globex Inc', issue_date: '2024-02-03', due_date: '2024-02-17', amount: 4500.50, status: 'pending' },
-    { id: '3', invoice_number: 'INV-2024-003', customer_name: 'Soylent Corp', issue_date: '2024-01-15', due_date: '2024-01-30', amount: 8900.00, status: 'overdue' },
-    { id: '4', invoice_number: 'INV-2024-004', customer_name: 'Initech', issue_date: '2024-02-05', due_date: '2024-02-19', amount: 3200.00, status: 'draft' },
-];
+function mapInvoiceStatus(status: string | null, dueDate: string | null): Invoice['status'] {
+    if (status === 'paid') return 'paid';
+    if (status === 'draft') return 'draft';
+    if (status === 'sent' || status === 'pending') {
+        if (dueDate && new Date(dueDate) < new Date()) return 'overdue';
+        return 'pending';
+    }
+    if (status === 'overdue') return 'overdue';
+    return 'draft';
+}
 
 interface InvoiceListProps {
     onSelectInvoice: (invoice: Invoice) => void;
 }
 
 export function InvoiceList({ onSelectInvoice }: InvoiceListProps) {
+    const { user } = useUser();
+    const orgId = user?.user_metadata?.organization_id || null;
+    const { data: rawInvoices } = useInvoices(orgId);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const filteredInvoices = MOCK_INVOICES.filter(inv =>
+    const invoices: Invoice[] = useMemo(() => {
+        if (!rawInvoices) return [];
+        return rawInvoices.map((inv) => ({
+            id: inv.id,
+            invoice_number: inv.invoice_number ?? inv.id.slice(0, 8),
+            customer_name: inv.company_id ?? 'Unknown',
+            issue_date: inv.issue_date ?? '',
+            due_date: inv.due_date ?? '',
+            amount: inv.total_amount ?? 0,
+            status: mapInvoiceStatus(inv.status, inv.due_date),
+        }));
+    }, [rawInvoices]);
+
+    const filteredInvoices = invoices.filter(inv =>
         inv.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         inv.invoice_number.toLowerCase().includes(searchTerm.toLowerCase())
     );

@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/reports/utilization
  * 

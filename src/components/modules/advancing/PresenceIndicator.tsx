@@ -60,7 +60,7 @@ export function PresenceIndicator({
                   </AvatarFallback>
                 </Avatar>
                 {user.action === 'editing' && (
-                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-background" />
+                  <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-semantic-success ring-2 ring-background" />
                 )}
               </div>
             </TooltipTrigger>
@@ -123,8 +123,8 @@ export function CollaborationBanner({
       className={cn(
         "flex items-center gap-3 px-4 py-2 rounded-lg border",
         editingUsers.length > 0
-          ? "bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800"
-          : "bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800",
+          ? "bg-semantic-warning/10 border-semantic-warning/20"
+          : "bg-semantic-info/10 border-semantic-info/20",
         className
       )}
     >
@@ -132,7 +132,7 @@ export function CollaborationBanner({
       
       <div className="flex-1 min-w-0">
         {editingUsers.length > 0 ? (
-          <p className="text-sm text-amber-800 dark:text-amber-200">
+          <p className="text-sm text-semantic-warning">
             <span className="font-medium">
               {editingUsers.map(u => u.userName).join(', ')}
             </span>
@@ -140,7 +140,7 @@ export function CollaborationBanner({
             {editingUsers.length === 1 ? 'is' : 'are'} editing {entityName}
           </p>
         ) : (
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+          <p className="text-sm text-semantic-info">
             <span className="font-medium">
               {viewingUsers.length} {viewingUsers.length === 1 ? 'person' : 'people'}
             </span>

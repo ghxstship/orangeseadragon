@@ -51,26 +51,18 @@ interface AssetUtilizationDashboardProps {
   onExport?: () => void;
 }
 
-const MOCK_ASSETS: AssetUtilization[] = [
-  { asset_id: '1', asset_name: 'LED Par Can #1247', asset_type: 'equipment', category: 'Lighting', days_reserved: 22, days_deployed: 20, days_maintenance: 2, days_available: 6, utilization_rate: 78, revenue_generated: 4400, maintenance_cost: 150, net_contribution: 4250 },
-  { asset_id: '2', asset_name: 'Truss Section A-12', asset_type: 'equipment', category: 'Staging', days_reserved: 4, days_deployed: 3, days_maintenance: 0, days_available: 27, utilization_rate: 12, revenue_generated: 600, maintenance_cost: 0, net_contribution: 600 },
-  { asset_id: '3', asset_name: 'QSC K12.2 Speaker', asset_type: 'equipment', category: 'Audio', days_reserved: 14, days_deployed: 12, days_maintenance: 1, days_available: 15, utilization_rate: 45, revenue_generated: 2100, maintenance_cost: 75, net_contribution: 2025 },
-  { asset_id: '4', asset_name: 'PTZ Camera #3', asset_type: 'equipment', category: 'Video', days_reserved: 28, days_deployed: 26, days_maintenance: 2, days_available: 0, utilization_rate: 92, revenue_generated: 5600, maintenance_cost: 200, net_contribution: 5400 },
-  { asset_id: '5', asset_name: 'Fog Machine #7', asset_type: 'equipment', category: 'Effects', days_reserved: 4, days_deployed: 3, days_maintenance: 0, days_available: 27, utilization_rate: 12, revenue_generated: 300, maintenance_cost: 0, net_contribution: 300 },
-];
-
-const MOCK_HEATMAP: UtilizationHeatmapData[] = [
-  { day: 'Mon', utilization: 45 },
-  { day: 'Tue', utilization: 62 },
-  { day: 'Wed', utilization: 78 },
-  { day: 'Thu', utilization: 85 },
-  { day: 'Fri', utilization: 95 },
-  { day: 'Sat', utilization: 98 },
-  { day: 'Sun', utilization: 32 },
+const EMPTY_HEATMAP: UtilizationHeatmapData[] = [
+  { day: 'Mon', utilization: 0 },
+  { day: 'Tue', utilization: 0 },
+  { day: 'Wed', utilization: 0 },
+  { day: 'Thu', utilization: 0 },
+  { day: 'Fri', utilization: 0 },
+  { day: 'Sat', utilization: 0 },
+  { day: 'Sun', utilization: 0 },
 ];
 
 export function AssetUtilizationDashboard({ 
-  assets = MOCK_ASSETS,
+  assets = [],
   onExport 
 }: AssetUtilizationDashboardProps) {
   const [period, setPeriod] = useState<string>('30');
@@ -129,15 +121,15 @@ export function AssetUtilizationDashboard({
   }, [filteredAssets]);
 
   const getUtilizationColor = (rate: number): string => {
-    if (rate >= 80) return 'bg-emerald-500';
-    if (rate >= 50) return 'bg-amber-500';
+    if (rate >= 80) return 'bg-semantic-success';
+    if (rate >= 50) return 'bg-semantic-warning';
     if (rate >= 20) return 'bg-orange-500';
     return 'bg-destructive';
   };
 
   const getUtilizationBadge = (rate: number) => {
-    if (rate >= 80) return <Badge variant="default" className="bg-emerald-500">High</Badge>;
-    if (rate >= 50) return <Badge variant="default" className="bg-amber-500">Medium</Badge>;
+    if (rate >= 80) return <Badge variant="default" className="bg-semantic-success">High</Badge>;
+    if (rate >= 50) return <Badge variant="default" className="bg-semantic-warning">Medium</Badge>;
     if (rate >= 20) return <Badge variant="default" className="bg-orange-500">Low</Badge>;
     return <Badge variant="destructive">Critical</Badge>;
   };
@@ -213,7 +205,7 @@ export function AssetUtilizationDashboard({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${overallStats.totalRevenue.toLocaleString()}</div>
-            <div className="flex items-center text-xs text-emerald-600">
+            <div className="flex items-center text-xs text-semantic-success">
               <TrendingUp className="mr-1 h-3 w-3" />
               +12% from last period
             </div>
@@ -264,7 +256,7 @@ export function AssetUtilizationDashboard({
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
-            {MOCK_HEATMAP.map(day => (
+            {EMPTY_HEATMAP.map(day => (
               <div key={day.day} className="flex-1 text-center">
                 <div 
                   className={`h-12 rounded ${getUtilizationColor(day.utilization)} opacity-${Math.round(day.utilization / 10) * 10}`}
@@ -346,7 +338,7 @@ export function AssetUtilizationDashboard({
                       </div>
                     </td>
                     <td className="py-3 text-right">{asset.days_deployed}</td>
-                    <td className="py-3 text-right text-emerald-600">${asset.revenue_generated.toLocaleString()}</td>
+                    <td className="py-3 text-right text-semantic-success">${asset.revenue_generated.toLocaleString()}</td>
                     <td className="py-3 text-right text-destructive">${asset.maintenance_cost.toLocaleString()}</td>
                     <td className="py-3 text-right font-medium">${asset.net_contribution.toLocaleString()}</td>
                   </tr>

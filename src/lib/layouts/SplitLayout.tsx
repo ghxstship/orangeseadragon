@@ -22,6 +22,7 @@ import {
   PanelLeft,
 } from "lucide-react";
 import type { SplitLayoutConfig } from "./types";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 
 /**
  * SPLIT LAYOUT
@@ -139,6 +140,154 @@ export function SplitLayout({
     }
   }, [focusedIndex]);
 
+  const { isMobile } = useBreakpoint();
+
+  // ── Mobile: stacked master/detail ──
+  if (isMobile) {
+    const showDetail = selectedId !== null && selectedItem !== undefined;
+
+    return (
+      <div className="flex flex-col h-full bg-background" onKeyDown={handleKeyDown}>
+        {showDetail ? (
+          /* Detail view — full screen on mobile */
+          <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between p-3 border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
+              <div className="flex items-center gap-3 min-w-0">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 flex-shrink-0"
+                  onClick={() => onSelect(null)}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <div className="min-w-0">
+                  <h1 className="font-semibold text-base truncate">{selectedItem!.title}</h1>
+                  {selectedItem!.subtitle && (
+                    <p className="text-sm text-muted-foreground truncate">{selectedItem!.subtitle}</p>
+                  )}
+                </div>
+              </div>
+              {detailActions && (
+                <div className="flex items-center gap-2 flex-shrink-0">{detailActions}</div>
+              )}
+            </div>
+            <div className="flex-1 overflow-auto p-4">{children}</div>
+          </div>
+        ) : (
+          /* Master list — full screen on mobile */
+          <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between p-3 border-b bg-background/80 backdrop-blur-sm">
+              <h2 className="font-semibold text-lg">{config.master.title}</h2>
+              <div className="flex items-center gap-2">
+                {masterActions}
+                {onCreateNew && (
+                  <Button size="sm" onClick={onCreateNew}>
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {config.master.search?.enabled && (
+              <div className="p-3 border-b">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={config.master.search.placeholder}
+                    value={localSearch}
+                    onChange={(e) => handleSearchChange(e.target.value)}
+                    className="pl-9 h-9"
+                  />
+                  {localSearch && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
+                      onClick={() => handleSearchChange("")}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <ScrollArea className="flex-1">
+              <div ref={listRef} className="p-2">
+                {loading ? (
+                  <div className="space-y-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="p-3 rounded-lg">
+                        <Skeleton className="h-5 w-3/4 mb-2" />
+                        <Skeleton className="h-4 w-1/2" />
+                      </div>
+                    ))}
+                  </div>
+                ) : filteredItems.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <p className="font-medium text-muted-foreground">
+                      {config.master.empty?.title || "No items"}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {config.master.empty?.description || "No items to display"}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    {filteredItems.map((item, index) => (
+                      <button
+                        key={item.id}
+                        data-index={index}
+                        onClick={() => onSelect(item.id)}
+                        className={cn(
+                          "w-full text-left p-3 rounded-lg transition-colors",
+                          "hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-ring",
+                          selectedId === item.id && "bg-accent",
+                          focusedIndex === index && "ring-2 ring-ring"
+                        )}
+                      >
+                        <div className="flex items-start gap-3">
+                          {item.icon && <div className="flex-shrink-0 mt-0.5">{item.icon}</div>}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium truncate">{item.title}</span>
+                              {item.badge && (
+                                <Badge variant={item.badge.variant || "secondary"} className="flex-shrink-0">
+                                  {item.badge.label}
+                                </Badge>
+                              )}
+                            </div>
+                            {item.subtitle && (
+                              <p className="text-sm text-muted-foreground truncate mt-0.5">
+                                {item.subtitle}
+                              </p>
+                            )}
+                            {item.meta && (
+                              <p className="text-xs text-muted-foreground mt-1">{item.meta}</p>
+                            )}
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-1" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+
+            <div className="p-3 border-t bg-background/80 backdrop-blur-sm">
+              <p className="text-xs text-muted-foreground text-center">
+                {filteredItems.length} of {items.length} items
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Desktop: resizable side-by-side panels ──
   return (
     <div className="flex h-full bg-background" onKeyDown={handleKeyDown}>
       <ResizablePanelGroup direction="horizontal" className="h-full">
@@ -294,14 +443,6 @@ export function SplitLayout({
                 {config.detail.header?.showBackButton && (
                   <div className="flex items-center justify-between p-4 border-b bg-background/80 backdrop-blur-sm sticky top-0 z-10">
                     <div className="flex items-center gap-3">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 lg:hidden"
-                        onClick={() => onSelect(null)}
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
                       <div>
                         <h1 className="font-semibold text-lg">{selectedItem.title}</h1>
                         {selectedItem.subtitle && (

@@ -186,24 +186,24 @@ export function ListLayout<T extends object>({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{schema.identity.namePlural}</h1>
+        <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl truncate">{schema.identity.namePlural}</h1>
             {schema.identity.description && (
-              <p className="text-muted-foreground">{schema.identity.description}</p>
+              <p className="text-muted-foreground text-sm hidden sm:block">{schema.identity.description}</p>
             )}
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {onRefresh && (
               <Button variant="outline" size="icon" onClick={onRefresh} disabled={loading}>
                 <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
               </Button>
             )}
             {schema.permissions?.create !== false && (
-              <Button onClick={handlePrimaryAction}>
-                <Plus className="h-4 w-4 mr-2" />
-                New {schema.identity.name}
+              <Button onClick={handlePrimaryAction} size="sm" className="sm:size-default">
+                <Plus className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">New {schema.identity.name}</span>
               </Button>
             )}
           </div>
@@ -211,7 +211,7 @@ export function ListLayout<T extends object>({
 
         {/* Subpage Navigation */}
         {listConfig.subpages.length > 1 && (
-          <div className="px-6 pb-0 border-t bg-muted/30">
+          <div className="px-4 sm:px-6 pb-0 border-t bg-muted/30 overflow-x-auto scrollbar-hide">
             <Tabs value={activeSubpage} onValueChange={onSubpageChange}>
               <TabsList variant="underline">
                 {listConfig.subpages.map((subpage) => (
@@ -234,7 +234,7 @@ export function ListLayout<T extends object>({
       </header>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-6 space-y-6">
+      <div className="flex-1 overflow-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
         {/* Stats */}
         {stats && stats.length > 0 && (
           <StatGrid columns={Math.min(stats.length, 4) as 2 | 3 | 4}>

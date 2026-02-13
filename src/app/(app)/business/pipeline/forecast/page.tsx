@@ -28,6 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-supabase';
 
 interface ForecastKpi {
   label: string;
@@ -35,13 +37,6 @@ interface ForecastKpi {
   change: number;
   icon: React.ElementType;
 }
-
-const kpis: ForecastKpi[] = [
-  { label: 'Pipeline Value', value: '$2,450,000', change: 12.5, icon: DollarSign },
-  { label: 'Weighted Revenue', value: '$1,180,000', change: 8.3, icon: TrendingUp },
-  { label: 'Win Rate', value: '34%', change: -2.1, icon: Target },
-  { label: 'Avg Deal Size', value: '$85,000', change: 5.7, icon: DollarSign },
-];
 
 interface FunnelStage {
   name: string;
@@ -51,33 +46,136 @@ interface FunnelStage {
   weighted: string;
 }
 
-const monthlyWeighted = [
-  { month: 'Jan', weighted: 820000, actual: 680000 },
-  { month: 'Feb', weighted: 910000, actual: 750000 },
-  { month: 'Mar', weighted: 1050000, actual: 890000 },
-  { month: 'Apr', weighted: 980000, actual: 0 },
-  { month: 'May', weighted: 1120000, actual: 0 },
-  { month: 'Jun', weighted: 1180000, actual: 0 },
-];
+const STAGE_PROBABILITIES: Record<string, number> = {
+  lead: 0.10,
+  qualified: 0.25,
+  proposal: 0.50,
+  negotiation: 0.75,
+  verbal_commit: 0.90,
+  closed_won: 1.0,
+};
 
-const revenueByClient = [
-  { client: 'Acme Corp', revenue: 420000 },
-  { client: 'TechStart', revenue: 340000 },
-  { client: 'GlobalFest', revenue: 280000 },
-  { client: 'MediaPro', revenue: 195000 },
-  { client: 'EventCo', revenue: 145000 },
-];
+function useForecastData(orgId: string | null) {
+  const [data, setData] = React.useState<{
+    kpis: ForecastKpi[];
+    monthlyWeighted: { month: string; weighted: number; actual: number }[];
+    revenueByClient: { client: string; revenue: number }[];
+    funnel: FunnelStage[];
+  } | null>(null);
 
-const funnel: FunnelStage[] = [
-  { name: 'Lead', count: 24, value: '$720,000', probability: '10%', weighted: '$72,000' },
-  { name: 'Qualified', count: 18, value: '$540,000', probability: '25%', weighted: '$135,000' },
-  { name: 'Proposal Sent', count: 12, value: '$480,000', probability: '50%', weighted: '$240,000' },
-  { name: 'Negotiation', count: 8, value: '$420,000', probability: '75%', weighted: '$315,000' },
-  { name: 'Verbal Commit', count: 5, value: '$290,000', probability: '90%', weighted: '$261,000' },
-];
+  React.useEffect(() => {
+    if (!orgId) return;
+    const supabase = createClient();
+
+    const fetchData = async () => {
+      const { data: deals } = await supabase
+        .from('deals')
+        .select('id, name, value, stage, probability, company_id, expected_close_date, won_at, created_at')
+        .eq('organization_id', orgId);
+
+      const { data: companies } = await supabase
+        .from('companies')
+        .select('id, name')
+        .eq('organization_id', orgId);
+
+      const companyMap = new Map((companies ?? []).map(c => [c.id, c.name]));
+      const allDeals = deals ?? [];
+      const openDeals = allDeals.filter(d => d.stage !== 'closed_won' && d.stage !== 'closed_lost');
+      const wonDeals = allDeals.filter(d => d.stage === 'closed_won');
+
+      const fmt = (v: number) => `$${v.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+      const pipelineValue = openDeals.reduce((s, d) => s + (d.value ?? 0), 0);
+      const weightedRevenue = openDeals.reduce((s, d) => {
+        const prob = d.probability ?? (STAGE_PROBABILITIES[d.stage ?? ''] ?? 0.1);
+        return s + (d.value ?? 0) * prob;
+      }, 0);
+      const winRate = allDeals.length > 0 ? (wonDeals.length / allDeals.length) * 100 : 0;
+      const avgDealSize = openDeals.length > 0 ? pipelineValue / openDeals.length : 0;
+
+      const computedKpis: ForecastKpi[] = [
+        { label: 'Pipeline Value', value: fmt(pipelineValue), change: 0, icon: DollarSign },
+        { label: 'Weighted Revenue', value: fmt(weightedRevenue), change: 0, icon: TrendingUp },
+        { label: 'Win Rate', value: `${winRate.toFixed(0)}%`, change: 0, icon: Target },
+        { label: 'Avg Deal Size', value: fmt(avgDealSize), change: 0, icon: DollarSign },
+      ];
+
+      // Monthly weighted vs actual (last 6 months)
+      const now = new Date();
+      const monthly: { month: string; weighted: number; actual: number }[] = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+        const label = d.toLocaleString(undefined, { month: 'short' });
+        const monthDeals = openDeals.filter(deal => {
+          if (!deal.expected_close_date) return false;
+          const cd = new Date(deal.expected_close_date);
+          return cd >= d && cd <= end;
+        });
+        const weighted = monthDeals.reduce((s, deal) => {
+          const prob = deal.probability ?? (STAGE_PROBABILITIES[deal.stage ?? ''] ?? 0.1);
+          return s + (deal.value ?? 0) * prob;
+        }, 0);
+        const actual = wonDeals
+          .filter(deal => deal.won_at && new Date(deal.won_at) >= d && new Date(deal.won_at) <= end)
+          .reduce((s, deal) => s + (deal.value ?? 0), 0);
+        monthly.push({ month: label, weighted, actual });
+      }
+
+      // Revenue by client (top 5 by pipeline value)
+      const clientRevMap = new Map<string, number>();
+      for (const deal of openDeals) {
+        const name = companyMap.get(deal.company_id ?? '') ?? 'Unknown';
+        clientRevMap.set(name, (clientRevMap.get(name) ?? 0) + (deal.value ?? 0));
+      }
+      const topClients = Array.from(clientRevMap.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([client, revenue]) => ({ client, revenue }));
+
+      // Pipeline funnel by stage
+      const stageOrder = ['lead', 'qualified', 'proposal', 'negotiation', 'verbal_commit'];
+      const stageLabels: Record<string, string> = {
+        lead: 'Lead', qualified: 'Qualified', proposal: 'Proposal Sent',
+        negotiation: 'Negotiation', verbal_commit: 'Verbal Commit',
+      };
+      const computedFunnel: FunnelStage[] = stageOrder.map(stage => {
+        const stageDeals = openDeals.filter(d => d.stage === stage);
+        const totalValue = stageDeals.reduce((s, d) => s + (d.value ?? 0), 0);
+        const prob = STAGE_PROBABILITIES[stage] ?? 0;
+        return {
+          name: stageLabels[stage] ?? stage,
+          count: stageDeals.length,
+          value: fmt(totalValue),
+          probability: `${(prob * 100).toFixed(0)}%`,
+          weighted: fmt(totalValue * prob),
+        };
+      });
+
+      setData({
+        kpis: computedKpis,
+        monthlyWeighted: monthly,
+        revenueByClient: topClients,
+        funnel: computedFunnel,
+      });
+    };
+
+    fetchData();
+  }, [orgId]);
+
+  return data;
+}
 
 export default function RevenueForecastPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
+  const forecastData = useForecastData(orgId);
   const [period, setPeriod] = React.useState('quarter');
+
+  const kpis = forecastData?.kpis ?? [];
+  const monthlyWeighted = forecastData?.monthlyWeighted ?? [];
+  const revenueByClient = forecastData?.revenueByClient ?? [];
+  const funnel = forecastData?.funnel ?? [];
 
   return (
     <div className="flex flex-col h-full">
@@ -117,7 +215,7 @@ export default function RevenueForecastPage() {
                     <Icon className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="text-2xl font-bold">{kpi.value}</div>
-                  <div className={`flex items-center gap-1 text-xs mt-1 ${isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'}`}>
+                  <div className={`flex items-center gap-1 text-xs mt-1 ${isPositive ? 'text-semantic-success' : 'text-destructive'}`}>
                     {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                     {Math.abs(kpi.change)}% vs last period
                   </div>
@@ -141,7 +239,7 @@ export default function RevenueForecastPage() {
                   <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                   <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]} />
                   <Bar dataKey="weighted" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Weighted" opacity={0.7} />
-                  <Bar dataKey="actual" fill="#22c55e" radius={[4, 4, 0, 0]} name="Actual" />
+                  <Bar dataKey="actual" fill="hsl(var(--semantic-success))" radius={[4, 4, 0, 0]} name="Actual" />
                   <Legend />
                 </BarChart>
               </ResponsiveContainer>

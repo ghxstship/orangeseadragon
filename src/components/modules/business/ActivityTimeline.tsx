@@ -69,12 +69,12 @@ const activityIcons: Record<string, React.ElementType> = {
 };
 
 const activityColors: Record<string, string> = {
-    call: 'bg-emerald-500',
+    call: 'bg-semantic-success',
     email: 'bg-blue-500',
     meeting: 'bg-purple-500',
     task: 'bg-orange-500',
     note: 'bg-gray-500',
-    follow_up: 'bg-amber-500',
+    follow_up: 'bg-semantic-warning',
     stage_change: 'bg-indigo-500',
 };
 
@@ -181,7 +181,7 @@ function ActivityItem({ activity }: { activity: Activity }) {
                         </Badge>
                     )}
                     {activity.is_completed && (
-                        <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-emerald-600 border-emerald-200 bg-emerald-50">
+                        <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-semantic-success border-semantic-success/20 bg-semantic-success/10">
                             Completed
                         </Badge>
                     )}

@@ -57,7 +57,7 @@ export function StatCard({
                   className={cn(
                     "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg",
                     trend.isPositive
-                      ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-green-500/10"
+                      ? "bg-semantic-success/10 text-semantic-success border border-semantic-success/20 shadow-[0_0_8px_hsl(var(--semantic-success)/0.1)]"
                       : "bg-destructive/10 text-destructive border border-destructive/20 shadow-red-500/10"
                   )}
                 >

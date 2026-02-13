@@ -134,9 +134,9 @@ export function TimeClock({
 
   const statusConfig = {
     idle: { color: 'bg-zinc-500', label: 'Not Clocked In', glow: '' },
-    clocked_in: { color: 'bg-emerald-500', label: 'Working', glow: 'shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)]' },
-    on_break: { color: 'bg-amber-500', label: 'On Break', glow: 'shadow-[0_0_30px_-5px_rgba(245,158,11,0.5)]' },
-    clocked_out: { color: 'bg-blue-500', label: 'Clocked Out', glow: 'shadow-[0_0_30px_-5px_rgba(59,130,246,0.5)]' },
+    clocked_in: { color: 'bg-semantic-success', label: 'Working', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-success)/0.5)]' },
+    on_break: { color: 'bg-semantic-warning', label: 'On Break', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-warning)/0.5)]' },
+    clocked_out: { color: 'bg-semantic-info', label: 'Clocked Out', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-info)/0.5)]' },
   };
 
   return (
@@ -154,9 +154,9 @@ export function TimeClock({
             variant="outline" 
             className={cn(
               "text-xs transition-colors",
-              status === 'clocked_in' && "border-emerald-500/50 text-emerald-400",
-              status === 'on_break' && "border-amber-500/50 text-amber-400",
-              status === 'clocked_out' && "border-blue-500/50 text-blue-400",
+              status === 'clocked_in' && "border-semantic-success/50 text-semantic-success",
+              status === 'on_break' && "border-semantic-warning/50 text-semantic-warning",
+              status === 'clocked_out' && "border-semantic-info/50 text-semantic-info",
               status === 'idle' && "border-zinc-500/50 text-zinc-400"
             )}
           >
@@ -214,7 +214,7 @@ export function TimeClock({
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex items-center gap-3"
+              className="bg-semantic-info/10 border border-semantic-info/20 rounded-xl p-4 flex items-center gap-3"
             >
               <CheckCircle2 className="w-6 h-6 text-blue-400" />
               <div>
@@ -238,7 +238,7 @@ export function TimeClock({
           {status === 'idle' && (
             <Button
               onClick={handleClockIn}
-              className="col-span-2 h-14 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-lg"
+              className="col-span-2 h-14 bg-semantic-success hover:bg-semantic-success/90 text-white font-medium text-lg"
             >
               <Play className="w-5 h-5 mr-2" />
               Clock In
@@ -250,14 +250,14 @@ export function TimeClock({
               <Button
                 onClick={handleBreakStart}
                 variant="outline"
-                className="h-14 border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+                className="h-14 border-semantic-warning/30 text-semantic-warning hover:bg-semantic-warning/10"
               >
                 <Coffee className="w-5 h-5 mr-2" />
                 Start Break
               </Button>
               <Button
                 onClick={handleClockOut}
-                className="h-14 bg-rose-600 hover:bg-rose-500 text-white"
+                className="h-14 bg-destructive hover:bg-destructive/90 text-white"
               >
                 <Square className="w-5 h-5 mr-2" />
                 Clock Out
@@ -268,7 +268,7 @@ export function TimeClock({
           {status === 'on_break' && (
             <Button
               onClick={handleBreakEnd}
-              className="col-span-2 h-14 bg-amber-600 hover:bg-amber-500 text-white font-medium text-lg"
+              className="col-span-2 h-14 bg-semantic-warning hover:bg-semantic-warning/90 text-white font-medium text-lg"
             >
               <Pause className="w-5 h-5 mr-2" />
               End Break

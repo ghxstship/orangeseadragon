@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Clock, Filter, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/hooks/use-supabase";
+import { useIncidents } from "@/hooks/use-incidents";
 
 interface Incident {
   id: string;
@@ -16,36 +18,6 @@ interface Incident {
   location: string;
   reporter: string;
 }
-
-const mockIncidents: Incident[] = [
-  {
-    id: '1',
-    title: 'Power Failure: Stage Left Audio',
-    severity: 'critical',
-    status: 'open',
-    time: '2 mins ago',
-    location: 'Main Stage',
-    reporter: 'Mike T.'
-  },
-  {
-    id: '2',
-    title: 'Spill cleanup needed',
-    severity: 'minor',
-    status: 'resolved',
-    time: '1 hour ago',
-    location: 'Lobby Bar',
-    reporter: 'Sarah J.'
-  },
-  {
-    id: '3',
-    title: 'Projector overheating warning',
-    severity: 'major',
-    status: 'investigating',
-    time: '15 mins ago',
-    location: 'Breakout Room B',
-    reporter: 'Dave C.'
-  }
-];
 
 const severityIndicator: Record<string, string> = {
   critical: "bg-destructive animate-pulse",
@@ -59,7 +31,33 @@ const statusBadgeVariant: Record<string, 'destructive' | 'warning' | 'default'> 
   resolved: 'default',
 };
 
+function formatTimeAgo(dateStr: string | null): string {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins} min${mins > 1 ? 's' : ''} ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  const days = Math.floor(hours / 24);
+  return `${days} day${days > 1 ? 's' : ''} ago`;
+}
+
 export default function IncidentsPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
+  const { data: rawIncidents } = useIncidents(orgId);
+
+  const incidents: Incident[] = (rawIncidents ?? []).map((i) => ({
+    id: i.id,
+    title: i.title,
+    severity: (i.severity as Incident['severity']) ?? 'minor',
+    status: (i.status as Incident['status']) ?? 'open',
+    time: formatTimeAgo(i.occurred_at),
+    location: '',
+    reporter: i.reported_by_name ?? 'Unknown',
+  }));
+
   return (
     <div className="flex flex-col h-full bg-background">
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
@@ -83,7 +81,7 @@ export default function IncidentsPage() {
 
       <div className="flex-1 overflow-auto p-6">
         <div className="grid gap-4">
-          {mockIncidents.map((incident, index) => (
+          {incidents.map((incident, index) => (
             <motion.div
               key={incident.id}
               initial={{ opacity: 0, x: -20 }}

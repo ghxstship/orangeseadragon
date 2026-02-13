@@ -294,9 +294,9 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
         const colorMap: Record<string, string> = {
             gray: 'bg-slate-400',
             blue: 'bg-blue-500',
-            yellow: 'bg-amber-500',
+            yellow: 'bg-semantic-warning',
             orange: 'bg-orange-500',
-            green: 'bg-emerald-500',
+            green: 'bg-semantic-success',
             red: 'bg-destructive'
         };
         return colorMap[option?.color || 'gray'] || 'bg-slate-400';

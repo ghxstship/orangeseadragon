@@ -47,3 +47,5 @@ export { useAuditLogs } from "./use-audit-logs";
 export { useInbox } from "./use-inbox";
 export { useSetupChecklist } from "./use-setup-checklist";
 export { useOnboardingProgress } from "./use-onboarding-progress";
+export { usePermissions } from "./use-permissions";
+export { useBadgeCounts } from "./use-badge-counts";

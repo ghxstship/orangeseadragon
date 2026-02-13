@@ -90,6 +90,17 @@ export interface ThemeBranding {
   privacyUrl?: string;
 }
 
+export interface SemanticColors {
+  success: string;
+  warning: string;
+  info: string;
+  accent: string;
+  purple: string;
+  cyan: string;
+  orange: string;
+  indigo: string;
+}
+
 export interface ThemeConfig {
   id: string;
   name: string;
@@ -97,6 +108,10 @@ export interface ThemeConfig {
   colors: {
     light: ThemeColors;
     dark: ThemeColors;
+  };
+  semanticColors?: {
+    light: Partial<SemanticColors>;
+    dark: Partial<SemanticColors>;
   };
   typography: ThemeTypography;
   spacing: ThemeSpacing;
@@ -243,6 +258,16 @@ export function generateCssVariables(theme: ThemeConfig, mode: "light" | "dark")
     `--radius: ${theme.borderRadius.lg};`,
   ];
 
+  // Emit semantic color overrides if provided
+  const semantic = theme.semanticColors?.[mode];
+  if (semantic) {
+    Object.entries(semantic).forEach(([key, value]) => {
+      if (value) {
+        variables.push(`--semantic-${key}: ${value};`);
+      }
+    });
+  }
+
   return variables.join("\n  ");
 }
 
@@ -254,6 +279,12 @@ export function mergeThemes(base: ThemeConfig, overrides: Partial<ThemeConfig>):
       light: { ...base.colors.light, ...overrides.colors?.light },
       dark: { ...base.colors.dark, ...overrides.colors?.dark },
     },
+    semanticColors: overrides.semanticColors || base.semanticColors
+      ? {
+          light: { ...base.semanticColors?.light, ...overrides.semanticColors?.light },
+          dark: { ...base.semanticColors?.dark, ...overrides.semanticColors?.dark },
+        }
+      : undefined,
     typography: { ...base.typography, ...overrides.typography },
     spacing: { ...base.spacing, ...overrides.spacing },
     borderRadius: { ...base.borderRadius, ...overrides.borderRadius },

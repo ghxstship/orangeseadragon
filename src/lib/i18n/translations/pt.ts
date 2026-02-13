@@ -1,6 +1,6 @@
-import type { TranslationKeys } from "./en";
+import type { PartialTranslationKeys } from "./en";
 
-export const pt: TranslationKeys = {
+export const pt: PartialTranslationKeys = {
   common: {
     save: "Salvar",
     cancel: "Cancelar",

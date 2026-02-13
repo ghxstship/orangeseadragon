@@ -43,8 +43,8 @@ interface TimelineDotProps extends React.HTMLAttributes<HTMLDivElement> {
 const dotVariants = {
   default: "bg-primary border-primary",
   outline: "bg-background border-border",
-  success: "bg-emerald-500 border-emerald-500",
-  warning: "bg-amber-500 border-amber-500",
+  success: "bg-semantic-success border-semantic-success",
+  warning: "bg-semantic-warning border-semantic-warning",
   error: "bg-destructive border-destructive",
 };
 

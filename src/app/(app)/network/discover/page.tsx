@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, UserPlus, Users, Briefcase, MapPin } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-supabase';
 
 interface ConnectionSuggestion {
   id: string;
@@ -19,46 +21,59 @@ interface ConnectionSuggestion {
   reason: string;
 }
 
-const mockSuggestions: ConnectionSuggestion[] = [
-  {
-    id: '1',
-    name: 'Sarah Johnson',
-    headline: 'Production Manager',
-    company: 'Live Events Co',
-    location: 'Los Angeles, CA',
-    mutualConnections: 12,
-    reason: 'Same industry',
-  },
-  {
-    id: '2',
-    name: 'Michael Chen',
-    headline: 'Technical Director',
-    company: 'Stage Systems Inc',
-    location: 'New York, NY',
-    mutualConnections: 8,
-    reason: '8 mutual connections',
-  },
-  {
-    id: '3',
-    name: 'Emily Rodriguez',
-    headline: 'Event Coordinator',
-    company: 'Festival Productions',
-    location: 'Austin, TX',
-    mutualConnections: 5,
-    reason: 'Attended same event',
-  },
-];
-
 export default function DiscoverPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
   const [searchQuery, setSearchQuery] = useState('');
-  const [suggestions] = useState<ConnectionSuggestion[]>(mockSuggestions);
+  const [contacts, setContacts] = useState<ConnectionSuggestion[]>([]);
 
-  const filteredSuggestions = suggestions.filter(
+  useEffect(() => {
+    if (!orgId) return;
+    const supabase = createClient();
+
+    const fetchContacts = async () => {
+      const { data } = await supabase
+        .from('contacts')
+        .select('id, first_name, last_name, full_name, job_title, company_id, city, state, country, avatar_url, department')
+        .eq('organization_id', orgId)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      // Fetch company names
+      const companyIds = Array.from(new Set((data ?? []).map(c => c.company_id).filter(Boolean))) as string[];
+      const { data: companies } = companyIds.length > 0
+        ? await supabase.from('companies').select('id, name').in('id', companyIds)
+        : { data: [] };
+      const companyMap = new Map((companies ?? []).map(c => [c.id, c.name]));
+
+      const mapped: ConnectionSuggestion[] = (data ?? []).map((c) => {
+        const name = c.full_name ?? `${c.first_name} ${c.last_name}`;
+        const location = [c.city, c.state, c.country].filter(Boolean).join(', ');
+        return {
+          id: c.id,
+          name,
+          headline: c.job_title ?? c.department ?? '',
+          company: c.company_id ? (companyMap.get(c.company_id) ?? '') : '',
+          location,
+          avatar: c.avatar_url ?? undefined,
+          mutualConnections: 0,
+          reason: c.department ? `${c.department} department` : 'Contact',
+        };
+      });
+
+      setContacts(mapped);
+    };
+
+    fetchContacts();
+  }, [orgId]);
+
+  const filteredSuggestions = useMemo(() => contacts.filter(
     (s) =>
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       s.headline.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ), [contacts, searchQuery]);
 
   return (
     <div className="container mx-auto py-6 space-y-6">

@@ -119,7 +119,7 @@ export function InlineEdit({
             onClick={handleSave}
             disabled={isSaving}
           >
-            <Check className="h-4 w-4 text-emerald-600" />
+            <Check className="h-4 w-4 text-semantic-success" />
           </Button>
           <Button
             type="button"

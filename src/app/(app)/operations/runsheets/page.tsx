@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Play, Clock, Calendar, ChevronRight, CheckCircle2, Maximize2, Plus } from "lucide-react";
+import { useUser } from "@/hooks/use-supabase";
+import { useRunsheets } from "@/hooks/use-runsheets";
 
 interface RunSheet {
   id: string;
@@ -19,13 +21,6 @@ interface RunSheet {
   location: string;
   date: string;
 }
-
-const mockRunsheets: RunSheet[] = [
-  { id: '1', title: 'Main Stage: Opening Keynote', status: 'live', startTime: '09:00 AM', duration: '1h 30m', totalCues: 24, currentCue: 'Intro Video Playback', location: 'Grand Ballroom', date: 'Today' },
-  { id: '2', title: 'Breakout A: Tech Directions', status: 'published', startTime: '11:00 AM', duration: '45m', totalCues: 12, currentCue: '-', location: 'Room 302', date: 'Today' },
-  { id: '3', title: 'Morning Briefing', status: 'completed', startTime: '07:30 AM', duration: '30m', totalCues: 8, currentCue: 'End of session', location: 'Staff Room', date: 'Today' },
-  { id: '4', title: 'Evening Gala - Main Program', status: 'draft', startTime: '07:00 PM', duration: '3h 00m', totalCues: 45, currentCue: '-', location: 'Grand Ballroom', date: 'Tomorrow' },
-];
 
 const statusBadgeVariant: Record<string, 'default' | 'secondary' | 'outline' | 'destructive'> = {
   live: 'destructive',
@@ -41,7 +36,43 @@ const statusIcon: Record<string, React.ElementType> = {
   completed: CheckCircle2,
 };
 
+function mapRunsheetStatus(status: string | null): RunSheet['status'] {
+  if (status === 'live') return 'live';
+  if (status === 'published') return 'published';
+  if (status === 'completed') return 'completed';
+  return 'draft';
+}
+
+function formatRunsheetDate(dateStr: string | null): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const sheetDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = (sheetDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Tomorrow';
+  if (diff === -1) return 'Yesterday';
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
 export default function RunsheetsPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
+  const { data: rawRunsheets } = useRunsheets(orgId);
+
+  const runsheets: RunSheet[] = (rawRunsheets ?? []).map((r) => ({
+    id: r.id,
+    title: r.name,
+    status: mapRunsheetStatus(r.status),
+    startTime: '',
+    duration: '',
+    totalCues: 0,
+    currentCue: '-',
+    location: '',
+    date: formatRunsheetDate(r.date),
+  }));
+
   return (
     <div className="flex flex-col h-full bg-background">
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
@@ -59,7 +90,7 @@ export default function RunsheetsPage() {
 
       <div className="flex-1 overflow-auto p-6">
         <div className="grid gap-4">
-          {mockRunsheets.map((sheet, index) => {
+          {runsheets.map((sheet, index) => {
             const StatusIcon = statusIcon[sheet.status];
             return (
               <motion.div

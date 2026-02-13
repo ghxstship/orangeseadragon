@@ -64,7 +64,7 @@ export function CurfewCountdownWidget({
 
   const phaseConfig = {
     safe: {
-      color: 'text-emerald-500',
+      color: 'text-semantic-success',
       bg: 'bg-black',
       border: 'border-zinc-800',
       glow: '',
@@ -72,9 +72,9 @@ export function CurfewCountdownWidget({
       badgeVariant: 'outline' as const,
     },
     warning: {
-      color: 'text-amber-500',
-      bg: 'bg-amber-950/20',
-      border: 'border-amber-900/50',
+      color: 'text-semantic-warning',
+      bg: 'bg-semantic-warning/10',
+      border: 'border-semantic-warning/30',
       glow: 'shadow-[0_0_20px_rgba(245,158,11,0.15)]',
       badge: 'Warning',
       badgeVariant: 'outline' as const,

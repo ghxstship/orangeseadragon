@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, ArrowRight, Settings, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/hooks/use-supabase";
+import { useEvents } from "@/hooks/use-events";
 
 interface Show {
   id: string;
@@ -16,12 +18,6 @@ interface Show {
   attendees: number;
   crewCount: number;
 }
-
-const mockShows: Show[] = [
-  { id: '1', title: 'Neon Nights Festival', status: 'live', venue: 'Main Arena', date: 'Today, 20:00', attendees: 15000, crewCount: 142 },
-  { id: '2', title: 'Tech Summit 2026', status: 'setup', venue: 'Convention Center', date: 'Tomorrow, 09:00', attendees: 2500, crewCount: 45 },
-  { id: '3', title: 'Corporate Galas', status: 'strike', venue: 'Grand Ballroom', date: 'Yesterday', attendees: 500, crewCount: 28 },
-];
 
 const statusBar: Record<string, string> = {
   live: "bg-primary",
@@ -35,7 +31,41 @@ const statusBadgeVariant: Record<string, 'default' | 'secondary' | 'outline'> = 
   strike: 'outline',
 };
 
+function mapEventStatus(status: string | null): Show['status'] {
+  if (status === 'in_progress' || status === 'active') return 'live';
+  if (status === 'completed' || status === 'cancelled') return 'strike';
+  return 'setup';
+}
+
+function formatEventDate(dateStr: string | null): string {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const eventDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = (eventDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
+  const time = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+  if (diff === 0) return `Today, ${time}`;
+  if (diff === 1) return `Tomorrow, ${time}`;
+  if (diff === -1) return 'Yesterday';
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
 export default function ShowsPage() {
+  const { user } = useUser();
+  const orgId = user?.user_metadata?.organization_id || null;
+  const { data: rawEvents } = useEvents(orgId);
+
+  const shows: Show[] = (rawEvents ?? []).map((e) => ({
+    id: e.id,
+    title: e.name,
+    status: mapEventStatus(e.status),
+    venue: '',
+    date: formatEventDate(e.start_date),
+    attendees: e.expected_attendance ?? 0,
+    crewCount: 0,
+  }));
+
   return (
     <div className="flex flex-col h-full bg-background">
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
@@ -53,7 +83,7 @@ export default function ShowsPage() {
 
       <div className="flex-1 overflow-auto p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockShows.map((show, index) => (
+          {shows.map((show, index) => (
             <motion.div
               key={show.id}
               initial={{ opacity: 0, y: 20 }}

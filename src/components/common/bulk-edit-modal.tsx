@@ -173,8 +173,8 @@ export function BulkEditModal({
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-6 space-y-3">
-            <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center">
-              <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+            <div className="h-12 w-12 rounded-full bg-semantic-success/10 flex items-center justify-center">
+              <CheckCircle2 className="h-6 w-6 text-semantic-success" />
             </div>
             <p className="text-sm font-medium">
               {result.success} of {selectedIds.length} updated

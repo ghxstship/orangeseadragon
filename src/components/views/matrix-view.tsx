@@ -118,9 +118,9 @@ function getQuadrantColor(color?: string) {
         case 'red':
             return { border: 'border-destructive/10', bg: 'bg-destructive/[0.02] shadow-[inner_0_0_50px_rgba(239,68,68,0.03)]' };
         case 'blue':
-            return { border: 'border-blue-500/10', bg: 'bg-blue-500/[0.02] shadow-[inner_0_0_50px_rgba(59,130,246,0.03)]' };
+            return { border: 'border-semantic-info/10', bg: 'bg-semantic-info/[0.02]' };
         case 'yellow':
-            return { border: 'border-amber-500/10', bg: 'bg-amber-500/[0.02] shadow-[inner_0_0_50px_rgba(234,179,8,0.03)]' };
+            return { border: 'border-semantic-warning/10', bg: 'bg-semantic-warning/[0.02]' };
         case 'gray':
             return { border: 'border-border', bg: 'bg-white/[0.01] shadow-[inner_0_0_50px_rgba(255,255,255,0.01)]' };
         default:

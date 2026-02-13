@@ -25,6 +25,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import { getLeaveTypeSolidClass, getStatusSolidClass, getStatusTextClass } from '@/lib/tokens/semantic-colors';
 
 type LeaveType = 'annual' | 'sick' | 'parental' | 'bereavement' | 'study' | 'unpaid';
 type LeaveStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
@@ -48,35 +49,28 @@ interface LeaveCalendarProps {
   onNewRequest?: () => void;
 }
 
-const LEAVE_TYPE_CONFIG: Record<LeaveType, { icon: React.ElementType; color: string; label: string }> = {
-  annual: { icon: Palmtree, color: 'bg-emerald-500', label: 'Annual Leave' },
-  sick: { icon: Stethoscope, color: 'bg-rose-500', label: 'Sick Leave' },
-  parental: { icon: Baby, color: 'bg-purple-500', label: 'Parental Leave' },
-  bereavement: { icon: Heart, color: 'bg-zinc-500', label: 'Bereavement' },
-  study: { icon: GraduationCap, color: 'bg-blue-500', label: 'Study Leave' },
-  unpaid: { icon: Briefcase, color: 'bg-amber-500', label: 'Unpaid Leave' },
+const LEAVE_TYPE_CONFIG: Record<LeaveType, { icon: React.ElementType; getColor: () => string; label: string }> = {
+  annual: { icon: Palmtree, getColor: () => getLeaveTypeSolidClass('annual'), label: 'Annual Leave' },
+  sick: { icon: Stethoscope, getColor: () => getLeaveTypeSolidClass('sick'), label: 'Sick Leave' },
+  parental: { icon: Baby, getColor: () => getLeaveTypeSolidClass('parental'), label: 'Parental Leave' },
+  bereavement: { icon: Heart, getColor: () => getLeaveTypeSolidClass('bereavement'), label: 'Bereavement' },
+  study: { icon: GraduationCap, getColor: () => getLeaveTypeSolidClass('study'), label: 'Study Leave' },
+  unpaid: { icon: Briefcase, getColor: () => getLeaveTypeSolidClass('unpaid'), label: 'Unpaid Leave' },
 };
 
-const STATUS_CONFIG: Record<LeaveStatus, { color: string; bgColor: string }> = {
-  pending: { color: 'text-amber-400', bgColor: 'bg-amber-500/20' },
-  approved: { color: 'text-emerald-400', bgColor: 'bg-emerald-500/20' },
-  rejected: { color: 'text-rose-400', bgColor: 'bg-rose-500/20' },
-  cancelled: { color: 'text-zinc-400', bgColor: 'bg-zinc-500/20' },
+const STATUS_CONFIG: Record<LeaveStatus, { getColor: () => string; getBgColor: () => string }> = {
+  pending: { getColor: () => getStatusTextClass('pending'), getBgColor: () => `${getStatusSolidClass('pending')}/20` },
+  approved: { getColor: () => getStatusTextClass('approved'), getBgColor: () => `${getStatusSolidClass('approved')}/20` },
+  rejected: { getColor: () => getStatusTextClass('rejected'), getBgColor: () => `${getStatusSolidClass('rejected')}/20` },
+  cancelled: { getColor: () => getStatusTextClass('cancelled'), getBgColor: () => `${getStatusSolidClass('cancelled')}/20` },
 };
 
-const MOCK_REQUESTS: LeaveRequest[] = [
-  { id: '1', employeeId: 'e1', employeeName: 'Sarah Chen', leaveType: 'annual', startDate: new Date(2026, 1, 9), endDate: new Date(2026, 1, 13), status: 'approved' },
-  { id: '2', employeeId: 'e2', employeeName: 'Tom Wilson', leaveType: 'sick', startDate: new Date(2026, 1, 5), endDate: new Date(2026, 1, 6), status: 'approved' },
-  { id: '3', employeeId: 'e3', employeeName: 'Jane Martinez', leaveType: 'annual', startDate: new Date(2026, 1, 16), endDate: new Date(2026, 1, 20), status: 'pending' },
-  { id: '4', employeeId: 'e4', employeeName: 'Mike Roberts', leaveType: 'study', startDate: new Date(2026, 1, 23), endDate: new Date(2026, 1, 27), status: 'approved' },
-  { id: '5', employeeId: 'e5', employeeName: 'Lisa Anderson', leaveType: 'parental', startDate: new Date(2026, 1, 2), endDate: new Date(2026, 2, 27), status: 'approved' },
-];
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export function LeaveCalendar({
-  requests = MOCK_REQUESTS,
+  requests = [],
   onDateClick,
   onRequestClick,
   onNewRequest,
@@ -184,7 +178,7 @@ export function LeaveCalendar({
           <div className="flex gap-4">
             {Object.entries(LEAVE_TYPE_CONFIG).map(([type, config]) => (
               <div key={type} className="flex items-center gap-1.5 text-xs text-zinc-400">
-                <div className={cn("w-3 h-3 rounded-full", config.color)} />
+                <div className={cn("w-3 h-3 rounded-full", config.getColor())} />
                 <span>{config.label}</span>
               </div>
             ))}
@@ -248,7 +242,7 @@ export function LeaveCalendar({
                             <div
                               className={cn(
                                 "text-xs px-1.5 py-0.5 rounded truncate cursor-pointer",
-                                typeConfig.color,
+                                typeConfig.getColor(),
                                 "bg-opacity-20 hover:bg-opacity-30 transition-colors"
                               )}
                               onClick={(e) => {
@@ -272,7 +266,7 @@ export function LeaveCalendar({
                                 <span className="font-medium">{request.employeeName}</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Badge variant="outline" className={cn("text-xs", statusConfig.color, statusConfig.bgColor)}>
+                                <Badge variant="outline" className={cn("text-xs", statusConfig.getColor(), statusConfig.getBgColor())}>
                                   {request.status}
                                 </Badge>
                                 <span className="text-xs text-zinc-400">{typeConfig.label}</span>

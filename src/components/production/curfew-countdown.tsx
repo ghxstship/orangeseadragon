@@ -83,18 +83,18 @@ export function CurfewCountdown({
 
   const statusConfig = {
     safe: {
-      bg: "bg-emerald-500/10",
-      border: "border-emerald-500/30",
-      text: "text-emerald-400",
+      bg: "bg-semantic-success/10",
+      border: "border-semantic-success/30",
+      text: "text-semantic-success",
       glow: "",
-      badge: "bg-emerald-500/20 text-emerald-400",
+      badge: "bg-semantic-success/20 text-semantic-success",
     },
     warning: {
-      bg: "bg-amber-500/10",
-      border: "border-amber-500/30",
-      text: "text-amber-400",
-      glow: "shadow-[0_0_20px_rgba(245,158,11,0.15)]",
-      badge: "bg-amber-500/20 text-amber-400",
+      bg: "bg-semantic-warning/10",
+      border: "border-semantic-warning/30",
+      text: "text-semantic-warning",
+      glow: "shadow-[0_0_20px_hsl(var(--semantic-warning)/0.15)]",
+      badge: "bg-semantic-warning/20 text-semantic-warning",
     },
     critical: {
       bg: "bg-destructive/10",

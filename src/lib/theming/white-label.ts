@@ -25,6 +25,17 @@ export interface ColorMode {
   ring: string;
 }
 
+export interface SemanticColorOverrides {
+  success?: string;
+  warning?: string;
+  info?: string;
+  accent?: string;
+  purple?: string;
+  cyan?: string;
+  orange?: string;
+  indigo?: string;
+}
+
 export interface WhiteLabelTheme {
   id: string;
   name: string;
@@ -47,6 +58,10 @@ export interface WhiteLabelTheme {
   modes: {
     light: Partial<ColorMode>;
     dark: Partial<ColorMode>;
+  };
+  semanticColors?: {
+    light: SemanticColorOverrides;
+    dark: SemanticColorOverrides;
   };
   components: {
     borderRadius: "none" | "sm" | "md" | "lg" | "xl" | "full";
@@ -220,6 +235,17 @@ export function generateCSSVariables(theme: WhiteLabelTheme, mode: "light" | "da
   css += `  --content-max-width: ${theme.layout.contentMaxWidth || 1440}px;\n`;
   css += `  --density-spacing: ${density.spacing};\n`;
   css += `  --density-font-size: ${density.fontSize};\n`;
+
+  // Emit semantic color overrides if provided
+  const semantic = theme.semanticColors?.[mode];
+  if (semantic) {
+    Object.entries(semantic).forEach(([key, value]) => {
+      if (value) {
+        css += `  --semantic-${key}: ${value};\n`;
+      }
+    });
+  }
+
   css += `}\n`;
 
   if (theme.customCss) {

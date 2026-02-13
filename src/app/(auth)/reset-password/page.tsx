@@ -2,6 +2,7 @@
 
 import { Lock } from 'lucide-react';
 import { AuthTemplate, AuthField } from '@/components/templates/AuthTemplate';
+import { createClient } from '@/lib/supabase/client';
 
 const resetPasswordFields: AuthField[] = [
   { key: 'password', label: 'New password', type: 'password', placeholder: '••••••••', icon: Lock, required: true, minLength: 8, showPasswordStrength: true },
@@ -9,8 +10,17 @@ const resetPasswordFields: AuthField[] = [
 ];
 
 export default function ResetPasswordPage() {
-  const handleSubmit = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const handleSubmit = async (formData: Record<string, string | boolean>) => {
+    const password = String(formData.password);
+    const confirmPassword = String(formData.confirmPassword);
+
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw new Error(error.message);
   };
 
   return (

@@ -118,7 +118,7 @@ export function ContextualEmptyState({
         className={cn(
           "flex h-16 w-16 items-center justify-center rounded-full mb-4",
           type === "error" && "bg-destructive/10 text-destructive",
-          type === "no-permission" && "bg-amber-500/10 text-amber-600",
+          type === "no-permission" && "bg-semantic-warning/10 text-semantic-warning",
           type === "offline" && "bg-muted text-muted-foreground",
           type === "first-time" && "bg-primary/10 text-primary",
           (type === "no-data" || type === "no-results") &&

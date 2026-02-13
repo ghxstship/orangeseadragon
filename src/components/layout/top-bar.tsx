@@ -21,9 +21,10 @@ import {
   RefreshCw,
   Check,
   Loader2,
+  Menu,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useLanguageStore, SUPPORTED_LANGUAGES } from "@/lib/i18n";
+import { useLanguageStore, useTranslation, SUPPORTED_LANGUAGES } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -47,8 +48,9 @@ export function TopBar() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguageStore();
+  const { t } = useTranslation();
   const [mounted, setMounted] = React.useState(false);
-  const { setCommandPaletteOpen } = useUIStore();
+  const { setCommandPaletteOpen, setMobileSidebarOpen } = useUIStore();
   const supabase = useSupabase();
 
   // Live data hooks
@@ -93,10 +95,10 @@ export function TopBar() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "just now";
-    if (diffMins < 60) return `${diffMins} min ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    if (diffMins < 1) return t("time.justNow");
+    if (diffMins < 60) return t("time.minutesAgo", { count: diffMins });
+    if (diffHours < 24) return t("time.hoursAgo", { count: diffHours });
+    return t("time.daysAgo", { count: diffDays });
   };
 
   // UUID pattern for detecting record detail pages
@@ -125,18 +127,27 @@ export function TopBar() {
   }, [pathname]);
 
   return (
-    <header className="fixed top-0 z-40 flex h-14 w-full items-center border-b bg-background px-4">
+    <header role="banner" aria-label="Application header" className="fixed top-0 z-40 flex h-14 w-full items-center border-b bg-background px-4 safe-area-top">
       <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden h-9 w-9"
+          onClick={() => setMobileSidebarOpen(true)}
+          aria-label="Open navigation menu"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
         <Link href="/core/dashboard" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
             A
           </div>
           <span className="hidden font-semibold md:inline-block">ATLVS</span>
         </Link>
-        <OrgSwitcher className="ml-2" />
+        <OrgSwitcher className="ml-2 hidden sm:flex" />
       </div>
 
-      <nav className="ml-6 hidden items-center gap-1 text-sm md:flex">
+      <nav aria-label="Breadcrumb" className="ml-6 hidden items-center gap-1 text-sm md:flex">
         {breadcrumbs.map((crumb, index) => (
           <React.Fragment key={crumb.href}>
             {index > 0 && (
@@ -169,7 +180,7 @@ export function TopBar() {
           onClick={() => setCommandPaletteOpen(true)}
         >
           <Search className="mr-2 h-4 w-4" />
-          <span className="flex-1 truncate text-left">Search or type a command...</span>
+          <span className="flex-1 truncate text-left">{t("nav.search")}</span>
           <kbd className="pointer-events-none absolute right-2 top-1/2 inline-flex h-5 -translate-y-1/2 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
             <span className="text-xs">⌘</span>
             <span className="text-xs">K</span>
@@ -181,13 +192,14 @@ export function TopBar() {
           size="icon" 
           className="lg:hidden"
           onClick={() => setCommandPaletteOpen(true)}
+          aria-label={t("topBar.searchLabel")}
         >
           <Search className="h-5 w-5" />
         </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative" aria-label={t("topBar.notifications")}>
               <Bell className="h-5 w-5" />
               {notificationUnreadCount > 0 && (
                 <Badge
@@ -201,7 +213,7 @@ export function TopBar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <div className="flex items-center justify-between px-2">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("topBar.notifications")}</DropdownMenuLabel>
               {notificationUnreadCount > 0 && (
                 <Button
                   variant="ghost"
@@ -213,7 +225,7 @@ export function TopBar() {
                   }}
                 >
                   <Check className="mr-1 h-3 w-3" />
-                  Mark all read
+                  {t("topBar.markAllRead")}
                 </Button>
               )}
             </div>
@@ -224,7 +236,7 @@ export function TopBar() {
               </div>
             ) : notifications.length === 0 ? (
               <div className="py-4 text-center text-sm text-muted-foreground">
-                No notifications
+                {t("topBar.noNotifications")}
               </div>
             ) : (
               notifications.map((notification) => (
@@ -254,14 +266,14 @@ export function TopBar() {
               className="justify-center"
               onClick={() => router.push("/account/history")}
             >
-              View all notifications
+              {t("topBar.viewAllNotifications")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative hidden sm:inline-flex" aria-label={t("topBar.inbox")}>
               <Inbox className="h-5 w-5" />
               {inboxUnreadCount > 0 && (
                 <Badge
@@ -274,7 +286,7 @@ export function TopBar() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
-            <DropdownMenuLabel>Inbox</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("topBar.inbox")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {inboxLoading ? (
               <div className="flex items-center justify-center py-4">
@@ -282,7 +294,7 @@ export function TopBar() {
               </div>
             ) : inboxItems.length === 0 ? (
               <div className="py-4 text-center text-sm text-muted-foreground">
-                Your inbox is empty
+                {t("topBar.inboxEmpty")}
               </div>
             ) : (
               inboxItems.map((item) => (
@@ -319,76 +331,76 @@ export function TopBar() {
               className="justify-center"
               onClick={() => router.push("/account/support")}
             >
-              View all messages
+              {t("topBar.viewAllMessages")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hidden md:inline-flex" aria-label={t("topBar.settings")}>
               <Settings className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Settings</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("topBar.settings")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/account/organization")}>
-              Workspace settings
+              {t("topBar.workspaceSettings")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/platform")}>
-              Integrations
+              {t("topBar.integrations")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/platform")}>
-              API keys
+              {t("topBar.apiKeys")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/platform")}>
-              Webhooks
+              {t("topBar.webhooks")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/platform")}>
-              Import/Export
+              {t("topBar.importExport")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hidden md:inline-flex" aria-label={t("topBar.helpAndSupport")}>
               <HelpCircle className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Support</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("topBar.support")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/account/resources")}>
-              Documentation
+              {t("topBar.documentation")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/resources")}>
-              Video tutorials
+              {t("topBar.videoTutorials")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/support")}>
-              Contact support
+              {t("topBar.contactSupport")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/support/tickets?type=bug")}>
-              Report bug
+              {t("topBar.reportBug")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/support/tickets?type=feature")}>
-              Feature request
+              {t("topBar.featureRequest")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/support")}>
-              System status
+              {t("topBar.systemStatus")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="hidden lg:inline-flex" aria-label={t("topBar.language")}>
               <Globe className="h-5 w-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Language</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("topBar.language")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {SUPPORTED_LANGUAGES.map((lang) => (
               <DropdownMenuItem
@@ -408,6 +420,7 @@ export function TopBar() {
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label={theme === "dark" ? t("topBar.switchToLight") : t("topBar.switchToDark")}
           >
             {theme === "dark" ? (
               <Sun className="h-5 w-5" />
@@ -448,29 +461,29 @@ export function TopBar() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/account/profile")}>
               <User className="mr-2 h-4 w-4" />
-              View profile
+              {t("topBar.viewProfile")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/organization")}>
               <Settings className="mr-2 h-4 w-4" />
-              Account settings
+              {t("topBar.accountSettings")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/history")}>
               <Activity className="mr-2 h-4 w-4" />
-              Activity log
+              {t("topBar.activityLog")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => router.push("/account/organization")}>
               <Building2 className="mr-2 h-4 w-4" />
-              Switch organization
+              {t("topBar.switchOrganization")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/account/profile")}>
               <RefreshCw className="mr-2 h-4 w-4" />
-              Preferences
+              {t("topBar.preferences")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
               <LogOut className="mr-2 h-4 w-4" />
-              Sign out
+              {t("topBar.signOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/hooks/use-supabase';
 import { useTasks } from '@/hooks/use-tasks';
 import { formatDistanceToNow } from 'date-fns';
+import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
 
 interface RecentActivityWidgetProps {
   title?: string;
@@ -76,16 +77,6 @@ export function RecentActivityWidget({ title = "Recent Activity", limit = 5 }: R
     );
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'done': return 'bg-emerald-500';
-      case 'in_progress': return 'bg-blue-500';
-      case 'todo': return 'bg-amber-500';
-      case 'blocked': return 'bg-destructive';
-      default: return 'bg-gray-500';
-    }
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -95,7 +86,7 @@ export function RecentActivityWidget({ title = "Recent Activity", limit = 5 }: R
         <div className="space-y-3">
           {recentTasks.map((task) => (
             <div key={task.id} className="flex items-start space-x-3">
-              <div className={`h-2 w-2 rounded-full mt-2 ${getStatusColor(task.status || 'todo')}`} />
+              <div className={`h-2 w-2 rounded-full mt-2 ${getStatusSolidClass(task.status || 'todo')}`} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{task.title}</p>
                 <div className="flex items-center space-x-2 mt-1">
