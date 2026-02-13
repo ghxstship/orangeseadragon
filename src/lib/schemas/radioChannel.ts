@@ -24,5 +24,13 @@ export const radioChannelSchema = defineSchema({
         { field: 'departmentId', format: { type: 'relation', entityType: 'department' } },
       ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/radio/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Channel', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+      { entity: 'department', foreignKey: 'departmentId', label: 'Department' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

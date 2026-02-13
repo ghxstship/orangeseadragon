@@ -85,10 +85,10 @@ export const bankConnectionSchema = defineSchema({
       },
       bankAccountId: {
         type: 'relation',
+        relation: { entity: 'bankAccount', display: 'name' },
         label: 'Linked Account',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'bankAccount', display: 'name' },
       },
     },
   },
@@ -167,5 +167,12 @@ export const bankConnectionSchema = defineSchema({
       { key: 'connect', label: 'Connect Bank', variant: 'primary', handler: { type: 'modal', component: 'BankConnectModal' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'bankAccount', foreignKey: 'bankAccountId', label: 'Bank Account' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

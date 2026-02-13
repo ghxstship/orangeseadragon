@@ -61,6 +61,7 @@ export const serviceHistorySchema = defineSchema({
       },
       vendor_id: {
         type: 'relation',
+        relation: { entity: 'company', display: 'name', searchable: true },
         label: 'Vendor',
         inForm: true,
       },
@@ -90,6 +91,7 @@ export const serviceHistorySchema = defineSchema({
       },
       work_order_id: {
         type: 'relation',
+        relation: { entity: 'workOrder', display: 'work_order_number' },
         label: 'Work Order',
         inForm: true,
       },
@@ -193,6 +195,15 @@ export const serviceHistorySchema = defineSchema({
       { key: 'create', label: 'Log Service', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/maintenance/history/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'asset', foreignKey: 'asset_id', label: 'Asset' },
+      { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
+      { entity: 'workOrder', foreignKey: 'work_order_id', label: 'Work Order' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

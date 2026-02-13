@@ -30,5 +30,13 @@ export const expenseSchema = defineSchema({
     { field: 'status', format: { type: 'badge', colorMap: { pending: '#eab308', approved: '#22c55e', rejected: '#ef4444', reimbursed: '#3b82f6' } } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/expenses/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Expense', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'projectId', label: 'Project' },
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

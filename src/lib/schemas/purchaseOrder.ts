@@ -27,14 +27,12 @@ export const purchaseOrderSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'vendor', display: 'name' },
       },
       event_id: {
         type: 'relation',
         label: 'Event',
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       project_id: {
         type: 'relation',
@@ -78,13 +76,11 @@ export const purchaseOrderSchema = defineSchema({
         type: 'relation',
         label: 'Ship To',
         inForm: true,
-        relation: { entity: 'address', display: 'formatted' },
       },
       billing_address_id: {
         type: 'relation',
         label: 'Bill To',
         inForm: true,
-        relation: { entity: 'address', display: 'formatted' },
       },
       currency_id: {
         type: 'relation',
@@ -239,5 +235,19 @@ export const purchaseOrderSchema = defineSchema({
       { key: 'create', label: 'New PO', variant: 'primary', handler: { type: 'navigate', path: '/operations/procurement/orders/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'user', foreignKey: 'approved_by_user_id', label: 'Approved By' },
+    ],
+    hasMany: [
+      { entity: 'purchaseOrderItem', foreignKey: 'purchase_order_id', label: 'Line Items', cascade: 'delete' },
+      { entity: 'goodsReceipt', foreignKey: 'purchase_order_id', label: 'Receipts', cascade: 'restrict' },
+      { entity: 'vendorPaymentSchedule', foreignKey: 'purchase_order_id', label: 'Payment Schedules', cascade: 'restrict' },
+    ],
+  },
+
   permissions: { create: true, read: true, update: true, delete: false },
 });

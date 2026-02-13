@@ -63,6 +63,7 @@ export const notificationSchema = defineSchema({
       },
       user_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'User',
         inTable: true,
       },
@@ -152,6 +153,13 @@ export const notificationSchema = defineSchema({
     ],
     global: []
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
 
   permissions: {
     create: false,

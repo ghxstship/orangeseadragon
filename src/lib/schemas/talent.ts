@@ -18,7 +18,6 @@ export const talentSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       talent_type_id: {
         type: 'relation',
@@ -83,14 +82,12 @@ export const talentSchema = defineSchema({
         type: 'relation',
         label: 'Currency',
         inForm: true,
-        relation: { entity: 'currency', display: 'code' },
       },
       agent_contact_id: {
         type: 'relation',
         label: 'Agent/Manager',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       status_id: {
         type: 'relation',
@@ -195,5 +192,13 @@ export const talentSchema = defineSchema({
       { key: 'create', label: 'Add Talent', variant: 'primary', handler: { type: 'navigate', path: '/productions/talent/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'currency', foreignKey: 'currency_id', label: 'Currency' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

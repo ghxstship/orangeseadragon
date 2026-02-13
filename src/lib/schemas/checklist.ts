@@ -65,6 +65,7 @@ export const checklistSchema = defineSchema({
       },
       assigned_to: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
@@ -171,6 +172,13 @@ export const checklistSchema = defineSchema({
       { key: 'create', label: 'New Checklist', variant: 'primary', handler: { type: 'navigate', path: () => '/core/tasks/checklists/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

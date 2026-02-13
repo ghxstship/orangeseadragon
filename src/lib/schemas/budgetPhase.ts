@@ -207,6 +207,13 @@ export const budgetPhaseSchema = defineSchema({
       { key: 'create', label: 'Add Phase', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'budget', foreignKey: 'budget_id', label: 'Budget' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -65,17 +65,16 @@ export const productionSchema = defineSchema({
         options: [],
       },
       venue_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Venue',
         inTable: true,
         inForm: true,
-        options: [],
       },
       project_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Project',
         inForm: true,
-        options: [],
+        relation: { entity: 'project', display: 'name', searchable: true },
       },
       project_manager_id: {
         type: 'select',
@@ -298,6 +297,15 @@ export const productionSchema = defineSchema({
       { key: 'create', label: 'New Production', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Production') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'client_id', label: 'Client' },
+      { entity: 'venue', foreignKey: 'venue_id', label: 'Venue' },
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

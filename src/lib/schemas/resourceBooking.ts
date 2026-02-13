@@ -29,13 +29,11 @@ export const resourceBookingSchema = defineSchema({
         label: 'Team Member',
         inTable: true,
         inForm: true,
-        relation: { entity: 'user', display: 'full_name' },
       },
       contact_id: {
         type: 'relation',
         label: 'Contractor/Freelancer',
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       project_id: {
         type: 'relation',
@@ -43,14 +41,12 @@ export const resourceBookingSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       event_id: {
         type: 'relation',
         label: 'Event',
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       deal_id: {
         type: 'relation',
@@ -158,7 +154,6 @@ export const resourceBookingSchema = defineSchema({
         type: 'relation',
         label: 'Budget',
         inForm: true,
-        relation: { entity: 'budget', display: 'name' },
       },
       labor_rule_set_id: {
         type: 'relation',
@@ -344,6 +339,19 @@ export const resourceBookingSchema = defineSchema({
       { key: 'create', label: 'New Booking', variant: 'primary', handler: { type: 'navigate', path: '/operations/resource-bookings/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'deal', foreignKey: 'deal_id', label: 'Deal' },
+      { entity: 'budget', foreignKey: 'budget_id', label: 'Budget' },
+      { entity: 'laborRuleSet', foreignKey: 'labor_rule_set_id', label: 'Labor Rule Set' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

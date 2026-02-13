@@ -40,7 +40,6 @@ export const dealSchema = defineSchema({
         label: 'Contact',
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       company_id: {
         type: 'relation',
@@ -48,7 +47,6 @@ export const dealSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'company', display: 'name' },
       },
       pipeline_id: {
         type: 'relation',
@@ -396,6 +394,22 @@ export const dealSchema = defineSchema({
     ],
     global: [
       { key: 'create', label: 'New Deal', variant: 'primary', handler: { type: 'navigate', path: () => '/business/deals/new' } },
+    ],
+  },
+
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'pipeline', foreignKey: 'pipeline_id', label: 'Pipeline' },
+      { entity: 'contact', foreignKey: 'referral_contact_id', label: 'Referred By' },
+      { entity: 'project', foreignKey: 'converted_project_id', label: 'Converted Project' },
+    ],
+    hasMany: [
+      { entity: 'venueHold', foreignKey: 'deal_id', label: 'Venue Holds', cascade: 'delete' },
+      { entity: 'proposal', foreignKey: 'deal_id', label: 'Proposals', cascade: 'delete' },
+      { entity: 'activity', foreignKey: 'deal_id', label: 'Activities', cascade: 'delete' },
+      { entity: 'rfpResponse', foreignKey: 'deal_id', label: 'RFP Responses', cascade: 'nullify' },
     ],
   },
 

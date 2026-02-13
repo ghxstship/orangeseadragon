@@ -180,6 +180,15 @@ export const challengeParticipantSchema = defineSchema({
     bulk: [],
     global: [],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'challenge', foreignKey: 'challenge_id', label: 'Challenge' },
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+      { entity: 'team', foreignKey: 'team_id', label: 'Team' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

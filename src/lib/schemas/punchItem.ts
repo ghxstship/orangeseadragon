@@ -45,10 +45,10 @@ export const punchItemSchema = defineSchema({
         options: [],
       },
       work_order_id: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'workOrder', display: 'work_order_number' },
         label: 'Work Order',
         inForm: true,
-        options: [],
       },
       inspection_id: {
         type: 'select',
@@ -63,7 +63,8 @@ export const punchItemSchema = defineSchema({
         inForm: true,
       },
       category: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'category', display: 'name' },
         label: 'Category',
         inTable: true,
         inForm: true,
@@ -110,13 +111,12 @@ export const punchItemSchema = defineSchema({
         label: 'Assigned To',
         inTable: true,
         inForm: true,
-        options: [],
       },
       reported_by_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Reported By',
         inForm: true,
-        options: [],
+        relation: { entity: 'user', display: 'full_name' },
       },
       due_date: {
         type: 'date',
@@ -253,6 +253,15 @@ export const punchItemSchema = defineSchema({
       { key: 'create', label: 'New Punch Item', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Punch Item') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'workOrder', foreignKey: 'work_order_id', label: 'Work Order' },
+      { entity: 'category', foreignKey: 'category', label: 'Category' },
+      { entity: 'user', foreignKey: 'reported_by_id', label: 'Reported By' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

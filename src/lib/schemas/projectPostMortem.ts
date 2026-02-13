@@ -61,10 +61,10 @@ export const projectPostMortemSchema = defineSchema({
       },
       facilitator_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name' },
         label: 'Facilitator',
         inTable: true,
         inForm: true,
-        relation: { entity: 'users', display: 'name' },
       },
       summary: {
         type: 'richtext',
@@ -211,6 +211,14 @@ export const projectPostMortemSchema = defineSchema({
       { key: 'create', label: 'New Post-Mortem', variant: 'primary', handler: { type: 'navigate', path: '/projects/post-mortems/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'user', foreignKey: 'facilitator_id', label: 'Facilitator' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

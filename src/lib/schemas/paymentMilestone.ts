@@ -127,10 +127,10 @@ export const paymentMilestoneSchema = defineSchema({
       },
       invoice_id: {
         type: 'relation',
+        relation: { entity: 'invoice', display: 'invoice_number' },
         label: 'Invoice',
         inTable: true,
         inDetail: true,
-        relation: { entity: 'invoice', display: 'invoice_number' },
       },
       paid_at: {
         type: 'datetime',
@@ -248,6 +248,14 @@ export const paymentMilestoneSchema = defineSchema({
       { key: 'create', label: 'Add Milestone', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'budget', foreignKey: 'budget_id', label: 'Budget' },
+      { entity: 'invoice', foreignKey: 'invoice_id', label: 'Invoice' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

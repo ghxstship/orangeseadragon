@@ -21,11 +21,11 @@ export const serviceTicketSchema = defineSchema({
       },
       contact_id: {
         type: 'relation',
+        relation: { entity: 'contact', display: 'full_name', searchable: true },
         label: 'Customer',
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       subject: {
         type: 'text',
@@ -91,10 +91,10 @@ export const serviceTicketSchema = defineSchema({
       },
       assigned_to_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       channel: {
         type: 'select',
@@ -217,5 +217,13 @@ export const serviceTicketSchema = defineSchema({
       { key: 'create', label: 'New Ticket', variant: 'primary', handler: { type: 'navigate', path: '/business/service/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'user', foreignKey: 'assigned_to_id', label: 'Assigned To' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

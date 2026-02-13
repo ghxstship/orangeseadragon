@@ -25,21 +25,18 @@ export const timerSessionSchema = defineSchema({
         label: 'User',
         required: true,
         inTable: true,
-        relation: { entity: 'user_profile', display: 'headline' },
       },
       project_id: {
         type: 'relation',
         label: 'Project',
         inTable: true,
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       task_id: {
         type: 'relation',
         label: 'Task',
         inTable: true,
         inForm: true,
-        relation: { entity: 'task', display: 'title' },
       },
       event_id: {
         type: 'relation',
@@ -87,9 +84,9 @@ export const timerSessionSchema = defineSchema({
       },
       time_entry_id: {
         type: 'relation',
+        relation: { entity: 'timeEntry', display: 'description' },
         label: 'Converted To',
         inDetail: true,
-        relation: { entity: 'time_entry', display: 'id' },
       },
     },
     computed: {
@@ -173,6 +170,16 @@ export const timerSessionSchema = defineSchema({
     bulk: [],
     global: [
       { key: 'start', label: 'Start Timer', variant: 'primary', handler: { type: 'function', fn: () => {} } },
+    ],
+  },
+
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'task', foreignKey: 'task_id', label: 'Task' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'timeEntry', foreignKey: 'time_entry_id', label: 'Converted To' },
     ],
   },
 

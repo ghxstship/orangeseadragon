@@ -30,7 +30,6 @@ export const clientPortalAccessSchema = defineSchema({
         inTable: true,
         inForm: true,
         inDetail: true,
-        relation: { entity: 'company', display: 'name' },
       },
       contact_id: {
         type: 'relation',
@@ -219,6 +218,14 @@ export const clientPortalAccessSchema = defineSchema({
       { key: 'invite', label: 'Invite Client', variant: 'primary', handler: { type: 'navigate', path: '/ecosystem/client-portal/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -59,16 +59,15 @@ export const permitSchema = defineSchema({
         options: [],
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Event',
         inForm: true,
-        options: [],
       },
       venue_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Venue',
         inForm: true,
-        options: [],
+        relation: { entity: 'venue', display: 'name', searchable: true },
       },
       issuing_authority: {
         type: 'text',
@@ -272,6 +271,14 @@ export const permitSchema = defineSchema({
       { key: 'create', label: 'New Permit', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Permit') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'venue', foreignKey: 'venue_id', label: 'Venue' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

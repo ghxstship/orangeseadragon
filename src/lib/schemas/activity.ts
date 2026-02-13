@@ -77,6 +77,7 @@ export const activitySchema = defineSchema({
       },
       assigned_to: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
@@ -194,6 +195,16 @@ export const activitySchema = defineSchema({
       { key: 'create', label: 'New Activity', variant: 'primary', handler: { type: 'navigate', path: () => '/business/pipeline/activities/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'deal', foreignKey: 'deal_id', label: 'Deal' },
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

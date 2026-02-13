@@ -33,7 +33,6 @@ export const offboardingTemplateSchema = defineSchema({
         label: 'Position Type',
         inTable: true,
         inForm: true,
-        relation: { entity: 'position_type', display: 'name' },
       },
       department_id: {
         type: 'relation',
@@ -142,5 +141,12 @@ export const offboardingTemplateSchema = defineSchema({
       { key: 'create', label: 'New Template', variant: 'primary', handler: { type: 'navigate', path: '/people/offboarding/templates/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'department', foreignKey: 'department_id', label: 'Department' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

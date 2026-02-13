@@ -19,5 +19,12 @@ export const positionSchema = defineSchema({
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'production', label: 'Production', query: { where: { category: 'production' } } }, { key: 'technical', label: 'Technical', query: { where: { category: 'technical' } } }, { key: 'operations', label: 'Operations', query: { where: { category: 'operations' } } }, { key: 'admin', label: 'Admin', query: { where: { category: 'admin' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'rate', label: 'Hourly Rate', value: { type: 'field', field: 'hourlyRate' }, format: 'currency' }], blocks: [{ key: 'desc', title: 'Description', content: { type: 'fields', fields: ['description', 'requirements'] } }] } }, form: { sections: [{ key: 'basic', title: 'Position Details', fields: ['name', 'departmentId', 'category', 'hourlyRate', 'description', 'requirements'] }] } },
   views: { table: { columns: ['name', 'departmentId', 'category', 'hourlyRate'] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/positions/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Position', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'department', foreignKey: 'departmentId', label: 'Department' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

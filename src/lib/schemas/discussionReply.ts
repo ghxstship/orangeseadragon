@@ -164,6 +164,13 @@ export const discussionReplySchema = defineSchema({
     bulk: [],
     global: [],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'discussion', foreignKey: 'discussion_id', label: 'Discussion' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

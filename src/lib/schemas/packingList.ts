@@ -37,6 +37,7 @@ export const packingListSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         inTable: true,
         inForm: true,
@@ -236,6 +237,7 @@ export const packingListItemSchema = defineSchema({
       },
       asset_id: {
         type: 'relation',
+        relation: { entity: 'asset', display: 'name' },
         label: 'Asset',
         required: true,
         inTable: true,

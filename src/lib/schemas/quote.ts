@@ -36,19 +36,16 @@ export const quoteSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'company', display: 'name' },
       },
       contactId: {
         type: 'relation',
         label: 'Contact',
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       projectId: {
         type: 'relation',
         label: 'Project',
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       eventId: {
         type: 'relation',
@@ -273,5 +270,15 @@ export const quoteSchema = defineSchema({
       { key: 'create', label: 'New Quote', variant: 'primary', handler: { type: 'navigate', path: '/finance/quotes/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'clientId', label: 'Client' },
+      { entity: 'contact', foreignKey: 'contactId', label: 'Contact' },
+      { entity: 'project', foreignKey: 'projectId', label: 'Project' },
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

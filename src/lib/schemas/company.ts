@@ -77,5 +77,17 @@ export const companySchema = defineSchema({
     { field: 'contactCount', format: { type: 'number' } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/companies/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Company', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    hasMany: [
+      { entity: 'contact', foreignKey: 'company_id', label: 'Contacts', cascade: 'nullify' },
+      { entity: 'deal', foreignKey: 'company_id', label: 'Deals', cascade: 'nullify' },
+      { entity: 'project', foreignKey: 'client_id', label: 'Projects', cascade: 'restrict' },
+      { entity: 'invoice', foreignKey: 'company_id', label: 'Invoices', cascade: 'restrict' },
+      { entity: 'purchaseOrder', foreignKey: 'vendor_id', label: 'Purchase Orders', cascade: 'restrict' },
+      { entity: 'contract', foreignKey: 'company_id', label: 'Contracts', cascade: 'restrict' },
+      { entity: 'asset', foreignKey: 'vendor_id', label: 'Supplied Assets', cascade: 'nullify' },
+    ],
+  },
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -52,6 +52,7 @@ export const cateringSchema = defineSchema({
       },
       vendor_id: {
         type: 'relation',
+        relation: { entity: 'company', display: 'name', searchable: true },
         label: 'Vendor',
         inTable: true,
         inForm: true,
@@ -208,6 +209,15 @@ export const cateringSchema = defineSchema({
       { key: 'create', label: 'New Order', variant: 'primary', handler: { type: 'navigate', path: () => '/productions/advancing/catering/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'resourceBooking', foreignKey: 'booking_id', label: 'Booking' },
+      { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

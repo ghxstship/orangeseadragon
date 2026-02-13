@@ -53,16 +53,15 @@ export const inspectionSchema = defineSchema({
         options: [],
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Event',
         inForm: true,
-        options: [],
       },
       work_order_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Work Order',
         inForm: true,
-        options: [],
+        relation: { entity: 'workOrder', display: 'work_order_number' },
       },
       scheduled_date: {
         type: 'date',
@@ -248,6 +247,14 @@ export const inspectionSchema = defineSchema({
       { key: 'create', label: 'New Inspection', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Inspection') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'workOrder', foreignKey: 'work_order_id', label: 'Work Order' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

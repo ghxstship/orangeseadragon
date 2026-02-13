@@ -24,5 +24,12 @@ export const zoneSchema = defineSchema({
         { field: 'capacity', format: { type: 'number' } },
       ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/zones/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Zone', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'venue', foreignKey: 'venueId', label: 'Venue' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

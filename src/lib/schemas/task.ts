@@ -90,6 +90,7 @@ export const taskSchema = defineSchema({
         label: 'Project',
         inTable: true,
         inForm: true,
+        relation: { entity: 'project', display: 'name', searchable: true },
       },
       importance: {
         type: 'number',
@@ -117,6 +118,7 @@ export const taskSchema = defineSchema({
       },
       list_id: {
         type: 'relation',
+        relation: { entity: 'taskList', display: 'name' },
         label: 'List',
         inForm: true,
       },

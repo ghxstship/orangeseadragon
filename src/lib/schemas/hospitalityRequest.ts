@@ -51,10 +51,10 @@ export const hospitalityRequestSchema = defineSchema({
       },
       contact_id: {
         type: 'relation',
+        relation: { entity: 'contact', display: 'full_name', searchable: true },
         label: 'Contact',
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       description: {
         type: 'textarea',
@@ -124,10 +124,10 @@ export const hospitalityRequestSchema = defineSchema({
       },
       vendor_id: {
         type: 'relation',
+        relation: { entity: 'company', display: 'name', searchable: true },
         label: 'Vendor',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'vendor', display: 'name' },
       },
     },
   },
@@ -220,5 +220,14 @@ export const hospitalityRequestSchema = defineSchema({
       { key: 'create', label: 'New Request', variant: 'primary', handler: { type: 'navigate', path: '/productions/hospitality/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

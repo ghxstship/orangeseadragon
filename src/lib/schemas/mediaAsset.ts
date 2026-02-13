@@ -54,11 +54,11 @@ export const mediaAssetSchema = defineSchema({
       },
       project_id: {
         type: 'relation',
+        relation: { entity: 'project', display: 'name', searchable: true },
         label: 'Project',
         inTable: true,
         inForm: true,
         inDetail: true,
-        relation: { entity: 'projects', display: 'name' },
       },
       file_url: {
         type: 'url',
@@ -258,6 +258,13 @@ export const mediaAssetSchema = defineSchema({
       { key: 'upload', label: 'Upload Asset', variant: 'primary', handler: { type: 'navigate', path: '/documents/media-assets/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

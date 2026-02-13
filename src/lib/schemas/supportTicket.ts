@@ -43,14 +43,12 @@ export const supportTicketSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       company_id: {
         type: 'relation',
         label: 'Company',
         inTable: true,
         inForm: true,
-        relation: { entity: 'company', display: 'name' },
       },
       category_id: {
         type: 'relation',
@@ -95,7 +93,6 @@ export const supportTicketSchema = defineSchema({
         label: 'Assigned To',
         inTable: true,
         inForm: true,
-        relation: { entity: 'profile', display: 'full_name' },
       },
       assigned_team_id: {
         type: 'relation',
@@ -121,7 +118,6 @@ export const supportTicketSchema = defineSchema({
         type: 'relation',
         label: 'Related Event',
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       registration_id: {
         type: 'relation',
@@ -256,5 +252,16 @@ export const supportTicketSchema = defineSchema({
       { key: 'create', label: 'New Ticket', variant: 'primary', handler: { type: 'navigate', path: '/operations/support/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'category', foreignKey: 'category_id', label: 'Category' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'registration', foreignKey: 'registration_id', label: 'Registration' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: false },
 });

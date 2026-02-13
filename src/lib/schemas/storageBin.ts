@@ -34,6 +34,7 @@ export const storageBinSchema = defineSchema({
       },
       warehouse_id: {
         type: 'relation',
+        relation: { entity: 'warehouse', display: 'name' },
         label: 'Warehouse',
         required: true,
         inTable: true,
@@ -179,6 +180,13 @@ export const storageBinSchema = defineSchema({
       { key: 'create', label: 'New Bin', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/locations/bins/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'warehouse', foreignKey: 'warehouse_id', label: 'Warehouse' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

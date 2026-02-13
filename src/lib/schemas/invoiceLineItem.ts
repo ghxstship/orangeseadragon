@@ -166,6 +166,13 @@ export const invoiceLineItemSchema = defineSchema({
       { key: 'create', label: 'Add Line Item', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'invoice', foreignKey: 'invoice_id', label: 'Invoice' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

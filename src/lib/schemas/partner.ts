@@ -18,7 +18,6 @@ export const partnerSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       company_id: {
         type: 'relation',
@@ -26,7 +25,6 @@ export const partnerSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'company', display: 'name' },
       },
       partner_type_id: {
         type: 'relation',
@@ -34,14 +32,12 @@ export const partnerSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'partner_type', display: 'name' },
       },
       sponsorship_level_id: {
         type: 'relation',
         label: 'Sponsorship Level',
         inTable: true,
         inForm: true,
-        relation: { entity: 'sponsorship_level', display: 'name' },
       },
       status_id: {
         type: 'relation',
@@ -49,7 +45,6 @@ export const partnerSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'status', display: 'name', filter: { domain: 'partner' } },
       },
       contract_id: {
         type: 'relation',
@@ -182,5 +177,14 @@ export const partnerSchema = defineSchema({
       { key: 'create', label: 'Add Partner', variant: 'primary', handler: { type: 'navigate', path: '/productions/partners/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'contract', foreignKey: 'contract_id', label: 'Contract' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

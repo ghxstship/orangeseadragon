@@ -30,5 +30,13 @@ export const reservationSchema = defineSchema({
     { field: 'status', format: { type: 'badge', colorMap: { pending: '#eab308', approved: '#22c55e', rejected: '#ef4444', completed: '#6b7280' } } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/reservations/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Reservation', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'asset', foreignKey: 'assetId', label: 'Asset' },
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

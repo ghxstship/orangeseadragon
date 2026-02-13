@@ -18,7 +18,6 @@ export const performanceReviewSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'user', display: 'full_name' },
       },
       reviewer_id: {
         type: 'relation',
@@ -226,5 +225,13 @@ export const performanceReviewSchema = defineSchema({
       { key: 'create', label: 'New Review', variant: 'primary', handler: { type: 'navigate', path: '/people/performance/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'employeeProfile', foreignKey: 'employee_id', label: 'Employee' },
+      { entity: 'user', foreignKey: 'reviewer_id', label: 'Reviewer' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

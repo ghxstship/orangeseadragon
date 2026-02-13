@@ -73,5 +73,12 @@ export const showSchema = defineSchema({
     bulk: [],
     global: [{ key: 'create', label: 'New Show', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

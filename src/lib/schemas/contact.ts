@@ -9,7 +9,7 @@ export const contactSchema = defineSchema({
       lastName: { type: 'text', label: 'Last Name', required: true, inTable: true, inForm: true, inDetail: true, sortable: true, searchable: true },
       email: { type: 'email', label: 'Email', required: true, inTable: true, inForm: true, searchable: true },
       phone: { type: 'phone', label: 'Phone', inTable: true, inForm: true },
-      companyId: { type: 'select', label: 'Company', inTable: true, inForm: true, options: [] },
+      companyId: { type: 'relation', label: 'Company', inTable: true, inForm: true, relation: { entity: 'company', display: 'name', searchable: true } },
       title: { type: 'text', label: 'Job Title', inTable: true, inForm: true },
       type: { type: 'select', label: 'Type', inTable: true, inForm: true, options: [{ label: 'Client', value: 'client', color: 'blue' }, { label: 'Vendor', value: 'vendor', color: 'green' }, { label: 'Partner', value: 'partner', color: 'purple' }, { label: 'Other', value: 'other', color: 'gray' }] },
       notes: { type: 'textarea', label: 'Notes', inForm: true, inDetail: true },
@@ -72,5 +72,17 @@ export const contactSchema = defineSchema({
     { field: 'type', format: { type: 'badge', colorMap: { primary: '#3b82f6', billing: '#22c55e', technical: '#8b5cf6', executive: '#f59e0b' } } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/contacts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Contact', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+    ],
+    hasMany: [
+      { entity: 'deal', foreignKey: 'contact_id', label: 'Deals', cascade: 'nullify' },
+      { entity: 'invoice', foreignKey: 'contact_id', label: 'Invoices', cascade: 'nullify' },
+      { entity: 'registration', foreignKey: 'contact_id', label: 'Registrations', cascade: 'nullify' },
+      { entity: 'activity', foreignKey: 'contact_id', label: 'Activities', cascade: 'delete' },
+    ],
+  },
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

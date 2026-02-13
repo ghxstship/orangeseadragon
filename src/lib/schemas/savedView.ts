@@ -95,6 +95,7 @@ export const savedViewSchema = defineSchema({
       },
       user_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Owner',
         inTable: true,
       },
@@ -184,6 +185,13 @@ export const savedViewSchema = defineSchema({
       { key: 'create', label: 'Save Current View', variant: 'primary', handler: { type: 'function', fn: () => {} } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

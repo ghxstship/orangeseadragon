@@ -82,6 +82,7 @@ export const escalationChainSchema = defineSchema({
       },
       venue_id: {
         type: 'relation',
+        relation: { entity: 'venue', display: 'name', searchable: true },
         label: 'Venue',
         inForm: true,
       },
@@ -106,6 +107,7 @@ export const escalationChainSchema = defineSchema({
       },
       created_by_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name' },
         label: 'Created By',
         inDetail: true,
       },
@@ -204,6 +206,15 @@ export const escalationChainSchema = defineSchema({
       { key: 'create', label: 'New Chain', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'venue', foreignKey: 'venue_id', label: 'Venue' },
+      { entity: 'user', foreignKey: 'created_by_id', label: 'Created By' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

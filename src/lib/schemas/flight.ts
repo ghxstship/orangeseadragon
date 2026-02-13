@@ -33,6 +33,7 @@ export const flightSchema = defineSchema({
       },
       booking_id: {
         type: 'relation',
+        relation: { entity: 'resourceBooking', display: 'name' },
         label: 'Talent Booking',
         inForm: true,
       },
@@ -204,6 +205,14 @@ export const flightSchema = defineSchema({
       { key: 'create', label: 'New Flight', variant: 'primary', handler: { type: 'navigate', path: () => '/people/travel/flights/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'resourceBooking', foreignKey: 'booking_id', label: 'Booking' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

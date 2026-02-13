@@ -205,5 +205,12 @@ export const networkingSessionSchema = defineSchema({
       { key: 'create', label: 'New Session', variant: 'primary', handler: { type: 'navigate', path: '/productions/networking/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

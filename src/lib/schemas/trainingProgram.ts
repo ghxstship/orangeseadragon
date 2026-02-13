@@ -68,13 +68,11 @@ export const trainingProgramSchema = defineSchema({
         type: 'multiselect',
         label: 'Required for Departments',
         inForm: true,
-        relation: { entity: 'department', display: 'name' },
       },
       required_for_positions: {
         type: 'multiselect',
         label: 'Required for Positions',
         inForm: true,
-        relation: { entity: 'position', display: 'title' },
       },
       certification_type_id: {
         type: 'relation',

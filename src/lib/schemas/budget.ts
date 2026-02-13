@@ -56,21 +56,18 @@ export const budgetSchema = defineSchema({
         label: 'Project',
         inTable: true,
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       event_id: {
         type: 'relation',
         label: 'Event',
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       parent_budget_id: {
         type: 'relation',
         label: 'Parent Budget',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'budget', display: 'name' },
       },
       department_id: {
         type: 'relation',
@@ -496,6 +493,22 @@ export const budgetSchema = defineSchema({
     global: [
       { key: 'create', label: 'New Budget', variant: 'primary', handler: { type: 'navigate', path: () => '/finance/budgets/new' } },
       { key: 'from-template', label: 'From Template', handler: { type: 'function', fn: () => {} } },
+    ],
+  },
+
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'department', foreignKey: 'department_id', label: 'Department' },
+      { entity: 'budget', foreignKey: 'parent_budget_id', label: 'Parent Budget' },
+    ],
+    hasMany: [
+      { entity: 'budgetLineItem', foreignKey: 'budget_id', label: 'Line Items', cascade: 'delete' },
+      { entity: 'budgetPhase', foreignKey: 'budget_id', label: 'Phases', cascade: 'delete' },
+      { entity: 'paymentMilestone', foreignKey: 'budget_id', label: 'Payment Milestones', cascade: 'delete' },
+      { entity: 'expense', foreignKey: 'budget_id', label: 'Expenses', cascade: 'nullify' },
+      { entity: 'invoice', foreignKey: 'budget_id', label: 'Invoices', cascade: 'restrict' },
     ],
   },
 

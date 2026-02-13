@@ -32,6 +32,7 @@ export const kitItemSchema = defineSchema({
       },
       category_id: {
         type: 'relation',
+        relation: { entity: 'category', display: 'name' },
         label: 'Category',
         inTable: true,
         inForm: true,
@@ -164,6 +165,15 @@ export const kitItemSchema = defineSchema({
       { key: 'add', label: 'Add Item', variant: 'primary', handler: { type: 'function', fn: () => console.log('Add item') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'kit', foreignKey: 'kit_id', label: 'Kit' },
+      { entity: 'asset', foreignKey: 'asset_id', label: 'Asset' },
+      { entity: 'category', foreignKey: 'category_id', label: 'Category' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

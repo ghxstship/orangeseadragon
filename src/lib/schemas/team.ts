@@ -50,5 +50,13 @@ export const teamSchema = defineSchema({
     bulk: [],
     global: [{ key: 'create', label: 'New Team', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'projectId', label: 'Project' },
+      { entity: 'lead', foreignKey: 'leadId', label: 'Lead' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -18,7 +18,6 @@ export const projectResourceSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       contact_id: {
         type: 'relation',
@@ -124,9 +123,9 @@ export const projectResourceSchema = defineSchema({
       },
       budget_id: {
         type: 'relation',
+        relation: { entity: 'budget', display: 'name' },
         label: 'Budget',
         inForm: true,
-        relation: { entity: 'budget', display: 'name' },
       },
       confirmed_at: {
         type: 'datetime',
@@ -218,5 +217,14 @@ export const projectResourceSchema = defineSchema({
       { key: 'create', label: 'Add Resource', variant: 'primary', handler: { type: 'navigate', path: '/productions/resources/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'budget', foreignKey: 'budget_id', label: 'Budget' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

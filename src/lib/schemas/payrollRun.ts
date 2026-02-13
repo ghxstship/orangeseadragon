@@ -99,9 +99,9 @@ export const payrollRunSchema = defineSchema({
       },
       approved_by_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name' },
         label: 'Approved By',
         inDetail: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       approved_at: {
         type: 'datetime',
@@ -204,5 +204,12 @@ export const payrollRunSchema = defineSchema({
       { key: 'create', label: 'New Payroll Run', variant: 'primary', handler: { type: 'navigate', path: '/people/payroll/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'approved_by_id', label: 'Approved By' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

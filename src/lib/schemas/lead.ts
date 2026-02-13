@@ -20,5 +20,13 @@ export const leadSchema = defineSchema({
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'new', label: 'New', query: { where: { status: 'new' } }, count: true }, { key: 'contacted', label: 'Contacted', query: { where: { status: 'contacted' } }, count: true }, { key: 'qualified', label: 'Qualified', query: { where: { status: 'qualified' } }, count: true }, { key: 'converted', label: 'Converted', query: { where: { status: 'converted' } } }], defaultView: 'table', availableViews: ['table', 'kanban'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'value', label: 'Value', value: { type: 'field', field: 'value' }, format: 'currency' }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Lead Details', fields: ['name', 'contactId', 'companyId', 'source', 'status', 'value', 'notes'] }] } },
   views: { table: { columns: ['name', 'companyId', 'source', 'status', 'value'] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/leads/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Lead', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'contact', foreignKey: 'contactId', label: 'Contact' },
+      { entity: 'company', foreignKey: 'companyId', label: 'Company' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

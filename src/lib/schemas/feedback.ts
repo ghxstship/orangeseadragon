@@ -77,6 +77,7 @@ export const feedbackSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         inForm: true,
       },
@@ -179,6 +180,13 @@ export const feedbackSchema = defineSchema({
       { key: 'create', label: 'Give Feedback', variant: 'primary', handler: { type: 'navigate', path: () => '/people/performance/feedback/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

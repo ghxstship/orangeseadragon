@@ -117,6 +117,13 @@ export const reactionSchema = defineSchema({
     bulk: [],
     global: [],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

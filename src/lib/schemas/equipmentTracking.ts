@@ -29,6 +29,7 @@ export const equipmentTrackingSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         required: true,
         inTable: true,
@@ -102,6 +103,7 @@ export const equipmentTrackingSchema = defineSchema({
       },
       assigned_to_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,

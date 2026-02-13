@@ -45,6 +45,7 @@ export const crewCheckinSchema = defineSchema({
       },
       department_id: {
         type: 'relation',
+        relation: { entity: 'department', display: 'name' },
         label: 'Department',
         inTable: true,
         inForm: true,
@@ -316,6 +317,15 @@ export const crewCheckinSchema = defineSchema({
       { key: 'kiosk', label: 'Kiosk Mode', handler: { type: 'navigate', path: () => '/operations/crew-checkins/kiosk' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'shift', foreignKey: 'shift_id', label: 'Shift' },
+      { entity: 'department', foreignKey: 'department_id', label: 'Department' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

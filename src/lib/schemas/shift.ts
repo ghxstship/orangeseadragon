@@ -28,5 +28,13 @@ export const shiftSchema = defineSchema({
         { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', pending: '#f59e0b', active: '#22c55e', in_progress: '#f59e0b', completed: '#22c55e', cancelled: '#ef4444', approved: '#22c55e', rejected: '#ef4444', closed: '#6b7280', open: '#3b82f6', planned: '#3b82f6', published: '#3b82f6', confirmed: '#22c55e', submitted: '#3b82f6', resolved: '#22c55e', expired: '#ef4444' } } },
       ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/shifts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Shift', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'schedule', foreignKey: 'scheduleId', label: 'Schedule' },
+      { entity: 'position', foreignKey: 'positionId', label: 'Position' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

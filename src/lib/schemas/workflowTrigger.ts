@@ -47,6 +47,7 @@ export const workflowTriggerSchema = defineSchema({
       },
       workflow_id: {
         type: 'relation',
+        relation: { entity: 'workflow', display: 'name' },
         label: 'Workflow',
         required: true,
         inTable: true,
@@ -155,6 +156,13 @@ export const workflowTriggerSchema = defineSchema({
       { key: 'create', label: 'New Trigger', variant: 'primary', handler: { type: 'navigate', path: () => '/core/workflows/triggers/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'workflow', foreignKey: 'workflow_id', label: 'Workflow' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

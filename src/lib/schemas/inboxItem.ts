@@ -119,6 +119,7 @@ export const inboxItemSchema = defineSchema({
       },
       user_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Recipient',
         inForm: false,
       },
@@ -216,6 +217,13 @@ export const inboxItemSchema = defineSchema({
     ],
     global: []
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
 
   permissions: {
     create: false,

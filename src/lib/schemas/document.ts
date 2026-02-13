@@ -43,6 +43,7 @@ export const documentSchema = defineSchema({
       },
       folder_id: {
         type: 'relation',
+        relation: { entity: 'folder', display: 'name' },
         label: 'Folder',
         inTable: true,
         inForm: true,
@@ -176,6 +177,13 @@ export const documentSchema = defineSchema({
       { key: 'upload', label: 'Upload', variant: 'primary', handler: { type: 'navigate', path: () => '/core/documents/upload' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'folder', foreignKey: 'folder_id', label: 'Folder' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

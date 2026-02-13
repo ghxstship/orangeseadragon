@@ -87,10 +87,10 @@ export const campaignSchema = defineSchema({
       },
       template_id: {
         type: 'relation',
+        relation: { entity: 'template', display: 'name' },
         label: 'Email Template',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'email_template', display: 'name' },
       },
       audience_filter: {
         type: 'json',
@@ -114,10 +114,10 @@ export const campaignSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Related Event',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'event', display: 'name' },
       },
     },
   },
@@ -207,5 +207,13 @@ export const campaignSchema = defineSchema({
       { key: 'create', label: 'New Campaign', variant: 'primary', handler: { type: 'navigate', path: '/business/campaigns/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'template', foreignKey: 'template_id', label: 'Template' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

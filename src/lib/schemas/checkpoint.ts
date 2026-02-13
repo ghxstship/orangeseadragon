@@ -24,5 +24,13 @@ export const checkpointSchema = defineSchema({
     { field: 'status', format: { type: 'badge', colorMap: { active: '#22c55e', inactive: '#6b7280' } } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/checkpoints/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Checkpoint', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'venue', foreignKey: 'venueId', label: 'Venue' },
+      { entity: 'zone', foreignKey: 'zoneId', label: 'Zone' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

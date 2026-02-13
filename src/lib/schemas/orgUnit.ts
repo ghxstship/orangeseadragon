@@ -48,7 +48,6 @@ export const orgUnitSchema = defineSchema({
         label: 'Parent Unit',
         inTable: true,
         inForm: true,
-        relation: { entity: 'org_unit', display: 'name' },
       },
       head_id: {
         type: 'relation',

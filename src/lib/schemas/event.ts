@@ -211,6 +211,14 @@ export const eventSchema = defineSchema({
   },
 
   // Permissions
+  relationships: {
+    belongsTo: [
+      { entity: 'venue', foreignKey: 'venueId', label: 'Venue' },
+      { entity: 'company', foreignKey: 'clientId', label: 'Client' },
+    ],
+  },
+
+
   permissions: {
     create: true,
     read: true,

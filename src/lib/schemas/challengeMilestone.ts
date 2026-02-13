@@ -161,6 +161,13 @@ export const challengeMilestoneSchema = defineSchema({
       { key: 'create', label: 'Add Milestone', variant: 'primary', handler: { type: 'navigate', path: () => '/network/challenges/milestones/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'challenge', foreignKey: 'challenge_id', label: 'Challenge' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

@@ -41,11 +41,11 @@ export const rfpResponseSchema = defineSchema({
       },
       deal_id: {
         type: 'relation',
+        relation: { entity: 'deal', display: 'name' },
         label: 'Associated Deal',
         inTable: true,
         inForm: true,
         inDetail: true,
-        relation: { entity: 'deals', display: 'name' },
       },
       issuing_organization: {
         type: 'text',
@@ -119,7 +119,6 @@ export const rfpResponseSchema = defineSchema({
         label: 'Team Lead',
         inTable: true,
         inForm: true,
-        relation: { entity: 'users', display: 'name' },
       },
       response_document_id: {
         type: 'relation',
@@ -247,6 +246,13 @@ export const rfpResponseSchema = defineSchema({
       { key: 'create', label: 'New RFP Response', variant: 'primary', handler: { type: 'navigate', path: '/sales/rfp-responses/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'deal', foreignKey: 'deal_id', label: 'Deal' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

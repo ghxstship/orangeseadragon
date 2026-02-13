@@ -18,7 +18,6 @@ export const leaveRequestSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'staff_member', display: 'full_name' },
       },
       leave_type_id: {
         type: 'relation',
@@ -89,10 +88,10 @@ export const leaveRequestSchema = defineSchema({
       },
       approver_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name' },
         label: 'Approver',
         inTable: true,
         inDetail: true,
-        relation: { entity: 'staff_member', display: 'full_name' },
       },
       approved_at: {
         type: 'datetime',
@@ -204,5 +203,13 @@ export const leaveRequestSchema = defineSchema({
       { key: 'create', label: 'New Request', variant: 'primary', handler: { type: 'navigate', path: '/people/leave/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'staffMember', foreignKey: 'staff_member_id', label: 'Employee' },
+      { entity: 'leaveType', foreignKey: 'leave_type_id', label: 'Leave Type' },
+      { entity: 'staffMember', foreignKey: 'approver_id', label: 'Approver' },
+    ],
+  },
+
   permissions: { create: true, read: true, update: true, delete: false },
 });

@@ -28,5 +28,13 @@ export const contractSchema = defineSchema({
     { field: 'endDate', format: { type: 'date' } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/contracts/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Contract', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'companyId', label: 'Company' },
+      { entity: 'deal', foreignKey: 'dealId', label: 'Deal' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

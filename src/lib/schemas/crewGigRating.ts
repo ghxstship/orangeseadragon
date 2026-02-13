@@ -28,7 +28,6 @@ export const crewGigRatingSchema = defineSchema({
         inTable: true,
         inForm: true,
         inDetail: true,
-        relation: { entity: 'people', display: 'name' },
       },
       project_id: {
         type: 'relation',
@@ -116,10 +115,10 @@ export const crewGigRatingSchema = defineSchema({
       },
       rated_by: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name' },
         label: 'Rated By',
         inTable: true,
         inDetail: true,
-        relation: { entity: 'users', display: 'name' },
       },
       rated_at: {
         type: 'datetime',
@@ -197,6 +196,15 @@ export const crewGigRatingSchema = defineSchema({
       { key: 'create', label: 'Rate Crew', variant: 'primary', handler: { type: 'navigate', path: '/people/crew-ratings/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'employeeProfile', foreignKey: 'employee_id', label: 'Employee' },
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'user', foreignKey: 'rated_by', label: 'Rated By' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

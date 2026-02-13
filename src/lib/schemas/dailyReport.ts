@@ -27,6 +27,7 @@ export const dailyReportSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         required: true,
         inTable: true,
@@ -200,6 +201,13 @@ export const dailyReportSchema = defineSchema({
       { key: 'create', label: 'New Report', variant: 'primary', handler: { type: 'navigate', path: () => '/operations/comms/daily-reports/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

@@ -51,7 +51,6 @@ export const landingPageSchema = defineSchema({
         label: 'Campaign',
         inTable: true,
         inForm: true,
-        relation: { entity: 'campaign', display: 'name' },
       },
       form_id: {
         type: 'relation',
@@ -206,5 +205,12 @@ export const landingPageSchema = defineSchema({
       { key: 'create', label: 'New Page', variant: 'primary', handler: { type: 'navigate', path: '/content/landing-pages/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'campaign', foreignKey: 'campaign_id', label: 'Campaign' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

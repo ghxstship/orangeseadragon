@@ -174,5 +174,12 @@ export const credentialSchema = defineSchema({
     bulk: [],
     global: [{ key: 'create', label: 'Add Credential', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -182,6 +182,14 @@ export const runsheetSchema = defineSchema({
       { key: 'create', label: 'New Runsheet', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+      { entity: 'stage', foreignKey: 'stageId', label: 'Stage' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

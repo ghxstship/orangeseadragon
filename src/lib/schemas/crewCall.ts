@@ -27,6 +27,7 @@ export const crewCallSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         required: true,
         inTable: true,
@@ -166,6 +167,13 @@ export const crewCallSchema = defineSchema({
       { key: 'create', label: 'New Crew Call', variant: 'primary', handler: { type: 'navigate', path: () => '/operations/events/crew-calls/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

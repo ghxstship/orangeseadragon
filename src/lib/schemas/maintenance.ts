@@ -182,6 +182,13 @@ export const maintenanceSchema = defineSchema({
       { key: 'create', label: 'Schedule', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/maintenance/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'asset', foreignKey: 'asset_id', label: 'Asset' },
+    ],
+  },
+
+
 
 
   permissions: {

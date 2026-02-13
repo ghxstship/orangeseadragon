@@ -24,11 +24,11 @@ export const ticketTypeSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       description: {
         type: 'textarea',
@@ -46,10 +46,10 @@ export const ticketTypeSchema = defineSchema({
       },
       currency_id: {
         type: 'relation',
+        relation: { entity: 'currency', display: 'code' },
         label: 'Currency',
         required: true,
         inForm: true,
-        relation: { entity: 'currency', display: 'code' },
       },
       quantity_available: {
         type: 'number',
@@ -185,5 +185,13 @@ export const ticketTypeSchema = defineSchema({
       { key: 'create', label: 'New Ticket Type', variant: 'primary', handler: { type: 'navigate', path: '/productions/ticketing/types/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'currency', foreignKey: 'currency_id', label: 'Currency' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

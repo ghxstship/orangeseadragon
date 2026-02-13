@@ -18,7 +18,6 @@ export const trainingAssignmentSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'training_program', display: 'name' },
       },
       user_id: {
         type: 'relation',
@@ -26,7 +25,6 @@ export const trainingAssignmentSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'user', display: 'full_name' },
       },
       assigned_by: {
         type: 'relation',
@@ -191,5 +189,12 @@ export const trainingAssignmentSchema = defineSchema({
       { key: 'create', label: 'New Assignment', variant: 'primary', handler: { type: 'navigate', path: '/people/training/assignments/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

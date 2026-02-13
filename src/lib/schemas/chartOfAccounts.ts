@@ -38,7 +38,6 @@ export const chartOfAccountsSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'account_type', display: 'name' },
       },
       parent_account_id: {
         type: 'relation',

@@ -28,5 +28,12 @@ export const timesheetSchema = defineSchema({
     { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', submitted: '#3b82f6', approved: '#22c55e', rejected: '#ef4444', paid: '#8b5cf6' } } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/timesheets/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Timesheet', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -41,6 +41,7 @@ export const meetingBookingSchema = defineSchema({
       },
       meeting_type_id: {
         type: 'relation',
+        relation: { entity: 'meetingType', display: 'name' },
         label: 'Meeting Type',
         required: true,
         inTable: true,
@@ -105,6 +106,7 @@ export const meetingBookingSchema = defineSchema({
       },
       deal_id: {
         type: 'relation',
+        relation: { entity: 'deal', display: 'name' },
         label: 'Deal',
         inForm: true,
       },
@@ -229,6 +231,16 @@ export const meetingBookingSchema = defineSchema({
       { key: 'create', label: 'Schedule Meeting', variant: 'primary', handler: { type: 'navigate', path: () => '/business/meetings/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'meetingType', foreignKey: 'meeting_type_id', label: 'Meeting Type' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'deal', foreignKey: 'deal_id', label: 'Deal' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

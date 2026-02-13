@@ -76,22 +76,20 @@ export const certificateOfInsuranceSchema = defineSchema({
         options: [],
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Event',
         inForm: true,
-        options: [],
       },
       company_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Company',
         inForm: true,
-        options: [],
       },
       vendor_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Vendor',
         inForm: true,
-        options: [],
+        relation: { entity: 'company', display: 'name', searchable: true },
       },
       effective_date: {
         type: 'date',
@@ -197,5 +195,14 @@ export const certificateOfInsuranceSchema = defineSchema({
       { key: 'create', label: 'New Certificate', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

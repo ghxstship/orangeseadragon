@@ -141,6 +141,13 @@ export const messageSchema = defineSchema({
     bulk: [],
     global: [],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'conversation', foreignKey: 'conversation_id', label: 'Conversation' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

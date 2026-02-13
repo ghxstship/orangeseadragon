@@ -24,11 +24,11 @@ export const recurringInvoiceSchema = defineSchema({
       },
       clientId: {
         type: 'relation',
+        relation: { entity: 'company', display: 'name', searchable: true },
         label: 'Client',
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'company', display: 'name' },
       },
       frequency: {
         type: 'select',
@@ -133,9 +133,9 @@ export const recurringInvoiceSchema = defineSchema({
       },
       projectId: {
         type: 'relation',
+        relation: { entity: 'project', display: 'name', searchable: true },
         label: 'Project',
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       notes: {
         type: 'textarea',
@@ -223,5 +223,13 @@ export const recurringInvoiceSchema = defineSchema({
       { key: 'create', label: 'New Recurring Invoice', variant: 'primary', handler: { type: 'navigate', path: '/finance/recurring-invoices/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'clientId', label: 'Client' },
+      { entity: 'project', foreignKey: 'projectId', label: 'Project' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

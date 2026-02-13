@@ -243,6 +243,13 @@ export const crewRateCardSchema = defineSchema({
       { key: 'create', label: 'New Rate Card', variant: 'primary', handler: { type: 'navigate', path: '/people/rate-cards/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'employeeProfile', foreignKey: 'employee_id', label: 'Employee' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

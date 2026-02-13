@@ -29,6 +29,7 @@ export const vendorPortalAccessSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         required: true,
         inTable: true,
@@ -275,6 +276,7 @@ export const vendorDocumentSchema = defineSchema({
       },
       document_id: {
         type: 'relation',
+        relation: { entity: 'document', display: 'name' },
         label: 'Document',
         required: true,
         inTable: true,

@@ -86,21 +86,18 @@ export const invoiceSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'company', display: 'name' },
       },
       contact_id: {
         type: 'relation',
         label: 'Billing Contact',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       project_id: {
         type: 'relation',
         label: 'Project',
         inTable: true,
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       event_id: {
         type: 'relation',
@@ -412,6 +409,20 @@ export const invoiceSchema = defineSchema({
       { key: 'create', label: 'New Invoice', variant: 'primary', handler: { type: 'navigate', path: () => '/finance/invoices/new' } },
       { key: 'from-quote', label: 'From Quote', handler: { type: 'function', fn: () => {} } },
       { key: 'from-milestone', label: 'From Milestone', handler: { type: 'function', fn: () => {} } },
+    ],
+  },
+
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'company_id', label: 'Client / Company' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Billing Contact' },
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+    hasMany: [
+      { entity: 'invoiceLineItem', foreignKey: 'invoice_id', label: 'Line Items', cascade: 'delete' },
+      { entity: 'payment', foreignKey: 'invoice_id', label: 'Payments', cascade: 'restrict' },
+      { entity: 'creditNote', foreignKey: 'invoice_id', label: 'Credit Notes', cascade: 'restrict' },
     ],
   },
 

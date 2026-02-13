@@ -26,6 +26,7 @@ export const creditNoteSchema = defineSchema({
       },
       invoice_id: {
         type: 'relation',
+        relation: { entity: 'invoice', display: 'invoice_number' },
         label: 'Invoice',
         required: true,
         inTable: true,
@@ -174,6 +175,13 @@ export const creditNoteSchema = defineSchema({
       { key: 'create', label: 'New Credit Note', variant: 'primary', handler: { type: 'navigate', path: () => '/finance/invoices/credit-notes/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'invoice', foreignKey: 'invoice_id', label: 'Invoice' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

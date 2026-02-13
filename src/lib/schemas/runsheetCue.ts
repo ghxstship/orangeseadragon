@@ -116,6 +116,7 @@ export const runsheetCueSchema = defineSchema({
       },
       department_id: {
         type: 'relation',
+        relation: { entity: 'department', display: 'name' },
         label: 'Department',
         inForm: true,
       },
@@ -285,6 +286,15 @@ export const runsheetCueSchema = defineSchema({
       { key: 'create', label: 'Add Cue', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'runsheet', foreignKey: 'runsheet_id', label: 'Runsheet' },
+      { entity: 'user', foreignKey: 'assigned_to_id', label: 'Assigned To' },
+      { entity: 'department', foreignKey: 'department_id', label: 'Department' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

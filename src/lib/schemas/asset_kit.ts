@@ -31,6 +31,7 @@ export const assetKitSchema = defineSchema({
             },
             category_id: {
                 type: 'relation',
+                relation: { entity: 'category', display: 'name' },
                 label: 'Category',
                 inTable: true,
                 inForm: true,
@@ -153,6 +154,14 @@ export const assetKitSchema = defineSchema({
             { key: 'create', label: 'New Kit', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/kits/new' } },
         ],
     },
+  relationships: {
+    belongsTo: [
+      { entity: 'category', foreignKey: 'category_id', label: 'Category' },
+      { entity: 'template', foreignKey: 'template_id', label: 'Template' },
+    ],
+  },
+
+
 
     permissions: {
         create: true,

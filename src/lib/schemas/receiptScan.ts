@@ -73,10 +73,10 @@ export const receiptScanSchema = defineSchema({
       },
       expenseId: {
         type: 'relation',
+        relation: { entity: 'expense', display: 'description' },
         label: 'Linked Expense',
         inTable: true,
         inDetail: true,
-        relation: { entity: 'expense', display: 'description' },
       },
       errorMessage: {
         type: 'text',
@@ -184,5 +184,12 @@ export const receiptScanSchema = defineSchema({
       { key: 'upload', label: 'Upload Receipts', variant: 'primary', handler: { type: 'modal', component: 'ReceiptUploadModal' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'expense', foreignKey: 'expenseId', label: 'Expense' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

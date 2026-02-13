@@ -46,7 +46,6 @@ export const timePunchSchema = defineSchema({
         label: 'Event',
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       venueId: {
         type: 'relation',
@@ -195,7 +194,6 @@ export const timeEntrySchema = defineSchema({
         required: true,
         inTable: true,
         inDetail: true,
-        relation: { entity: 'employee_profile', display: 'full_name' },
       },
       eventId: {
         type: 'relation',

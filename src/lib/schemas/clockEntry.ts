@@ -98,7 +98,6 @@ export const clockEntrySchema = defineSchema({
         type: 'relation',
         label: 'Scheduled Shift',
         inDetail: true,
-        relation: { entity: 'shift', display: 'name' },
       },
       approved_by_id: {
         type: 'relation',
@@ -204,5 +203,14 @@ export const clockEntrySchema = defineSchema({
     ],
     global: [],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'employeeProfile', foreignKey: 'employee_id', label: 'Employee' },
+      { entity: 'shift', foreignKey: 'shift_id', label: 'Shift' },
+      { entity: 'user', foreignKey: 'approved_by_id', label: 'Approved By' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: false },
 });

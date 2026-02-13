@@ -32,5 +32,13 @@ export const checkInOutSchema = defineSchema({
     { field: 'condition', format: { type: 'badge', colorMap: { good: '#22c55e', fair: '#eab308', poor: '#f59e0b', damaged: '#ef4444' } } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/check/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Record', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'asset', foreignKey: 'assetId', label: 'Asset' },
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

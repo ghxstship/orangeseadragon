@@ -18,14 +18,12 @@ export const timeEntrySchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'project', display: 'name' },
       },
       task_id: {
         type: 'relation',
         label: 'Task',
         inTable: true,
         inForm: true,
-        relation: { entity: 'task', display: 'name' },
       },
       user_id: {
         type: 'relation',
@@ -33,7 +31,7 @@ export const timeEntrySchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
+        relation: { entity: 'user', display: 'full_name' },
       },
       date: {
         type: 'date',
@@ -90,7 +88,6 @@ export const timeEntrySchema = defineSchema({
         type: 'relation',
         label: 'Approved By',
         inDetail: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       approved_at: {
         type: 'datetime',
@@ -99,9 +96,9 @@ export const timeEntrySchema = defineSchema({
       },
       invoice_id: {
         type: 'relation',
+        relation: { entity: 'invoice', display: 'invoice_number' },
         label: 'Invoice',
         inDetail: true,
-        relation: { entity: 'invoice', display: 'invoice_number' },
       },
     },
   },
@@ -191,5 +188,15 @@ export const timeEntrySchema = defineSchema({
       { key: 'create', label: 'Log Time', variant: 'primary', handler: { type: 'navigate', path: '/productions/time/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'project_id', label: 'Project' },
+      { entity: 'task', foreignKey: 'task_id', label: 'Task' },
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+      { entity: 'user', foreignKey: 'approved_by_id', label: 'Approved By' },
+      { entity: 'invoice', foreignKey: 'invoice_id', label: 'Invoice' },
+    ],
+  },
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

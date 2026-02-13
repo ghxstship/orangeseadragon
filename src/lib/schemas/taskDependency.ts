@@ -119,6 +119,13 @@ export const taskDependencySchema = defineSchema({
     bulk: [],
     global: []
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'task', foreignKey: 'task_id', label: 'Task' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

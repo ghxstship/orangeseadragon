@@ -39,6 +39,7 @@ export const stageSchema = defineSchema({
       },
       venue_id: {
         type: 'relation',
+        relation: { entity: 'venue', display: 'name', searchable: true },
         label: 'Venue',
         inTable: true,
         inForm: true,
@@ -153,6 +154,14 @@ export const stageSchema = defineSchema({
       { key: 'create', label: 'New Stage', variant: 'primary', handler: { type: 'navigate', path: () => '/productions/stages/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'venue', foreignKey: 'venue_id', label: 'Venue' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

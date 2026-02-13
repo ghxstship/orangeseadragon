@@ -36,10 +36,10 @@ export const subscriberSchema = defineSchema({
       },
       contact_id: {
         type: 'relation',
+        relation: { entity: 'contact', display: 'full_name', searchable: true },
         label: 'Contact',
         inForm: true,
         inDetail: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       status: {
         type: 'select',
@@ -187,5 +187,12 @@ export const subscriberSchema = defineSchema({
       { key: 'import', label: 'Import', handler: { type: 'modal', component: 'SubscriberImport' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

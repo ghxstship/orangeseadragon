@@ -22,5 +22,13 @@ export const vendorSchema = defineSchema({
     { field: 'is_primary', format: { type: 'boolean', trueLabel: 'Primary', falseLabel: 'Secondary' } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/assets/vendors/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Vendor Contact', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

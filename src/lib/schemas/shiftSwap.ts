@@ -18,7 +18,6 @@ export const shiftSwapRequestSchema = defineSchema({
         required: true,
         inTable: true,
         inDetail: true,
-        relation: { entity: 'shift', display: 'name' },
       },
       requestingEmployeeId: {
         type: 'relation',
@@ -26,7 +25,6 @@ export const shiftSwapRequestSchema = defineSchema({
         required: true,
         inTable: true,
         inDetail: true,
-        relation: { entity: 'employee_profile', display: 'full_name' },
       },
       targetEmployeeId: {
         type: 'relation',

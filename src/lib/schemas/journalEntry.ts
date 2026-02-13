@@ -99,13 +99,11 @@ export const journalEntrySchema = defineSchema({
         type: 'relation',
         label: 'Reversal Of',
         inDetail: true,
-        relation: { entity: 'journal_entry', display: 'entry_number' },
       },
       reversed_by_id: {
         type: 'relation',
         label: 'Reversed By',
         inDetail: true,
-        relation: { entity: 'journal_entry', display: 'entry_number' },
       },
       posted_at: {
         type: 'datetime',

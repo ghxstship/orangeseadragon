@@ -62,6 +62,7 @@ export const approvalSchema = defineSchema({
       },
       assigned_to: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inDetail: true,
@@ -169,6 +170,13 @@ export const approvalSchema = defineSchema({
     bulk: [],
     global: []
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+    ],
+  },
+
+
 
   permissions: {
     create: false,

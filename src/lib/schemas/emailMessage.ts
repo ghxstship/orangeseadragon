@@ -98,6 +98,7 @@ export const emailMessageSchema = defineSchema({
       },
       deal_id: {
         type: 'relation',
+        relation: { entity: 'deal', display: 'name' },
         label: 'Deal',
         inForm: true,
       },
@@ -220,6 +221,15 @@ export const emailMessageSchema = defineSchema({
       { key: 'compose', label: 'Compose', variant: 'primary', handler: { type: 'navigate', path: () => '/business/emails/compose' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'company', foreignKey: 'company_id', label: 'Company' },
+      { entity: 'deal', foreignKey: 'deal_id', label: 'Deal' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

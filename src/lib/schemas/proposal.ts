@@ -20,5 +20,13 @@ export const proposalSchema = defineSchema({
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'draft', label: 'Draft', query: { where: { status: 'draft' } }, count: true }, { key: 'sent', label: 'Sent', query: { where: { status: 'sent' } }, count: true }, { key: 'viewed', label: 'Viewed', query: { where: { status: 'viewed' } }, count: true }, { key: 'accepted', label: 'Accepted', query: { where: { status: 'accepted' } } }, { key: 'rejected', label: 'Rejected', query: { where: { status: 'rejected' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'amount', label: 'Amount', value: { type: 'field', field: 'amount' }, format: 'currency' }], blocks: [{ key: 'content', title: 'Content', content: { type: 'fields', fields: ['content'] } }] } }, form: { sections: [{ key: 'basic', title: 'Proposal Details', fields: ['title', 'dealId', 'companyId', 'amount', 'status', 'validUntil', 'content'] }] } },
   views: { table: { columns: ['title', 'companyId', 'amount', 'status', 'validUntil'] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/proposals/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Proposal', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'deal', foreignKey: 'dealId', label: 'Deal' },
+      { entity: 'company', foreignKey: 'companyId', label: 'Company' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

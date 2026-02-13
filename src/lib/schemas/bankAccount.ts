@@ -62,7 +62,6 @@ export const bankAccountSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'currency', display: 'code' },
       },
       gl_account_id: {
         type: 'relation',
@@ -172,5 +171,12 @@ export const bankAccountSchema = defineSchema({
       { key: 'create', label: 'Add Bank Account', variant: 'primary', handler: { type: 'navigate', path: '/finance/banking/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'currency', foreignKey: 'currency_id', label: 'Currency' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: false },
 });

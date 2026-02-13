@@ -39,6 +39,7 @@ export const punchListSchema = defineSchema({
       },
       venue_id: {
         type: 'relation',
+        relation: { entity: 'venue', display: 'name', searchable: true },
         label: 'Venue',
         inTable: true,
         inForm: true,
@@ -76,6 +77,7 @@ export const punchListSchema = defineSchema({
       },
       assigned_to: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
@@ -208,6 +210,15 @@ export const punchListSchema = defineSchema({
       { key: 'create', label: 'New Item', variant: 'primary', handler: { type: 'navigate', path: () => '/operations/incidents/punch-lists/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'venue', foreignKey: 'venue_id', label: 'Venue' },
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

@@ -28,7 +28,6 @@ export const eventSessionSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       session_type_id: {
         type: 'relation',
@@ -36,14 +35,12 @@ export const eventSessionSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'session_type', display: 'name' },
       },
       track_id: {
         type: 'relation',
         label: 'Track',
         inTable: true,
         inForm: true,
-        relation: { entity: 'session_track', display: 'name' },
       },
       venue_space_id: {
         type: 'relation',
@@ -188,5 +185,12 @@ export const eventSessionSchema = defineSchema({
       { key: 'create', label: 'New Session', variant: 'primary', handler: { type: 'navigate', path: '/productions/sessions/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

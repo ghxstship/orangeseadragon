@@ -191,6 +191,13 @@ export const oauthConnectionSchema = defineSchema({
       { key: 'connect', label: 'Connect Provider', variant: 'primary', handler: { type: 'navigate', path: '/ecosystem/integrations/connect' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'user', foreignKey: 'user_id', label: 'User' },
+    ],
+  },
+
+
 
   permissions: { create: true, read: true, update: true, delete: true },
 });

@@ -27,7 +27,6 @@ export const registrationSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       contact_id: {
         type: 'relation',
@@ -35,7 +34,6 @@ export const registrationSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'contact', display: 'full_name' },
       },
       registration_type_id: {
         type: 'relation',
@@ -43,7 +41,6 @@ export const registrationSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'registration_type', display: 'name' },
       },
       status_id: {
         type: 'relation',
@@ -51,7 +48,6 @@ export const registrationSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'status', display: 'name', filter: { domain: 'registration' } },
       },
       currency_id: {
         type: 'relation',
@@ -197,5 +193,14 @@ export const registrationSchema = defineSchema({
       { key: 'import', label: 'Import', handler: { type: 'modal', component: 'ImportModal' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'contact', foreignKey: 'contact_id', label: 'Contact' },
+      { entity: 'currency', foreignKey: 'currency_id', label: 'Currency' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: false },
 });

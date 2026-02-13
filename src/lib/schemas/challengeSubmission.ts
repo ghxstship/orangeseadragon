@@ -213,6 +213,16 @@ export const challengeSubmissionSchema = defineSchema({
     bulk: [],
     global: [],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'challenge', foreignKey: 'challenge_id', label: 'Challenge' },
+      { entity: 'challengeParticipant', foreignKey: 'participant_id', label: 'Participant' },
+      { entity: 'milestone', foreignKey: 'milestone_id', label: 'Milestone' },
+      { entity: 'user', foreignKey: 'reviewer_id', label: 'Reviewer' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

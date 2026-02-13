@@ -66,5 +66,13 @@ export const techSpecSchema = defineSchema({
     bulk: [],
     global: [{ key: 'create', label: 'New Spec', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+      { entity: 'venue', foreignKey: 'venueId', label: 'Venue' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

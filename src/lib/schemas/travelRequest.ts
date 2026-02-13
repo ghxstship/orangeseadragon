@@ -39,10 +39,10 @@ export const travelRequestSchema = defineSchema({
         options: [],
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         inForm: true,
-        options: [],
       },
       purpose: {
         type: 'textarea',
@@ -187,6 +187,13 @@ export const travelRequestSchema = defineSchema({
       { key: 'create', label: 'New Travel Request', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Travel Request') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

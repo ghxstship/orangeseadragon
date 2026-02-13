@@ -33,7 +33,6 @@ export const onboardingTemplateSchema = defineSchema({
         label: 'Position Type',
         inTable: true,
         inForm: true,
-        relation: { entity: 'position_type', display: 'name' },
         helpText: 'Leave blank for all positions',
       },
       department_id: {
@@ -41,7 +40,6 @@ export const onboardingTemplateSchema = defineSchema({
         label: 'Department',
         inTable: true,
         inForm: true,
-        relation: { entity: 'department', display: 'name' },
         helpText: 'Leave blank for all departments',
       },
       employment_type_id: {
@@ -154,5 +152,12 @@ export const onboardingTemplateSchema = defineSchema({
       { key: 'create', label: 'New Template', variant: 'primary', handler: { type: 'navigate', path: '/people/onboarding/templates/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'department', foreignKey: 'department_id', label: 'Department' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

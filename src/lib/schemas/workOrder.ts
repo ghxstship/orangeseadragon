@@ -61,17 +61,16 @@ export const workOrderSchema = defineSchema({
         options: [],
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Event',
         inForm: true,
-        options: [],
       },
       venue_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Venue',
         inTable: true,
         inForm: true,
-        options: [],
+        relation: { entity: 'venue', display: 'name', searchable: true },
       },
       scheduled_start: {
         type: 'datetime',
@@ -278,6 +277,14 @@ export const workOrderSchema = defineSchema({
       { key: 'create', label: 'New Work Order', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Work Order') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'venue', foreignKey: 'venue_id', label: 'Venue' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

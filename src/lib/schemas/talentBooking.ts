@@ -38,6 +38,7 @@ export const talentBookingSchema = defineSchema({
       },
       stage_id: {
         type: 'relation',
+        relation: { entity: 'stage', display: 'name' },
         label: 'Stage',
         inTable: true,
         inForm: true,
@@ -95,6 +96,7 @@ export const talentBookingSchema = defineSchema({
       },
       rider_id: {
         type: 'relation',
+        relation: { entity: 'rider', display: 'name' },
         label: 'Rider',
         inForm: true,
         inDetail: true,
@@ -214,6 +216,16 @@ export const talentBookingSchema = defineSchema({
       { key: 'create', label: 'New Booking', variant: 'primary', handler: { type: 'navigate', path: () => '/operations/events/talent-bookings/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'stage', foreignKey: 'stage_id', label: 'Stage' },
+      { entity: 'contract', foreignKey: 'contract_id', label: 'Contract' },
+      { entity: 'rider', foreignKey: 'rider_id', label: 'Rider' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

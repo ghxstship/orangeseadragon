@@ -244,6 +244,13 @@ export const warehouseLocationSchema = defineSchema({
       { key: 'create', label: 'New Location', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/locations/bins/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'warehouse', foreignKey: 'warehouse_id', label: 'Warehouse' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

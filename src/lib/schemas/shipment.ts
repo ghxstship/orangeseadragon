@@ -52,10 +52,10 @@ export const shipmentSchema = defineSchema({
         options: [],
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         inForm: true,
-        options: [],
       },
       carrier_id: {
         type: 'select',
@@ -305,6 +305,13 @@ export const shipmentSchema = defineSchema({
       { key: 'create', label: 'New Shipment', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Shipment') } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

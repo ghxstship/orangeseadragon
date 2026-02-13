@@ -37,18 +37,17 @@ export const incidentSchema = defineSchema({
         sortable: true,
       },
       eventId: {
-        type: 'select',
+        type: 'relation',
         label: 'Event',
         inTable: true,
         inForm: true,
-        options: [],
       },
       venueId: {
-        type: 'select',
+        type: 'relation',
         label: 'Venue',
         inTable: true,
         inForm: true,
-        options: [],
+        relation: { entity: 'venue', display: 'name', searchable: true },
       },
       location: {
         type: 'text',
@@ -123,6 +122,7 @@ export const incidentSchema = defineSchema({
       },
       assigned_to_id: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
@@ -350,6 +350,16 @@ export const incidentSchema = defineSchema({
       { key: 'control-room', label: 'Control Room', variant: 'primary', handler: { type: 'navigate', path: () => '/operations/incidents/control-room' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'eventId', label: 'Event' },
+      { entity: 'venue', foreignKey: 'venueId', label: 'Venue' },
+      { entity: 'user', foreignKey: 'reported_by_id', label: 'Reported By' },
+      { entity: 'user', foreignKey: 'assigned_to_id', label: 'Assigned To' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

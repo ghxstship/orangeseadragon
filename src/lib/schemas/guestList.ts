@@ -27,6 +27,7 @@ export const guestListSchema = defineSchema({
       },
       event_id: {
         type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         required: true,
         inTable: true,
@@ -156,6 +157,13 @@ export const guestListSchema = defineSchema({
       { key: 'create', label: 'New Guest List', variant: 'primary', handler: { type: 'navigate', path: () => '/productions/advancing/guest-lists/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

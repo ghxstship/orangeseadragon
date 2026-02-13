@@ -188,6 +188,13 @@ export const assetAuditLogSchema = defineSchema({
     bulk: [],
     global: [],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'asset', foreignKey: 'asset_id', label: 'Asset' },
+    ],
+  },
+
+
 
   permissions: {
     create: false,

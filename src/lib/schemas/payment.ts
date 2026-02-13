@@ -26,5 +26,12 @@ export const paymentSchema = defineSchema({
     { field: 'date', format: { type: 'date' } },
   ] } },
   actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/payments/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'Record Payment', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  relationships: {
+    belongsTo: [
+      { entity: 'invoice', foreignKey: 'invoiceId', label: 'Invoice' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

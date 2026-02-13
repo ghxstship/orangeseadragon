@@ -166,6 +166,7 @@ export const assetSchema = defineSchema({
       },
       insurance_policy_id: {
         type: 'relation',
+        relation: { entity: 'insurancePolicy', display: 'policy_number' },
         label: 'Insurance Policy',
         inForm: true,
         inDetail: true,
@@ -194,6 +195,7 @@ export const assetSchema = defineSchema({
         label: 'Assigned To',
         inTable: true,
         inForm: true,
+        relation: { entity: 'user', display: 'full_name', searchable: true },
       },
       notes: {
         type: 'textarea',
@@ -376,6 +378,21 @@ export const assetSchema = defineSchema({
     global: [
       { key: 'create', label: 'New Asset', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/inventory/new' } }
     ]
+  },
+
+  relationships: {
+    belongsTo: [
+      { entity: 'storageBin', foreignKey: 'warehouse_location_id', label: 'Warehouse Bin' },
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+      { entity: 'catalogItem', foreignKey: 'catalog_item_id', label: 'Catalog Item' },
+    ],
+    hasMany: [
+      { entity: 'assetMaintenance', foreignKey: 'asset_id', label: 'Maintenance Records', cascade: 'delete' },
+      { entity: 'reservation', foreignKey: 'asset_id', label: 'Reservations', cascade: 'nullify' },
+      { entity: 'checkInOut', foreignKey: 'asset_id', label: 'Check In/Out History', cascade: 'delete' },
+      { entity: 'assetTransfer', foreignKey: 'asset_id', label: 'Transfers', cascade: 'restrict' },
+      { entity: 'assetAuditLog', foreignKey: 'asset_id', label: 'Audit Log', cascade: 'restrict' },
+    ],
   },
 
   permissions: {

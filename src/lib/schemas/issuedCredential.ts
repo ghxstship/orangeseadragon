@@ -26,7 +26,6 @@ export const issuedCredentialSchema = defineSchema({
         label: 'Event',
         inTable: true,
         inForm: true,
-        relation: { entity: 'event', display: 'name' },
       },
       credential_type_id: {
         type: 'relation',
@@ -34,7 +33,6 @@ export const issuedCredentialSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'credential_type', display: 'name' },
       },
       holder_contact_id: {
         type: 'relation',
@@ -85,7 +83,6 @@ export const issuedCredentialSchema = defineSchema({
         required: true,
         inTable: true,
         inForm: true,
-        relation: { entity: 'status', display: 'name', filter: { domain: 'credential' } },
       },
       issued_at: {
         type: 'datetime',
@@ -229,5 +226,12 @@ export const issuedCredentialSchema = defineSchema({
       { key: 'create', label: 'Issue Credential', variant: 'primary', handler: { type: 'navigate', path: '/productions/credentials/new' } },
     ],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: false },
 });

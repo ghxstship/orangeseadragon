@@ -25,12 +25,12 @@ export const productionAdvanceSchema = defineSchema({
         searchable: true,
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'event', display: 'name', searchable: true },
         label: 'Event',
         required: true,
         inTable: true,
         inForm: true,
-        options: [],
       },
       advance_type: {
         type: 'select',
@@ -83,11 +83,11 @@ export const productionAdvanceSchema = defineSchema({
         sortable: true,
       },
       assigned_to: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
-        options: [],
       },
       notes: {
         type: 'textarea',
@@ -210,6 +210,16 @@ export const productionAdvanceSchema = defineSchema({
     ],
   },
 
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+    ],
+    hasMany: [
+      { entity: 'advanceItem', foreignKey: 'production_advance_id', label: 'Items', cascade: 'delete' },
+    ],
+  },
+
   permissions: {
     create: true,
     read: true,
@@ -242,18 +252,16 @@ export const advanceItemSchema = defineSchema({
         searchable: true,
       },
       production_advance_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Advance',
         required: true,
         inForm: true,
-        options: [],
       },
       category_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Category',
         inTable: true,
         inForm: true,
-        options: [],
       },
       description: {
         type: 'textarea',
@@ -262,11 +270,11 @@ export const advanceItemSchema = defineSchema({
         inDetail: true,
       },
       vendor_id: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'company', display: 'name', searchable: true },
         label: 'Vendor',
         inTable: true,
         inForm: true,
-        options: [],
       },
       quantity_required: {
         type: 'number',
@@ -326,11 +334,11 @@ export const advanceItemSchema = defineSchema({
         default: false,
       },
       assigned_to: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
-        options: [],
       },
       notes: {
         type: 'textarea',
@@ -427,6 +435,18 @@ export const advanceItemSchema = defineSchema({
     ],
   },
 
+  relationships: {
+    belongsTo: [
+      { entity: 'productionAdvance', foreignKey: 'production_advance_id', label: 'Advance' },
+      { entity: 'advanceCategory', foreignKey: 'category_id', label: 'Category' },
+      { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+    ],
+    hasMany: [
+      { entity: 'advanceItemFulfillment', foreignKey: 'advance_item_id', label: 'Fulfillment Stages', cascade: 'delete' },
+    ],
+  },
+
   permissions: {
     create: true,
     read: true,
@@ -449,12 +469,12 @@ export const advanceItemFulfillmentSchema = defineSchema({
     primaryKey: 'id',
     fields: {
       advance_item_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Advance Item',
         required: true,
         inTable: true,
         inForm: true,
-        options: [],
+        relation: { entity: 'advanceItem', display: 'item_name' },
       },
       fulfillment_stage: {
         type: 'select',
@@ -492,11 +512,11 @@ export const advanceItemFulfillmentSchema = defineSchema({
         max: 100,
       },
       assigned_to: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'user', display: 'full_name', searchable: true },
         label: 'Assigned To',
         inTable: true,
         inForm: true,
-        options: [],
       },
       notes: {
         type: 'textarea',
@@ -583,6 +603,13 @@ export const advanceItemFulfillmentSchema = defineSchema({
     ],
   },
 
+  relationships: {
+    belongsTo: [
+      { entity: 'advanceItem', foreignKey: 'advance_item_id', label: 'Advance Item' },
+      { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
+    ],
+  },
+
   permissions: {
     create: true,
     read: true,
@@ -605,19 +632,18 @@ export const vendorRatingSchema = defineSchema({
     primaryKey: 'id',
     fields: {
       vendor_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Vendor',
         required: true,
         inTable: true,
         inForm: true,
-        options: [],
       },
       event_id: {
-        type: 'select',
+        type: 'relation',
         label: 'Event',
         inTable: true,
         inForm: true,
-        options: [],
+        relation: { entity: 'event', display: 'name', searchable: true },
       },
       on_time_delivery: {
         type: 'checkbox',
@@ -755,6 +781,13 @@ export const vendorRatingSchema = defineSchema({
     ],
   },
 
+  relationships: {
+    belongsTo: [
+      { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+    ],
+  },
+
   permissions: {
     create: true,
     read: true,
@@ -799,11 +832,11 @@ export const advanceCategorySchema = defineSchema({
         inDetail: true,
       },
       parent_category_id: {
-        type: 'select',
+        type: 'relation',
+        relation: { entity: 'category', display: 'name' },
         label: 'Parent Category',
         inTable: true,
         inForm: true,
-        options: [],
       },
       icon: {
         type: 'text',
@@ -899,6 +932,15 @@ export const advanceCategorySchema = defineSchema({
     bulk: [],
     global: [
       { key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => console.log('New Category') } },
+    ],
+  },
+
+  relationships: {
+    belongsTo: [
+      { entity: 'advanceCategory', foreignKey: 'parent_category_id', label: 'Parent Category' },
+    ],
+    hasMany: [
+      { entity: 'advanceItem', foreignKey: 'category_id', label: 'Items', cascade: 'nullify' },
     ],
   },
 
@@ -1039,6 +1081,12 @@ export const advancingCatalogItemSchema = defineSchema({
     row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/catalog/${r.id}` } }],
     bulk: [],
     global: [{ key: 'create', label: 'Add to Catalog', variant: 'primary', handler: { type: 'navigate', path: () => '/advancing/catalog/new' } }],
+  },
+
+  relationships: {
+    belongsTo: [
+      { entity: 'advanceCategory', foreignKey: 'category_id', label: 'Category' },
+    ],
   },
 
   permissions: {

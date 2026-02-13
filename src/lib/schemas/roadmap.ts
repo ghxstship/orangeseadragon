@@ -67,5 +67,12 @@ export const roadmapSchema = defineSchema({
     bulk: [],
     global: [{ key: 'create', label: 'New Roadmap', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'project', foreignKey: 'projectId', label: 'Project' },
+    ],
+  },
+
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

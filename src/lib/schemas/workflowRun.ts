@@ -151,6 +151,13 @@ export const workflowRunSchema = defineSchema({
     bulk: [],
     global: []
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'workflow', foreignKey: 'workflow_id', label: 'Workflow' },
+    ],
+  },
+
+
 
   permissions: {
     create: false,

@@ -33,6 +33,7 @@ export const accommodationSchema = defineSchema({
       },
       booking_id: {
         type: 'relation',
+        relation: { entity: 'resourceBooking', display: 'name' },
         label: 'Talent Booking',
         inForm: true,
       },
@@ -228,6 +229,14 @@ export const accommodationSchema = defineSchema({
       { key: 'create', label: 'New Accommodation', variant: 'primary', handler: { type: 'navigate', path: () => '/people/travel/accommodations/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'event', foreignKey: 'event_id', label: 'Event' },
+      { entity: 'resourceBooking', foreignKey: 'booking_id', label: 'Booking' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,

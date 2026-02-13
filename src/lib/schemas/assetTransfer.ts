@@ -24,6 +24,7 @@ export const assetTransferSchema = defineSchema({
       },
       asset_id: {
         type: 'relation',
+        relation: { entity: 'asset', display: 'name' },
         label: 'Asset',
         required: true,
         inTable: true,
@@ -65,6 +66,7 @@ export const assetTransferSchema = defineSchema({
       },
       approved_by: {
         type: 'relation',
+        relation: { entity: 'user', display: 'full_name' },
         label: 'Approved By',
         inDetail: true,
       },
@@ -195,6 +197,14 @@ export const assetTransferSchema = defineSchema({
       { key: 'create', label: 'New Transfer', variant: 'primary', handler: { type: 'navigate', path: () => '/assets/reservations/transfers/new' } }
     ]
   },
+  relationships: {
+    belongsTo: [
+      { entity: 'asset', foreignKey: 'asset_id', label: 'Asset' },
+      { entity: 'user', foreignKey: 'approved_by', label: 'Approved By' },
+    ],
+  },
+
+
 
   permissions: {
     create: true,
