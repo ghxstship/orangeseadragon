@@ -31,9 +31,12 @@ jobs:
         
       - name: Lint
         run: npm run lint
+
+      - name: UI Compliance Audit (Strict)
+        run: npm run audit:ui:strict
         
       - name: Type Check
-        run: npx tsc --noEmit
+        run: npm run typecheck
         
       - name: Unit Tests
         run: npm test -- --run
