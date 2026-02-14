@@ -3,6 +3,59 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getServerEnv } from "@/lib/env";
 import { captureError } from "@/lib/observability";
 
+type SecurityContext = {
+  requestId: string;
+  correlationId: string;
+  cspNonce: string;
+};
+
+function createSecurityContext(request: NextRequest): SecurityContext {
+  const requestId = request.headers.get("x-request-id") || crypto.randomUUID();
+  const correlationId = request.headers.get("x-correlation-id") || requestId;
+  const cspNonce = crypto.randomUUID().replace(/-/g, "");
+
+  return {
+    requestId,
+    correlationId,
+    cspNonce,
+  };
+}
+
+function buildContentSecurityPolicy(cspNonce: string): string {
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${cspNonce}' https://js.stripe.com`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://js.stripe.com https://fonts.googleapis.com",
+    "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+    "worker-src 'self' blob:",
+    "object-src 'none'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+    "report-uri /api/security/csp-report",
+  ].join("; ");
+}
+
+function applySecurityHeaders(response: NextResponse, security: SecurityContext): NextResponse {
+  response.headers.set("x-request-id", security.requestId);
+  response.headers.set("x-correlation-id", security.correlationId);
+  response.headers.set("x-content-type-options", "nosniff");
+  response.headers.set("x-frame-options", "DENY");
+  response.headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  response.headers.set("strict-transport-security", "max-age=63072000; includeSubDomains; preload");
+  response.headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
+  response.headers.set("cross-origin-opener-policy", "same-origin");
+  response.headers.set("cross-origin-resource-policy", "same-origin");
+  response.headers.set("origin-agent-cluster", "?1");
+  response.headers.set("x-permitted-cross-domain-policies", "none");
+  response.headers.set("content-security-policy", buildContentSecurityPolicy(security.cspNonce));
+  return response;
+}
+
 // ============================================================================
 // RATE LIMITING (middleware-level, distributed token bucket)
 // ============================================================================
@@ -77,6 +130,7 @@ const PUBLIC_API_PREFIXES = [
   "/api/webhooks",
   "/api/health",
   "/api/public",
+  "/api/security/csp-report",
 ];
 
 function isPublicApiRoute(pathname: string): boolean {
@@ -88,10 +142,21 @@ function isPublicApiRoute(pathname: string): boolean {
 // ============================================================================
 
 export async function middleware(request: NextRequest) {
+  const security = createSecurityContext(request);
   const env = getServerEnv();
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-request-id", security.requestId);
+  requestHeaders.set("x-correlation-id", security.correlationId);
+  requestHeaders.set("x-csp-nonce", security.cspNonce);
+
+  let supabaseResponse = applySecurityHeaders(
+    NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    }),
+    security
+  );
 
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -105,9 +170,14 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
+          supabaseResponse = applySecurityHeaders(
+            NextResponse.next({
+              request: {
+                headers: requestHeaders,
+              },
+            }),
+            security
+          );
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           );
@@ -127,7 +197,7 @@ export async function middleware(request: NextRequest) {
   // STATIC ASSETS — pass through immediately
   // ========================================================================
   if (pathname.startsWith("/_next") || pathname.includes(".")) {
-    return supabaseResponse;
+    return applySecurityHeaders(supabaseResponse, security);
   }
 
   // ========================================================================
@@ -139,9 +209,12 @@ export async function middleware(request: NextRequest) {
     // CSRF origin validation for mutation requests
     if (MUTATION_METHODS.has(method) && !isPublicApiRoute(pathname)) {
       if (!validateOrigin(request)) {
-        return NextResponse.json(
-          { error: { code: "CSRF_REJECTED", message: "Origin validation failed" } },
-          { status: 403 }
+        return applySecurityHeaders(
+          NextResponse.json(
+            { error: { code: "CSRF_REJECTED", message: "Origin validation failed" } },
+            { status: 403 }
+          ),
+          security
         );
       }
     }
@@ -154,16 +227,24 @@ export async function middleware(request: NextRequest) {
           path: pathname,
           method,
           bucket: "auth",
+          request_id: security.requestId,
+          correlation_id: security.correlationId,
         });
-        return NextResponse.json(
-          { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
-          { status: 503 }
+        return applySecurityHeaders(
+          NextResponse.json(
+            { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
+            { status: 503 }
+          ),
+          security
         );
       }
       if (!result.allowed) {
-        return NextResponse.json(
-          { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
-          { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+        return applySecurityHeaders(
+          NextResponse.json(
+            { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
+            { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+          ),
+          security
         );
       }
     } else if (MUTATION_METHODS.has(method)) {
@@ -173,16 +254,24 @@ export async function middleware(request: NextRequest) {
           path: pathname,
           method,
           bucket: "write",
+          request_id: security.requestId,
+          correlation_id: security.correlationId,
         });
-        return NextResponse.json(
-          { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
-          { status: 503 }
+        return applySecurityHeaders(
+          NextResponse.json(
+            { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
+            { status: 503 }
+          ),
+          security
         );
       }
       if (!result.allowed) {
-        return NextResponse.json(
-          { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
-          { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+        return applySecurityHeaders(
+          NextResponse.json(
+            { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
+            { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+          ),
+          security
         );
       }
     } else {
@@ -192,22 +281,30 @@ export async function middleware(request: NextRequest) {
           path: pathname,
           method,
           bucket: "read",
+          request_id: security.requestId,
+          correlation_id: security.correlationId,
         });
-        return NextResponse.json(
-          { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
-          { status: 503 }
+        return applySecurityHeaders(
+          NextResponse.json(
+            { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
+            { status: 503 }
+          ),
+          security
         );
       }
       if (!result.allowed) {
-        return NextResponse.json(
-          { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
-          { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+        return applySecurityHeaders(
+          NextResponse.json(
+            { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
+            { status: 429, headers: { "Retry-After": String(result.retryAfter) } }
+          ),
+          security
         );
       }
     }
 
     // Return with refreshed session cookies — individual route guards handle auth
-    return supabaseResponse;
+    return applySecurityHeaders(supabaseResponse, security);
   }
 
   // ========================================================================
@@ -241,7 +338,7 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("redirectTo", pathname);
-    return NextResponse.redirect(url);
+    return applySecurityHeaders(NextResponse.redirect(url), security);
   }
 
   // Authenticated user — single onboarding check for all page routes
@@ -262,22 +359,22 @@ export async function middleware(request: NextRequest) {
 
       if (isAuthPage) {
         url.pathname = onboardingDone ? "/dashboard" : "/onboarding/welcome";
-        return NextResponse.redirect(url);
+        return applySecurityHeaders(NextResponse.redirect(url), security);
       }
 
       if (!onboardingDone && !isOnboardingPage && !isPublicRoute) {
         url.pathname = "/onboarding/welcome";
-        return NextResponse.redirect(url);
+        return applySecurityHeaders(NextResponse.redirect(url), security);
       }
 
       if (onboardingDone && isOnboardingPage) {
         url.pathname = "/dashboard";
-        return NextResponse.redirect(url);
+        return applySecurityHeaders(NextResponse.redirect(url), security);
       }
     }
   }
 
-  return supabaseResponse;
+  return applySecurityHeaders(supabaseResponse, security);
 }
 
 export const config = {

@@ -38,19 +38,22 @@ jobs:
     - name: Start Supabase
       run: npx supabase start -x studio,migra,realtime,storage-api,imgproxy
       # Exclude heavier services if not needed to speed up CI
+
+    - name: Export Supabase local env
+      run: |
+        npx supabase status -o env | grep -E '^(API_URL|PUBLISHABLE_KEY|SECRET_KEY)=' > /tmp/supabase.env
+        source /tmp/supabase.env
+        {
+          echo "NEXT_PUBLIC_SUPABASE_URL=${API_URL}"
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${PUBLISHABLE_KEY}"
+          echo "SUPABASE_SERVICE_ROLE_KEY=${SECRET_KEY}"
+        } >> "$GITHUB_ENV"
       
     - name: Run Playwright tests
       run: npx playwright test
       env:
         CI_E2E_PRODUCTION_SERVER: "true"
         NEXT_PUBLIC_APP_URL: http://localhost:3000
-        # These should match what `supabase start` outputs or uses as defaults
-        NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }} # In real CI, use secrets. For local dev/demo workflow, we might need default keys
-        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        # If using default local dev keys, we can hardcode them here for "local-in-ci" testing if acceptable, 
-        # but better to use secrets. 
-        # For this template, I'll assume repository secrets are set.
         
     - uses: actions/upload-artifact@v4
       if: always()

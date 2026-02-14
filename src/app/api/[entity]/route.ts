@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/api/guard';
 import { apiPaginated, apiCreated, badRequest, notFound, supabaseError } from '@/lib/api/response';
 import { resolveAllowedEntityTable } from '@/lib/api/entity-access';
-import { captureError } from '@/lib/observability';
+import { captureError, extractRequestContext } from '@/lib/observability';
 
 /**
  * GENERIC ENTITY LIST API
@@ -17,6 +17,7 @@ export async function GET(
     const auth = await requireAuth();
     if (auth.error) return auth.error;
     const { supabase } = auth;
+    const requestContext = extractRequestContext(request.headers);
     const { entity } = await params;
     const tableName = resolveAllowedEntityTable(entity);
     if (!tableName) {
@@ -48,7 +49,7 @@ export async function GET(
                 }
             });
         } catch (e) {
-            captureError(e, 'api.generic_entity.where_parse_failed', { entity: tableName });
+            captureError(e, 'api.generic_entity.where_parse_failed', { entity: tableName, ...requestContext });
         }
     }
 
@@ -63,7 +64,7 @@ export async function GET(
             const { field, direction } = JSON.parse(orderBy);
             query = query.order(field, { ascending: direction === 'asc' });
         } catch (e) {
-            captureError(e, 'api.generic_entity.orderby_parse_failed', { entity: tableName });
+            captureError(e, 'api.generic_entity.orderby_parse_failed', { entity: tableName, ...requestContext });
         }
     } else {
         // Default sort by created_at if not specified
@@ -102,6 +103,7 @@ export async function POST(
     const auth = await requireAuth();
     if (auth.error) return auth.error;
     const { supabase } = auth;
+    const requestContext = extractRequestContext(request.headers);
     const { entity } = await params;
     const tableName = resolveAllowedEntityTable(entity);
     if (!tableName) {
@@ -113,13 +115,13 @@ export async function POST(
         const { data, error } = await supabase.from(tableName).insert(body).select().single();
 
         if (error) {
-            captureError(error, 'api.generic_entity.insert_failed', { entity: tableName });
+            captureError(error, 'api.generic_entity.insert_failed', { entity: tableName, ...requestContext });
             return supabaseError(error);
         }
 
         return apiCreated(data);
     } catch (e) {
-        captureError(e, 'api.generic_entity.invalid_request_body', { entity: tableName });
+        captureError(e, 'api.generic_entity.invalid_request_body', { entity: tableName, ...requestContext });
         return badRequest('Invalid request body');
     }
 }

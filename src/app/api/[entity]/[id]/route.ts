@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, apiNoContent, notFound, badRequest, supabaseError } from '@/lib/api/response';
 import { resolveAllowedEntityTable } from '@/lib/api/entity-access';
-import { captureError } from '@/lib/observability';
+import { captureError, extractRequestContext } from '@/lib/observability';
 
 /**
  * GENERIC ENTITY RECORD API
@@ -44,6 +44,7 @@ export async function PATCH(
     const auth = await requireAuth();
     if (auth.error) return auth.error;
     const { supabase } = auth;
+    const requestContext = extractRequestContext(request.headers);
     const { entity, id } = await params;
     const tableName = resolveAllowedEntityTable(entity);
     if (!tableName) {
@@ -65,7 +66,7 @@ export async function PATCH(
 
         return apiSuccess(data);
     } catch (error) {
-        captureError(error, 'api.generic_entity.invalid_request_body', { entity: tableName, id });
+        captureError(error, 'api.generic_entity.invalid_request_body', { entity: tableName, id, ...requestContext });
         return badRequest('Invalid request body');
     }
 }
@@ -77,6 +78,7 @@ export async function DELETE(
     const auth = await requireAuth();
     if (auth.error) return auth.error;
     const { supabase } = auth;
+    const requestContext = extractRequestContext(request.headers);
     const { entity, id } = await params;
     const tableName = resolveAllowedEntityTable(entity);
     if (!tableName) {
@@ -100,6 +102,7 @@ export async function DELETE(
                 .eq('id', id);
 
             if (hardDeleteError) {
+                captureError(hardDeleteError, 'api.generic_entity.hard_delete_failed', { entity: tableName, id, ...requestContext });
                 return supabaseError(hardDeleteError);
             }
             return apiNoContent();

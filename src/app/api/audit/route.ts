@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { requireAuth } from "@/lib/api/guard";
+import { requirePolicy } from "@/lib/api/guard";
 import { apiSuccess, supabaseError } from "@/lib/api/response";
 
 const parseNumber = (value: string | null, fallback: number) => {
@@ -9,9 +9,9 @@ const parseNumber = (value: string | null, fallback: number) => {
 };
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy("audit.read", { sensitivity: "high" });
   if (auth.error) return auth.error;
-  const { user, supabase } = auth;
+  const { supabase, membership } = auth;
 
   const searchParams = request.nextUrl.searchParams;
   const page = parseNumber(searchParams.get("page"), 1);
@@ -22,15 +22,7 @@ export async function GET(request: NextRequest) {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
 
-  let organizationId: string | null = null;
-  const { data: role } = await supabase
-    .from("user_roles")
-    .select("organization_id")
-    .eq("user_id", user.id)
-    .eq("is_active", true)
-    .maybeSingle();
-
-  organizationId = role?.organization_id ?? null;
+  const organizationId = membership.organization_id;
 
   let query = supabase
     .from("audit_logs")

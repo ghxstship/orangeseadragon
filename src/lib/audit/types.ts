@@ -99,6 +99,9 @@ export interface AuditEntry {
   
   requestId?: string;
   correlationId?: string;
+
+  previousHash?: string;
+  integrityHash?: string;
   
   retentionDays?: number;
   tags?: string[];
@@ -160,6 +163,11 @@ export interface AuditServiceConfig {
     enabled: boolean;
     webhookUrl?: string;
     severityThreshold?: AuditSeverity;
+  };
+
+  persistence?: {
+    mode: "memory" | "supabase" | "hybrid";
+    hashAlgorithm?: "sha256";
   };
   
   compliance?: {

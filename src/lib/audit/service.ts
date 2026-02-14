@@ -16,8 +16,25 @@ import type {
   AuditStats,
   AuditTarget,
 } from "./types";
+import { captureError, logWarn } from "@/lib/observability";
 
 type AuditEventHandler = (entry: AuditEntry) => void | Promise<void>;
+
+const NIL_UUID = "00000000-0000-0000-0000-000000000000";
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+type PersistResult = {
+  previous_hash?: string;
+  integrity_hash?: string;
+};
+
+function asUuidOrNil(value: string | undefined | null): string {
+  if (!value) {
+    return NIL_UUID;
+  }
+
+  return UUID_PATTERN.test(value) ? value : NIL_UUID;
+}
 
 export class AuditService {
   private config: AuditServiceConfig;
@@ -55,6 +72,10 @@ export class AuditService {
         "ssn",
         "socialSecurityNumber",
       ],
+      persistence: {
+        mode: "hybrid",
+        hashAlgorithm: "sha256",
+      },
       ...config,
     };
   }
@@ -84,7 +105,11 @@ export class AuditService {
       try {
         await handler(entry);
       } catch (error) {
-        console.error("Audit event handler error:", error);
+        captureError(error, "audit.handler_failed", {
+          audit_id: entry.id,
+          action: entry.action,
+          category: entry.category,
+        });
       }
     }
 
@@ -112,10 +137,26 @@ export class AuditService {
     if (!this.config.realtime?.webhookUrl) return;
 
     try {
-      // In production, use fetch to send to webhook
-      console.log(`[AUDIT WEBHOOK] ${this.config.realtime.webhookUrl}`, entry);
+      const response = await fetch(this.config.realtime.webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(entry),
+      });
+
+      if (!response.ok) {
+        logWarn("audit.webhook_failed", {
+          audit_id: entry.id,
+          status: response.status,
+          endpoint: this.config.realtime.webhookUrl,
+        });
+      }
     } catch (error) {
-      console.error("Failed to send audit to webhook:", error);
+      captureError(error, "audit.webhook_exception", {
+        audit_id: entry.id,
+        endpoint: this.config.realtime.webhookUrl,
+      });
     }
   }
 
@@ -189,10 +230,106 @@ export class AuditService {
       tags: params.tags,
     };
 
+    const persistResult = await this.persistEntry(entry);
+    if (persistResult) {
+      entry.previousHash = persistResult.previous_hash;
+      entry.integrityHash = persistResult.integrity_hash;
+    }
+
     this.entries.set(id, entry);
     await this.emitEntry(entry);
 
     return entry;
+  }
+
+  private async persistEntry(entry: AuditEntry): Promise<PersistResult | null> {
+    const mode = this.config.persistence?.mode || "memory";
+    if (mode === "memory") {
+      return null;
+    }
+
+    // Prevent server-only Supabase dependencies from being loaded in browser bundles.
+    if (typeof window !== "undefined") {
+      return null;
+    }
+
+    const retentionDays = entry.retentionDays || this.config.retentionPolicy.defaultDays;
+    const retentionUntil = new Date(entry.timestamp);
+    retentionUntil.setDate(retentionUntil.getDate() + retentionDays);
+
+    const oldValues = this.buildChangeValueMap(entry.changes, "oldValue");
+    const newValues = this.buildChangeValueMap(entry.changes, "newValue");
+
+    try {
+      const { createServiceClient } = await import("@/lib/supabase/server");
+      const supabase = await createServiceClient();
+
+      const { data, error } = await supabase.rpc("append_audit_log", {
+        p_organization_id: asUuidOrNil(entry.organizationId),
+        p_user_id: asUuidOrNil(entry.actor.id),
+        p_user_email: entry.actor.email ?? null,
+        p_action: entry.action,
+        p_entity_type: entry.target?.type ?? entry.category,
+        p_entity_id: asUuidOrNil(entry.target?.id),
+        p_old_values: oldValues,
+        p_new_values: newValues,
+        p_ip_address: entry.actor.ipAddress ?? null,
+        p_user_agent: entry.actor.userAgent ?? null,
+        p_metadata: {
+          ...(entry.metadata || {}),
+          tags: entry.tags ?? [],
+          severity: entry.severity,
+          success: entry.success,
+          error_message: entry.errorMessage ?? null,
+        },
+        p_request_id: entry.requestId ?? null,
+        p_correlation_id: entry.correlationId ?? null,
+        p_retention_until: retentionUntil.toISOString(),
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row || typeof row !== "object") {
+        return null;
+      }
+
+      const result = row as Record<string, unknown>;
+      return {
+        previous_hash: typeof result.previous_hash === "string" ? result.previous_hash : undefined,
+        integrity_hash: typeof result.integrity_hash === "string" ? result.integrity_hash : undefined,
+      };
+    } catch (error) {
+      captureError(error, "audit.persistence_failed", {
+        audit_id: entry.id,
+        organization_id: entry.organizationId,
+        mode,
+      });
+
+      if (mode === "supabase") {
+        throw new Error("Audit persistence failed");
+      }
+
+      return null;
+    }
+  }
+
+  private buildChangeValueMap(
+    changes: AuditChange[] | undefined,
+    key: "oldValue" | "newValue"
+  ): Record<string, unknown> | null {
+    if (!changes?.length) {
+      return null;
+    }
+
+    const mapped: Record<string, unknown> = {};
+    for (const change of changes) {
+      mapped[change.field] = change[key];
+    }
+
+    return Object.keys(mapped).length > 0 ? mapped : null;
   }
 
   // Convenience methods for common actions

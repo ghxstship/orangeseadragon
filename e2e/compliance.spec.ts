@@ -30,6 +30,10 @@ test.describe("Compliance — Security Headers", () => {
     // Strict-Transport-Security
     expect(headers["strict-transport-security"]).toContain("max-age=");
 
+    // Request tracing
+    expect(headers["x-request-id"]).toBeTruthy();
+    expect(headers["x-correlation-id"]).toBeTruthy();
+
     // X-XSS-Protection
     expect(headers["x-xss-protection"]).toBe("1; mode=block");
 
@@ -46,6 +50,8 @@ test.describe("Compliance — Security Headers", () => {
     const csp = response!.headers()["content-security-policy"];
 
     expect(csp).toContain("default-src 'self'");
+    expect(csp).toContain("script-src 'self' 'nonce-");
+    expect(csp).not.toContain("'unsafe-eval'");
     expect(csp).toContain("base-uri 'self'");
     expect(csp).toContain("form-action 'self'");
   });
@@ -70,13 +76,7 @@ test.describe("Compliance — Rate Limiting", () => {
 
     // At least one should be rate limited (429) after 10 auth requests
     const hasRateLimit = responses.some((status) => status === 429);
-    // Note: In dev mode with hot reloads, the in-memory store resets.
-    // This test is most reliable in production/staging.
-    if (!hasRateLimit) {
-      console.warn(
-        "Rate limiting not triggered — may be due to dev server cold starts resetting in-memory store"
-      );
-    }
+    expect(hasRateLimit).toBe(true);
   });
 });
 

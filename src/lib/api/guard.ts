@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { unauthorized, forbidden } from "@/lib/api/response";
+import { evaluatePolicy, type DataSensitivity, type PolicyAction } from "@/lib/api/policy";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 
@@ -153,6 +154,43 @@ export async function requireRole(
         `Role '${membership.role_name}' is not authorized. Required: ${allowedRoles.join(", ")}`
       ),
     };
+  }
+
+  return result;
+}
+
+// ============================================================================
+// POLICY GUARD (ABAC/RBAC)
+// ============================================================================
+
+/**
+ * Verify the request is from an org member that satisfies centralized policy rules.
+ * This guard combines org membership, role constraints, ownership, and sensitivity checks.
+ */
+export async function requirePolicy(
+  action: PolicyAction,
+  options?: {
+    orgId?: string;
+    resourceOwnerId?: string | null;
+    resourceOrganizationId?: string | null;
+    sensitivity?: DataSensitivity;
+  }
+): Promise<OrgMemberContext | OrgMemberError> {
+  const result = await requireOrgMember(options?.orgId);
+  if (result.error) return result;
+
+  const decision = evaluatePolicy(action, {
+    actorId: result.user.id,
+    actorOrganizationId: result.membership.organization_id,
+    roleName: result.membership.role_name,
+    resourceOwnerId: options?.resourceOwnerId,
+    resourceOrganizationId:
+      options?.resourceOrganizationId ?? result.membership.organization_id,
+    sensitivity: options?.sensitivity,
+  });
+
+  if (!decision.allow) {
+    return { error: forbidden(decision.reason) };
   }
 
   return result;
