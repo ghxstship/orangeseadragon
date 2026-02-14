@@ -103,13 +103,13 @@ export function BankReconciliation({
   const getStatusIcon = (status: BankTransaction['matchStatus']) => {
     switch (status) {
       case 'confirmed':
-        return <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />;
+        return <Check className="h-4 w-4 text-semantic-success" />;
       case 'suggested':
-        return <HelpCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />;
+        return <HelpCircle className="h-4 w-4 text-semantic-warning" />;
       case 'excluded':
-        return <X className="h-4 w-4 text-gray-400" />;
+        return <X className="h-4 w-4 text-muted-foreground" />;
       default:
-        return <AlertCircle className="h-4 w-4 text-orange-500" />;
+        return <AlertCircle className="h-4 w-4 text-semantic-orange" />;
     }
   };
 
@@ -143,7 +143,7 @@ export function BankReconciliation({
         </CardHeader>
         <CardContent>
           {connection.unmatchedCount > 0 && (
-            <div className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
+            <div className="flex items-center gap-2 rounded-lg border border-semantic-warning/30 bg-semantic-warning/10 p-3 text-semantic-warning">
               <AlertCircle className="h-5 w-5" />
               <span>{connection.unmatchedCount} transactions need review</span>
             </div>
@@ -197,8 +197,8 @@ export function BankReconciliation({
                       key={tx.id}
                       className={cn(
                         'flex items-center gap-4 rounded-lg border p-4',
-                        tx.matchStatus === 'suggested' && 'border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-900/10',
-                        tx.matchStatus === 'confirmed' && 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-800 dark:bg-emerald-900/10'
+                        tx.matchStatus === 'suggested' && 'border-semantic-warning/30 bg-semantic-warning/10',
+                        tx.matchStatus === 'confirmed' && 'border-semantic-success/30 bg-semantic-success/10'
                       )}
                     >
                       <div className="flex-shrink-0">
@@ -221,7 +221,7 @@ export function BankReconciliation({
 
                       <div className={cn(
                         'text-right font-mono font-medium',
-                        tx.type === 'credit' ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive'
+                        tx.type === 'credit' ? 'text-semantic-success' : 'text-destructive'
                       )}>
                         {tx.type === 'credit' ? '+' : '-'}${Math.abs(tx.amount).toFixed(2)}
                       </div>
@@ -229,7 +229,7 @@ export function BankReconciliation({
                       {tx.matchStatus === 'suggested' && tx.suggestedMatch && (
                         <>
                           <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                          <div className="min-w-0 flex-1 rounded-lg bg-white p-2 dark:bg-gray-800">
+                          <div className="min-w-0 flex-1 rounded-lg border border-border bg-card/80 p-2">
                             <p className="text-sm font-medium">{tx.suggestedMatch.description}</p>
                             <div className="flex items-center gap-2">
                               <Badge variant="secondary" className="text-xs">
@@ -290,7 +290,7 @@ export function BankReconciliation({
                           </>
                         )}
                         {tx.matchStatus === 'confirmed' && (
-                          <Badge variant="default" className="bg-emerald-600 dark:bg-emerald-500">
+                          <Badge variant="outline" className="border-semantic-success/30 bg-semantic-success/10 text-semantic-success">
                             <Check className="mr-1 h-3 w-3" />
                             Matched
                           </Badge>

@@ -24,7 +24,7 @@ interface WorkflowExecutionMonitorProps {
 
 const statusConfig: Record<ExecutionStatus, { icon: React.ReactNode; color: string; label: string }> = {
   pending: { icon: <Clock className="h-4 w-4" />, color: "text-muted-foreground", label: "Pending" },
-  running: { icon: <RefreshCw className="h-4 w-4 animate-spin" />, color: "text-blue-500", label: "Running" },
+  running: { icon: <RefreshCw className="h-4 w-4 animate-spin" />, color: "text-semantic-info", label: "Running" },
   completed: { icon: <CheckCircle className="h-4 w-4" />, color: "text-semantic-success", label: "Completed" },
   failed: { icon: <XCircle className="h-4 w-4" />, color: "text-destructive", label: "Failed" },
   cancelled: { icon: <AlertCircle className="h-4 w-4" />, color: "text-semantic-warning", label: "Cancelled" },
@@ -32,7 +32,7 @@ const statusConfig: Record<ExecutionStatus, { icon: React.ReactNode; color: stri
 
 const stepStatusConfig: Record<StepStatus, { icon: React.ReactNode; color: string }> = {
   pending: { icon: <Clock className="h-3 w-3" />, color: "text-muted-foreground" },
-  running: { icon: <RefreshCw className="h-3 w-3 animate-spin" />, color: "text-blue-500" },
+  running: { icon: <RefreshCw className="h-3 w-3 animate-spin" />, color: "text-semantic-info" },
   completed: { icon: <CheckCircle className="h-3 w-3" />, color: "text-semantic-success" },
   failed: { icon: <XCircle className="h-3 w-3" />, color: "text-destructive" },
   skipped: { icon: <AlertCircle className="h-3 w-3" />, color: "text-muted-foreground" },
@@ -66,7 +66,7 @@ function ExecutionCard({
   const progress = (completedSteps / execution.steps.length) * 100;
 
   return (
-    <Card className={execution.status === "running" ? "border-blue-500/50" : ""}>
+    <Card className={execution.status === "running" ? "border-semantic-info/50" : ""}>
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
         <CollapsibleTrigger asChild>
           <CardHeader className="p-4 cursor-pointer hover:bg-accent/50">
@@ -195,7 +195,7 @@ export function WorkflowExecutionMonitor({
             variant="ghost"
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
-            className={autoRefresh ? "text-blue-500" : ""}
+            className={autoRefresh ? "text-semantic-info" : ""}
           >
             <RefreshCw className={`h-4 w-4 mr-1 ${autoRefresh ? "animate-spin" : ""}`} />
             Auto

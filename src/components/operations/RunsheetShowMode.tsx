@@ -44,7 +44,7 @@ interface RunsheetShowModeProps {
 const CUE_TYPE_COLORS: Record<string, string> = {
   action: 'bg-semantic-info',
   audio: 'bg-semantic-purple',
-  video: 'bg-pink-500',
+  video: 'bg-semantic-accent',
   lighting: 'bg-semantic-warning',
   transition: 'bg-semantic-cyan',
   break: 'bg-muted-foreground',
@@ -214,7 +214,7 @@ export function RunsheetShowMode({
       <div className="flex-1 flex flex-col p-6 gap-6 overflow-hidden">
         {/* Previous Cue */}
         {previousCue && (
-          <div className="flex items-center gap-4 text-neutral-500">
+          <div className="flex items-center gap-4 text-muted-foreground">
             <ChevronUp className="h-4 w-4" />
             <span className="text-sm">PREVIOUS:</span>
             <span className="font-medium">{previousCue.name}</span>
@@ -246,15 +246,15 @@ export function RunsheetShowMode({
                     <div className="flex items-center gap-4">
                       <div className={cn(
                         "w-3 h-3 rounded-full",
-                        CUE_TYPE_COLORS[currentCue.cue_type] || 'bg-gray-500'
+                        CUE_TYPE_COLORS[currentCue.cue_type] || 'bg-muted-foreground'
                       )} />
                       <Badge variant="outline" className="text-sm uppercase tracking-wider">
                         {currentCue.cue_type}
                       </Badge>
-                      <span className="text-neutral-400">#{currentCue.sequence}</span>
+                      <span className="text-muted-foreground">#{currentCue.sequence}</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-neutral-400">Scheduled</p>
+                      <p className="text-sm text-muted-foreground">Scheduled</p>
                       <p className="text-xl font-mono">{formatTime(currentCue.scheduled_time)}</p>
                     </div>
                   </div>
@@ -263,7 +263,7 @@ export function RunsheetShowMode({
                   <h2 className="text-4xl font-bold mb-4">{currentCue.name}</h2>
                   
                   {currentCue.description && (
-                    <p className="text-lg text-neutral-300 mb-6">{currentCue.description}</p>
+                    <p className="text-lg text-muted-foreground mb-6">{currentCue.description}</p>
                   )}
 
                   {/* Timer Section */}
@@ -271,7 +271,7 @@ export function RunsheetShowMode({
                     <div className="text-center">
                       <p className={cn(
                         "text-sm uppercase tracking-wider mb-2",
-                        isOvertime ? "text-destructive" : "text-neutral-400"
+                        isOvertime ? "text-destructive" : "text-muted-foreground"
                       )}>
                         {isOvertime ? 'OVERTIME' : isRunning ? 'REMAINING' : 'DURATION'}
                       </p>
@@ -324,7 +324,7 @@ export function RunsheetShowMode({
                 "flex items-center gap-4 px-4 py-3 rounded-lg transition-all",
                 index === 0 
                   ? "bg-accent border border-border" 
-                  : "bg-muted text-neutral-400"
+                  : "bg-muted text-muted-foreground"
               )}
             >
               <ChevronDown className="h-4 w-4" />
@@ -333,7 +333,7 @@ export function RunsheetShowMode({
               </span>
               <div className={cn(
                 "w-2 h-2 rounded-full",
-                CUE_TYPE_COLORS[cue.cue_type] || 'bg-gray-500'
+                CUE_TYPE_COLORS[cue.cue_type] || 'bg-muted-foreground'
               )} />
               <span className="font-medium flex-1">{cue.name}</span>
               <span className="font-mono text-sm">
@@ -384,7 +384,7 @@ export function RunsheetShowMode({
         </div>
 
         {/* Keyboard Hints */}
-        <div className="flex items-center justify-center gap-6 mt-4 text-xs text-neutral-500">
+        <div className="flex items-center justify-center gap-6 mt-4 text-xs text-muted-foreground">
           <span><kbd className="px-2 py-1 bg-accent rounded">SPACE</kbd> Go</span>
           <span><kbd className="px-2 py-1 bg-accent rounded">ENTER</kbd> Next</span>
           <span><kbd className="px-2 py-1 bg-accent rounded">S</kbd> Skip</span>

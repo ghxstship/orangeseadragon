@@ -130,7 +130,7 @@ export function EmployeePortal({
   return (
     <div className="space-y-6">
       {/* Welcome Header */}
-      <Card className="bg-gradient-to-br from-zinc-900/80 to-zinc-800/40 border-border overflow-hidden">
+      <Card className="bg-gradient-to-br from-card to-muted/50 border-border overflow-hidden">
         <CardContent className="pt-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
@@ -138,7 +138,7 @@ export function EmployeePortal({
                 {employee.avatarUrl ? (
                   <AvatarImage src={employee.avatarUrl} alt={employee.name} />
                 ) : (
-                  <AvatarFallback className="bg-zinc-800 text-xl">
+                  <AvatarFallback className="bg-muted text-xl">
                     {employee.name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 )}
@@ -147,7 +147,7 @@ export function EmployeePortal({
                 <h1 className="text-2xl font-bold text-white">
                   Welcome back, {employee.name.split(' ')[0]}
                 </h1>
-                <p className="text-zinc-400">
+                <p className="text-muted-foreground">
                   {employee.title} · {employee.department}
                 </p>
               </div>
@@ -176,11 +176,11 @@ export function EmployeePortal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0 }}
         >
-          <Card className="bg-zinc-900/60 border-border">
+          <Card className="bg-card/80 border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-zinc-400">PTO Balance</p>
+                  <p className="text-sm text-muted-foreground">PTO Balance</p>
                   <p className="text-3xl font-bold text-white">{totalPtoAvailable} days</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-semantic-success/20 flex items-center justify-center">
@@ -196,20 +196,20 @@ export function EmployeePortal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="bg-zinc-900/60 border-border">
+          <Card className="bg-card/80 border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-zinc-400">Next Shift</p>
+                  <p className="text-sm text-muted-foreground">Next Shift</p>
                   <p className="text-xl font-bold text-white">
                     {nextShift ? nextShift.time : 'Mon 9:00 AM'}
                   </p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-muted-foreground">
                     {nextShift?.location || 'Main Office'}
                   </p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-semantic-info/20 flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-blue-400" />
+                  <Clock className="w-6 h-6 text-semantic-info" />
                 </div>
               </div>
             </CardContent>
@@ -221,13 +221,13 @@ export function EmployeePortal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="bg-zinc-900/60 border-border">
+          <Card className="bg-card/80 border-border">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-zinc-400">Pending</p>
+                  <p className="text-sm text-muted-foreground">Pending</p>
                   <p className="text-3xl font-bold text-white">{pendingItems.length}</p>
-                  <p className="text-xs text-zinc-500">items need attention</p>
+                  <p className="text-xs text-muted-foreground">items need attention</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-semantic-warning/20 flex items-center justify-center">
                   <AlertCircle className="w-6 h-6 text-semantic-warning" />
@@ -239,9 +239,9 @@ export function EmployeePortal({
       </div>
 
       {/* Quick Actions */}
-      <Card className="bg-zinc-900/60 border-border">
+      <Card className="bg-card/80 border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-zinc-300">Quick Actions</CardTitle>
+          <CardTitle className="text-lg text-foreground">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -251,7 +251,7 @@ export function EmployeePortal({
                 <Button
                   key={action.id}
                   variant="outline"
-                  className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border hover:bg-zinc-700/50"
+                  className="h-auto py-4 flex flex-col items-center gap-2 bg-card/70 border-border hover:bg-muted/50"
                   onClick={() => {
                     if (action.id === 'pto') onRequestTimeOff?.();
                     if (action.id === 'schedule') onViewSchedule?.();
@@ -260,7 +260,7 @@ export function EmployeePortal({
                   }}
                 >
                   <Icon className={cn("w-6 h-6", action.color)} />
-                  <span className="text-sm text-zinc-300">{action.label}</span>
+                  <span className="text-sm text-foreground">{action.label}</span>
                 </Button>
               );
             })}
@@ -270,9 +270,9 @@ export function EmployeePortal({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Leave Balances */}
-        <Card className="bg-zinc-900/60 border-border">
+        <Card className="bg-card/80 border-border">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg text-zinc-300">Leave Balances</CardTitle>
+            <CardTitle className="text-lg text-foreground">Leave Balances</CardTitle>
             <Button variant="ghost" size="sm" className="text-primary">
               View All <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
@@ -281,7 +281,7 @@ export function EmployeePortal({
             {leaveBalances.map((balance) => (
               <div key={balance.type} className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-zinc-400">{balance.type}</span>
+                  <span className="text-muted-foreground">{balance.type}</span>
                   <span className="text-white font-medium">
                     {balance.available} of {balance.total} days
                   </span>
@@ -296,9 +296,9 @@ export function EmployeePortal({
         </Card>
 
         {/* Recent Activity / Pending Items */}
-        <Card className="bg-zinc-900/60 border-border">
+        <Card className="bg-card/80 border-border">
           <CardHeader>
-            <CardTitle className="text-lg text-zinc-300">Recent Activity</CardTitle>
+            <CardTitle className="text-lg text-foreground">Recent Activity</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {pendingItems.map((item) => {
@@ -315,12 +315,12 @@ export function EmployeePortal({
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white truncate">{item.title}</p>
                     {item.dueDate && (
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-muted-foreground">
                         Due {item.dueDate.toLocaleDateString()}
                       </p>
                     )}
                   </div>
-                  <ChevronRight className="w-4 h-4 text-zinc-600" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/70" />
                 </div>
               );
             })}
@@ -329,9 +329,9 @@ export function EmployeePortal({
       </div>
 
       {/* Certifications & Training */}
-      <Card className="bg-zinc-900/60 border-border">
+      <Card className="bg-card/80 border-border">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+          <CardTitle className="text-lg text-foreground flex items-center gap-2">
             <Award className="w-5 h-5" />
             Certifications & Training
           </CardTitle>
@@ -347,7 +347,7 @@ export function EmployeePortal({
                 <span className="text-sm font-medium text-semantic-success">Valid</span>
               </div>
               <p className="text-white font-medium">Safety Certification</p>
-              <p className="text-xs text-zinc-500">Expires Dec 2026</p>
+              <p className="text-xs text-muted-foreground">Expires Dec 2026</p>
             </div>
             <div className="p-4 rounded-lg bg-semantic-warning/10 border border-semantic-warning/20">
               <div className="flex items-center gap-2 mb-2">
@@ -355,15 +355,15 @@ export function EmployeePortal({
                 <span className="text-sm font-medium text-semantic-warning">Expiring</span>
               </div>
               <p className="text-white font-medium">First Aid</p>
-              <p className="text-xs text-zinc-500">Expires in 30 days</p>
+              <p className="text-xs text-muted-foreground">Expires in 30 days</p>
             </div>
             <div className="p-4 rounded-lg bg-semantic-info/10 border border-semantic-info/20">
               <div className="flex items-center gap-2 mb-2">
-                <BookOpen className="w-4 h-4 text-blue-400" />
-                <span className="text-sm font-medium text-blue-300">In Progress</span>
+                <BookOpen className="w-4 h-4 text-semantic-info" />
+                <span className="text-sm font-medium text-semantic-info">In Progress</span>
               </div>
               <p className="text-white font-medium">Leadership Training</p>
-              <p className="text-xs text-zinc-500">60% complete</p>
+              <p className="text-xs text-muted-foreground">60% complete</p>
             </div>
           </div>
         </CardContent>

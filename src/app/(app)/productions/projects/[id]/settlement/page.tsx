@@ -145,7 +145,7 @@ export default function SettlementPage() {
               <Input value={item.description} onChange={e => updateItem(setter, item.id, 'description', e.target.value)} placeholder="Description" className="h-8" />
               <Input type="number" value={item.estimated || ''} onChange={e => updateItem(setter, item.id, 'estimated', Number(e.target.value))} className="h-8 text-right" />
               <Input type="number" value={item.actual || ''} onChange={e => updateItem(setter, item.id, 'actual', Number(e.target.value))} className="h-8 text-right" />
-              <div className={`text-right text-sm font-medium ${variance > 0 ? 'text-destructive' : variance < 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'}`}>
+              <div className={`text-right text-sm font-medium ${variance > 0 ? 'text-destructive' : variance < 0 ? 'text-semantic-success' : 'text-muted-foreground'}`}>
                 {variance !== 0 ? `${variance > 0 ? '+' : ''}$${variance.toLocaleString()}` : '—'}
               </div>
               <Input value={item.notes} onChange={e => updateItem(setter, item.id, 'notes', e.target.value)} placeholder="Notes" className="h-8" />
@@ -159,7 +159,7 @@ export default function SettlementPage() {
           <span>Total</span>
           <span className="text-right">${sumEstimated(items).toLocaleString()}</span>
           <span className="text-right">${sumActual(items).toLocaleString()}</span>
-          <span className={`text-right ${sumActual(items) - sumEstimated(items) > 0 ? 'text-destructive' : 'text-emerald-600 dark:text-emerald-400'}`}>
+          <span className={`text-right ${sumActual(items) - sumEstimated(items) > 0 ? 'text-destructive' : 'text-semantic-success'}`}>
             {sumActual(items) - sumEstimated(items) !== 0 ? `${sumActual(items) - sumEstimated(items) > 0 ? '+' : ''}$${(sumActual(items) - sumEstimated(items)).toLocaleString()}` : '—'}
           </span>
           <span /><span />
@@ -203,7 +203,7 @@ export default function SettlementPage() {
         <div className="space-y-1.5">
           {approvalSteps.map((step, idx) => (
             <div key={step.key} className="flex items-center gap-2 text-sm">
-              <div className={`h-2 w-2 rounded-full ${idx < currentStepIndex ? 'bg-emerald-500 dark:bg-emerald-400' : idx === currentStepIndex ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+              <div className={`h-2 w-2 rounded-full ${idx < currentStepIndex ? 'bg-semantic-success' : idx === currentStepIndex ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
               <span className={idx <= currentStepIndex ? 'text-foreground' : 'text-muted-foreground'}>{step.label}</span>
             </div>
           ))}
@@ -229,10 +229,10 @@ export default function SettlementPage() {
           <div className="space-y-6 max-w-4xl">
             <div className="grid grid-cols-4 gap-4">
               {[
-                { label: 'Revenue', value: revenue, icon: DollarSign, color: 'text-emerald-600 dark:text-emerald-400' },
-                { label: 'Total Costs', value: totalActual, icon: totalActual > totalEstimated ? TrendingUp : TrendingDown, color: totalActual > totalEstimated ? 'text-destructive' : 'text-emerald-600 dark:text-emerald-400' },
+                { label: 'Revenue', value: revenue, icon: DollarSign, color: 'text-semantic-success' },
+                { label: 'Total Costs', value: totalActual, icon: totalActual > totalEstimated ? TrendingUp : TrendingDown, color: totalActual > totalEstimated ? 'text-destructive' : 'text-semantic-success' },
                 { label: 'Agency Fee', value: agencyFee, icon: DollarSign, color: 'text-muted-foreground' },
-                { label: 'Net Margin', value: margin, icon: margin >= 0 ? TrendingUp : TrendingDown, color: margin >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive' },
+                { label: 'Net Margin', value: margin, icon: margin >= 0 ? TrendingUp : TrendingDown, color: margin >= 0 ? 'text-semantic-success' : 'text-destructive' },
               ].map(stat => (
                 <Card key={stat.label}>
                   <CardContent className="pt-4">
@@ -314,7 +314,7 @@ export default function SettlementPage() {
                     <React.Fragment key={step.key}>
                       {idx > 0 && <div className={`h-0.5 flex-1 ${idx <= currentStepIndex ? 'bg-primary' : 'bg-muted'}`} />}
                       <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
-                        idx < currentStepIndex ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                        idx < currentStepIndex ? 'bg-semantic-success/10 text-semantic-success' :
                         idx === currentStepIndex ? 'bg-primary text-primary-foreground' :
                         'bg-muted text-muted-foreground'
                       }`}>
@@ -343,7 +343,7 @@ export default function SettlementPage() {
                 )}
 
                 {approvalStatus === 'finalized' && (
-                  <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                  <div className="flex items-center gap-2 text-semantic-success">
                     <CheckCircle2 className="h-5 w-5" />
                     <span className="font-medium">Settlement finalized</span>
                   </div>

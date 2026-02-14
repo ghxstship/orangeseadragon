@@ -19,7 +19,8 @@ const buttonVariants = cva(
         glass: "glass text-foreground hover:bg-white/10 dark:hover:bg-white/5 border border-white/20 hover:border-white/30 shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] backdrop-blur-md",
         spatial: "bg-gradient-to-b from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 border border-white/20 shadow-[0_2px_10px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] hover:-translate-y-[1px] text-foreground backdrop-blur-md",
         link: "text-primary underline-offset-4 hover:underline",
-        shiny: "bg-primary text-primary-foreground animate-shimmer bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] bg-[length:200%_100%] border-slate-800",
+        shiny:
+          "bg-primary text-primary-foreground animate-shimmer bg-[linear-gradient(110deg,hsl(var(--background)),45%,hsl(var(--muted)),55%,hsl(var(--background)))] bg-[length:200%_100%] border-border",
       },
       size: {
         default: "h-10 px-4 py-2",

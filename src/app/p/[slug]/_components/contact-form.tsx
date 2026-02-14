@@ -15,12 +15,11 @@ interface ContactFormProps {
     };
 }
 
-export function ContactForm({ profileId, leadCaptureType, themeConfig }: ContactFormProps) {
+export function ContactForm({ profileId, leadCaptureType, themeConfig: _themeConfig }: ContactFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const primaryColor = themeConfig?.primary_color || "#6366f1";
     const showMessage = leadCaptureType === "contact" || leadCaptureType === "both";
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,13 +57,13 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
 
     if (isSuccess) {
         return (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border">
+            <div className="bg-card rounded-2xl p-6 shadow-sm border">
                 <div className="flex flex-col items-center justify-center py-4 text-center">
-                    <CheckCircle className="h-12 w-12 text-emerald-500 dark:text-emerald-400 mb-3" />
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                    <CheckCircle className="h-12 w-12 text-semantic-success mb-3" />
+                    <h3 className="text-lg font-semibold text-foreground">
                         {leadCaptureType === "newsletter" ? "Subscribed!" : "Message Sent!"}
                     </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                         {leadCaptureType === "newsletter"
                             ? "You'll receive updates soon."
                             : "We'll get back to you shortly."}
@@ -75,7 +74,7 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
     }
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border">
+        <div className="bg-card rounded-2xl p-6 shadow-sm border">
             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
                 {leadCaptureType === "newsletter" ? "Stay Updated" : "Get in Touch"}
             </h3>
@@ -89,7 +88,7 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
                         name="name"
                         placeholder="Your name"
                         required
-                        className="bg-slate-50 dark:bg-slate-800/50"
+                        className="bg-muted/40"
                     />
                 </div>
                 <div className="space-y-2">
@@ -102,7 +101,7 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
                         type="email"
                         placeholder="you@example.com"
                         required
-                        className="bg-slate-50 dark:bg-slate-800/50"
+                        className="bg-muted/40"
                     />
                 </div>
                 {showMessage && (
@@ -115,7 +114,7 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
                             name="message"
                             placeholder="How can we help?"
                             rows={3}
-                            className="bg-slate-50 dark:bg-slate-800/50 resize-none"
+                            className="bg-muted/40 resize-none"
                         />
                     </div>
                 )}
@@ -125,8 +124,7 @@ export function ContactForm({ profileId, leadCaptureType, themeConfig }: Contact
                 <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full"
-                    style={{ backgroundColor: primaryColor }}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                 >
                     {isSubmitting ? (
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />

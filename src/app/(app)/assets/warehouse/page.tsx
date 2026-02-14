@@ -7,6 +7,8 @@ import type { WorkspaceLayoutConfig } from '@/lib/layouts/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import {
   Search,
   Package,
@@ -52,8 +54,8 @@ const zones: StorageZone[] = [
 ];
 
 const statusColors: Record<string, string> = {
-  available: 'bg-emerald-500 dark:bg-emerald-400',
-  reserved: 'bg-amber-500 dark:bg-amber-400',
+  available: 'bg-semantic-success',
+  reserved: 'bg-semantic-warning',
   deployed: 'bg-primary',
   maintenance: 'bg-destructive',
 };
@@ -89,9 +91,9 @@ export default function WarehouseMapPage() {
 
       {activeZone ? (
         <div>
-          <button onClick={() => setSelectedZone(null)} className="text-xs text-primary mb-3 hover:underline">
+          <Button variant="link" size="sm" onClick={() => setSelectedZone(null)} className="h-auto p-0 text-xs mb-3">
             ← All Zones
-          </button>
+          </Button>
           <h3 className="text-sm font-semibold mb-2">{activeZone.name}</h3>
           <div className="text-xs text-muted-foreground mb-3">
             {activeZone.used}/{activeZone.capacity} slots used
@@ -123,8 +125,8 @@ export default function WarehouseMapPage() {
 
           <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-3 mt-6">Low Stock Alerts</h3>
           <div className="space-y-2">
-            <div className="flex items-center gap-2 p-2 rounded-md bg-amber-500/10 border border-amber-500/20">
-              <AlertTriangle className="h-3 w-3 text-amber-600 dark:text-amber-400 shrink-0" />
+            <div className="flex items-center gap-2 p-2 rounded-md bg-semantic-warning/10 border border-semantic-warning/20">
+              <AlertTriangle className="h-3 w-3 text-semantic-warning shrink-0" />
               <span className="text-xs">Gaffer tape — 2 rolls remaining</span>
             </div>
             <div className="flex items-center gap-2 p-2 rounded-md bg-destructive/10 border border-destructive/20">
@@ -163,12 +165,10 @@ export default function WarehouseMapPage() {
                       <span className="text-sm font-semibold">{zone.name}</span>
                     </div>
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${isHigh ? 'bg-destructive' : 'bg-primary'}`}
-                          style={{ width: `${utilization}%` }}
-                        />
-                      </div>
+                      <Progress
+                        value={utilization}
+                        className={`flex-1 h-2 ${isHigh ? '[&>div]:bg-destructive' : '[&>div]:bg-primary'}`}
+                      />
                       <span className={`text-xs font-medium ${isHigh ? 'text-destructive' : ''}`}>{utilization}%</span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">

@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { SEMANTIC_BADGE_CLASSES } from "@/lib/tokens/semantic-colors";
 import {
   Play,
   Pause,
@@ -82,16 +83,16 @@ const cueTypeIcons: Record<string, React.ReactNode> = {
 };
 
 const cueTypeColors: Record<string, string> = {
-  action: "bg-blue-500/10 text-blue-500 border-blue-500/30",
-  audio: "bg-purple-500/10 text-purple-500 border-purple-500/30",
-  video: "bg-pink-500/10 text-pink-500 border-pink-500/30",
-  lighting: "bg-semantic-warning/10 text-semantic-warning border-semantic-warning/30",
-  transition: "bg-cyan-500/10 text-cyan-500 border-cyan-500/30",
-  break: "bg-gray-500/10 text-gray-500 border-gray-500/30",
-  speech: "bg-semantic-success/10 text-semantic-success border-semantic-success/30",
-  presentation: "bg-orange-500/10 text-orange-500 border-orange-500/30",
-  music: "bg-indigo-500/10 text-indigo-500 border-indigo-500/30",
-  standby: "bg-semantic-warning/10 text-semantic-warning border-semantic-warning/30",
+  action: SEMANTIC_BADGE_CLASSES.info,
+  audio: SEMANTIC_BADGE_CLASSES.purple,
+  video: SEMANTIC_BADGE_CLASSES.accent,
+  lighting: SEMANTIC_BADGE_CLASSES.warning,
+  transition: SEMANTIC_BADGE_CLASSES.cyan,
+  break: SEMANTIC_BADGE_CLASSES.neutral,
+  speech: SEMANTIC_BADGE_CLASSES.success,
+  presentation: SEMANTIC_BADGE_CLASSES.orange,
+  music: SEMANTIC_BADGE_CLASSES.indigo,
+  standby: SEMANTIC_BADGE_CLASSES.warning,
 };
 
 function formatDuration(seconds: number): string {
@@ -144,51 +145,6 @@ export function ShowCallingView({
       }
     };
   }, [isLive, showStartTime, cueStartTime]);
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-        return;
-      }
-
-      switch (e.code) {
-        case "Space":
-          e.preventDefault();
-          if (currentCue && currentCue.status !== "complete") {
-            handleGo();
-          }
-          break;
-        case "KeyS":
-          e.preventDefault();
-          if (nextCue) {
-            handleStandby();
-          }
-          break;
-        case "Escape":
-          e.preventDefault();
-          if (currentCue) {
-            handleSkip();
-          }
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          if (currentCueIndex > 0) {
-            setCurrentCueIndex(currentCueIndex - 1);
-          }
-          break;
-        case "ArrowDown":
-          e.preventDefault();
-          if (currentCueIndex < runsheet.cues.length - 1) {
-            setCurrentCueIndex(currentCueIndex + 1);
-          }
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentCue, nextCue, currentCueIndex, runsheet.cues.length]);
 
   // Auto-scroll to current cue
   useEffect(() => {
@@ -247,6 +203,51 @@ export function ShowCallingView({
     await onCueReset(cueId);
   }, [onCueReset]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.code) {
+        case "Space":
+          e.preventDefault();
+          if (currentCue && currentCue.status !== "complete") {
+            handleGo();
+          }
+          break;
+        case "KeyS":
+          e.preventDefault();
+          if (nextCue) {
+            handleStandby();
+          }
+          break;
+        case "Escape":
+          e.preventDefault();
+          if (currentCue) {
+            handleSkip();
+          }
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          if (currentCueIndex > 0) {
+            setCurrentCueIndex(currentCueIndex - 1);
+          }
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          if (currentCueIndex < runsheet.cues.length - 1) {
+            setCurrentCueIndex(currentCueIndex + 1);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentCue, nextCue, currentCueIndex, runsheet.cues.length, handleGo, handleStandby, handleSkip]);
+
   const getVariance = () => {
     if (!currentCue || !cueStartTime) return 0;
     return cueElapsedTime - currentCue.duration_seconds;
@@ -256,15 +257,15 @@ export function ShowCallingView({
   const isOvertime = variance > 0;
 
   return (
-    <div className={cn("flex h-full bg-black text-white", className)}>
+    <div className={cn("flex h-full bg-background text-foreground", className)}>
       {/* Left Panel - Cue List */}
-      <div className="w-80 border-r border-zinc-800 flex flex-col">
-        <div className="p-4 border-b border-zinc-800">
+      <div className="w-80 border-r border-border flex flex-col">
+        <div className="p-4 border-b border-border">
           <h2 className="font-semibold text-lg">{runsheet.name}</h2>
-          <p className="text-sm text-zinc-400">
+          <p className="text-sm text-muted-foreground">
             {runsheet.event_name} • {runsheet.stage_name}
           </p>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {runsheet.date} @ {runsheet.start_time}
           </p>
         </div>
@@ -272,23 +273,25 @@ export function ShowCallingView({
         <ScrollArea className="flex-1" ref={cueListRef}>
           <div className="p-2 space-y-1">
             {runsheet.cues.map((cue, index) => (
-              <button
+              <Button
                 key={cue.id}
+                type="button"
+                variant="ghost"
                 data-cue-index={index}
                 onClick={() => setCurrentCueIndex(index)}
                 className={cn(
-                  "w-full text-left p-3 rounded-lg transition-colors",
+                  "w-full justify-start h-auto text-left p-3 rounded-lg transition-colors",
                   index === currentCueIndex
                     ? "bg-semantic-success/20 border border-semantic-success"
                     : cue.status === "complete"
-                    ? "bg-zinc-800/50 opacity-60"
+                    ? "bg-muted/50 opacity-60"
                     : cue.status === "skipped"
                     ? "bg-destructive/10 opacity-60"
-                    : "hover:bg-zinc-800"
+                    : "hover:bg-muted/60"
                 )}
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-zinc-500 w-6">{cue.sequence}</span>
+                  <span className="text-xs text-muted-foreground w-6">{cue.sequence}</span>
                   <span
                     className={cn(
                       "p-1 rounded border",
@@ -298,7 +301,7 @@ export function ShowCallingView({
                     {cueTypeIcons[cue.cue_type] || cueTypeIcons.action}
                   </span>
                   <span className="flex-1 truncate font-medium">{cue.name}</span>
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-muted-foreground">
                     {formatDuration(cue.duration_seconds)}
                   </span>
                 </div>
@@ -320,18 +323,18 @@ export function ShowCallingView({
                     </Badge>
                   </div>
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t border-zinc-800">
+        <div className="p-4 border-t border-border">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-zinc-400">Total Cues</span>
+            <span className="text-muted-foreground">Total Cues</span>
             <span>{runsheet.cues.length}</span>
           </div>
           <div className="flex items-center justify-between text-sm mt-1">
-            <span className="text-zinc-400">Completed</span>
+            <span className="text-muted-foreground">Completed</span>
             <span>{runsheet.cues.filter((c) => c.status === "complete").length}</span>
           </div>
         </div>
@@ -340,17 +343,17 @@ export function ShowCallingView({
       {/* Center Panel - Current Cue */}
       <div className="flex-1 flex flex-col">
         {/* Timer Bar */}
-        <div className="h-16 border-b border-zinc-800 flex items-center justify-between px-6 bg-zinc-900">
+        <div className="h-16 border-b border-border flex items-center justify-between px-6 bg-card">
           <div className="flex items-center gap-4">
             <div className="text-center">
-              <div className="text-xs text-zinc-500 uppercase">Show Time</div>
+              <div className="text-xs text-muted-foreground uppercase">Show Time</div>
               <div className="text-2xl font-mono font-bold">
                 {formatDuration(elapsedTime)}
               </div>
             </div>
-            <Separator orientation="vertical" className="h-10 bg-zinc-700" />
+            <Separator orientation="vertical" className="h-10 bg-border" />
             <div className="text-center">
-              <div className="text-xs text-zinc-500 uppercase">Cue Time</div>
+              <div className="text-xs text-muted-foreground uppercase">Cue Time</div>
               <div
                 className={cn(
                   "text-2xl font-mono font-bold",
@@ -407,10 +410,10 @@ export function ShowCallingView({
               {/* Previous Cue */}
               {previousCue && (
                 <div className="w-full max-w-3xl mb-4 opacity-50">
-                  <Card className="bg-zinc-900 border-zinc-800">
+                  <Card className="bg-card border-border">
                     <CardContent className="p-4 flex items-center gap-4">
-                      <ChevronUp className="h-5 w-5 text-zinc-500" />
-                      <span className="text-zinc-400">Previous:</span>
+                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-muted-foreground">Previous:</span>
                       <span className="font-medium">{previousCue.name}</span>
                       <Badge variant="secondary" className="ml-auto">
                         {previousCue.status === "complete" ? "COMPLETE" : previousCue.status.toUpperCase()}
@@ -421,11 +424,11 @@ export function ShowCallingView({
               )}
 
               {/* Current Cue - Large Display */}
-              <Card className="w-full max-w-3xl bg-zinc-900 border-2 border-emerald-500">
+              <Card className="w-full max-w-3xl bg-card border-2 border-semantic-success">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="text-3xl font-bold text-zinc-500">
+                      <span className="text-3xl font-bold text-muted-foreground">
                         #{currentCue.sequence}
                       </span>
                       <span
@@ -438,7 +441,7 @@ export function ShowCallingView({
                       </span>
                     </div>
                     <div className="text-right">
-                      <div className="text-sm text-zinc-500">Scheduled</div>
+                      <div className="text-sm text-muted-foreground">Scheduled</div>
                       <div className="text-xl font-mono">
                         {formatTime(currentCue.scheduled_time)}
                       </div>
@@ -446,28 +449,28 @@ export function ShowCallingView({
                   </div>
                   <CardTitle className="text-4xl mt-4">{currentCue.name}</CardTitle>
                   {currentCue.description && (
-                    <p className="text-lg text-zinc-400 mt-2">{currentCue.description}</p>
+                    <p className="text-lg text-muted-foreground mt-2">{currentCue.description}</p>
                   )}
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-sm text-zinc-500">Duration</div>
+                      <div className="text-sm text-muted-foreground">Duration</div>
                       <div className="text-3xl font-mono font-bold">
                         {formatDuration(currentCue.duration_seconds)}
                       </div>
                     </div>
                     {currentCue.assigned_to_name && (
                       <div className="text-right">
-                        <div className="text-sm text-zinc-500">Assigned To</div>
+                        <div className="text-sm text-muted-foreground">Assigned To</div>
                         <div className="text-lg">{currentCue.assigned_to_name}</div>
                       </div>
                     )}
                   </div>
 
                   {currentCue.script_text && (
-                    <div className="p-4 bg-zinc-800 rounded-lg">
-                      <div className="text-sm text-zinc-500 mb-2">Script</div>
+                    <div className="p-4 bg-muted rounded-lg">
+                      <div className="text-sm text-muted-foreground mb-2">Script</div>
                       <p className="text-lg whitespace-pre-wrap">{currentCue.script_text}</p>
                     </div>
                   )}
@@ -484,10 +487,10 @@ export function ShowCallingView({
               {/* Next Cue */}
               {nextCue && (
                 <div className="w-full max-w-3xl mt-4 opacity-70">
-                  <Card className="bg-zinc-900 border-zinc-800">
+                  <Card className="bg-card border-border">
                     <CardContent className="p-4 flex items-center gap-4">
-                      <ChevronDown className="h-5 w-5 text-zinc-500" />
-                      <span className="text-zinc-400">Next:</span>
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-muted-foreground">Next:</span>
                       <span
                         className={cn(
                           "p-1 rounded border",
@@ -497,7 +500,7 @@ export function ShowCallingView({
                         {cueTypeIcons[nextCue.cue_type] || cueTypeIcons.action}
                       </span>
                       <span className="font-medium">{nextCue.name}</span>
-                      <span className="text-zinc-500 ml-auto">
+                      <span className="text-muted-foreground ml-auto">
                         {formatDuration(nextCue.duration_seconds)}
                       </span>
                     </CardContent>
@@ -507,9 +510,9 @@ export function ShowCallingView({
             </>
           ) : (
             <div className="text-center">
-              <Clock className="h-16 w-16 text-zinc-600 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-zinc-400">Ready to Start</h3>
-              <p className="text-zinc-500 mt-2">
+              <Clock className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-muted-foreground">Ready to Start</h3>
+              <p className="text-muted-foreground mt-2">
                 Press &quot;Start Show&quot; or select a cue to begin
               </p>
             </div>
@@ -517,7 +520,7 @@ export function ShowCallingView({
         </div>
 
         {/* Control Bar */}
-        <div className="h-24 border-t border-zinc-800 bg-zinc-900 flex items-center justify-center gap-4 px-8">
+        <div className="h-24 border-t border-border bg-card flex items-center justify-center gap-4 px-8">
           <Button
             size="lg"
             variant="outline"
@@ -527,7 +530,7 @@ export function ShowCallingView({
           >
             <Clock className="h-6 w-6 mr-2" />
             STANDBY
-            <kbd className="ml-2 text-xs bg-zinc-800 px-2 py-1 rounded">S</kbd>
+            <kbd className="ml-2 text-xs bg-muted px-2 py-1 rounded">S</kbd>
           </Button>
 
           <Button
@@ -568,51 +571,51 @@ export function ShowCallingView({
       </div>
 
       {/* Right Panel - Info */}
-      <div className="w-72 border-l border-zinc-800 flex flex-col">
-        <div className="p-4 border-b border-zinc-800">
+      <div className="w-72 border-l border-border flex flex-col">
+        <div className="p-4 border-b border-border">
           <h3 className="font-semibold">Keyboard Shortcuts</h3>
         </div>
         <div className="p-4 space-y-3 text-sm">
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Go / Execute</span>
-            <kbd className="bg-zinc-800 px-2 py-1 rounded">Space</kbd>
+            <span className="text-muted-foreground">Go / Execute</span>
+            <kbd className="bg-muted px-2 py-1 rounded">Space</kbd>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Standby Next</span>
-            <kbd className="bg-zinc-800 px-2 py-1 rounded">S</kbd>
+            <span className="text-muted-foreground">Standby Next</span>
+            <kbd className="bg-muted px-2 py-1 rounded">S</kbd>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Skip Cue</span>
-            <kbd className="bg-zinc-800 px-2 py-1 rounded">Esc</kbd>
+            <span className="text-muted-foreground">Skip Cue</span>
+            <kbd className="bg-muted px-2 py-1 rounded">Esc</kbd>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Previous Cue</span>
-            <kbd className="bg-zinc-800 px-2 py-1 rounded">↑</kbd>
+            <span className="text-muted-foreground">Previous Cue</span>
+            <kbd className="bg-muted px-2 py-1 rounded">↑</kbd>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Next Cue</span>
-            <kbd className="bg-zinc-800 px-2 py-1 rounded">↓</kbd>
+            <span className="text-muted-foreground">Next Cue</span>
+            <kbd className="bg-muted px-2 py-1 rounded">↓</kbd>
           </div>
         </div>
 
-        <Separator className="bg-zinc-800" />
+        <Separator className="bg-border" />
 
-        <div className="p-4 border-b border-zinc-800">
+        <div className="p-4 border-b border-border">
           <h3 className="font-semibold">Status</h3>
         </div>
         <div className="p-4 space-y-3 text-sm flex-1">
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Show Status</span>
+            <span className="text-muted-foreground">Show Status</span>
             <Badge variant={isLive ? "destructive" : "secondary"}>
               {isLive ? "LIVE" : "STANDBY"}
             </Badge>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Current Cue</span>
+            <span className="text-muted-foreground">Current Cue</span>
             <span>{currentCue ? `#${currentCue.sequence}` : "-"}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-zinc-400">Progress</span>
+            <span className="text-muted-foreground">Progress</span>
             <span>
               {runsheet.cues.filter((c) => c.status === "complete").length} /{" "}
               {runsheet.cues.length}

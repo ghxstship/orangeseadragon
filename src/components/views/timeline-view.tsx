@@ -78,10 +78,6 @@ const _ROW_HEIGHT = 48;
 const _HEADER_HEIGHT = 60;
 const _GROUP_WIDTH = 200;
 
-const ROW_HEIGHT_VAR = 'var(--timeline-row-height, 48px)';
-const HEADER_HEIGHT_VAR = 'var(--timeline-header-height, 60px)';
-const GROUP_WIDTH_VAR = 'var(--timeline-group-width, 200px)';
-
 export function TimelineView({
   items,
   groups = [],
@@ -245,6 +241,15 @@ export function TimelineView({
     return (offset / totalDays) * totalWidth;
   }, [viewStart, viewEnd, totalWidth]);
 
+  const timelineVars = React.useMemo(
+    () => ({
+      "--timeline-cell-width": `${cellWidth}px`,
+      "--timeline-total-width": `${totalWidth}px`,
+      "--timeline-today-position": `${todayPosition ?? 0}px`,
+    }) as React.CSSProperties,
+    [cellWidth, totalWidth, todayPosition]
+  );
+
   return (
     <Card className={cn("w-full border-border glass-morphism overflow-hidden shadow-2xl", className)}>
       <CardHeader className="pb-4 border-b border-border bg-background/5">
@@ -318,18 +323,16 @@ export function TimelineView({
       <CardContent className="p-0">
         <div className="flex">
           {showGroups && groups.length > 0 && (
-            <div className="flex-shrink-0 border-r border-border bg-background/20" style={{ width: GROUP_WIDTH_VAR }}>
+            <div className="flex-shrink-0 w-[var(--timeline-group-width,200px)] border-r border-border bg-background/20">
               <div
-                className="border-b border-border bg-muted px-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
-                style={{ height: HEADER_HEIGHT_VAR }}
+                className="h-[var(--timeline-header-height,60px)] border-b border-border bg-muted px-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
               >
                 Groups
               </div>
               {groupedItems.map(({ group }, index) => (
                 <div
                   key={group?.id || `ungrouped-${index}`}
-                  className="border-b border-border px-6 flex items-center text-xs font-bold transition-colors hover:bg-muted"
-                  style={{ height: ROW_HEIGHT_VAR }}
+                  className="h-[var(--timeline-row-height,48px)] border-b border-border px-6 flex items-center text-xs font-bold transition-colors hover:bg-muted"
                 >
                   {group ? (
                     <div className="flex items-center gap-3">
@@ -349,21 +352,19 @@ export function TimelineView({
             </div>
           )}
 
-          <ScrollArea className="flex-1" ref={scrollRef}>
-            <div style={{ width: totalWidth, minWidth: "100%" }}>
+          <ScrollArea className="flex-1" ref={scrollRef} style={timelineVars}>
+            <div className="w-[var(--timeline-total-width)] min-w-full">
               {/* Header */}
               <div
-                className="flex border-b border-border bg-muted sticky top-0 z-30"
-                style={{ height: HEADER_HEIGHT_VAR }}
+                className="h-[var(--timeline-header-height,60px)] flex border-b border-border bg-muted sticky top-0 z-30"
               >
                 {timeUnits.map((unit, index) => (
                   <div
                     key={index}
                     className={cn(
-                      "flex-shrink-0 border-r border-border flex flex-col items-center justify-center gap-0.5",
+                      "w-[var(--timeline-cell-width)] flex-shrink-0 border-r border-border flex flex-col items-center justify-center gap-0.5",
                       showToday && isSameDay(unit, new Date()) && "bg-primary/10 shadow-[inner_0_0_20px_rgba(var(--primary),0.1)]"
                     )}
-                    style={{ width: cellWidth }}
                   >
                     <span className="text-[10px] font-black uppercase tracking-[0.1em] opacity-30">{format(unit, "EEE")}</span>
                     <span className={cn("text-sm font-black tracking-tight", showToday && isSameDay(unit, new Date()) && "text-primary")}>
@@ -381,10 +382,9 @@ export function TimelineView({
                     <div
                       key={index}
                       className={cn(
-                        "flex-shrink-0 border-r border-border",
+                        "w-[var(--timeline-cell-width)] flex-shrink-0 border-r border-border",
                         showToday && isSameDay(unit, new Date()) && "bg-primary/[0.03]"
                       )}
-                      style={{ width: cellWidth }}
                     />
                   ))}
                 </div>
@@ -392,8 +392,7 @@ export function TimelineView({
                 {/* Today line */}
                 {showToday && todayPosition !== null && (
                   <div
-                    className="absolute top-0 bottom-0 w-[2px] bg-primary z-40 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
-                    style={{ left: todayPosition }}
+                    className="absolute top-0 bottom-0 left-[var(--timeline-today-position)] w-[2px] bg-primary z-40 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
                   />
                 )}
 
@@ -402,8 +401,7 @@ export function TimelineView({
                   {groupedItems.map(({ group, items: groupItems }, groupIndex) => (
                     <div
                       key={group?.id || `ungrouped-${groupIndex}`}
-                      className="relative border-b border-border group/row"
-                      style={{ height: ROW_HEIGHT_VAR }}
+                      className="relative h-[var(--timeline-row-height,48px)] border-b border-border group/row"
                     >
                       <TooltipProvider>
                         {groupItems.map((item) => {

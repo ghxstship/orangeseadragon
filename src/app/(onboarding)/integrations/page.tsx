@@ -115,7 +115,7 @@ export default function OnboardingIntegrationsPage() {
               key={integration.id}
               className={cn(
                 "flex items-center justify-between rounded-lg border p-4 transition-colors",
-                isConnected && "border-emerald-500/50 bg-emerald-500/5"
+                isConnected && "border-semantic-success/50 bg-semantic-success/5"
               )}
             >
               <div className="flex items-center gap-3">
@@ -146,7 +146,7 @@ export default function OnboardingIntegrationsPage() {
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : isConnected ? (
                   <>
-                    <Check className="mr-1 h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+                    <Check className="mr-1 h-4 w-4 text-semantic-success" />
                     Connected
                   </>
                 ) : (

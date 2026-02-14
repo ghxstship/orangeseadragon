@@ -28,16 +28,16 @@ export function LiveClockWidget() {
     }).toUpperCase();
 
     return (
-        <Card className="h-full bg-black border-zinc-800 text-zinc-100 flex flex-col justify-center items-center shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+        <Card className="h-full bg-card border-border text-foreground flex flex-col justify-center items-center shadow-[0_0_15px_rgba(0,0,0,0.5)]">
             <CardContent className="flex flex-col items-center justify-center p-6 space-y-2">
-                <div className="flex items-center gap-2 text-zinc-500 text-sm font-mono tracking-widest uppercase">
+                <div className="flex items-center gap-2 text-muted-foreground text-sm font-mono tracking-widest uppercase">
                     <Clock className="w-4 h-4" />
                     <span>Local Time</span>
                 </div>
                 <div className="text-5xl font-mono font-bold tracking-tighter text-semantic-success tabular-nums">
                     {timeString}
                 </div>
-                <div className="text-lg font-medium text-zinc-400 tracking-widest">
+                <div className="text-lg font-medium text-muted-foreground tracking-widest">
                     {dateString}
                 </div>
             </CardContent>

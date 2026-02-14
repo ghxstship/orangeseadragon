@@ -133,7 +133,7 @@ export function TimeClock({
   };
 
   const statusConfig = {
-    idle: { color: 'bg-zinc-500', label: 'Not Clocked In', glow: '' },
+    idle: { color: 'bg-muted-foreground', label: 'Not Clocked In', glow: '' },
     clocked_in: { color: 'bg-semantic-success', label: 'Working', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-success)/0.5)]' },
     on_break: { color: 'bg-semantic-warning', label: 'On Break', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-warning)/0.5)]' },
     clocked_out: { color: 'bg-semantic-info', label: 'Clocked Out', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-info)/0.5)]' },
@@ -141,12 +141,12 @@ export function TimeClock({
 
   return (
     <Card className={cn(
-      "bg-zinc-900/60 backdrop-blur-xl border-border overflow-hidden transition-shadow duration-500",
+      "bg-card/80 backdrop-blur-xl border-border overflow-hidden transition-shadow duration-500",
       statusConfig[status].glow
     )}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-medium text-zinc-300 flex items-center gap-2">
+          <CardTitle className="text-lg font-medium text-foreground flex items-center gap-2">
             <Clock className="w-5 h-5" />
             Time Clock
           </CardTitle>
@@ -157,7 +157,7 @@ export function TimeClock({
               status === 'clocked_in' && "border-semantic-success/50 text-semantic-success",
               status === 'on_break' && "border-semantic-warning/50 text-semantic-warning",
               status === 'clocked_out' && "border-semantic-info/50 text-semantic-info",
-              status === 'idle' && "border-zinc-500/50 text-zinc-400"
+              status === 'idle' && "border-muted-foreground/50 text-muted-foreground"
             )}
           >
             {statusConfig[status].label}
@@ -176,7 +176,7 @@ export function TimeClock({
           >
             {formatTime(currentTime)}
           </motion.div>
-          <p className="text-sm text-zinc-500 mt-2">{formatDate(currentTime)}</p>
+          <p className="text-sm text-muted-foreground mt-2">{formatDate(currentTime)}</p>
         </div>
 
         {/* Elapsed Time (when clocked in) */}
@@ -186,20 +186,20 @@ export function TimeClock({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="bg-zinc-800/50 rounded-xl p-4 border border-border"
+              className="bg-muted/30 rounded-xl p-4 border border-border"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-zinc-500 uppercase tracking-wide">Elapsed Time</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Elapsed Time</p>
                   <p className="text-2xl font-mono font-semibold text-white">{getElapsedTime()}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-zinc-500 uppercase tracking-wide">Break Time</p>
-                  <p className="text-lg font-mono text-zinc-400">{totalBreakMinutes} min</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Break Time</p>
+                  <p className="text-lg font-mono text-muted-foreground">{totalBreakMinutes} min</p>
                 </div>
               </div>
               {clockInTime && (
-                <p className="text-xs text-zinc-500 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   Clocked in at {formatTime(clockInTime)}
                 </p>
               )}
@@ -216,10 +216,10 @@ export function TimeClock({
               exit={{ opacity: 0, scale: 0.9 }}
               className="bg-semantic-info/10 border border-semantic-info/20 rounded-xl p-4 flex items-center gap-3"
             >
-              <CheckCircle2 className="w-6 h-6 text-blue-400" />
+              <CheckCircle2 className="w-6 h-6 text-semantic-info" />
               <div>
-                <p className="text-blue-300 font-medium">Successfully Clocked Out</p>
-                <p className="text-xs text-blue-400/70">Your time has been recorded</p>
+                <p className="text-semantic-info font-medium">Successfully Clocked Out</p>
+                <p className="text-xs text-semantic-info/70">Your time has been recorded</p>
               </div>
             </motion.div>
           )}
@@ -227,7 +227,7 @@ export function TimeClock({
 
         {/* Location */}
         {locationName && status !== 'clocked_out' && (
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <MapPin className="w-3 h-3" />
             <span>{locationName}</span>
           </div>
@@ -278,8 +278,8 @@ export function TimeClock({
 
         {/* Employee Info */}
         <div className="pt-4 border-t border-border text-center">
-          <p className="text-sm text-zinc-400">{employeeName}</p>
-          {employeeId && <p className="text-xs text-zinc-600">ID: {employeeId}</p>}
+          <p className="text-sm text-muted-foreground">{employeeName}</p>
+          {employeeId && <p className="text-xs text-muted-foreground/70">ID: {employeeId}</p>}
         </div>
       </CardContent>
     </Card>

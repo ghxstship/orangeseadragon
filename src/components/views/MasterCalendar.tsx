@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
   PopoverContent,
@@ -481,45 +483,49 @@ function CreateEventModal({ isOpen, onClose, initialDate, onSubmit }: CreateEven
         <h2 className="text-lg font-semibold mb-4">Create Event</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm font-medium">Title</label>
-            <input
+            <Label htmlFor="calendar-create-title" className="text-sm font-medium">Title</Label>
+            <Input
+              id="calendar-create-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+              className="mt-1"
               placeholder="Event title"
               autoFocus
               required
             />
           </div>
           <div>
-            <label className="text-sm font-medium">Description</label>
-            <textarea
+            <Label htmlFor="calendar-create-description" className="text-sm font-medium">Description</Label>
+            <Textarea
+              id="calendar-create-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+              className="mt-1"
               placeholder="Optional description"
               rows={2}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">Start</label>
-              <input
+              <Label htmlFor="calendar-create-start" className="text-sm font-medium">Start</Label>
+              <Input
+                id="calendar-create-start"
                 type="datetime-local"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                className="mt-1"
                 required
               />
             </div>
             <div>
-              <label className="text-sm font-medium">End</label>
-              <input
+              <Label htmlFor="calendar-create-end" className="text-sm font-medium">End</Label>
+              <Input
+                id="calendar-create-end"
                 type="datetime-local"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+                className="mt-1"
                 required
               />
             </div>
@@ -533,12 +539,13 @@ function CreateEventModal({ isOpen, onClose, initialDate, onSubmit }: CreateEven
             <Label htmlFor="all-day" className="text-sm">All day event</Label>
           </div>
           <div>
-            <label className="text-sm font-medium">Location</label>
-            <input
+            <Label htmlFor="calendar-create-location" className="text-sm font-medium">Location</Label>
+            <Input
+              id="calendar-create-location"
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="mt-1 w-full rounded-md border px-3 py-2 text-sm"
+              className="mt-1"
               placeholder="Optional location"
             />
           </div>

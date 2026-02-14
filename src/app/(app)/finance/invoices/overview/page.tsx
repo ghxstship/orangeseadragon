@@ -84,10 +84,10 @@ function useInvoiceOverview() {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string }> = {
   draft: { label: "Draft", color: "text-muted-foreground", bgColor: "bg-muted" },
-  sent: { label: "Sent", color: "text-blue-500", bgColor: "bg-blue-500/10" },
-  paid: { label: "Paid", color: "text-emerald-500", bgColor: "bg-emerald-500/10" },
+  sent: { label: "Sent", color: "text-semantic-info", bgColor: "bg-semantic-info/10" },
+  paid: { label: "Paid", color: "text-semantic-success", bgColor: "bg-semantic-success/10" },
   overdue: { label: "Overdue", color: "text-destructive", bgColor: "bg-destructive/10" },
-  partially_paid: { label: "Partial", color: "text-amber-500", bgColor: "bg-amber-500/10" },
+  partially_paid: { label: "Partial", color: "text-semantic-warning", bgColor: "bg-semantic-warning/10" },
 };
 
 export default function InvoiceOverviewPage() {
@@ -230,9 +230,9 @@ export default function InvoiceOverviewPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {[
-                { key: "current", label: "Current", color: "bg-emerald-500" },
-                { key: "1-30", label: "1–30 days", color: "bg-amber-400" },
-                { key: "31-60", label: "31–60 days", color: "bg-orange-500" },
+                { key: "current", label: "Current", color: "bg-semantic-success" },
+                { key: "1-30", label: "1–30 days", color: "bg-semantic-warning" },
+                { key: "31-60", label: "31–60 days", color: "bg-semantic-orange" },
                 { key: "61-90", label: "61–90 days", color: "bg-destructive/70" },
                 { key: "90+", label: "90+ days", color: "bg-destructive" },
               ].map((bucket) => {

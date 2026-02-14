@@ -122,7 +122,7 @@ export default function InvoiceBuilderPage() {
           {discount > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Discount</span>
-              <span className="text-emerald-600 dark:text-emerald-400">-<CurrencyDisplay amount={discount} /></span>
+              <span className="text-semantic-success">-<CurrencyDisplay amount={discount} /></span>
             </div>
           )}
           <div className="border-t pt-2 flex justify-between text-sm font-semibold">
@@ -132,7 +132,7 @@ export default function InvoiceBuilderPage() {
           {depositCredit > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Deposit Credit</span>
-              <span className="text-emerald-600 dark:text-emerald-400">-<CurrencyDisplay amount={depositCredit} /></span>
+              <span className="text-semantic-success">-<CurrencyDisplay amount={depositCredit} /></span>
             </div>
           )}
           <div className="border-t pt-2 flex justify-between text-base font-bold">
@@ -314,9 +314,9 @@ export default function InvoiceBuilderPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
                   <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tax</span><span>${taxTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
-                  {discount > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Discount</span><span className="text-emerald-600 dark:text-emerald-400">-${discount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>}
+                  {discount > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Discount</span><span className="text-semantic-success">-${discount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>}
                   <div className="border-t pt-2 flex justify-between font-semibold"><span>Total</span><span>${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
-                  {depositCredit > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Deposit Credit</span><span className="text-emerald-600 dark:text-emerald-400">-${depositCredit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>}
+                  {depositCredit > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Deposit Credit</span><span className="text-semantic-success">-${depositCredit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>}
                   <div className="border-t pt-2 flex justify-between text-lg font-bold"><span>Amount Due</span><span>${amountDue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
                 </div>
               </CardContent>

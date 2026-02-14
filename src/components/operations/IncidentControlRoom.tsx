@@ -165,7 +165,7 @@ export function IncidentControlRoom() {
 
   return (
     <div className={cn(
-      "flex flex-col h-full bg-neutral-950 text-white",
+      "flex flex-col h-full bg-background text-foreground",
       isFullscreen && "fixed inset-0 z-50"
     )}>
       {/* Header */}
@@ -211,7 +211,7 @@ export function IncidentControlRoom() {
         <Card className="bg-muted border-border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-neutral-400 uppercase tracking-wider">Active Incidents</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Active Incidents</p>
               <p className="text-3xl font-bold text-white">{stats.active_incidents}</p>
             </div>
             <AlertTriangle className="h-8 w-8 text-semantic-warning" />
@@ -226,7 +226,7 @@ export function IncidentControlRoom() {
         )}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-neutral-400 uppercase tracking-wider">Critical</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Critical</p>
               <p className={cn(
                 "text-3xl font-bold",
                 stats.critical_count > 0 ? "text-destructive/80" : "text-white"
@@ -236,7 +236,7 @@ export function IncidentControlRoom() {
             </div>
             <AlertTriangle className={cn(
               "h-8 w-8",
-              stats.critical_count > 0 ? "text-destructive/80" : "text-neutral-600"
+              stats.critical_count > 0 ? "text-destructive/80" : "text-muted-foreground"
             )} />
           </div>
         </Card>
@@ -244,17 +244,17 @@ export function IncidentControlRoom() {
         <Card className="bg-muted border-border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-neutral-400 uppercase tracking-wider">Avg Response</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Avg Response</p>
               <p className="text-3xl font-bold text-white">{formatDuration(stats.avg_response_time)}</p>
             </div>
-            <Clock className="h-8 w-8 text-blue-400" />
+            <Clock className="h-8 w-8 text-semantic-info" />
           </div>
         </Card>
         
         <Card className="bg-muted border-border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-neutral-400 uppercase tracking-wider">Teams Deployed</p>
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Teams Deployed</p>
               <p className="text-3xl font-bold text-white">{stats.teams_deployed}</p>
             </div>
             <Users className="h-8 w-8 text-semantic-success" />
@@ -306,7 +306,7 @@ export function IncidentControlRoom() {
                     selectedIncident?.id === incident.id 
                       ? "bg-accent" 
                       : "hover:bg-muted",
-                    incident.severity === 'critical' && "bg-destructive/5 border-l-4 border-l-red-500"
+                    incident.severity === 'critical' && "bg-destructive/5 border-l-4 border-l-destructive"
                   )}
                 >
                   <div className="flex items-start gap-3">
@@ -318,7 +318,7 @@ export function IncidentControlRoom() {
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs text-neutral-500 font-mono">
+                        <span className="text-xs text-muted-foreground font-mono">
                           {incident.incident_number}
                         </span>
                         <Badge variant="outline" className="text-[10px] uppercase">
@@ -328,7 +328,7 @@ export function IncidentControlRoom() {
                       
                       <h3 className="font-medium text-white truncate">{incident.title}</h3>
                       
-                      <div className="flex items-center gap-3 mt-2 text-xs text-neutral-400">
+                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <MapPin className="h-3 w-3" />
                           {incident.location}
@@ -347,7 +347,7 @@ export function IncidentControlRoom() {
                       )}
                     </div>
                     
-                    <ChevronRight className="h-5 w-5 text-neutral-600" />
+                    <ChevronRight className="h-5 w-5 text-muted-foreground/70" />
                   </div>
                 </motion.div>
               ))}
@@ -361,7 +361,7 @@ export function IncidentControlRoom() {
             <div className="flex-1 p-6 overflow-y-auto">
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <p className="text-xs text-neutral-500 font-mono mb-1">
+                  <p className="text-xs text-muted-foreground font-mono mb-1">
                     {selectedIncident.incident_number}
                   </p>
                   <h2 className="text-2xl font-bold">{selectedIncident.title}</h2>
@@ -377,31 +377,31 @@ export function IncidentControlRoom() {
 
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <Card className="bg-muted border-border p-4">
-                  <p className="text-xs text-neutral-400 mb-1">Location</p>
+                  <p className="text-xs text-muted-foreground mb-1">Location</p>
                   <p className="font-medium">{selectedIncident.location}</p>
                 </Card>
                 <Card className="bg-muted border-border p-4">
-                  <p className="text-xs text-neutral-400 mb-1">Reported</p>
+                  <p className="text-xs text-muted-foreground mb-1">Reported</p>
                   <p className="font-medium">{formatTimeAgo(selectedIncident.reported_at)}</p>
                 </Card>
                 <Card className="bg-muted border-border p-4">
-                  <p className="text-xs text-neutral-400 mb-1">Type</p>
+                  <p className="text-xs text-muted-foreground mb-1">Type</p>
                   <p className="font-medium capitalize">{selectedIncident.type}</p>
                 </Card>
                 <Card className="bg-muted border-border p-4">
-                  <p className="text-xs text-neutral-400 mb-1">Status</p>
+                  <p className="text-xs text-muted-foreground mb-1">Status</p>
                   <p className="font-medium capitalize">{selectedIncident.status}</p>
                 </Card>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-neutral-400 mb-2">Description</h3>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Description</h3>
                 <p className="text-white">{selectedIncident.description}</p>
               </div>
 
               {selectedIncident.assigned_to && (
                 <div className="mb-6">
-                  <h3 className="text-sm font-medium text-neutral-400 mb-2">Assigned To</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Assigned To</h3>
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-semantic-success/20 flex items-center justify-center">
                       <User className="h-4 w-4 text-semantic-success" />
@@ -435,7 +435,7 @@ export function IncidentControlRoom() {
               </div>
             </div>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-neutral-500">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
               <div className="text-center">
                 <MapPin className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>Select an incident to view details</p>

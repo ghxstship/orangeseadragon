@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
 export default function GlobalError({
   error,
@@ -15,7 +16,7 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="bg-zinc-950 text-white flex items-center justify-center min-h-screen">
+      <body className="bg-background text-foreground flex items-center justify-center min-h-screen">
         <div className="text-center space-y-6 max-w-md px-6">
           <div className="mx-auto w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
             <svg className="w-8 h-8 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -24,25 +25,26 @@ export default function GlobalError({
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Something went wrong</h1>
-            <p className="mt-2 text-sm text-zinc-400">
+            <p className="mt-2 text-sm text-muted-foreground">
               An unexpected error occurred. Please try again or contact support if the issue persists.
             </p>
             {error.digest && (
-              <p className="mt-1 text-xs text-zinc-600 font-mono">
+              <p className="mt-1 text-xs text-muted-foreground/70 font-mono">
                 Error ID: {error.digest}
               </p>
             )}
           </div>
           <div className="flex items-center justify-center gap-3">
-            <button
+            <Button
               onClick={reset}
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-white text-zinc-950 hover:bg-zinc-200 transition-colors"
+              variant="default"
+              size="sm"
             >
               Try again
-            </button>
+            </Button>
             <a
               href="/dashboard"
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-zinc-700 text-zinc-300 hover:bg-zinc-800 transition-colors"
+              className="px-4 py-2 text-sm font-medium rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors"
             >
               Go to Dashboard
             </a>

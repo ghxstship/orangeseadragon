@@ -57,9 +57,9 @@ export function LifeStreamProfile({ person }: LifeStreamProfileProps) {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
 
             {/* Col 1: Skill DNA (Spider Chart) */}
-            <Card className="col-span-1 bg-zinc-900/50 border-border backdrop-blur-xl">
+            <Card className="col-span-1 bg-card/80 border-border backdrop-blur-xl">
                 <CardHeader>
-                    <CardTitle className="text-lg text-zinc-300">Skill DNA</CardTitle>
+                    <CardTitle className="text-lg text-foreground">Skill DNA</CardTitle>
                 </CardHeader>
                 <CardContent className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
@@ -81,11 +81,11 @@ export function LifeStreamProfile({ person }: LifeStreamProfileProps) {
             </Card>
 
             {/* Col 2 & 3: Life Stream (Timeline) */}
-            <Card className="col-span-1 lg:col-span-2 bg-zinc-900/50 border-border backdrop-blur-xl">
+            <Card className="col-span-1 lg:col-span-2 bg-card/80 border-border backdrop-blur-xl">
                 <CardHeader>
-                    <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+                    <CardTitle className="text-lg text-foreground flex items-center gap-2">
                         Life Stream
-                        <Badge variant="outline" className="ml-2 text-xs font-normal text-zinc-400 border-zinc-700">Recent Activity</Badge>
+                        <Badge variant="outline" className="ml-2 text-xs font-normal text-muted-foreground border-border">Recent Activity</Badge>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

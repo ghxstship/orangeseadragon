@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { SEMANTIC_BADGE_CLASSES } from '@/lib/tokens/semantic-colors';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
 
@@ -33,17 +34,17 @@ interface AuditEntry {
 }
 
 const actionColors: Record<string, string> = {
-  created: 'bg-semantic-success/10 text-semantic-success',
-  updated: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
-  deleted: 'bg-destructive/10 text-destructive',
-  approved: 'bg-semantic-success/10 text-semantic-success',
-  assigned: 'bg-purple-500/10 text-purple-700 dark:text-purple-400',
-  exported: 'bg-orange-500/10 text-orange-700 dark:text-orange-400',
-  triggered: 'bg-semantic-warning/10 text-semantic-warning',
-  synced: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-400',
-  insert: 'bg-semantic-success/10 text-semantic-success',
-  update: 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
-  delete: 'bg-destructive/10 text-destructive',
+  created: SEMANTIC_BADGE_CLASSES.success,
+  updated: SEMANTIC_BADGE_CLASSES.info,
+  deleted: SEMANTIC_BADGE_CLASSES.danger,
+  approved: SEMANTIC_BADGE_CLASSES.success,
+  assigned: SEMANTIC_BADGE_CLASSES.purple,
+  exported: SEMANTIC_BADGE_CLASSES.orange,
+  triggered: SEMANTIC_BADGE_CLASSES.warning,
+  synced: SEMANTIC_BADGE_CLASSES.cyan,
+  insert: SEMANTIC_BADGE_CLASSES.success,
+  update: SEMANTIC_BADGE_CLASSES.info,
+  delete: SEMANTIC_BADGE_CLASSES.danger,
 };
 
 function useAuditLog(orgId: string | null) {

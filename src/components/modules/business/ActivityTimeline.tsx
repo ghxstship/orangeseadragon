@@ -25,6 +25,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SEMANTIC_SOLID_CLASSES } from '@/lib/tokens/semantic-colors';
 
 // --- Types ---
 interface Activity {
@@ -69,13 +70,13 @@ const activityIcons: Record<string, React.ElementType> = {
 };
 
 const activityColors: Record<string, string> = {
-    call: 'bg-semantic-success',
-    email: 'bg-blue-500',
-    meeting: 'bg-purple-500',
-    task: 'bg-orange-500',
-    note: 'bg-gray-500',
-    follow_up: 'bg-semantic-warning',
-    stage_change: 'bg-indigo-500',
+    call: SEMANTIC_SOLID_CLASSES.success,
+    email: SEMANTIC_SOLID_CLASSES.info,
+    meeting: SEMANTIC_SOLID_CLASSES.purple,
+    task: SEMANTIC_SOLID_CLASSES.orange,
+    note: SEMANTIC_SOLID_CLASSES.neutral,
+    follow_up: SEMANTIC_SOLID_CLASSES.warning,
+    stage_change: SEMANTIC_SOLID_CLASSES.indigo,
 };
 
 function formatTime(dateString: string): string {
@@ -120,7 +121,7 @@ function groupActivitiesByDate(activities: Activity[]): Map<string, Activity[]> 
 // --- Components ---
 function ActivityItem({ activity }: { activity: Activity }) {
     const Icon = activityIcons[activity.activity_type] || MessageSquare;
-    const colorClass = activityColors[activity.activity_type] || 'bg-gray-500';
+    const colorClass = activityColors[activity.activity_type] || SEMANTIC_SOLID_CLASSES.neutral;
     const timestamp = activity.occurred_at || activity.created_at;
 
     return (

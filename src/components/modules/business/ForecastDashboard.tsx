@@ -64,8 +64,8 @@ function ForecastCard({
 }) {
     const variantStyles = {
         default: '',
-        success: 'border-emerald-200 dark:border-emerald-800',
-        warning: 'border-amber-200 dark:border-amber-800',
+        success: 'border-semantic-success/30',
+        warning: 'border-semantic-warning/30',
         primary: 'border-primary/50',
     };
 
@@ -169,14 +169,14 @@ function ForecastScenarios({
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500" />
+                        <div className="w-2 h-2 rounded-full bg-semantic-info" />
                         <span className="text-sm">Most Likely</span>
                     </div>
                     <span className="font-semibold">{currencyFormatter.format(mostLikely)}</span>
                 </div>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-orange-500" />
+                        <div className="w-2 h-2 rounded-full bg-semantic-orange" />
                         <span className="text-sm">Worst Case</span>
                     </div>
                     <span className="font-semibold">{currencyFormatter.format(worstCase)}</span>
@@ -186,12 +186,10 @@ function ForecastScenarios({
                 <div className="pt-2">
                     <div className="relative h-8 bg-muted rounded-lg overflow-hidden">
                         <div 
-                            className="absolute h-full bg-gradient-to-r from-orange-500/30 via-blue-500/50 to-emerald-500/30"
-                            style={{ left: '10%', right: '10%' }}
+                            className="absolute inset-y-0 inset-x-[10%] bg-gradient-to-r from-semantic-orange/30 via-semantic-info/50 to-semantic-success/30"
                         />
                         <div 
-                            className="absolute top-1/2 -translate-y-1/2 w-1 h-4 bg-blue-600 rounded"
-                            style={{ left: '50%' }}
+                            className="absolute top-1/2 left-1/2 -translate-y-1/2 w-1 h-4 bg-semantic-info rounded"
                         />
                     </div>
                     <div className="flex justify-between text-[10px] text-muted-foreground mt-1">

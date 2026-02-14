@@ -166,11 +166,13 @@ export default function MessagesPage() {
               </div>
             ) : (
               filtered.map((thread) => (
-                <button
+                <Button
                   key={thread.id}
+                  type="button"
+                  variant="ghost"
                   onClick={() => setSelectedThread(thread.id)}
                   className={cn(
-                    "w-full text-left px-4 py-3 border-b hover:bg-muted/50 transition-colors",
+                    "h-auto w-full justify-start rounded-none text-left px-4 py-3 border-b hover:bg-muted/50 transition-colors",
                     selectedThread === thread.id && "bg-muted/50",
                     thread.unread && "bg-primary/5"
                   )}
@@ -196,9 +198,9 @@ export default function MessagesPage() {
                         </Badge>
                       )}
                     </div>
-                    {thread.starred && <Star className="h-3 w-3 text-amber-500 fill-amber-500 flex-shrink-0 mt-1" />}
+                    {thread.starred && <Star className="h-3 w-3 text-semantic-warning fill-current flex-shrink-0 mt-1" />}
                   </div>
-                </button>
+                </Button>
               ))
             )}
           </div>
@@ -222,7 +224,7 @@ export default function MessagesPage() {
                 </div>
                 <div className="flex items-center gap-1">
                   <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Star className={cn("h-4 w-4", selected.starred && "text-amber-500 fill-amber-500")} />
+                    <Star className={cn("h-4 w-4", selected.starred && "text-semantic-warning fill-current")} />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <Archive className="h-4 w-4" />

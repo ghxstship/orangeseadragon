@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { SEMANTIC_SOLID_CLASSES } from '@/lib/tokens/semantic-colors';
 import {
     Sparkles,
     RefreshCw,
@@ -48,13 +49,13 @@ interface EnrichmentData {
 }
 
 const statusConfig = {
-    pending: { label: 'Pending', color: 'bg-semantic-warning', icon: RefreshCw },
-    processing: { label: 'Processing', color: 'bg-blue-500', icon: Loader2 },
-    success: { label: 'Enriched', color: 'bg-semantic-success', icon: Check },
-    partial: { label: 'Partial', color: 'bg-orange-500', icon: AlertCircle },
-    failed: { label: 'Failed', color: 'bg-destructive', icon: X },
-    not_found: { label: 'Not Found', color: 'bg-gray-500', icon: AlertCircle },
-    not_enriched: { label: 'Not Enriched', color: 'bg-gray-400', icon: Sparkles },
+    pending: { label: 'Pending', color: SEMANTIC_SOLID_CLASSES.warning, icon: RefreshCw },
+    processing: { label: 'Processing', color: SEMANTIC_SOLID_CLASSES.info, icon: Loader2 },
+    success: { label: 'Enriched', color: SEMANTIC_SOLID_CLASSES.success, icon: Check },
+    partial: { label: 'Partial', color: SEMANTIC_SOLID_CLASSES.orange, icon: AlertCircle },
+    failed: { label: 'Failed', color: SEMANTIC_SOLID_CLASSES.danger, icon: X },
+    not_found: { label: 'Not Found', color: SEMANTIC_SOLID_CLASSES.neutral, icon: AlertCircle },
+    not_enriched: { label: 'Not Enriched', color: SEMANTIC_SOLID_CLASSES.neutral, icon: Sparkles },
 };
 
 function EnrichedField({

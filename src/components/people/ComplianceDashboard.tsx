@@ -112,7 +112,7 @@ export function ComplianceDashboard({
             <Shield className="w-6 h-6 text-primary" />
             Compliance Overview
           </h2>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Monitor certifications, training, and policy acknowledgments
           </p>
         </div>
@@ -193,11 +193,11 @@ export function ComplianceDashboard({
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-300/70">Pending</p>
-                  <p className="text-3xl font-bold text-blue-400">{stats.pending}</p>
+                  <p className="text-sm text-semantic-info/70">Pending</p>
+                  <p className="text-3xl font-bold text-semantic-info">{stats.pending}</p>
                 </div>
                 <div className="h-12 w-12 rounded-full bg-semantic-info/20 flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-blue-400" />
+                  <FileText className="w-6 h-6 text-semantic-info" />
                 </div>
               </div>
             </CardContent>
@@ -206,9 +206,9 @@ export function ComplianceDashboard({
       </div>
 
       {/* Training Completion */}
-      <Card className="bg-zinc-900/60 border-border">
+      <Card className="bg-card/80 border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+          <CardTitle className="text-lg text-foreground flex items-center gap-2">
             <Users className="w-5 h-5" />
             Required Training Completion
           </CardTitle>
@@ -216,7 +216,7 @@ export function ComplianceDashboard({
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-zinc-400">
+              <span className="text-muted-foreground">
                 {Math.round(stats.trainingCompletionRate * stats.totalEmployees / 100)} of {stats.totalEmployees} employees completed
               </span>
               <span className="text-white font-medium">{stats.trainingCompletionRate}%</span>
@@ -227,9 +227,9 @@ export function ComplianceDashboard({
       </Card>
 
       {/* Expiring/Expired Items */}
-      <Card className="bg-zinc-900/60 border-border">
+      <Card className="bg-card/80 border-border">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg text-zinc-300">
+          <CardTitle className="text-lg text-foreground">
             Expiring Soon (Next 30 Days)
           </CardTitle>
           {selectedItems.length > 0 && (
@@ -269,13 +269,13 @@ export function ComplianceDashboard({
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <TypeIcon className="w-4 h-4 text-zinc-500" />
+                      <TypeIcon className="w-4 h-4 text-muted-foreground" />
                       <span className="font-medium text-white">{item.name}</span>
                       <Badge variant="outline" className="text-xs">
                         {item.type}
                       </Badge>
                     </div>
-                    <p className="text-sm text-zinc-400 mt-0.5">{item.employeeName}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{item.employeeName}</p>
                   </div>
 
                   <div className="text-right">
@@ -284,7 +284,7 @@ export function ComplianceDashboard({
                         "text-sm font-medium",
                         item.daysUntilExpiry < 0 ? "text-destructive" : 
                         item.daysUntilExpiry <= 7 ? "text-destructive" :
-                        item.daysUntilExpiry <= 30 ? "text-semantic-warning" : "text-zinc-400"
+                        item.daysUntilExpiry <= 30 ? "text-semantic-warning" : "text-muted-foreground"
                       )}>
                         {item.daysUntilExpiry < 0 
                           ? `Expired ${Math.abs(item.daysUntilExpiry)} days ago`
@@ -293,13 +293,13 @@ export function ComplianceDashboard({
                       </p>
                     )}
                     {item.expiryDate && (
-                      <p className="text-xs text-zinc-500">
+                      <p className="text-xs text-muted-foreground">
                         {item.expiryDate.toLocaleDateString()}
                       </p>
                     )}
                   </div>
 
-                  <ChevronRight className="w-5 h-5 text-zinc-600" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground/70" />
                 </motion.div>
               );
             })}
@@ -309,9 +309,9 @@ export function ComplianceDashboard({
 
       {/* Pending Acknowledgments */}
       {pendingItems.length > 0 && (
-        <Card className="bg-zinc-900/60 border-border">
+        <Card className="bg-card/80 border-border">
           <CardHeader>
-            <CardTitle className="text-lg text-zinc-300">
+            <CardTitle className="text-lg text-foreground">
               Pending Acknowledgments
             </CardTitle>
           </CardHeader>
@@ -341,7 +341,7 @@ export function ComplianceDashboard({
                           {item.type}
                         </Badge>
                       </div>
-                      <p className="text-sm text-zinc-400 mt-0.5">{item.employeeName}</p>
+                      <p className="text-sm text-muted-foreground mt-0.5">{item.employeeName}</p>
                     </div>
 
                     <Button size="sm" variant="outline">

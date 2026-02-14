@@ -4,6 +4,8 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -113,23 +115,24 @@ function SortableColumnItem({ column, onVisibilityChange }: SortableColumnItemPr
       style={style}
       className="flex items-center gap-2 px-2 py-1.5 rounded-sm hover:bg-accent"
     >
-      <button
+      <Button
         type="button"
-        className="cursor-grab touch-none text-muted-foreground hover:text-foreground"
+        variant="ghost"
+        size="icon"
+        className="h-6 w-6 cursor-grab touch-none text-muted-foreground hover:text-foreground"
         {...attributes}
         {...listeners}
       >
         <GripVertical className="h-4 w-4" />
-      </button>
-      <label className="flex items-center gap-2 flex-1 cursor-pointer">
-        <input
-          type="checkbox"
+      </Button>
+      <Label htmlFor={`toolbar-column-${column.id}`} className="flex items-center gap-2 flex-1 cursor-pointer">
+        <Checkbox
+          id={`toolbar-column-${column.id}`}
           checked={column.visible}
-          onChange={(e) => onVisibilityChange(e.target.checked)}
-          className="h-4 w-4 rounded border-input"
+          onCheckedChange={(checked) => onVisibilityChange(Boolean(checked))}
         />
         <span className="text-sm">{column.label}</span>
-      </label>
+      </Label>
     </div>
   );
 }
@@ -503,7 +506,7 @@ export function Toolbar({
 
         {importConfig && (
           <>
-            <input
+            <Input
               ref={fileInputRef}
               type="file"
               accept={importConfig.accept || ".csv,.xlsx,.json"}

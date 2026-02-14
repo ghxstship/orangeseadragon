@@ -65,8 +65,8 @@ export function CurfewCountdownWidget({
   const phaseConfig = {
     safe: {
       color: 'text-semantic-success',
-      bg: 'bg-black',
-      border: 'border-zinc-800',
+      bg: 'bg-card',
+      border: 'border-border',
       glow: '',
       badge: 'On Track',
       badgeVariant: 'outline' as const,
@@ -81,7 +81,7 @@ export function CurfewCountdownWidget({
     },
     critical: {
       color: 'text-destructive',
-      bg: 'bg-destructive/90/20',
+      bg: 'bg-destructive/20',
       border: 'border-destructive/50',
       glow: 'shadow-[0_0_30px_rgba(239,68,68,0.2)]',
       badge: 'Critical',
@@ -89,7 +89,7 @@ export function CurfewCountdownWidget({
     },
     expired: {
       color: 'text-destructive',
-      bg: 'bg-destructive/90/30',
+      bg: 'bg-destructive/30',
       border: 'border-destructive/40',
       glow: 'shadow-[0_0_40px_rgba(239,68,68,0.3)]',
       badge: 'CURFEW EXCEEDED',
@@ -106,11 +106,11 @@ export function CurfewCountdownWidget({
         config.bg,
         config.border,
         config.glow,
-        'text-zinc-100'
+        'text-foreground'
       )}
     >
       <CardContent className="flex flex-col items-center justify-center p-6 space-y-3">
-        <div className="flex items-center gap-2 text-zinc-500 text-sm font-mono tracking-widest uppercase">
+        <div className="flex items-center gap-2 text-muted-foreground text-sm font-mono tracking-widest uppercase">
           {phase === 'critical' || phase === 'expired' ? (
             <AlertTriangle className={cn('w-4 h-4', config.color, phase === 'critical' && 'animate-pulse')} />
           ) : (
@@ -127,7 +127,7 @@ export function CurfewCountdownWidget({
           )}
         </div>
 
-        <div className="text-sm font-mono text-zinc-500">
+        <div className="text-sm font-mono text-muted-foreground">
           Curfew at {curfewTime}
         </div>
 

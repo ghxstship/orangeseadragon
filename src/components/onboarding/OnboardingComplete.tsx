@@ -71,10 +71,10 @@ export function OnboardingComplete({ user, accountType, onComplete }: Onboarding
         <p className="text-xl text-muted-foreground">{getWelcomeMessage()}</p>
       </CardHeader>
       <CardContent className="text-center space-y-6">
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 p-6 rounded-lg">
+        <div className="bg-gradient-to-r from-semantic-info/10 to-semantic-purple/10 dark:from-semantic-info/20 dark:to-semantic-purple/20 p-6 rounded-lg">
           <div className="flex items-center justify-center mb-4">
-            <Sparkles className="w-6 h-6 text-purple-600 mr-2" />
-            <span className="text-lg font-semibold text-purple-900 dark:text-purple-100">
+            <Sparkles className="w-6 h-6 text-semantic-purple mr-2" />
+            <span className="text-lg font-semibold text-foreground">
               You&apos;re all set as a {accountType || 'team member'}!
             </span>
           </div>

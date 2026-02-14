@@ -75,14 +75,11 @@ export async function GET(request: NextRequest) {
   const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
   const unreadCount = filtered.filter((item) => !item.read).length;
 
-  return apiSuccess({
-    data: filtered,
-    meta: {
-      page,
-      limit,
-      total,
-      totalPages,
-      unreadCount,
-    },
+  return apiSuccess(filtered, {
+    page,
+    limit,
+    total,
+    totalPages,
+    unreadCount,
   });
 }

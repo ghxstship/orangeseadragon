@@ -123,14 +123,27 @@ export function AssetUtilizationDashboard({
   const getUtilizationColor = (rate: number): string => {
     if (rate >= 80) return 'bg-semantic-success';
     if (rate >= 50) return 'bg-semantic-warning';
-    if (rate >= 20) return 'bg-orange-500';
+    if (rate >= 20) return 'bg-semantic-orange';
     return 'bg-destructive';
+  };
+
+  const getHeatmapOpacityClass = (rate: number): string => {
+    if (rate >= 90) return 'opacity-90';
+    if (rate >= 80) return 'opacity-80';
+    if (rate >= 70) return 'opacity-70';
+    if (rate >= 60) return 'opacity-60';
+    if (rate >= 50) return 'opacity-50';
+    if (rate >= 40) return 'opacity-40';
+    if (rate >= 30) return 'opacity-30';
+    if (rate >= 20) return 'opacity-20';
+    if (rate >= 10) return 'opacity-10';
+    return 'opacity-0';
   };
 
   const getUtilizationBadge = (rate: number) => {
     if (rate >= 80) return <Badge variant="default" className="bg-semantic-success">High</Badge>;
     if (rate >= 50) return <Badge variant="default" className="bg-semantic-warning">Medium</Badge>;
-    if (rate >= 20) return <Badge variant="default" className="bg-orange-500">Low</Badge>;
+    if (rate >= 20) return <Badge variant="default" className="bg-semantic-orange">Low</Badge>;
     return <Badge variant="destructive">Critical</Badge>;
   };
 
@@ -259,8 +272,7 @@ export function AssetUtilizationDashboard({
             {EMPTY_HEATMAP.map(day => (
               <div key={day.day} className="flex-1 text-center">
                 <div 
-                  className={`h-12 rounded ${getUtilizationColor(day.utilization)} opacity-${Math.round(day.utilization / 10) * 10}`}
-                  style={{ opacity: day.utilization / 100 }}
+                  className={`h-12 rounded ${getUtilizationColor(day.utilization)} ${getHeatmapOpacityClass(day.utilization)}`}
                 />
                 <p className="mt-2 text-xs font-medium">{day.day}</p>
                 <p className="text-xs text-muted-foreground">{day.utilization}%</p>
@@ -272,20 +284,20 @@ export function AssetUtilizationDashboard({
 
       {/* Underutilized Assets Alert */}
       {underutilizedAssets.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-900 dark:bg-orange-950">
+        <Card className="border-semantic-warning/30 bg-semantic-warning/10">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-orange-600" />
-              <CardTitle className="text-orange-800 dark:text-orange-200">Underutilized Assets (&lt;20%)</CardTitle>
+              <AlertTriangle className="h-5 w-5 text-semantic-warning" />
+              <CardTitle className="text-semantic-warning">Underutilized Assets (&lt;20%)</CardTitle>
             </div>
-            <CardDescription className="text-orange-700 dark:text-orange-300">
+            <CardDescription className="text-semantic-warning/90">
               Consider reviewing these assets for potential sale, rental, or reallocation
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {underutilizedAssets.map(asset => (
-                <div key={asset.asset_id} className="flex items-center justify-between rounded-lg bg-white p-3 dark:bg-gray-900">
+                <div key={asset.asset_id} className="flex items-center justify-between rounded-lg bg-card p-3">
                   <div>
                     <p className="font-medium">{asset.asset_name}</p>
                     <p className="text-sm text-muted-foreground">{asset.category}</p>

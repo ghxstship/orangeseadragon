@@ -68,7 +68,7 @@ interface PerformanceReviewDashboardProps {
 }
 
 const STATUS_CONFIG: Record<ReviewStatus, { label: string; color: string; bgColor: string }> = {
-  not_started: { label: 'Not Started', color: 'text-zinc-400', bgColor: 'bg-zinc-500/20' },
+  not_started: { label: 'Not Started', color: 'text-muted-foreground', bgColor: 'bg-muted/60' },
   self_review: { label: 'Self Review', color: 'text-semantic-info', bgColor: 'bg-semantic-info/20' },
   manager_review: { label: 'Manager Review', color: 'text-semantic-warning', bgColor: 'bg-semantic-warning/20' },
   calibration: { label: 'Calibration', color: 'text-semantic-purple', bgColor: 'bg-semantic-purple/20' },
@@ -119,11 +119,11 @@ export function PerformanceReviewDashboard({
                 ? "fill-semantic-warning text-semantic-warning" 
                 : star - 0.5 <= rating 
                   ? "fill-semantic-warning/50 text-semantic-warning" 
-                  : "text-zinc-600"
+                  : "text-muted-foreground/70"
             )}
           />
         ))}
-        <span className="ml-1 text-sm text-zinc-400">{rating.toFixed(1)}</span>
+        <span className="ml-1 text-sm text-muted-foreground">{rating.toFixed(1)}</span>
       </div>
     );
   };
@@ -137,7 +137,7 @@ export function PerformanceReviewDashboard({
             <TrendingUp className="w-6 h-6" />
             Performance Reviews
           </h2>
-          <p className="text-sm text-zinc-400 mt-1">{currentCycle.name}</p>
+          <p className="text-sm text-muted-foreground mt-1">{currentCycle.name}</p>
         </div>
         <div className="flex items-center gap-3">
           <Badge variant="outline" className={cn(
@@ -156,11 +156,11 @@ export function PerformanceReviewDashboard({
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-zinc-900/60 border-border">
+        <Card className="bg-card/80 border-border">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-zinc-400">Cycle Progress</p>
+                <p className="text-sm text-muted-foreground">Cycle Progress</p>
                 <p className="text-3xl font-bold text-white">{currentCycle.completionRate}%</p>
               </div>
               <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
@@ -195,21 +195,21 @@ export function PerformanceReviewDashboard({
           </CardContent>
         </Card>
 
-        <Card className="bg-zinc-800/50 border-border">
+        <Card className="bg-card/60 border-border">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-zinc-400">Not Started</p>
-                <p className="text-3xl font-bold text-zinc-300">{notStartedReviews}</p>
+                <p className="text-sm text-muted-foreground">Not Started</p>
+                <p className="text-3xl font-bold text-foreground">{notStartedReviews}</p>
               </div>
-              <AlertCircle className="w-8 h-8 text-zinc-500" />
+              <AlertCircle className="w-8 h-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-zinc-800/50">
+        <TabsList className="bg-muted/40">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="goals">Goals & OKRs</TabsTrigger>
           {isManager && <TabsTrigger value="team">Team Reviews</TabsTrigger>}
@@ -217,9 +217,9 @@ export function PerformanceReviewDashboard({
 
         <TabsContent value="overview" className="mt-6 space-y-6">
           {/* My Review Status (for non-managers or self) */}
-          <Card className="bg-zinc-900/60 border-border">
+          <Card className="bg-card/80 border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-zinc-300">My Review Status</CardTitle>
+              <CardTitle className="text-lg text-foreground">My Review Status</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-6">
@@ -237,7 +237,7 @@ export function PerformanceReviewDashboard({
                     </div>
                     <div>
                       <p className="font-medium text-white">Self Review</p>
-                      <p className="text-sm text-zinc-500">
+                      <p className="text-sm text-muted-foreground">
                         {reviews[0]?.selfReviewComplete ? 'Completed' : 'Pending'}
                       </p>
                     </div>
@@ -245,25 +245,25 @@ export function PerformanceReviewDashboard({
                   <div className="flex items-center gap-4">
                     <div className={cn(
                       "w-10 h-10 rounded-full flex items-center justify-center",
-                      reviews[0]?.managerReviewComplete ? "bg-semantic-success/20" : "bg-zinc-700"
+                      reviews[0]?.managerReviewComplete ? "bg-semantic-success/20" : "bg-muted"
                     )}>
                       {reviews[0]?.managerReviewComplete ? (
                         <CheckCircle2 className="w-5 h-5 text-semantic-success" />
                       ) : (
-                        <Users className="w-5 h-5 text-zinc-500" />
+                        <Users className="w-5 h-5 text-muted-foreground" />
                       )}
                     </div>
                     <div>
                       <p className="font-medium text-white">Manager Review</p>
-                      <p className="text-sm text-zinc-500">
+                      <p className="text-sm text-muted-foreground">
                         {reviews[0]?.managerReviewComplete ? 'Completed' : 'Awaiting'}
                       </p>
                     </div>
                   </div>
                 </div>
                 {reviews[0]?.overallRating && (
-                  <div className="text-center p-6 bg-zinc-800/50 rounded-xl">
-                    <p className="text-sm text-zinc-400 mb-2">Overall Rating</p>
+                  <div className="text-center p-6 bg-muted/30 rounded-xl">
+                    <p className="text-sm text-muted-foreground mb-2">Overall Rating</p>
                     {renderStars(reviews[0].overallRating)}
                   </div>
                 )}
@@ -273,15 +273,15 @@ export function PerformanceReviewDashboard({
 
           {/* Quick Actions */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border">
-              <Target className="w-6 h-6 text-blue-400" />
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-card/70 border-border">
+              <Target className="w-6 h-6 text-semantic-info" />
               <span>Update Goals</span>
             </Button>
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border">
-              <MessageSquare className="w-6 h-6 text-purple-400" />
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-card/70 border-border">
+              <MessageSquare className="w-6 h-6 text-semantic-purple" />
               <span>Request Feedback</span>
             </Button>
-            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-zinc-800/50 border-border">
+            <Button variant="outline" className="h-auto py-4 flex flex-col items-center gap-2 bg-card/70 border-border">
               <Award className="w-6 h-6 text-semantic-warning" />
               <span>View Achievements</span>
             </Button>
@@ -289,9 +289,9 @@ export function PerformanceReviewDashboard({
         </TabsContent>
 
         <TabsContent value="goals" className="mt-6">
-          <Card className="bg-zinc-900/60 border-border">
+          <Card className="bg-card/80 border-border">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg text-zinc-300">Goals & Key Results</CardTitle>
+              <CardTitle className="text-lg text-foreground">Goals & Key Results</CardTitle>
               <Button size="sm">Add Goal</Button>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -303,15 +303,15 @@ export function PerformanceReviewDashboard({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="p-4 rounded-lg bg-zinc-800/30 border border-border"
+                    className="p-4 rounded-lg bg-muted/30 border border-border"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <Target className="w-4 h-4 text-zinc-500" />
+                          <Target className="w-4 h-4 text-muted-foreground" />
                           <h4 className="font-medium text-white">{goal.title}</h4>
                         </div>
-                        <p className="text-xs text-zinc-500 mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           Due {goal.dueDate.toLocaleDateString()}
                         </p>
                       </div>
@@ -321,7 +321,7 @@ export function PerformanceReviewDashboard({
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="text-zinc-400">Progress</span>
+                        <span className="text-muted-foreground">Progress</span>
                         <span className="text-white font-medium">{goal.progress}%</span>
                       </div>
                       <Progress value={goal.progress} className="h-2" />
@@ -330,8 +330,8 @@ export function PerformanceReviewDashboard({
                       <div className="mt-3 pt-3 border-t border-border space-y-2">
                         {goal.keyResults.map((kr, i) => (
                           <div key={i} className="flex items-center justify-between text-sm">
-                            <span className="text-zinc-500">{kr.title}</span>
-                            <span className="text-zinc-400">{kr.progress}%</span>
+                            <span className="text-muted-foreground">{kr.title}</span>
+                            <span className="text-muted-foreground">{kr.progress}%</span>
                           </div>
                         ))}
                       </div>
@@ -345,9 +345,9 @@ export function PerformanceReviewDashboard({
 
         {isManager && (
           <TabsContent value="team" className="mt-6">
-            <Card className="bg-zinc-900/60 border-border">
+            <Card className="bg-card/80 border-border">
               <CardHeader>
-                <CardTitle className="text-lg text-zinc-300">Team Reviews</CardTitle>
+                <CardTitle className="text-lg text-foreground">Team Reviews</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {reviews.map((review, index) => {
@@ -358,27 +358,27 @@ export function PerformanceReviewDashboard({
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-zinc-800/30 border border-border hover:bg-zinc-800/50 cursor-pointer transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-lg bg-muted/30 border border-border hover:bg-muted/50 cursor-pointer transition-colors"
                       onClick={() => onViewReview?.(review.id)}
                     >
                       <Avatar className="h-10 w-10">
                         {review.employeeAvatar ? (
                           <AvatarImage src={review.employeeAvatar} />
                         ) : (
-                          <AvatarFallback className="bg-zinc-700">
+                          <AvatarFallback className="bg-muted">
                             {review.employeeName.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         )}
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-white">{review.employeeName}</p>
-                        <p className="text-sm text-zinc-500">{review.department}</p>
+                        <p className="text-sm text-muted-foreground">{review.department}</p>
                       </div>
                       <Badge variant="outline" className={cn("text-xs", statusConfig.color, statusConfig.bgColor)}>
                         {statusConfig.label}
                       </Badge>
                       {review.overallRating && renderStars(review.overallRating)}
-                      <ChevronRight className="w-5 h-5 text-zinc-600" />
+                      <ChevronRight className="w-5 h-5 text-muted-foreground/70" />
                     </motion.div>
                   );
                 })}

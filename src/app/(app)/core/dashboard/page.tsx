@@ -50,16 +50,16 @@ const dashboardConfig: DashboardLayoutConfig = {
 };
 
 const statusColors: Record<string, string> = {
-  active: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-  planning: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  on_hold: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  active: "bg-semantic-success/10 text-semantic-success border-semantic-success/20",
+  planning: "bg-semantic-info/10 text-semantic-info border-semantic-info/20",
+  on_hold: "bg-semantic-warning/10 text-semantic-warning border-semantic-warning/20",
   completed: "bg-muted text-muted-foreground border-border",
   cancelled: "bg-destructive/10 text-destructive border-destructive/20",
 };
 
 const priorityIndicators: Record<string, string> = {
   urgent: "text-destructive",
-  high: "text-amber-500",
+  high: "text-semantic-warning",
   medium: "text-primary",
   low: "text-muted-foreground",
 };

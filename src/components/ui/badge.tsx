@@ -15,15 +15,15 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 shadow-[0_4px_10px_-2px_rgba(var(--destructive),0.3)]",
         outline: "text-foreground border-border hover:bg-accent hover:text-accent-foreground",
         success:
-          "border-transparent bg-green-500/15 text-green-700 dark:text-green-400 hover:bg-green-500/25",
+          "border-transparent bg-semantic-success/15 text-semantic-success hover:bg-semantic-success/25",
         warning:
-          "border-transparent bg-amber-500/15 text-amber-700 dark:text-amber-400 hover:bg-amber-500/25",
+          "border-transparent bg-semantic-warning/15 text-semantic-warning hover:bg-semantic-warning/25",
         glass:
           "glass border-white/20 text-foreground shadow-sm hover:shadow-md backdrop-blur-md",
         spatial:
           "bg-background/80 border-border/50 text-foreground shadow-[0_2px_8px_-2px_rgba(0,0,0,0.1)] backdrop-blur-sm",
         aurora:
-          "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white border-none shadow-[0_4px_14px_0_rgba(168,85,247,0.4)] animate-aurora bg-[length:200%_200%]",
+          "bg-gradient-to-r from-semantic-indigo via-semantic-purple to-semantic-accent text-white border-none shadow-[0_4px_14px_0_hsl(var(--semantic-purple)/0.4)] animate-aurora bg-[length:200%_200%]",
       },
     },
     defaultVariants: {

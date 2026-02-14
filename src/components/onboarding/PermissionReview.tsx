@@ -109,11 +109,11 @@ export function PermissionReview({ accountType, onNext }: PermissionReviewProps)
           </div>
         </div>
 
-        <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-          <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+        <div className="bg-semantic-info/10 dark:bg-semantic-info/20 p-4 rounded-lg">
+          <h4 className="font-semibold text-semantic-info mb-2">
             Important Notes:
           </h4>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <ul className="text-sm text-semantic-info/90 space-y-1">
             <li>• You can request additional permissions from an administrator</li>
             <li>• Permissions can be modified by organization admins</li>
             <li>• All actions are logged for security and compliance</li>

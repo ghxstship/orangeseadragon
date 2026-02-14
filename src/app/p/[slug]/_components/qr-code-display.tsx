@@ -14,11 +14,11 @@ interface QRCodeDisplayProps {
 
 export function QRCodeDisplay({ profileUrl, profileSlug, themeConfig }: QRCodeDisplayProps) {
     const [copied, setCopied] = useState(false);
-    const primaryColor = themeConfig?.primary_color || "#6366f1";
+    const primaryColor = (themeConfig?.primary_color ?? "6366f1").replace("#", "");
     
     // Generate QR code using Google Charts API (no dependencies needed)
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(profileUrl)}&color=${primaryColor.replace("#", "")}&bgcolor=ffffff`;
-    const qrCodeUrlHiRes = `https://api.qrserver.com/v1/create-qr-code/?size=1024x1024&data=${encodeURIComponent(profileUrl)}&color=${primaryColor.replace("#", "")}&bgcolor=ffffff`;
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(profileUrl)}&color=${primaryColor}&bgcolor=ffffff`;
+    const qrCodeUrlHiRes = `https://api.qrserver.com/v1/create-qr-code/?size=1024x1024&data=${encodeURIComponent(profileUrl)}&color=${primaryColor}&bgcolor=ffffff`;
 
     const copyUrl = useCallback(async () => {
         try {
@@ -47,12 +47,12 @@ export function QRCodeDisplay({ profileUrl, profileSlug, themeConfig }: QRCodeDi
     }, [qrCodeUrlHiRes, profileSlug]);
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border">
+        <div className="bg-card rounded-2xl p-6 shadow-sm border">
             <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
                 Share Profile
             </h3>
             <div className="flex flex-col items-center gap-4">
-                <div className="bg-white p-3 rounded-xl shadow-inner">
+                <div className="bg-background p-3 rounded-xl shadow-inner">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                         src={qrCodeUrl}
@@ -79,7 +79,7 @@ export function QRCodeDisplay({ profileUrl, profileSlug, themeConfig }: QRCodeDi
                     >
                         {copied ? (
                             <>
-                                <Check className="h-4 w-4 mr-2 text-emerald-500 dark:text-emerald-400" />
+                                <Check className="h-4 w-4 mr-2 text-semantic-success" />
                                 Copied!
                             </>
                         ) : (

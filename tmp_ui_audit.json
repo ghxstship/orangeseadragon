@@ -1,0 +1,170 @@
+{
+  "meta": {
+    "generated_at": "2026-02-14T08:53:44.808Z",
+    "total_page_files": 313,
+    "total_tsx_files": 581,
+    "total_css_files": 1,
+    "strict_mode": false
+  },
+  "layout_normalization": {
+    "total_pages": 313,
+    "pages_using_standard_wrapper": 224,
+    "pages_with_route_layout_contract": 89,
+    "pages_without_layout_contract": 0,
+    "wrapper_usage": {
+      "CrudList": 176,
+      "CrudDetail": 24,
+      "AuthTemplate": 8,
+      "ReportsTemplate": 1,
+      "SettingsTemplate": 7,
+      "DashboardLayout": 1,
+      "WorkspaceLayout": 7
+    },
+    "without_layout_contract_files": []
+  },
+  "hardcoded_ui": {
+    "palette_class_occurrences": 31,
+    "palette_class_files": 17,
+    "inline_style_occurrences": 38,
+    "inline_style_files": 28,
+    "native_control_occurrences": 51,
+    "native_control_files": 43,
+    "literal_color_occurrences": 0,
+    "literal_color_files": 0
+  },
+  "compliance": {
+    "issue_occurrences_total": 120,
+    "files_with_any_issue": 80,
+    "top_offenders": [
+      [
+        "src/app/(app)/finance/invoices/components/InvoiceDrawer.tsx",
+        3
+      ],
+      [
+        "src/components/dashboard/DashboardGrid.tsx",
+        3
+      ],
+      [
+        "src/components/modules/advancing/PresenceIndicator.tsx",
+        3
+      ],
+      [
+        "src/components/ui/password-strength.tsx",
+        3
+      ],
+      [
+        "src/components/views/data-table.tsx",
+        3
+      ],
+      [
+        "src/components/views/MasterCalendar.tsx",
+        3
+      ],
+      [
+        "src/lib/components/fields/DateField.tsx",
+        3
+      ],
+      [
+        "src/lib/components/fields/TagsField.tsx",
+        3
+      ],
+      [
+        "src/lib/layouts/CanvasLayout.tsx",
+        3
+      ],
+      [
+        "src/lib/layouts/DocumentLayout.tsx",
+        3
+      ],
+      [
+        "src/app/(app)/analytics/dashboards/page.tsx",
+        2
+      ],
+      [
+        "src/app/(app)/analytics/reports/page.tsx",
+        2
+      ],
+      [
+        "src/app/(app)/finance/components/FinancialHealthCard.tsx",
+        2
+      ],
+      [
+        "src/app/(app)/finance/components/PaymentLinkButton.tsx",
+        2
+      ],
+      [
+        "src/app/(app)/finance/components/ReceiptUploader.tsx",
+        2
+      ],
+      [
+        "src/app/(app)/productions/projects/[id]/call-sheet/page.tsx",
+        2
+      ],
+      [
+        "src/components/common/financial-display.tsx",
+        2
+      ],
+      [
+        "src/components/common/subtask-list.tsx",
+        2
+      ],
+      [
+        "src/components/layout/sidebar.tsx",
+        2
+      ],
+      [
+        "src/components/modules/advancing/AvailabilityTimeline.tsx",
+        2
+      ],
+      [
+        "src/components/modules/advancing/ConflictPanel.tsx",
+        2
+      ],
+      [
+        "src/components/onboarding/AccountTypeSelector.tsx",
+        2
+      ],
+      [
+        "src/components/realtime/ActivityFeed.tsx",
+        2
+      ],
+      [
+        "src/components/realtime/MentionInput.tsx",
+        2
+      ],
+      [
+        "src/components/views/data-view.tsx",
+        2
+      ],
+      [
+        "src/components/views/timeline-view.tsx",
+        2
+      ],
+      [
+        "src/components/widgets/InboxSummaryWidget.tsx",
+        2
+      ],
+      [
+        "src/components/widgets/SetupChecklistWidget.tsx",
+        2
+      ],
+      [
+        "src/lib/components/fields/MultiselectField.tsx",
+        2
+      ],
+      [
+        "src/lib/layouts/SplitLayout.tsx",
+        2
+      ]
+    ]
+  },
+  "exceptions": {
+    "native_control_allowlist": [
+      {
+        "file": "src/components/views/map-view.tsx",
+        "tag": "button",
+        "reason": "Map markers/clusters are absolute-positioned interactive overlays."
+      }
+    ]
+  }
+}

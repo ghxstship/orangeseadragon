@@ -204,7 +204,7 @@ export function ExpenseApprovalCard({
           )}
 
           {!approval.expense.receiptUrl && (
-            <div className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
+            <div className="flex items-center gap-2 rounded-lg bg-semantic-warning/10 p-3 text-semantic-warning dark:bg-semantic-warning/20">
               <AlertCircle className="h-4 w-4" />
               <span className="text-sm">No receipt attached</span>
             </div>

@@ -54,13 +54,13 @@ const ACTION_MAP: Record<string, ActivityEntry['action']> = {
 
 const actionConfig: Record<string, { icon: React.ElementType; color: string; label: string }> = {
   created: { icon: Plus, color: 'text-semantic-success', label: 'Created' },
-  updated: { icon: FileEdit, color: 'text-blue-500', label: 'Updated' },
+  updated: { icon: FileEdit, color: 'text-semantic-info', label: 'Updated' },
   deleted: { icon: Trash2, color: 'text-destructive', label: 'Deleted' },
   viewed: { icon: Eye, color: 'text-muted-foreground', label: 'Viewed' },
-  exported: { icon: Download, color: 'text-purple-500', label: 'Exported' },
+  exported: { icon: Download, color: 'text-semantic-purple', label: 'Exported' },
   imported: { icon: Upload, color: 'text-semantic-warning', label: 'Imported' },
   approved: { icon: CheckCircle, color: 'text-semantic-success', label: 'Approved' },
-  submitted: { icon: Clock, color: 'text-blue-500', label: 'Submitted' },
+  submitted: { icon: Clock, color: 'text-semantic-info', label: 'Submitted' },
 };
 
 function useMyActivity(userId: string | null, orgId: string | null) {

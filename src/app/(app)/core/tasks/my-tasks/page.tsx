@@ -85,7 +85,7 @@ const groupOrder = ["overdue", "today", "tomorrow", "this_week", "next_week", "l
 
 const priorityColors: Record<string, string> = {
   urgent: "text-destructive",
-  high: "text-amber-500",
+  high: "text-semantic-warning",
   medium: "text-primary",
   low: "text-muted-foreground",
 };
@@ -93,8 +93,8 @@ const priorityColors: Record<string, string> = {
 const statusConfig: Record<string, { icon: React.ReactNode; label: string; color: string }> = {
   todo: { icon: <Circle className="h-4 w-4" />, label: "To Do", color: "text-muted-foreground" },
   in_progress: { icon: <Timer className="h-4 w-4" />, label: "In Progress", color: "text-primary" },
-  in_review: { icon: <Clock className="h-4 w-4" />, label: "In Review", color: "text-amber-500" },
-  done: { icon: <CheckSquare className="h-4 w-4" />, label: "Done", color: "text-emerald-500" },
+  in_review: { icon: <Clock className="h-4 w-4" />, label: "In Review", color: "text-semantic-warning" },
+  done: { icon: <CheckSquare className="h-4 w-4" />, label: "Done", color: "text-semantic-success" },
 };
 
 export default function MyTasksPage() {
@@ -664,7 +664,7 @@ function CalendarTaskView({
                     className={cn(
                       "text-[10px] px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 transition-opacity",
                       task.priority === "urgent" ? "bg-destructive/10 text-destructive" :
-                      task.priority === "high" ? "bg-amber-500/10 text-amber-700 dark:text-amber-400" :
+                      task.priority === "high" ? "bg-semantic-warning/10 text-semantic-warning" :
                       "bg-primary/10 text-primary"
                     )}
                     onClick={() => onTaskClick(task.id)}

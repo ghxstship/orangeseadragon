@@ -97,8 +97,11 @@ export default function ReportBuilderPage() {
             { type: 'line' as ChartType, icon: LineChart, label: 'Line' },
             { type: 'pie' as ChartType, icon: PieChart, label: 'Pie' },
           ]).map(({ type, icon: Icon, label }) => (
-            <button
+            <Button
               key={type}
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setChartType(type)}
               className={`flex flex-col items-center gap-1 p-2 rounded-md text-xs transition-colors ${
                 chartType === type ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'
@@ -106,7 +109,7 @@ export default function ReportBuilderPage() {
             >
               <Icon className="h-4 w-4" />
               {label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -175,7 +178,16 @@ export default function ReportBuilderPage() {
                   {rows.map((fieldId) => (
                     <div key={fieldId} className="flex items-center justify-between bg-muted rounded px-2 py-1">
                       <span className="text-xs">{getFieldLabel(fieldId)}</span>
-                      <button onClick={() => removeField('rows', fieldId)}><X className="h-3 w-3" /></button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5"
+                        onClick={() => removeField('rows', fieldId)}
+                        aria-label={`Remove ${getFieldLabel(fieldId)} from rows`}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </div>
                   ))}
                   <Select onValueChange={(v) => addField('rows', v)}>
@@ -201,7 +213,16 @@ export default function ReportBuilderPage() {
                   {columns.map((fieldId) => (
                     <div key={fieldId} className="flex items-center justify-between bg-muted rounded px-2 py-1">
                       <span className="text-xs">{getFieldLabel(fieldId)}</span>
-                      <button onClick={() => removeField('columns', fieldId)}><X className="h-3 w-3" /></button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5"
+                        onClick={() => removeField('columns', fieldId)}
+                        aria-label={`Remove ${getFieldLabel(fieldId)} from columns`}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </div>
                   ))}
                   <Select onValueChange={(v) => addField('columns', v)}>
@@ -227,7 +248,16 @@ export default function ReportBuilderPage() {
                   {values.map((fieldId) => (
                     <div key={fieldId} className="flex items-center justify-between bg-muted rounded px-2 py-1">
                       <span className="text-xs">{getFieldLabel(fieldId)}</span>
-                      <button onClick={() => removeField('values', fieldId)}><X className="h-3 w-3" /></button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-5 w-5"
+                        onClick={() => removeField('values', fieldId)}
+                        aria-label={`Remove ${getFieldLabel(fieldId)} from values`}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </div>
                   ))}
                   <Select onValueChange={(v) => addField('values', v)}>

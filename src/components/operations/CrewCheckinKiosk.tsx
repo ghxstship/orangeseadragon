@@ -287,14 +287,14 @@ export function CrewCheckinKiosk() {
 
   return (
     <div className={cn(
-      "flex flex-col h-full bg-neutral-950 text-white",
+      "flex flex-col h-full bg-background text-foreground",
       isFullscreen && "fixed inset-0 z-50"
     )}>
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-black/50">
         <div>
           <h1 className="text-xl font-bold">{config.event_name}</h1>
-          <div className="flex items-center gap-2 text-sm text-neutral-400">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <MapPin className="h-4 w-4" />
             {config.venue_name}
           </div>
@@ -305,7 +305,7 @@ export function CrewCheckinKiosk() {
             <div className="text-3xl font-mono font-bold text-semantic-success">
               {formatTime(currentTime)}
             </div>
-            <div className="text-sm text-neutral-400">
+            <div className="text-sm text-muted-foreground">
               {currentTime.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
             </div>
           </div>
@@ -315,7 +315,7 @@ export function CrewCheckinKiosk() {
               "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm",
               locationValid === true ? "bg-semantic-success/20 text-semantic-success" :
               locationValid === false ? "bg-destructive/20 text-destructive/80" :
-              "bg-neutral-500/20 text-neutral-400"
+              "bg-muted text-muted-foreground"
             )}>
               <MapPin className="h-4 w-4" />
               {locationValid === true ? 'In Zone' : locationValid === false ? 'Outside Zone' : 'Checking...'}
@@ -348,20 +348,20 @@ export function CrewCheckinKiosk() {
               >
                 <div 
                   onClick={simulateScan}
-                  className="w-80 h-80 mx-auto mb-8 rounded-3xl border-4 border-dashed border-border flex items-center justify-center cursor-pointer hover:border-emerald-500/50 transition-colors group"
+                  className="w-80 h-80 mx-auto mb-8 rounded-3xl border-4 border-dashed border-border flex items-center justify-center cursor-pointer hover:border-semantic-success/50 transition-colors group"
                 >
                   <div className="text-center">
-                    <QrCode className="h-24 w-24 mx-auto mb-4 text-neutral-600 group-hover:text-semantic-success transition-colors" />
-                    <p className="text-xl text-neutral-400 group-hover:text-white transition-colors">
+                    <QrCode className="h-24 w-24 mx-auto mb-4 text-muted-foreground group-hover:text-semantic-success transition-colors" />
+                    <p className="text-xl text-muted-foreground group-hover:text-foreground transition-colors">
                       Scan QR Code
                     </p>
-                    <p className="text-sm text-neutral-600 mt-2">
+                    <p className="text-sm text-muted-foreground mt-2">
                       or tap to simulate
                     </p>
                   </div>
                 </div>
                 
-                <p className="text-neutral-400 text-lg">
+                <p className="text-muted-foreground text-lg">
                   Hold your crew badge QR code up to the camera
                 </p>
               </motion.div>
@@ -375,9 +375,9 @@ export function CrewCheckinKiosk() {
                 exit={{ opacity: 0 }}
                 className="text-center"
               >
-                <div className="w-80 h-80 mx-auto mb-8 rounded-3xl border-4 border-emerald-500 flex items-center justify-center relative overflow-hidden">
+                <div className="w-80 h-80 mx-auto mb-8 rounded-3xl border-4 border-semantic-success flex items-center justify-center relative overflow-hidden">
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-b from-emerald-500/20 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-b from-semantic-success/20 to-transparent"
                     animate={{ y: ['-100%', '100%'] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   />
@@ -391,7 +391,7 @@ export function CrewCheckinKiosk() {
                 <Button
                   variant="ghost"
                   onClick={handleCancel}
-                  className="mt-4 text-neutral-400"
+                  className="mt-4 text-muted-foreground"
                 >
                   Cancel
                 </Button>
@@ -412,7 +412,7 @@ export function CrewCheckinKiosk() {
                       <UserCheck className="h-10 w-10 text-semantic-success" />
                     </div>
                     <h2 className="text-2xl font-bold">{scanResult.crew_member.name}</h2>
-                    <p className="text-neutral-400">{scanResult.crew_member.role}</p>
+                    <p className="text-muted-foreground">{scanResult.crew_member.role}</p>
                     <Badge variant="outline" className="mt-2">
                       {scanResult.crew_member.department}
                     </Badge>
@@ -469,7 +469,7 @@ export function CrewCheckinKiosk() {
                     <Button
                       variant="ghost"
                       onClick={handleCancel}
-                      className="w-full text-neutral-400"
+                      className="w-full text-muted-foreground"
                     >
                       Cancel
                     </Button>
@@ -495,7 +495,7 @@ export function CrewCheckinKiosk() {
                   <CheckCircle2 className="h-16 w-16 text-white" />
                 </motion.div>
                 <h2 className="text-3xl font-bold text-semantic-success">Success!</h2>
-                <p className="text-neutral-400 mt-2">
+                <p className="text-muted-foreground mt-2">
                   {scanResult?.crew_member.name} has been checked in
                 </p>
               </motion.div>
@@ -513,7 +513,7 @@ export function CrewCheckinKiosk() {
                   <XCircle className="h-16 w-16 text-white" />
                 </div>
                 <h2 className="text-3xl font-bold text-destructive/80">Error</h2>
-                <p className="text-neutral-400 mt-2">
+                <p className="text-muted-foreground mt-2">
                   Could not process check-in
                 </p>
                 <Button
@@ -544,20 +544,20 @@ export function CrewCheckinKiosk() {
                     "w-10 h-10 rounded-full flex items-center justify-center",
                     checkin.status === 'checked_in' ? "bg-semantic-success/20" :
                     checkin.status === 'on_break' ? "bg-semantic-warning/20" :
-                    "bg-neutral-500/20"
+                    "bg-muted"
                   )}>
                     {checkin.status === 'checked_in' ? (
                       <UserCheck className="h-5 w-5 text-semantic-success" />
                     ) : checkin.status === 'on_break' ? (
                       <Coffee className="h-5 w-5 text-semantic-warning" />
                     ) : (
-                      <UserX className="h-5 w-5 text-neutral-400" />
+                      <UserX className="h-5 w-5 text-muted-foreground" />
                     )}
                   </div>
                   
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{checkin.crew_member.name}</p>
-                    <p className="text-xs text-neutral-500">{checkin.crew_member.role}</p>
+                    <p className="text-xs text-muted-foreground">{checkin.crew_member.role}</p>
                   </div>
                   
                   <div className="text-right">
@@ -567,13 +567,13 @@ export function CrewCheckinKiosk() {
                         "text-[10px]",
                         checkin.status === 'checked_in' ? "text-semantic-success border-semantic-success/30" :
                         checkin.status === 'on_break' ? "text-semantic-warning border-semantic-warning/30" :
-                        "text-neutral-400"
+                        "text-muted-foreground"
                       )}
                     >
                       {checkin.status === 'checked_in' ? 'IN' : 
                        checkin.status === 'on_break' ? 'BREAK' : 'OUT'}
                     </Badge>
-                    <p className="text-xs text-neutral-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       {formatTimeAgo(checkin.check_in_time)}
                     </p>
                   </div>
@@ -589,19 +589,19 @@ export function CrewCheckinKiosk() {
                 <p className="text-2xl font-bold text-semantic-success">
                   {recentCheckins.filter((c) => c.status === 'checked_in').length}
                 </p>
-                <p className="text-xs text-neutral-500">On Site</p>
+                <p className="text-xs text-muted-foreground">On Site</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-semantic-warning">
                   {recentCheckins.filter((c) => c.status === 'on_break').length}
                 </p>
-                <p className="text-xs text-neutral-500">On Break</p>
+                <p className="text-xs text-muted-foreground">On Break</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-neutral-400">
+                <p className="text-2xl font-bold text-muted-foreground">
                   {recentCheckins.filter((c) => c.status === 'checked_out').length}
                 </p>
-                <p className="text-xs text-neutral-500">Checked Out</p>
+                <p className="text-xs text-muted-foreground">Checked Out</p>
               </div>
             </div>
           </div>

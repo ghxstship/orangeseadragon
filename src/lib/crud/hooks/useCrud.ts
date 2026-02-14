@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { EntitySchema } from '@/lib/schema/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { throwApiErrorResponse } from '@/lib/api/error-message';
 
 /**
  * GENERIC CRUD HOOK
@@ -40,8 +41,7 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
       const url = queryParams ? `${endpoint}?${queryParams}` : endpoint;
       const res = await fetch(url);
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to load ${schema.identity.namePlural}`);
+        await throwApiErrorResponse(res, `Failed to load ${schema.identity.namePlural}`);
       }
       return res.json();
     },
@@ -54,8 +54,7 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
       queryFn: async () => {
         const res = await fetch(`${endpoint}/${id}`);
         if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          throw new Error(errorData.error || `Failed to load ${schema.identity.name}`);
+          await throwApiErrorResponse(res, `Failed to load ${schema.identity.name}`);
         }
         return res.json();
       },
@@ -78,8 +77,7 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
       });
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to create ${schema.identity.name}`);
+        await throwApiErrorResponse(res, `Failed to create ${schema.identity.name}`);
       }
       return res.json();
     },
@@ -111,8 +109,7 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
       });
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to update ${schema.identity.name}`);
+        await throwApiErrorResponse(res, `Failed to update ${schema.identity.name}`);
       }
       return res.json();
     },
@@ -145,8 +142,7 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
       });
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || `Failed to delete ${schema.identity.name}`);
+        await throwApiErrorResponse(res, `Failed to delete ${schema.identity.name}`);
       }
       return id;
     },

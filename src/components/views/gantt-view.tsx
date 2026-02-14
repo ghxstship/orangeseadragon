@@ -78,6 +78,30 @@ export interface GanttViewProps<T extends GanttTask> {
 
 type ZoomLevel = "day" | "week" | "month";
 
+const getTaskRowStyle = (depth: number): React.CSSProperties => ({
+  paddingLeft: `${24 + depth * 16}px`,
+});
+
+const getTimelineHeaderCellStyle = (
+  timeUnitCount: number,
+  zoomLevel: ZoomLevel
+): React.CSSProperties => ({
+  width: `${100 / timeUnitCount}%`,
+  minWidth: zoomLevel === "day" ? 40 : 80,
+});
+
+const getTimelineGridCellStyle = (timeUnitCount: number): React.CSSProperties => ({
+  width: `${100 / timeUnitCount}%`,
+});
+
+const getTodayLineStyle = (leftPercent: number): React.CSSProperties => ({
+  left: `${leftPercent}%`,
+});
+
+const getProgressFillStyle = (progress: number): React.CSSProperties => ({
+  width: `${progress}%`,
+});
+
 /**
  * Add business days (skipping weekends) to a date.
  */
@@ -448,7 +472,7 @@ export function GanttView<T extends GanttTask>({
                     "h-12 px-6 flex items-center gap-3 hover:bg-muted cursor-pointer transition-colors group/task",
                     task.isCriticalPath && showCriticalPath && "bg-status-critical-path/5"
                   )}
-                  style={{ paddingLeft: `${24 + task.depth * 16}px` }}
+                  style={getTaskRowStyle(task.depth)}
                   onClick={() => onTaskClick?.(task as unknown as T)}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -481,7 +505,7 @@ export function GanttView<T extends GanttTask>({
                 <div
                   key={i}
                   className="flex-shrink-0 border-r border-border px-2 flex flex-col items-center justify-center gap-0.5"
-                  style={{ width: `${100 / timeUnits.length}%`, minWidth: zoomLevel === "day" ? 40 : 80 }}
+                  style={getTimelineHeaderCellStyle(timeUnits.length, zoomLevel)}
                 >
                   <span className="text-[9px] font-black uppercase tracking-widest opacity-30">
                     {zoomLevel === "day" ? format(unit, "EEE") : zoomLevel === "month" ? format(unit, "yyyy") : ""}
@@ -505,7 +529,7 @@ export function GanttView<T extends GanttTask>({
                   <div
                     key={i}
                     className="flex-shrink-0 border-r border-border"
-                    style={{ width: `${100 / timeUnits.length}%` }}
+                    style={getTimelineGridCellStyle(timeUnits.length)}
                   />
                 ))}
               </div>
@@ -514,9 +538,7 @@ export function GanttView<T extends GanttTask>({
               {isWithinInterval(new Date(), { start: viewStart, end: viewEnd }) && (
                 <div
                   className="absolute top-0 bottom-0 w-[2px] bg-primary z-20 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
-                  style={{
-                    left: `${(differenceInDays(new Date(), viewStart) / totalDays) * 100}%`,
-                  }}
+                  style={getTodayLineStyle((differenceInDays(new Date(), viewStart) / totalDays) * 100)}
                 />
               )}
 
@@ -600,7 +622,7 @@ export function GanttView<T extends GanttTask>({
                                     <span>{task.progress}%</span>
                                   </div>
                                   <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-                                    <div className="h-full bg-primary" style={{ width: `${task.progress}%` }} />
+                                    <div className="h-full bg-primary" style={getProgressFillStyle(task.progress)} />
                                   </div>
                                 </div>
                               )}

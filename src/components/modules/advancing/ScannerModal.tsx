@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { extractApiErrorMessage } from '@/lib/api/error-message';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -169,7 +170,7 @@ export function ScannerModal({
           success: false,
           error: error.code === 'TAG_NOT_FOUND' 
             ? 'Tag not found in system' 
-            : error.error || 'Lookup failed'
+            : extractApiErrorMessage(error, 'Lookup failed')
         });
         return;
       }
@@ -195,7 +196,7 @@ export function ScannerModal({
         setScanResult({
           success: false,
           tag: lookupData.data,
-          error: error.error || 'Scan recording failed'
+          error: extractApiErrorMessage(error, 'Scan recording failed')
         });
         return;
       }

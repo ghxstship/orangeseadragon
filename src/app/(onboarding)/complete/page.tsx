@@ -9,8 +9,8 @@ export default function OnboardingCompletePage() {
   return (
     <div className="space-y-8 text-center">
       {/* Success icon */}
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-        <CheckCircle className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-semantic-success/15 dark:bg-semantic-success/25">
+        <CheckCircle className="h-10 w-10 text-semantic-success" />
       </div>
 
       {/* Header */}

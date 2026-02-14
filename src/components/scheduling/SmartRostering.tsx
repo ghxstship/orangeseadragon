@@ -109,11 +109,11 @@ export function SmartRostering() {
     // Simplified Dnd implementation placeholder - full implementation would handle coordinate mapping
 
     return (
-        <Card className="border-border bg-zinc-900/40 backdrop-blur-xl overflow-hidden">
+        <Card className="border-border bg-card/80 backdrop-blur-xl overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-xl">Smart Rostering</CardTitle>
                 <div className="flex gap-2">
-                    <Badge variant="outline" className="text-xs bg-zinc-800">Day View</Badge>
+                    <Badge variant="outline" className="text-xs bg-muted">Day View</Badge>
                     <Badge variant="secondary" className="text-xs">Week View</Badge>
                 </div>
             </CardHeader>
@@ -121,10 +121,10 @@ export function SmartRostering() {
                 <div className="min-w-[800px]">
                     {/* Timeline Header */}
                     <div className="flex border-b border-border">
-                        <div className="w-48 p-4 shrink-0 font-medium text-zinc-400">Resource</div>
+                        <div className="w-48 p-4 shrink-0 font-medium text-muted-foreground">Resource</div>
                         <div className="flex-1 flex">
                             {HOURS.map(h => (
-                                <div key={h} className="flex-1 px-1 py-4 text-xs text-zinc-500 border-l border-border text-center">
+                                <div key={h} className="flex-1 px-1 py-4 text-xs text-muted-foreground border-l border-border text-center">
                                     {h}:00
                                 </div>
                             ))}
@@ -135,15 +135,15 @@ export function SmartRostering() {
                     <DndContext>
                         <div className="divide-y divide-border">
                             {resources.map(resource => (
-                                <div key={resource.id} className="flex group bg-zinc-900/20 hover:bg-zinc-800/30 transition-colors">
+                                <div key={resource.id} className="flex group bg-muted/20 hover:bg-muted/40 transition-colors">
                                     {/* Resource Info */}
                                     <div className="w-48 p-4 shrink-0 flex items-center gap-3">
                                         <Avatar className="h-8 w-8">
-                                            <AvatarFallback className="bg-zinc-700 text-xs">{resource.name.charAt(0)}</AvatarFallback>
+                                            <AvatarFallback className="bg-muted text-xs">{resource.name.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                         <div className="overflow-hidden">
-                                            <div className="text-sm font-medium truncate text-zinc-200">{resource.name}</div>
-                                            <div className="text-xs text-zinc-500 truncate">{resource.role}</div>
+                                            <div className="text-sm font-medium truncate text-foreground">{resource.name}</div>
+                                            <div className="text-xs text-muted-foreground truncate">{resource.role}</div>
                                         </div>
                                     </div>
 
@@ -171,7 +171,7 @@ export function SmartRostering() {
                                                         "absolute top-2 bottom-2 rounded-md border text-xs flex items-center px-2 cursor-pointer hover:brightness-110 shadow-lg",
                                                         shift.conflict
                                                             ? "bg-destructive/20 border-destructive/50 text-destructive/80 shadow-[0_0_15px_-3px_hsl(var(--destructive)/0.4)]"
-                                                            : "bg-indigo-500/30 border-indigo-400/30 text-indigo-100"
+                                                            : "bg-semantic-indigo/30 border-semantic-indigo/40 text-semantic-indigo"
                                                     )}
                                                     style={{
                                                         left: `${startOffsetPercent}%`,

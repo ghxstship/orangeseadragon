@@ -82,12 +82,12 @@ function SortableDealCard({ deal, isOverlay }: { deal: Deal; isOverlay?: boolean
     };
 
     const variants = {
-        prospecting: 'border-l-slate-400',
-        qualification: 'border-l-blue-500',
-        proposal: 'border-l-yellow-500',
-        negotiation: 'border-l-orange-500',
-        'closed-won': 'border-l-green-500',
-        'closed-lost': 'border-l-red-500',
+        prospecting: 'border-l-muted-foreground',
+        qualification: 'border-l-semantic-info',
+        proposal: 'border-l-semantic-warning',
+        negotiation: 'border-l-semantic-orange',
+        'closed-won': 'border-l-semantic-success',
+        'closed-lost': 'border-l-destructive',
     };
 
     const isRotting = isDeadRotting(deal);
@@ -101,7 +101,7 @@ function SortableDealCard({ deal, isOverlay }: { deal: Deal; isOverlay?: boolean
             {...listeners}
             className={cn(
                 "mb-3 cursor-grab hover:shadow-md transition-all border-l-4",
-                variants[deal.stage as keyof typeof variants] || 'border-l-gray-300',
+                variants[deal.stage as keyof typeof variants] || 'border-l-border',
                 isDragging && "opacity-30",
                 isOverlay && "shadow-xl rotate-2 cursor-grabbing opacity-90 scale-105 z-50 ring-2 ring-primary",
                 isRotting && "ring-2 ring-destructive/50 bg-destructive/5/30 dark:bg-destructive/90/20"
@@ -292,14 +292,14 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
     const getColorForStage = (stage: string) => {
         const option = columns.find((c: any) => c.value === stage);
         const colorMap: Record<string, string> = {
-            gray: 'bg-slate-400',
-            blue: 'bg-blue-500',
+            gray: 'bg-muted-foreground',
+            blue: 'bg-semantic-info',
             yellow: 'bg-semantic-warning',
-            orange: 'bg-orange-500',
+            orange: 'bg-semantic-orange',
             green: 'bg-semantic-success',
             red: 'bg-destructive'
         };
-        return colorMap[option?.color || 'gray'] || 'bg-slate-400';
+        return colorMap[option?.color || 'gray'] || 'bg-muted-foreground';
     };
 
     if (loading) {

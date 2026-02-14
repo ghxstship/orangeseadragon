@@ -69,7 +69,7 @@ const CATEGORY_CONFIG: Record<DocumentCategory, { label: string; color: string }
   certification: { label: 'Certification', color: 'bg-semantic-success' },
   personal: { label: 'Personal', color: 'bg-semantic-warning' },
   tax: { label: 'Tax', color: 'bg-destructive' },
-  other: { label: 'Other', color: 'bg-zinc-500' },
+  other: { label: 'Other', color: 'bg-muted-foreground' },
 };
 
 const STATUS_CONFIG: Record<DocumentStatus, { label: string; icon: React.ElementType; color: string }> = {
@@ -152,7 +152,7 @@ export function DocumentManager({
             <FolderOpen className="w-6 h-6" />
             Documents
           </h2>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Manage employee documents, contracts, and certifications
           </p>
         </div>
@@ -160,9 +160,9 @@ export function DocumentManager({
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-zinc-900/60 border-border">
+        <Card className="bg-card/80 border-border">
           <CardContent className="pt-4">
-            <p className="text-sm text-zinc-400">Total Documents</p>
+            <p className="text-sm text-muted-foreground">Total Documents</p>
             <p className="text-2xl font-bold text-white">{documents.length}</p>
           </CardContent>
         </Card>
@@ -189,16 +189,16 @@ export function DocumentManager({
       </div>
 
       {/* Upload Area */}
-      <Card className="bg-zinc-900/60 border-border">
+      <Card className="bg-card/80 border-border">
         <CardContent className="pt-6">
           <div
             onDrop={handleDrop}
             onDragOver={(e) => e.preventDefault()}
             className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-border transition-colors cursor-pointer"
           >
-            <Upload className="w-10 h-10 text-zinc-500 mx-auto mb-3" />
-            <p className="text-zinc-300 mb-1">Drag and drop files here</p>
-            <p className="text-sm text-zinc-500 mb-4">or</p>
+            <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <p className="text-foreground mb-1">Drag and drop files here</p>
+            <p className="text-sm text-muted-foreground mb-4">or</p>
             <label>
               <Button variant="outline" className="cursor-pointer">
                 Browse Files
@@ -211,7 +211,7 @@ export function DocumentManager({
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xls,.xlsx"
               />
             </label>
-            <p className="text-xs text-zinc-600 mt-4">
+            <p className="text-xs text-muted-foreground mt-4">
               Supported: PDF, DOC, DOCX, JPG, PNG, XLS, XLSX (Max 10MB)
             </p>
           </div>
@@ -219,22 +219,22 @@ export function DocumentManager({
       </Card>
 
       {/* Filters */}
-      <Card className="bg-zinc-900/60 border-border">
+      <Card className="bg-card/80 border-border">
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg text-zinc-300">All Documents</CardTitle>
+            <CardTitle className="text-lg text-foreground">All Documents</CardTitle>
             <div className="flex items-center gap-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Search documents..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9 w-64 bg-zinc-800/50 border-border"
+                  className="pl-9 w-64 bg-card/70 border-border"
                 />
               </div>
               <Select value={categoryFilter} onValueChange={(v) => setCategoryFilter(v as typeof categoryFilter)}>
-                <SelectTrigger className="w-40 bg-zinc-800/50 border-border">
+                <SelectTrigger className="w-40 bg-card/70 border-border">
                   <Filter className="w-4 h-4 mr-2" />
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
@@ -246,7 +246,7 @@ export function DocumentManager({
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as typeof statusFilter)}>
-                <SelectTrigger className="w-40 bg-zinc-800/50 border-border">
+                <SelectTrigger className="w-40 bg-card/70 border-border">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -273,10 +273,10 @@ export function DocumentManager({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="flex items-center gap-4 p-4 rounded-lg bg-zinc-800/30 border border-border hover:bg-zinc-800/50 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-lg bg-muted/30 border border-border hover:bg-muted/50 transition-colors"
                 >
-                  <div className="p-2 rounded-lg bg-zinc-700/50">
-                    <FileIcon className="w-6 h-6 text-zinc-400" />
+                  <div className="p-2 rounded-lg bg-muted/60">
+                    <FileIcon className="w-6 h-6 text-muted-foreground" />
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -288,7 +288,7 @@ export function DocumentManager({
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+                    <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <div className={cn("w-2 h-2 rounded-full", categoryConfig.color)} />
                         {categoryConfig.label}
@@ -352,7 +352,7 @@ export function DocumentManager({
             })}
 
             {filteredDocuments.length === 0 && (
-              <div className="text-center py-12 text-zinc-500">
+              <div className="text-center py-12 text-muted-foreground">
                 <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>No documents found</p>
               </div>

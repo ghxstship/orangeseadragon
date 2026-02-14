@@ -150,7 +150,7 @@ export function LeaveRequestForm({
   };
 
   return (
-    <Card className="bg-zinc-900/60 border-border max-w-2xl mx-auto">
+    <Card className="bg-card/80 border-border max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="text-xl text-white flex items-center gap-2">
           <Calendar className="w-5 h-5" />
@@ -178,7 +178,7 @@ export function LeaveRequestForm({
                     "p-3 rounded-lg border text-left transition-colors",
                     isSelected 
                       ? "border-primary bg-primary/10" 
-                      : "border-border bg-zinc-800/50 hover:bg-zinc-800"
+                      : "border-border bg-card/70 hover:bg-muted/50"
                   )}
                 >
                   <div className="flex items-center gap-2 mb-1">
@@ -186,7 +186,7 @@ export function LeaveRequestForm({
                     <span className="text-sm font-medium text-white">{type.label}</span>
                   </div>
                   {balance && type.value !== 'unpaid' && (
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-muted-foreground">
                       {balance.available} of {balance.total} days
                     </p>
                   )}
@@ -206,7 +206,7 @@ export function LeaveRequestForm({
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className={cn(
-                "bg-zinc-800/50 border-border",
+                "bg-card/70 border-border",
                 errors.startDate && "border-destructive"
               )}
             />
@@ -214,7 +214,7 @@ export function LeaveRequestForm({
               <p className="text-xs text-destructive">{errors.startDate}</p>
             )}
             <Select value={startHalfDay} onValueChange={(v) => setStartHalfDay(v as typeof startHalfDay)}>
-              <SelectTrigger className="bg-zinc-800/50 border-border">
+              <SelectTrigger className="bg-card/70 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -233,7 +233,7 @@ export function LeaveRequestForm({
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className={cn(
-                "bg-zinc-800/50 border-border",
+                "bg-card/70 border-border",
                 errors.endDate && "border-destructive"
               )}
             />
@@ -241,7 +241,7 @@ export function LeaveRequestForm({
               <p className="text-xs text-destructive">{errors.endDate}</p>
             )}
             <Select value={endHalfDay} onValueChange={(v) => setEndHalfDay(v as typeof endHalfDay)}>
-              <SelectTrigger className="bg-zinc-800/50 border-border">
+              <SelectTrigger className="bg-card/70 border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -259,16 +259,16 @@ export function LeaveRequestForm({
             "p-4 rounded-lg border",
             hasInsufficientBalance 
               ? "bg-destructive/10 border-destructive/20" 
-              : "bg-zinc-800/50 border-border"
+              : "bg-card/70 border-border"
           )}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-zinc-400">Requested Days</p>
+                <p className="text-sm text-muted-foreground">Requested Days</p>
                 <p className="text-2xl font-bold text-white">{requestedDays} days</p>
               </div>
               {selectedBalance && leaveType !== 'unpaid' && (
                 <div className="text-right">
-                  <p className="text-sm text-zinc-400">Remaining After</p>
+                  <p className="text-sm text-muted-foreground">Remaining After</p>
                   <p className={cn(
                     "text-2xl font-bold",
                     hasInsufficientBalance ? "text-destructive" : "text-semantic-success"
@@ -295,22 +295,22 @@ export function LeaveRequestForm({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Add any notes or details about your leave request..."
-            className="bg-zinc-800/50 border-border min-h-[100px]"
+            className="bg-card/70 border-border min-h-[100px]"
           />
         </div>
 
         {/* Attachment */}
         <div className="space-y-2">
           <Label>Attachment (Optional)</Label>
-          <p className="text-xs text-zinc-500 mb-2">
+          <p className="text-xs text-muted-foreground mb-2">
             Upload supporting documents (e.g., medical certificate)
           </p>
           
           {attachment ? (
-            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg border border-border">
+            <div className="flex items-center gap-3 p-3 bg-card/70 rounded-lg border border-border">
               <div className="flex-1 truncate">
                 <p className="text-sm text-white truncate">{attachment.name}</p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-muted-foreground">
                   {(attachment.size / 1024).toFixed(1)} KB
                 </p>
               </div>
@@ -318,15 +318,15 @@ export function LeaveRequestForm({
                 variant="ghost"
                 size="icon"
                 onClick={() => setAttachment(null)}
-                className="text-zinc-400 hover:text-white"
+                className="text-muted-foreground hover:text-foreground"
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
           ) : (
             <label className="flex items-center justify-center gap-2 p-6 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-border transition-colors">
-              <Upload className="w-5 h-5 text-zinc-500" />
-              <span className="text-sm text-zinc-400">Click to upload</span>
+              <Upload className="w-5 h-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Click to upload</span>
               <input
                 type="file"
                 className="hidden"

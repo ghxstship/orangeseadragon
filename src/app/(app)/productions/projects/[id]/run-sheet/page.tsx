@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -44,16 +45,16 @@ interface RunSheetCue {
 }
 
 const DEPARTMENTS = [
-  { value: 'production', label: 'Production', color: 'bg-blue-500' },
-  { value: 'audio', label: 'Audio', color: 'bg-purple-500' },
-  { value: 'lighting', label: 'Lighting', color: 'bg-amber-500' },
-  { value: 'video', label: 'Video', color: 'bg-cyan-500' },
-  { value: 'backline', label: 'Backline', color: 'bg-orange-500' },
-  { value: 'catering', label: 'Catering', color: 'bg-emerald-500' },
-  { value: 'foh', label: 'FOH', color: 'bg-pink-500' },
+  { value: 'production', label: 'Production', color: 'bg-semantic-info' },
+  { value: 'audio', label: 'Audio', color: 'bg-semantic-purple' },
+  { value: 'lighting', label: 'Lighting', color: 'bg-semantic-warning' },
+  { value: 'video', label: 'Video', color: 'bg-semantic-cyan' },
+  { value: 'backline', label: 'Backline', color: 'bg-semantic-orange' },
+  { value: 'catering', label: 'Catering', color: 'bg-semantic-success' },
+  { value: 'foh', label: 'FOH', color: 'bg-semantic-accent' },
   { value: 'security', label: 'Security', color: 'bg-destructive' },
-  { value: 'transport', label: 'Transport', color: 'bg-indigo-500' },
-  { value: 'all', label: 'All Departments', color: 'bg-gray-500' },
+  { value: 'transport', label: 'Transport', color: 'bg-semantic-indigo' },
+  { value: 'all', label: 'All Departments', color: 'bg-muted-foreground' },
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -97,7 +98,7 @@ export default function RunSheetPage() {
     return () => clearInterval(interval);
   }, [isLive]);
 
-  const getDeptColor = (dept: string) => DEPARTMENTS.find(d => d.value === dept)?.color || 'bg-gray-500';
+  const getDeptColor = (dept: string) => DEPARTMENTS.find(d => d.value === dept)?.color || 'bg-muted-foreground';
   const getDeptLabel = (dept: string) => DEPARTMENTS.find(d => d.value === dept)?.label || dept;
 
   const addCue = () => {
@@ -166,23 +167,21 @@ export default function RunSheetPage() {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Completed</span>
-            <span className="font-medium text-emerald-600 dark:text-emerald-400">{cues.filter(c => c.status === 'done').length}</span>
+            <span className="font-medium text-semantic-success">{cues.filter(c => c.status === 'done').length}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Active</span>
-            <span className="font-medium text-blue-600">{cues.filter(c => c.status === 'active').length}</span>
+            <span className="font-medium text-semantic-info">{cues.filter(c => c.status === 'active').length}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Pending</span>
             <span className="font-medium">{cues.filter(c => c.status === 'pending').length}</span>
           </div>
         </div>
-        <div className="mt-2 h-2 rounded-full bg-muted overflow-hidden">
-          <div
-            className="h-full bg-emerald-500 dark:bg-emerald-400 transition-all duration-300"
-            style={{ width: `${cues.length > 0 ? (cues.filter(c => c.status === 'done').length / cues.length) * 100 : 0}%` }}
-          />
-        </div>
+        <Progress
+          value={cues.length > 0 ? (cues.filter(c => c.status === 'done').length / cues.length) * 100 : 0}
+          className="mt-2 h-2"
+        />
       </div>
 
       <div>

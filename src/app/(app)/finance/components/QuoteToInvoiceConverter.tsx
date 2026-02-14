@@ -57,7 +57,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
     return (
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+          <div className="flex items-center gap-2 text-semantic-success">
             <Check className="h-6 w-6" />
             <CardTitle>Quote Converted Successfully</CardTitle>
           </div>
@@ -69,9 +69,9 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
               <p className="mt-2 font-medium">{quote.quoteNumber}</p>
               <Badge variant="secondary">Quote</Badge>
             </div>
-            <ArrowRight className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+            <ArrowRight className="h-8 w-8 text-semantic-success" />
             <div className="text-center">
-              <Receipt className="mx-auto h-12 w-12 text-emerald-600 dark:text-emerald-400" />
+              <Receipt className="mx-auto h-12 w-12 text-semantic-success" />
               <p className="mt-2 font-medium">{result.invoiceNumber}</p>
               <Badge variant="default">Invoice</Badge>
             </div>
@@ -105,7 +105,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
       </CardHeader>
       <CardContent className="space-y-4">
         {isExpired && (
-          <div className="flex items-center gap-2 rounded-lg bg-amber-50 p-3 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
+          <div className="flex items-center gap-2 rounded-lg bg-semantic-warning/10 p-3 text-semantic-warning border border-semantic-warning/20">
             <AlertCircle className="h-5 w-5" />
             <span>This quote expired on {format(quote.validUntil, 'PPP')}. You can still convert it.</span>
           </div>

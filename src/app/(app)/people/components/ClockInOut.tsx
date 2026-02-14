@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
+import { throwApiErrorResponse } from '@/lib/api/error-message';
 
 interface LocationData {
   latitude: number;
@@ -196,8 +197,7 @@ export function ClockInOut() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Action failed');
+        await throwApiErrorResponse(response, 'Action failed');
       }
 
       const data = await response.json();
@@ -271,7 +271,7 @@ export function ClockInOut() {
               </Badge>
             ) : location ? (
               isWithinGeofence === true ? (
-                <Badge variant="default" className="gap-1 bg-emerald-600 dark:bg-emerald-500">
+                <Badge variant="outline" className="gap-1 border-semantic-success/30 bg-semantic-success/10 text-semantic-success">
                   <CheckCircle2 className="h-3 w-3" />
                   At Venue
                 </Badge>
@@ -295,22 +295,22 @@ export function ClockInOut() {
 
           {/* Active Shift Info */}
           {isClockedIn && activeShift && (
-            <div className="rounded-lg bg-emerald-50 dark:bg-emerald-900/20 p-4 space-y-2">
+            <div className="rounded-lg border border-semantic-success/20 bg-semantic-success/10 p-4 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-emerald-800 dark:text-emerald-200">
+                <span className="text-sm font-medium text-semantic-success">
                   Currently Working
                 </span>
-                <span className="text-2xl font-mono font-bold text-emerald-700 dark:text-emerald-300">
+                <span className="text-2xl font-mono font-bold text-semantic-success">
                   {getElapsedTime()}
                 </span>
               </div>
               {activeShift.eventName && (
-                <p className="text-sm text-emerald-700 dark:text-emerald-300">
+                <p className="text-sm text-semantic-success">
                   {activeShift.eventName}
                   {activeShift.venueName && ` @ ${activeShift.venueName}`}
                 </p>
               )}
-              <p className="text-xs text-emerald-600 dark:text-emerald-400">
+              <p className="text-xs text-semantic-success/80">
                 Started {formatDistanceToNow(new Date(activeShift.clockInTime), { addSuffix: true })}
               </p>
             </div>
@@ -318,10 +318,10 @@ export function ClockInOut() {
 
           {/* Break Status */}
           {isOnBreak && (
-            <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 p-4">
+            <div className="rounded-lg border border-semantic-warning/20 bg-semantic-warning/10 p-4">
               <div className="flex items-center gap-2">
-                <Coffee className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                <span className="font-medium text-amber-800 dark:text-amber-200">
+                <Coffee className="h-5 w-5 text-semantic-warning" />
+                <span className="font-medium text-semantic-warning">
                   On Break
                 </span>
               </div>
@@ -365,7 +365,7 @@ export function ClockInOut() {
             {!isClockedIn ? (
               <Button
                 size="lg"
-                className="w-full h-16 text-lg gap-3 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-600"
+                className="w-full h-16 text-lg gap-3 bg-semantic-success text-white hover:bg-semantic-success/90"
                 onClick={() => handleAction('clock_in')}
                 disabled={isLoading}
               >

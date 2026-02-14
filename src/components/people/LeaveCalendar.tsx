@@ -143,10 +143,10 @@ export function LeaveCalendar({
   };
 
   return (
-    <Card className="bg-zinc-900/60 border-border">
+    <Card className="bg-card/80 border-border">
       <CardHeader className="border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+          <CardTitle className="text-lg text-foreground flex items-center gap-2">
             <CalendarIcon className="w-5 h-5" />
             Leave Calendar
           </CardTitle>
@@ -167,7 +167,7 @@ export function LeaveCalendar({
             <Button variant="ghost" size="icon" onClick={prevMonth}>
               <ChevronLeft className="w-5 h-5" />
             </Button>
-            <h3 className="text-xl font-semibold text-white min-w-[200px] text-center">
+            <h3 className="text-xl font-semibold text-foreground min-w-[200px] text-center">
               {MONTHS[month]} {year}
             </h3>
             <Button variant="ghost" size="icon" onClick={nextMonth}>
@@ -177,7 +177,7 @@ export function LeaveCalendar({
 
           <div className="flex gap-4">
             {Object.entries(LEAVE_TYPE_CONFIG).map(([type, config]) => (
-              <div key={type} className="flex items-center gap-1.5 text-xs text-zinc-400">
+              <div key={type} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <div className={cn("w-3 h-3 rounded-full", config.getColor())} />
                 <span>{config.label}</span>
               </div>
@@ -191,7 +191,7 @@ export function LeaveCalendar({
           {DAYS.map(day => (
             <div 
               key={day} 
-              className="bg-zinc-800/50 p-2 text-center text-xs font-medium text-zinc-400"
+              className="bg-muted/70 p-2 text-center text-xs font-medium text-muted-foreground"
             >
               {day}
             </div>
@@ -200,7 +200,7 @@ export function LeaveCalendar({
           {calendarDays.map((date, index) => {
             if (!date) {
               return (
-                <div key={`empty-${index}`} className="bg-zinc-900/30 min-h-[100px]" />
+                <div key={`empty-${index}`} className="bg-muted/20 min-h-[100px]" />
               );
             }
 
@@ -215,17 +215,17 @@ export function LeaveCalendar({
                 animate={{ opacity: 1 }}
                 transition={{ delay: index * 0.01 }}
                 className={cn(
-                  "bg-zinc-900/50 min-h-[100px] p-1 cursor-pointer transition-colors",
-                  "hover:bg-zinc-800/50",
-                  weekend && "bg-zinc-900/30",
+                  "bg-card/70 min-h-[100px] p-1 cursor-pointer transition-colors",
+                  "hover:bg-muted/60",
+                  weekend && "bg-muted/30",
                   today && "ring-2 ring-primary ring-inset"
                 )}
                 onClick={() => onDateClick?.(date)}
               >
                 <div className={cn(
                   "text-sm font-medium mb-1 w-7 h-7 flex items-center justify-center rounded-full",
-                  today ? "bg-primary text-primary-foreground" : "text-zinc-400",
-                  weekend && !today && "text-zinc-600"
+                  today ? "bg-primary text-primary-foreground" : "text-muted-foreground",
+                  weekend && !today && "text-muted-foreground/70"
                 )}>
                   {date.getDate()}
                 </div>
@@ -250,12 +250,12 @@ export function LeaveCalendar({
                                 onRequestClick?.(request);
                               }}
                             >
-                              <span className="text-white/90 truncate">
+                              <span className="text-foreground truncate">
                                 {request.employeeName.split(' ')[0]}
                               </span>
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent side="right" className="bg-zinc-800 border-border">
+                          <TooltipContent side="right" className="bg-popover border-border">
                             <div className="space-y-2">
                               <div className="flex items-center gap-2">
                                 <Avatar className="h-6 w-6">
@@ -269,9 +269,9 @@ export function LeaveCalendar({
                                 <Badge variant="outline" className={cn("text-xs", statusConfig.getColor(), statusConfig.getBgColor())}>
                                   {request.status}
                                 </Badge>
-                                <span className="text-xs text-zinc-400">{typeConfig.label}</span>
+                                <span className="text-xs text-muted-foreground">{typeConfig.label}</span>
                               </div>
-                              <p className="text-xs text-zinc-400">
+                              <p className="text-xs text-muted-foreground">
                                 {request.startDate.toLocaleDateString()} - {request.endDate.toLocaleDateString()}
                               </p>
                             </div>
@@ -282,7 +282,7 @@ export function LeaveCalendar({
                   </TooltipProvider>
 
                   {dayRequests.length > 3 && (
-                    <div className="text-xs text-zinc-500 px-1">
+                    <div className="text-xs text-muted-foreground/80 px-1">
                       +{dayRequests.length - 3} more
                     </div>
                   )}

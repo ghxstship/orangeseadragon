@@ -54,11 +54,11 @@ function PaymentSuccessContent() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-emerald-50 to-white p-4 dark:from-emerald-950/20 dark:to-background">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-semantic-success/10 to-background p-4 dark:from-semantic-success/20 dark:to-background">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-            <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-semantic-success/15 dark:bg-semantic-success/25">
+            <CheckCircle2 className="h-10 w-10 text-semantic-success" />
           </div>
           <CardTitle className="text-2xl">Payment Successful!</CardTitle>
           <CardDescription>

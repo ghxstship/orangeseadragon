@@ -75,8 +75,8 @@ function dateKey(date: Date): string {
 
 const weekStatusConfig: Record<WeekStatus, { label: string; color: string; icon: React.ReactNode }> = {
   draft: { label: "Draft", color: "bg-muted text-muted-foreground", icon: <FileText className="h-3 w-3" /> },
-  submitted: { label: "Submitted", color: "bg-amber-500/10 text-amber-500 border-amber-500/20", icon: <Send className="h-3 w-3" /> },
-  approved: { label: "Approved", color: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20", icon: <CheckCircle2 className="h-3 w-3" /> },
+  submitted: { label: "Submitted", color: "bg-semantic-warning/10 text-semantic-warning border-semantic-warning/20", icon: <Send className="h-3 w-3" /> },
+  approved: { label: "Approved", color: "bg-semantic-success/10 text-semantic-success border-semantic-success/20", icon: <CheckCircle2 className="h-3 w-3" /> },
   rejected: { label: "Rejected", color: "bg-destructive/10 text-destructive border-destructive/20", icon: <AlertTriangle className="h-3 w-3" /> },
 };
 
@@ -368,7 +368,7 @@ export default function MyTimesheetPage() {
             className={cn(
               "h-2",
               utilizationPct > 100 && "[&>div]:bg-destructive",
-              utilizationPct >= 80 && utilizationPct <= 100 && "[&>div]:bg-emerald-500"
+              utilizationPct >= 80 && utilizationPct <= 100 && "[&>div]:bg-semantic-success"
             )}
           />
         </div>
@@ -402,7 +402,7 @@ export default function MyTimesheetPage() {
                           {dayTotal > 0 && (
                             <div className={cn(
                               "text-[9px] font-mono font-bold mt-0.5",
-                              isOverTarget ? "text-amber-500" : "opacity-40"
+                              isOverTarget ? "text-semantic-warning" : "opacity-40"
                             )}>
                               {dayTotal}h
                             </div>
@@ -551,7 +551,7 @@ export default function MyTimesheetPage() {
                         <td key={key} className="px-2 py-3 text-center">
                           <span className={cn(
                             "font-mono text-xs font-bold",
-                            isOverTarget && "text-amber-500"
+                            isOverTarget && "text-semantic-warning"
                           )}>
                             {dayTotal}h
                           </span>

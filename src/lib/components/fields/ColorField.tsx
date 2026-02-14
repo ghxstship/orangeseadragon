@@ -1,5 +1,7 @@
 import React from 'react';
 import { FieldRenderProps } from './index';
+import { ColorPicker } from '@/components/ui/color-picker';
+import { COLOR_PICKER_DEFAULT_HEX } from '@/lib/tokens/color-presets';
 
 /**
  * Color Field Component
@@ -8,29 +10,16 @@ import { FieldRenderProps } from './index';
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ColorField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
+  const normalizedValue = typeof value === 'string' && value.length > 0 ? value : COLOR_PICKER_DEFAULT_HEX;
+
   return (
     <div className="space-y-1">
-      <div className="flex items-center space-x-2">
-        <input
-          type="color"
-          value={value || '#000000'}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-          className={`w-12 h-10 border rounded focus:outline-none focus:ring-2 focus:ring-ring ${
-            error ? 'border-destructive' : 'border-input'
-          } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-        />
-        <input
-          type="text"
-          value={value || ''}
-          onChange={(e) => onChange(e.target.value)}
-          disabled={disabled}
-          className={`flex-1 px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${
-            error ? 'border-destructive' : 'border-input'
-          } ${disabled ? 'bg-muted' : ''}`}
-          placeholder="#000000"
-        />
-      </div>
+      <ColorPicker
+        value={normalizedValue}
+        onChange={onChange}
+        disabled={disabled}
+        className={`w-full ${error ? 'border-destructive' : ''}`}
+      />
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );

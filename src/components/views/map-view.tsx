@@ -66,6 +66,19 @@ const defaultMarkerTypes = [
   { type: "event", label: "Events", color: "hsl(var(--marker-event))", icon: <Calendar className="h-4 w-4" /> },
 ];
 
+const getAbsolutePositionStyle = (x: number, y: number): React.CSSProperties => ({
+  left: x,
+  top: y,
+});
+
+const getMarkerBackgroundStyle = (color: string): React.CSSProperties => ({
+  backgroundColor: color,
+});
+
+const getMarkerPointerStyle = (color: string): React.CSSProperties => ({
+  borderTopColor: color,
+});
+
 export function MapView({
   markers,
   title,
@@ -266,10 +279,6 @@ export function MapView({
                   size="sm"
                   className="h-8"
                   onClick={() => toggleType(type.type)}
-                  style={{
-                    backgroundColor: selectedTypes.includes(type.type) ? type.color : undefined,
-                    borderColor: type.color,
-                  }}
                 >
                   {type.icon}
                   <span className="ml-1">{type.label}</span>
@@ -295,7 +304,7 @@ export function MapView({
               )}
             >
               {/* Map placeholder - in production, integrate with Mapbox/Google Maps */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20">
+              <div className="absolute inset-0 bg-gradient-to-br from-semantic-info/10 to-semantic-info/20 dark:from-semantic-info/20 dark:to-semantic-info/10">
                 {/* Grid lines */}
                 <svg className="absolute inset-0 w-full h-full opacity-20">
                   <defs>
@@ -311,6 +320,11 @@ export function MapView({
                   const pos = latLngToPixel(marker.latitude, marker.longitude);
                   if (pos.x < 0 || pos.y < 0) return null;
 
+                  const markerColor = getMarkerColor(marker);
+                  const markerPosition = getAbsolutePositionStyle(pos.x, pos.y);
+                  const markerBackgroundStyle = getMarkerBackgroundStyle(markerColor);
+                  const markerPointerStyle = getMarkerPointerStyle(markerColor);
+
                   return (
                     <button
                       key={marker.id}
@@ -318,18 +332,18 @@ export function MapView({
                         "absolute -translate-x-1/2 -translate-y-full transition-transform hover:scale-110 z-10",
                         selectedMarker?.id === marker.id && "scale-125 z-20"
                       )}
-                      style={{ left: pos.x, top: pos.y }}
+                      style={markerPosition}
                       onClick={() => handleMarkerClick(marker)}
                     >
                       <div
                         className="flex items-center justify-center w-8 h-8 rounded-full text-white shadow-lg"
-                        style={{ backgroundColor: getMarkerColor(marker) }}
+                        style={markerBackgroundStyle}
                       >
                         {getMarkerIcon(marker)}
                       </div>
                       <div
                         className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-8 border-transparent"
-                        style={{ borderTopColor: getMarkerColor(marker) }}
+                        style={markerPointerStyle}
                       />
                     </button>
                   );
@@ -340,11 +354,13 @@ export function MapView({
                   const pos = latLngToPixel(cluster.latitude, cluster.longitude);
                   if (pos.x < 0 || pos.y < 0) return null;
 
+                  const clusterPosition = getAbsolutePositionStyle(pos.x, pos.y);
+
                   return (
                     <button
                       key={cluster.id}
                       className="absolute -translate-x-1/2 -translate-y-1/2 transition-transform hover:scale-110 z-10"
-                      style={{ left: pos.x, top: pos.y }}
+                      style={clusterPosition}
                       onClick={() => handleClusterClick(cluster)}
                     >
                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg font-bold">
@@ -397,10 +413,15 @@ export function MapView({
               {/* Selected marker popup */}
               {selectedMarker && (
                 <div className="absolute bottom-4 right-4 w-64 bg-background border rounded-lg shadow-lg p-3">
+                  {(() => {
+                    const selectedMarkerColor = getMarkerColor(selectedMarker);
+                    const selectedMarkerBackgroundStyle = getMarkerBackgroundStyle(selectedMarkerColor);
+
+                    return (
                   <div className="flex items-start gap-3">
                     <div
                       className="flex items-center justify-center w-10 h-10 rounded-full text-white flex-shrink-0"
-                      style={{ backgroundColor: getMarkerColor(selectedMarker) }}
+                      style={selectedMarkerBackgroundStyle}
                     >
                       {getMarkerIcon(selectedMarker)}
                     </div>
@@ -419,6 +440,8 @@ export function MapView({
                       )}
                     </div>
                   </div>
+                    );
+                  })()}
                   <div className="flex gap-2 mt-3">
                     <Button size="sm" className="flex-1">
                       <Navigation className="h-3 w-3 mr-1" />
@@ -445,32 +468,39 @@ export function MapView({
               <ScrollArea className="h-[400px]">
                 <div className="divide-y">
                   {filteredMarkers.map((marker) => (
-                    <button
-                      key={marker.id}
-                      className={cn(
-                        "w-full p-3 text-left hover:bg-muted/50 transition-colors flex items-start gap-3",
-                        selectedMarker?.id === marker.id && "bg-muted"
-                      )}
-                      onClick={() => handleMarkerClick(marker)}
-                    >
-                      <div
-                        className="flex items-center justify-center w-8 h-8 rounded-full text-white flex-shrink-0"
-                        style={{ backgroundColor: getMarkerColor(marker) }}
-                      >
-                        {getMarkerIcon(marker)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">{marker.title}</h4>
-                        {marker.description && (
-                          <p className="text-xs text-muted-foreground line-clamp-1">
-                            {marker.description}
-                          </p>
-                        )}
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {marker.latitude.toFixed(4)}, {marker.longitude.toFixed(4)}
-                        </p>
-                      </div>
-                    </button>
+                    (() => {
+                      const listMarkerColor = getMarkerColor(marker);
+                      const listMarkerBackgroundStyle = getMarkerBackgroundStyle(listMarkerColor);
+
+                      return (
+                        <button
+                          key={marker.id}
+                          className={cn(
+                            "w-full p-3 text-left hover:bg-muted/50 transition-colors flex items-start gap-3",
+                            selectedMarker?.id === marker.id && "bg-muted"
+                          )}
+                          onClick={() => handleMarkerClick(marker)}
+                        >
+                          <div
+                            className="flex items-center justify-center w-8 h-8 rounded-full text-white flex-shrink-0"
+                            style={listMarkerBackgroundStyle}
+                          >
+                            {getMarkerIcon(marker)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-sm truncate">{marker.title}</h4>
+                            {marker.description && (
+                              <p className="text-xs text-muted-foreground line-clamp-1">
+                                {marker.description}
+                              </p>
+                            )}
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {marker.latitude.toFixed(4)}, {marker.longitude.toFixed(4)}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })()
                   ))}
 
                   {filteredMarkers.length === 0 && (

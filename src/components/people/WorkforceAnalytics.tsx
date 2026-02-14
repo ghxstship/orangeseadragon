@@ -195,20 +195,20 @@ export function WorkforceAnalytics({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Brain className="w-6 h-6 text-purple-400" />
+            <Brain className="w-6 h-6 text-semantic-purple" />
             Workforce Analytics
-            <Badge variant="outline" className="ml-2 border-purple-500/50 text-purple-400">
+            <Badge variant="outline" className="ml-2 border-semantic-purple/50 text-semantic-purple">
               <Sparkles className="w-3 h-3 mr-1" />
               AI-Powered
             </Badge>
           </h2>
-          <p className="text-sm text-zinc-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Predictive insights and workforce intelligence
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-40 bg-zinc-800/50 border-border">
+            <SelectTrigger className="w-40 bg-muted/50 border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -238,9 +238,9 @@ export function WorkforceAnalytics({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card className="bg-zinc-900/60 border-border h-full">
+            <Card className="bg-card/80 border-border h-full">
               <CardContent className="pt-4">
-                <p className="text-xs text-zinc-500 uppercase tracking-wide">{metric.title}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">{metric.title}</p>
                 <p className="text-2xl font-bold text-white mt-1">{metric.value}</p>
                 <div className={cn(
                   "flex items-center gap-1 mt-2 text-xs",
@@ -252,7 +252,7 @@ export function WorkforceAnalytics({
                     <ArrowDownRight className="w-3 h-3" />
                   ) : null}
                   <span>{metric.change > 0 ? '+' : ''}{metric.change}</span>
-                  <span className="text-zinc-500">{metric.changeLabel}</span>
+                  <span className="text-muted-foreground">{metric.changeLabel}</span>
                 </div>
               </CardContent>
             </Card>
@@ -261,7 +261,7 @@ export function WorkforceAnalytics({
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-zinc-800/50">
+        <TabsList className="bg-muted/50">
           <TabsTrigger value="overview">AI Insights</TabsTrigger>
           <TabsTrigger value="departments">Departments</TabsTrigger>
           <TabsTrigger value="trends">Trends</TabsTrigger>
@@ -274,7 +274,7 @@ export function WorkforceAnalytics({
               <Zap className="w-5 h-5 text-semantic-warning" />
               AI-Generated Insights
             </h3>
-            <p className="text-sm text-zinc-500">
+            <p className="text-sm text-muted-foreground">
               {insights.length} insight{insights.length !== 1 ? 's' : ''} generated
             </p>
           </div>
@@ -292,8 +292,8 @@ export function WorkforceAnalytics({
                   transition={{ delay: index * 0.1 }}
                 >
                   <Card className={cn(
-                    "bg-zinc-900/60 border-border h-full",
-                    insight.priority === 'high' && "border-l-2 border-l-rose-500"
+                    "bg-card/80 border-border h-full",
+                    insight.priority === 'high' && "border-l-2 border-l-destructive"
                   )}>
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between">
@@ -307,7 +307,7 @@ export function WorkforceAnalytics({
                               <Badge variant="outline" className={cn("text-xs capitalize", config.color)}>
                                 {insight.type}
                               </Badge>
-                              <span className="text-xs text-zinc-500">
+                              <span className="text-xs text-muted-foreground">
                                 {insight.confidence}% confidence
                               </span>
                             </div>
@@ -316,9 +316,9 @@ export function WorkforceAnalytics({
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-zinc-400 mb-3">{insight.description}</p>
+                      <p className="text-sm text-muted-foreground mb-3">{insight.description}</p>
                       {insight.metric && (
-                        <p className="text-xs text-zinc-500 mb-3 flex items-center gap-1">
+                        <p className="text-xs text-muted-foreground mb-3 flex items-center gap-1">
                           <Activity className="w-3 h-3" />
                           {insight.metric}
                         </p>
@@ -342,9 +342,9 @@ export function WorkforceAnalytics({
         </TabsContent>
 
         <TabsContent value="departments" className="mt-6">
-          <Card className="bg-zinc-900/60 border-border">
+          <Card className="bg-card/80 border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+              <CardTitle className="text-lg text-foreground flex items-center gap-2">
                 <PieChart className="w-5 h-5" />
                 Department Analytics
               </CardTitle>
@@ -357,12 +357,12 @@ export function WorkforceAnalytics({
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border">
-                      <th className="text-left py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Department</th>
-                      <th className="text-right py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Headcount</th>
-                      <th className="text-right py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Turnover</th>
-                      <th className="text-right py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Avg Tenure</th>
-                      <th className="text-right py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Engagement</th>
-                      <th className="text-right py-3 px-4 text-xs font-medium text-zinc-500 uppercase">Productivity</th>
+                      <th className="text-left py-3 px-4 text-xs font-medium text-muted-foreground uppercase">Department</th>
+                      <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase">Headcount</th>
+                      <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase">Turnover</th>
+                      <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase">Avg Tenure</th>
+                      <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase">Engagement</th>
+                      <th className="text-right py-3 px-4 text-xs font-medium text-muted-foreground uppercase">Productivity</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -372,18 +372,18 @@ export function WorkforceAnalytics({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: index * 0.05 }}
-                        className="border-b border-border hover:bg-zinc-800/30"
+                        className="border-b border-border hover:bg-muted/40"
                       >
                         <td className="py-3 px-4">
                           <span className="font-medium text-white">{dept.department}</span>
                         </td>
-                        <td className="py-3 px-4 text-right text-zinc-300">{dept.headcount}</td>
+                        <td className="py-3 px-4 text-right text-foreground">{dept.headcount}</td>
                         <td className="py-3 px-4 text-right">
                           <span className={getScoreColor(100 - dept.turnoverRate * 5, { good: 70, warning: 50 })}>
                             {dept.turnoverRate}%
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-right text-zinc-300">{dept.avgTenure} yrs</td>
+                        <td className="py-3 px-4 text-right text-foreground">{dept.avgTenure} yrs</td>
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Progress value={dept.engagementScore} className="w-16 h-2" />
@@ -411,9 +411,9 @@ export function WorkforceAnalytics({
 
         <TabsContent value="trends" className="mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-zinc-900/60 border-border">
+            <Card className="bg-card/80 border-border">
               <CardHeader>
-                <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+                <CardTitle className="text-lg text-foreground flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-semantic-success" />
                   Positive Trends
                 </CardTitle>
@@ -424,28 +424,28 @@ export function WorkforceAnalytics({
                     <span className="text-sm text-white">Employee Retention</span>
                     <span className="text-semantic-success font-medium">+15%</span>
                   </div>
-                  <p className="text-xs text-zinc-500">Retention improved significantly after implementing flexible work policies</p>
+                  <p className="text-xs text-muted-foreground">Retention improved significantly after implementing flexible work policies</p>
                 </div>
                 <div className="p-4 rounded-lg bg-semantic-success/10 border border-semantic-success/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Training Completion</span>
                     <span className="text-semantic-success font-medium">+28%</span>
                   </div>
-                  <p className="text-xs text-zinc-500">New LMS platform driving higher course completion rates</p>
+                  <p className="text-xs text-muted-foreground">New LMS platform driving higher course completion rates</p>
                 </div>
                 <div className="p-4 rounded-lg bg-semantic-success/10 border border-semantic-success/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Internal Mobility</span>
                     <span className="text-semantic-success font-medium">+22%</span>
                   </div>
-                  <p className="text-xs text-zinc-500">More employees moving between departments and roles</p>
+                  <p className="text-xs text-muted-foreground">More employees moving between departments and roles</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-zinc-900/60 border-border">
+            <Card className="bg-card/80 border-border">
               <CardHeader>
-                <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+                <CardTitle className="text-lg text-foreground flex items-center gap-2">
                   <TrendingDown className="w-5 h-5 text-destructive" />
                   Areas of Concern
                 </CardTitle>
@@ -456,21 +456,21 @@ export function WorkforceAnalytics({
                     <span className="text-sm text-white">Sales Team Turnover</span>
                     <span className="text-destructive font-medium">12.1%</span>
                   </div>
-                  <p className="text-xs text-zinc-500">Above industry average of 8%. Review compensation and workload.</p>
+                  <p className="text-xs text-muted-foreground">Above industry average of 8%. Review compensation and workload.</p>
                 </div>
                 <div className="p-4 rounded-lg bg-semantic-warning/10 border border-semantic-warning/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Overtime Hours</span>
                     <span className="text-semantic-warning font-medium">+18%</span>
                   </div>
-                  <p className="text-xs text-zinc-500">Engineering team averaging 8+ overtime hours per week</p>
+                  <p className="text-xs text-muted-foreground">Engineering team averaging 8+ overtime hours per week</p>
                 </div>
                 <div className="p-4 rounded-lg bg-semantic-warning/10 border border-semantic-warning/20">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-white">Open Positions</span>
                     <span className="text-semantic-warning font-medium">23 roles</span>
                   </div>
-                  <p className="text-xs text-zinc-500">Average time-to-fill increasing. Consider expanding sourcing channels.</p>
+                  <p className="text-xs text-muted-foreground">Average time-to-fill increasing. Consider expanding sourcing channels.</p>
                 </div>
               </CardContent>
             </Card>
@@ -478,10 +478,10 @@ export function WorkforceAnalytics({
         </TabsContent>
 
         <TabsContent value="predictions" className="mt-6">
-          <Card className="bg-zinc-900/60 border-border">
+          <Card className="bg-card/80 border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
-                <Brain className="w-5 h-5 text-purple-400" />
+              <CardTitle className="text-lg text-foreground flex items-center gap-2">
+                <Brain className="w-5 h-5 text-semantic-purple" />
                 Predictive Models
               </CardTitle>
               <CardDescription>
@@ -490,27 +490,27 @@ export function WorkforceAnalytics({
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-6 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/20">
+                <div className="p-6 rounded-xl bg-gradient-to-br from-semantic-purple/20 to-semantic-info/20 border border-semantic-purple/20">
                   <div className="flex items-center gap-2 mb-3">
-                    <Users className="w-5 h-5 text-purple-400" />
+                    <Users className="w-5 h-5 text-semantic-purple" />
                     <span className="text-sm font-medium text-white">Headcount Forecast</span>
                   </div>
                   <p className="text-3xl font-bold text-white">268</p>
-                  <p className="text-xs text-zinc-400 mt-1">Projected by Q2 2026</p>
+                  <p className="text-xs text-muted-foreground mt-1">Projected by Q2 2026</p>
                   <div className="mt-3 flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs border-purple-500/50 text-purple-400">
+                    <Badge variant="outline" className="text-xs border-semantic-purple/50 text-semantic-purple">
                       94% confidence
                     </Badge>
                   </div>
                 </div>
 
-                <div className="p-6 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20">
+                <div className="p-6 rounded-xl bg-gradient-to-br from-semantic-success/20 to-semantic-cyan/20 border border-semantic-success/20">
                   <div className="flex items-center gap-2 mb-3">
                     <Target className="w-5 h-5 text-semantic-success" />
                     <span className="text-sm font-medium text-white">Retention Rate</span>
                   </div>
                   <p className="text-3xl font-bold text-white">93%</p>
-                  <p className="text-xs text-zinc-400 mt-1">Expected next 12 months</p>
+                  <p className="text-xs text-muted-foreground mt-1">Expected next 12 months</p>
                   <div className="mt-3 flex items-center gap-2">
                     <Badge variant="outline" className="text-xs border-semantic-success/50 text-semantic-success">
                       89% confidence
@@ -518,13 +518,13 @@ export function WorkforceAnalytics({
                   </div>
                 </div>
 
-                <div className="p-6 rounded-xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/20">
+                <div className="p-6 rounded-xl bg-gradient-to-br from-semantic-warning/20 to-semantic-orange/20 border border-semantic-warning/20">
                   <div className="flex items-center gap-2 mb-3">
                     <Clock className="w-5 h-5 text-semantic-warning" />
                     <span className="text-sm font-medium text-white">Hiring Needs</span>
                   </div>
                   <p className="text-3xl font-bold text-white">42</p>
-                  <p className="text-xs text-zinc-400 mt-1">New hires needed in 2026</p>
+                  <p className="text-xs text-muted-foreground mt-1">New hires needed in 2026</p>
                   <div className="mt-3 flex items-center gap-2">
                     <Badge variant="outline" className="text-xs border-semantic-warning/50 text-semantic-warning">
                       86% confidence
@@ -533,14 +533,14 @@ export function WorkforceAnalytics({
                 </div>
               </div>
 
-              <div className="p-4 rounded-lg bg-zinc-800/50 border border-border">
+              <div className="p-4 rounded-lg bg-muted/50 border border-border">
                 <div className="flex items-start gap-3">
                   <div className="p-2 rounded-lg bg-semantic-purple/20">
-                    <Sparkles className="w-5 h-5 text-purple-400" />
+                    <Sparkles className="w-5 h-5 text-semantic-purple" />
                   </div>
                   <div>
                     <h4 className="font-medium text-white mb-1">Model Information</h4>
-                    <p className="text-sm text-zinc-400">
+                    <p className="text-sm text-muted-foreground">
                       Predictions are generated using machine learning models trained on 3 years of historical workforce data, 
                       industry benchmarks, and current market conditions. Models are retrained monthly to maintain accuracy.
                     </p>

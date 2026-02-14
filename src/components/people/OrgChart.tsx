@@ -116,7 +116,7 @@ const DEFAULT_ORG_DATA: OrgNode = {
 const DEPARTMENT_COLORS: Record<string, string> = {
   'Executive': 'border-semantic-purple/50 bg-semantic-purple/10',
   'Engineering': 'border-semantic-info/50 bg-semantic-info/10',
-  'Design': 'border-pink-500/50 bg-pink-500/10',
+  'Design': 'border-semantic-accent/50 bg-semantic-accent/10',
   'Finance': 'border-semantic-success/50 bg-semantic-success/10',
   'Operations': 'border-semantic-warning/50 bg-semantic-warning/10',
   'Human Resources': 'border-destructive/50 bg-destructive/10',
@@ -134,7 +134,7 @@ function OrgNodeCard({
   level?: number;
 }) {
   const hasChildren = node.children && node.children.length > 0;
-  const departmentColor = DEPARTMENT_COLORS[node.department || ''] || 'border-zinc-500/50 bg-zinc-500/10';
+  const departmentColor = DEPARTMENT_COLORS[node.department || ''] || 'border-muted-foreground/50 bg-muted/40';
 
   return (
     <div className="flex flex-col items-center">
@@ -145,7 +145,7 @@ function OrgNodeCard({
         className={cn(
           "relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-200",
           "hover:shadow-lg hover:scale-105",
-          "bg-zinc-900/80 backdrop-blur-sm",
+          "bg-card/80 backdrop-blur-sm",
           departmentColor
         )}
         onClick={() => onClick(node)}
@@ -155,14 +155,14 @@ function OrgNodeCard({
             {node.avatarUrl ? (
               <AvatarImage src={node.avatarUrl} alt={node.name} />
             ) : (
-              <AvatarFallback className="bg-zinc-800 text-zinc-300">
+              <AvatarFallback className="bg-muted text-muted-foreground">
                 {node.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
             )}
           </Avatar>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-white text-sm truncate">{node.name}</p>
-            <p className="text-xs text-zinc-400 truncate">{node.title}</p>
+            <p className="text-xs text-muted-foreground truncate">{node.title}</p>
           </div>
         </div>
         
@@ -176,24 +176,26 @@ function OrgNodeCard({
         )}
 
         {hasChildren && (
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={(e) => {
               e.stopPropagation();
               onToggle(node.id);
             }}
             className={cn(
               "absolute -bottom-3 left-1/2 -translate-x-1/2",
-              "w-6 h-6 rounded-full bg-zinc-800 border border-border",
-              "flex items-center justify-center",
+              "w-6 h-6 rounded-full bg-muted border border-border",
               "hover:bg-accent transition-colors"
             )}
           >
             {node.isExpanded ? (
-              <ChevronDown className="w-4 h-4 text-zinc-400" />
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
             ) : (
-              <ChevronRight className="w-4 h-4 text-zinc-400" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
             )}
-          </button>
+          </Button>
         )}
       </motion.div>
 
@@ -202,12 +204,7 @@ function OrgNodeCard({
           <div className="w-px h-6 bg-muted" />
           <div className="relative flex gap-8">
             {node.children!.length > 1 && (
-              <div 
-                className="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-muted"
-                style={{ 
-                  width: `calc(100% - 180px)`,
-                }}
-              />
+              <div className="absolute top-0 left-1/2 h-px w-[calc(100%-180px)] -translate-x-1/2 bg-muted" />
             )}
             {node.children!.map((child) => (
               <div key={child.id} className="flex flex-col items-center">
@@ -271,10 +268,10 @@ export function OrgChart({
   }, [orgData]);
 
   return (
-    <Card className="bg-zinc-900/60 border-border overflow-hidden">
+    <Card className="bg-card/80 border-border overflow-hidden">
       <CardHeader className="border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg text-zinc-300 flex items-center gap-2">
+          <CardTitle className="text-lg text-foreground flex items-center gap-2">
             <Building2 className="w-5 h-5" />
             Organization Chart
             <Badge variant="secondary" className="ml-2">
@@ -285,12 +282,12 @@ export function OrgChart({
           
           <div className="flex items-center gap-2">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-48 h-8 bg-zinc-800/50 border-border"
+                className="pl-9 w-48 h-8 bg-card/70 border-border"
               />
             </div>
             
@@ -303,7 +300,7 @@ export function OrgChart({
               >
                 <ZoomOut className="w-4 h-4" />
               </Button>
-              <span className="text-xs text-zinc-500 w-12 text-center">
+              <span className="text-xs text-muted-foreground w-12 text-center">
                 {Math.round(zoom * 100)}%
               </span>
               <Button 
@@ -338,16 +335,18 @@ export function OrgChart({
       </CardHeader>
 
       <CardContent className="p-8 overflow-auto">
-        <div 
-          className="flex justify-center min-w-max transition-transform duration-200"
-          style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
+        <motion.div 
+          initial={false}
+          animate={{ scale: zoom }}
+          transition={{ duration: 0.2 }}
+          className="flex min-w-max justify-center origin-top"
         >
           <OrgNodeCard 
             node={orgData} 
             onToggle={toggleNode}
             onClick={handleNodeClick}
           />
-        </div>
+        </motion.div>
       </CardContent>
     </Card>
   );

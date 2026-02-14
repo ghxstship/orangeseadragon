@@ -89,6 +89,10 @@ export function WorkspaceLayout({
   
   const activeTab = currentTab || config.defaultTab || config.tabs[0]?.key;
   const onlineCollaborators = collaborators.filter(c => c.status === 'online');
+  const sidebarWidthStyle = React.useMemo(
+    () => ({ width: config.sidebar?.width || 'var(--sidebar-width-lg, 320px)' }),
+    [config.sidebar?.width]
+  );
 
   const handleKeyDown = React.useCallback((e: KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '9') {
@@ -178,7 +182,7 @@ export function WorkspaceLayout({
 
             {config.header?.showFavorite && onFavoriteToggle && (
               <Button variant="ghost" size="icon" onClick={onFavoriteToggle} className="h-8 w-8">
-                <Star className={cn("h-4 w-4", isFavorite && "fill-amber-400 text-amber-400")} />
+                <Star className={cn("h-4 w-4", isFavorite && "fill-semantic-warning text-semantic-warning")} />
               </Button>
             )}
 
@@ -266,11 +270,13 @@ export function WorkspaceLayout({
             <ScrollArea className="h-full">
               <nav className="p-2 space-y-1">
                 {config.tabs.map((tab) => (
-                  <button
+                  <Button
                     key={tab.key}
+                    type="button"
+                    variant="ghost"
                     onClick={() => onTabChange?.(tab.key)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                      "h-auto w-full justify-start gap-3 px-3 py-2 rounded-md text-sm transition-colors",
                       "hover:bg-accent",
                       activeTab === tab.key && "bg-accent font-medium"
                     )}
@@ -280,7 +286,7 @@ export function WorkspaceLayout({
                     {tab.badge?.show && (
                       <Badge variant="secondary" className="h-5 px-1.5 text-xs">0</Badge>
                     )}
-                  </button>
+                  </Button>
                 ))}
               </nav>
             </ScrollArea>
@@ -296,7 +302,7 @@ export function WorkspaceLayout({
         {config.sidebar?.enabled && sidebarContent && sidebarOpen && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 overflow-auto"
-            style={{ width: config.sidebar.width || 'var(--sidebar-width-lg, 320px)' }}
+            style={sidebarWidthStyle}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>
