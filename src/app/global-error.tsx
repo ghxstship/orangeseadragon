@@ -25,7 +25,7 @@ export default function GlobalError({
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Something went wrong</h1>
             <p className="mt-2 text-sm text-zinc-400">
-              An unexpected error occurred. Our team has been notified.
+              An unexpected error occurred. Please try again or contact support if the issue persists.
             </p>
             {error.digest && (
               <p className="mt-1 text-xs text-zinc-600 font-mono">

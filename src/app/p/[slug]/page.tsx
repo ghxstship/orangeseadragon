@@ -1,4 +1,5 @@
 import { createUntypedClient } from "@/lib/supabase/server";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -93,10 +94,12 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
             {/* Banner */}
             <div className="relative h-64 md:h-80 w-full overflow-hidden">
                 {profile.banner_url ? (
-                    <img
+                    <Image
                         src={profile.banner_url}
                         alt="Banner"
                         className="w-full h-full object-cover"
+                        fill
+                        unoptimized
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
@@ -109,10 +112,12 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
                     <div className="relative inline-block">
                         <div className="h-32 w-32 md:h-48 md:w-48 rounded-full border-4 border-white dark:border-slate-950 overflow-hidden bg-slate-200">
                             {profile.avatar_url ? (
-                                <img
+                                <Image
                                     src={profile.avatar_url}
                                     alt={profile.headline}
                                     className="w-full h-full object-cover"
+                                    fill
+                                    unoptimized
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-indigo-100 text-indigo-500">
@@ -170,10 +175,12 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     {profile.gallery.map((item: { url: string; caption?: string }, idx: number) => (
                                         <div key={idx} className="aspect-square relative rounded-xl overflow-hidden group">
-                                            <img
+                                            <Image
                                                 src={item.url}
                                                 alt={item.caption || "Gallery item"}
                                                 className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                                fill
+                                                unoptimized
                                             />
                                             {item.caption && (
                                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">

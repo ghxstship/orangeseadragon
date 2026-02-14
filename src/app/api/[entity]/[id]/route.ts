@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, apiNoContent, notFound, badRequest, supabaseError } from '@/lib/api/response';
-
-const normalizeEntity = (entity: string) => entity.replace(/-/g, '_');
+import { resolveAllowedEntityTable } from '@/lib/api/entity-access';
+import { captureError } from '@/lib/observability';
 
 /**
  * GENERIC ENTITY RECORD API
@@ -18,7 +18,10 @@ export async function GET(
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { entity, id } = await params;
-    const tableName = normalizeEntity(entity);
+    const tableName = resolveAllowedEntityTable(entity);
+    if (!tableName) {
+        return notFound('Entity');
+    }
 
     const { data, error } = await supabase
         .from(tableName)
@@ -42,7 +45,10 @@ export async function PATCH(
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { entity, id } = await params;
-    const tableName = normalizeEntity(entity);
+    const tableName = resolveAllowedEntityTable(entity);
+    if (!tableName) {
+        return notFound('Entity');
+    }
 
     try {
         const body = await request.json();
@@ -59,7 +65,7 @@ export async function PATCH(
 
         return apiSuccess(data);
     } catch (error) {
-        console.error('Invalid request body', error);
+        captureError(error, 'api.generic_entity.invalid_request_body', { entity: tableName, id });
         return badRequest('Invalid request body');
     }
 }
@@ -72,7 +78,10 @@ export async function DELETE(
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { entity, id } = await params;
-    const tableName = normalizeEntity(entity);
+    const tableName = resolveAllowedEntityTable(entity);
+    if (!tableName) {
+        return notFound('Entity');
+    }
 
     // Soft delete: set deleted_at timestamp instead of hard delete
     const { data, error } = await supabase

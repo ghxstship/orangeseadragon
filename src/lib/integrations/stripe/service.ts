@@ -1,7 +1,5 @@
 import Stripe from 'stripe';
-
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
+import { getStripeSecretKey, getStripeWebhookSecret } from '@/lib/env';
 
 export interface PaymentIntentResult {
   id: string;
@@ -27,10 +25,7 @@ export class StripeService {
 
   private getClient(): Stripe {
     if (!this.stripe) {
-      if (!STRIPE_SECRET_KEY) {
-        throw new Error('STRIPE_SECRET_KEY environment variable is not set');
-      }
-      this.stripe = new Stripe(STRIPE_SECRET_KEY);
+      this.stripe = new Stripe(getStripeSecretKey());
     }
     return this.stripe;
   }
@@ -193,10 +188,7 @@ export class StripeService {
 
   constructWebhookEvent(payload: string | Buffer, signature: string): Stripe.Event {
     const stripe = this.getClient();
-    if (!STRIPE_WEBHOOK_SECRET) {
-      throw new Error('STRIPE_WEBHOOK_SECRET environment variable is not set');
-    }
-    return stripe.webhooks.constructEvent(payload, signature, STRIPE_WEBHOOK_SECRET);
+    return stripe.webhooks.constructEvent(payload, signature, getStripeWebhookSecret());
   }
 
   async listProducts(limit = 10): Promise<Stripe.Product[]> {

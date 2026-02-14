@@ -13,9 +13,9 @@ export default function OrgChartPage() {
       </header>
 
       <div className="flex-1 overflow-auto p-6">
-        <OrgChart 
-          onNodeClick={(node) => console.log('Selected:', node)}
-          onExport={() => console.log('Export org chart')}
+        <OrgChart
+          onNodeClick={() => { /* TODO: implement node click */ }}
+          onExport={() => { /* TODO: implement export */ }}
         />
       </div>
     </div>

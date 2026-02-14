@@ -110,8 +110,8 @@ export default function PerformancePage() {
         <TabsContent value="dashboard" className="mt-6">
           <PerformanceReviewDashboard
             reviews={reviews.length > 0 ? reviews : undefined}
-            onStartReview={(id) => console.log('Start review:', id)}
-            onViewReview={(id) => console.log('View review:', id)}
+            onStartReview={() => { /* TODO: implement start review */ }}
+            onViewReview={() => { /* TODO: implement view review */ }}
           />
         </TabsContent>
 

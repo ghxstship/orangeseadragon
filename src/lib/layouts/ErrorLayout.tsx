@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw, Home, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import type { ErrorLayoutConfig } from "./types";
@@ -40,7 +41,7 @@ export function ErrorLayout({
       {/* Illustration */}
       {config.illustration ? (
         <div className="w-48 h-48 mb-8">
-          <img src={config.illustration} alt="" className="w-full h-full object-contain" />
+          <Image src={config.illustration} alt="" className="w-full h-full object-contain" width={192} height={192} unoptimized />
         </div>
       ) : (
         <div className="w-24 h-24 mb-8 rounded-full bg-destructive/10 flex items-center justify-center">
@@ -104,7 +105,7 @@ export function ErrorLayout({
             {showDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             {showDetails ? 'Hide' : 'Show'} technical details
           </button>
-          
+
           {showDetails && (
             <div className="mt-4 p-4 rounded-lg bg-muted text-left">
               {config.showDetails && (

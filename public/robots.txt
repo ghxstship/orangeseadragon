@@ -5,5 +5,3 @@ Disallow: /api/
 Disallow: /onboarding/
 Disallow: /account/
 Disallow: /admin/
-
-Sitemap: https://app.atlvs.io/sitemap.xml

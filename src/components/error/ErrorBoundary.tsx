@@ -2,6 +2,7 @@ import React from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { captureError } from '@/lib/observability';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -33,10 +34,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     this.setState({ errorInfo });
 
-    // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.error('ErrorBoundary caught an error:', error, errorInfo);
-    }
+    captureError(error, 'react.error_boundary.caught', {
+      componentStack: errorInfo.componentStack,
+    });
 
     // Call onError callback if provided
     this.props.onError?.(error, errorInfo);
@@ -109,11 +109,9 @@ export function withErrorBoundary<P extends object>(
 // Hook for handling async errors in functional components
 export function useErrorHandler() {
   return (error: Error, errorInfo?: { componentStack?: string }) => {
-    // In a real app, you might want to send this to an error reporting service
-    console.error('Async error caught:', error, errorInfo);
-
-    // You could also trigger a global error state here
-    // For now, just log it
+    captureError(error, 'react.async_error.caught', {
+      componentStack: errorInfo?.componentStack,
+    });
   };
 }
 

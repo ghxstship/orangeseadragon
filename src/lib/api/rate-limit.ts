@@ -1,36 +1,13 @@
 import { NextRequest } from 'next/server';
 import { apiError } from '@/lib/api/response';
+import { createUntypedClient } from '@/lib/supabase/server';
 
 /**
- * ATLVS Rate Limiting — In-Memory Token Bucket
+ * ATLVS Rate Limiting — Distributed Token Bucket
  *
  * Enforces per-IP rate limits on write endpoints.
- * Production deployments should replace with Redis-backed implementation.
+ * Backed by PostgreSQL via Supabase RPC (check_rate_limit).
  */
-
-interface RateLimitEntry {
-  tokens: number;
-  lastRefill: number;
-}
-
-const store = new Map<string, RateLimitEntry>();
-
-// Cleanup stale entries every 5 minutes
-const CLEANUP_INTERVAL = 5 * 60 * 1000;
-let lastCleanup = Date.now();
-
-function cleanup() {
-  const now = Date.now();
-  if (now - lastCleanup < CLEANUP_INTERVAL) return;
-  lastCleanup = now;
-
-  const staleThreshold = now - 60 * 1000;
-  Array.from(store.entries()).forEach(([key, entry]) => {
-    if (entry.lastRefill < staleThreshold) {
-      store.delete(key);
-    }
-  });
-}
 
 export interface RateLimitConfig {
   /** Maximum tokens in the bucket */
@@ -51,12 +28,10 @@ const DEFAULT_CONFIG: RateLimitConfig = {
  * Check rate limit for a request.
  * Returns null if allowed, or a 429 Response if rate limited.
  */
-export function checkRateLimit(
+export async function checkRateLimit(
   request: NextRequest,
   config: Partial<RateLimitConfig> = {}
 ) {
-  cleanup();
-
   const { maxTokens, refillRate, prefix } = { ...DEFAULT_CONFIG, ...config };
 
   // Extract client identifier
@@ -65,22 +40,28 @@ export function checkRateLimit(
     || 'unknown';
 
   const key = `${prefix}:${ip}`;
-  const now = Date.now();
 
-  let entry = store.get(key);
+  const supabase = await createUntypedClient();
+  const { data, error } = await supabase
+    .rpc('check_rate_limit', {
+      p_key: key,
+      p_max_tokens: maxTokens,
+      p_refill_rate: refillRate,
+    })
+    .single();
 
-  if (!entry) {
-    entry = { tokens: maxTokens, lastRefill: now };
-    store.set(key, entry);
+  if (error) {
+    return apiError(
+      'RATE_LIMIT_CHECK_FAILED',
+      'Rate limit service unavailable',
+      503
+    );
   }
 
-  // Refill tokens based on elapsed time
-  const elapsed = (now - entry.lastRefill) / 1000;
-  entry.tokens = Math.min(maxTokens, entry.tokens + elapsed * refillRate);
-  entry.lastRefill = now;
+  const result = data as { allowed?: boolean; retry_after?: number | null } | null;
 
-  if (entry.tokens < 1) {
-    const retryAfter = Math.ceil((1 - entry.tokens) / refillRate);
+  if (!result?.allowed) {
+    const retryAfter = Math.max(1, Number(result?.retry_after ?? 1));
     return apiError(
       'RATE_LIMITED',
       'Too many requests. Please try again later.',
@@ -89,7 +70,6 @@ export function checkRateLimit(
     );
   }
 
-  entry.tokens -= 1;
   return null;
 }
 

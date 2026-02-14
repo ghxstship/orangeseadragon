@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/api/guard';
-import { apiPaginated, apiCreated, badRequest, supabaseError } from '@/lib/api/response';
-
-const normalizeEntity = (entity: string) => entity.replace(/-/g, '_');
+import { apiPaginated, apiCreated, badRequest, notFound, supabaseError } from '@/lib/api/response';
+import { resolveAllowedEntityTable } from '@/lib/api/entity-access';
+import { captureError } from '@/lib/observability';
 
 /**
  * GENERIC ENTITY LIST API
@@ -18,7 +18,10 @@ export async function GET(
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { entity } = await params;
-    const tableName = normalizeEntity(entity);
+    const tableName = resolveAllowedEntityTable(entity);
+    if (!tableName) {
+        return notFound('Entity');
+    }
 
     const searchParams = request.nextUrl.searchParams;
 
@@ -45,7 +48,7 @@ export async function GET(
                 }
             });
         } catch (e) {
-            console.error('Failed to parse where filter:', e);
+            captureError(e, 'api.generic_entity.where_parse_failed', { entity: tableName });
         }
     }
 
@@ -60,7 +63,7 @@ export async function GET(
             const { field, direction } = JSON.parse(orderBy);
             query = query.order(field, { ascending: direction === 'asc' });
         } catch (e) {
-            console.error('Failed to parse orderBy:', e);
+            captureError(e, 'api.generic_entity.orderby_parse_failed', { entity: tableName });
         }
     } else {
         // Default sort by created_at if not specified
@@ -100,20 +103,23 @@ export async function POST(
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { entity } = await params;
-    const tableName = normalizeEntity(entity);
+    const tableName = resolveAllowedEntityTable(entity);
+    if (!tableName) {
+        return notFound('Entity');
+    }
 
     try {
         const body = await request.json();
         const { data, error } = await supabase.from(tableName).insert(body).select().single();
 
         if (error) {
-            console.error(`[API] Insert failed for ${tableName}:`, error.message);
+            captureError(error, 'api.generic_entity.insert_failed', { entity: tableName });
             return supabaseError(error);
         }
 
         return apiCreated(data);
     } catch (e) {
-        console.error(`[API] Invalid request body for ${tableName}:`, e instanceof Error ? e.message : 'unknown');
+        captureError(e, 'api.generic_entity.invalid_request_body', { entity: tableName });
         return badRequest('Invalid request body');
     }
 }

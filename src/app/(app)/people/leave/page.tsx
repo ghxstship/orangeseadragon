@@ -136,8 +136,8 @@ export default function LeavePage() {
           <LeaveCalendar
             requests={requests.length > 0 ? requests : undefined}
             onNewRequest={() => setShowRequestForm(true)}
-            onRequestClick={(req) => console.log('View request:', req)}
-            onDateClick={(date) => console.log('Date clicked:', date)}
+            onRequestClick={() => { /* TODO: implement view request */ }}
+            onDateClick={() => { /* TODO: implement date click */ }}
           />
         </TabsContent>
 
@@ -168,9 +168,9 @@ export default function LeavePage() {
 
       <Dialog open={showRequestForm} onOpenChange={setShowRequestForm}>
         <DialogContent className="max-w-2xl">
-          <LeaveRequestForm 
-            onSubmit={(data) => {
-              console.log('Submit leave request:', data);
+          <LeaveRequestForm
+            onSubmit={(_data) => {
+              // TODO: implement leave request submission
               setShowRequestForm(false);
             }}
             onCancel={() => setShowRequestForm(false)}

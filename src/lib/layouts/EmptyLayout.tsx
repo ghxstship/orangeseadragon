@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { FolderOpen, Plus, ArrowRight, Sparkles } from "lucide-react";
 import type { EmptyLayoutConfig } from "./types";
@@ -31,7 +32,7 @@ export function EmptyLayout({
       {/* Illustration */}
       {config.illustration ? (
         <div className="w-48 h-48 mb-8">
-          <img src={config.illustration} alt="" className="w-full h-full object-contain" />
+          <Image src={config.illustration} alt="" className="w-full h-full object-contain" width={192} height={192} unoptimized />
         </div>
       ) : (
         <div className="w-24 h-24 mb-8 rounded-full bg-muted flex items-center justify-center">

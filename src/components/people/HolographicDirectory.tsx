@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { User, MapPin, Briefcase } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -54,7 +55,7 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                         <div className="flex items-start justify-between mb-4">
                             <div className="h-16 w-16 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-border flex items-center justify-center shadow-inner">
                                 {person.avatar_url ? (
-                                    <img src={person.avatar_url} alt={person.headline} className="h-full w-full rounded-full object-cover" />
+                                    <Image src={person.avatar_url} alt={person.headline} className="h-full w-full rounded-full object-cover" fill unoptimized />
                                 ) : (
                                     <User className="w-8 h-8 text-white/40" />
                                 )}

@@ -1,13 +1,25 @@
 import { createUntypedClient } from "@/lib/supabase/server";
 import { NextRequest } from "next/server";
 import { apiSuccess, badRequest, serverError } from "@/lib/api/response";
+import { enforcePublicIngressPolicy, isValidUuid } from "@/lib/api/public-ingress";
+import { captureError } from "@/lib/observability";
 
 export async function POST(request: NextRequest) {
     try {
+        const ingressError = await enforcePublicIngressPolicy(request, {
+            maxPayloadBytes: 2_048,
+            rateLimit: {
+                prefix: "public:track-click",
+                maxTokens: 240,
+                refillRate: 240 / 300,
+            },
+        });
+        if (ingressError) return ingressError;
+
         const { linkId } = await request.json();
 
-        if (!linkId) {
-            return badRequest("Link ID required");
+        if (!linkId || typeof linkId !== "string" || !isValidUuid(linkId)) {
+            return badRequest("Valid link ID required");
         }
 
         const supabase = await createUntypedClient();
@@ -20,12 +32,12 @@ export async function POST(request: NextRequest) {
         });
 
         if (error) {
-            console.error("Error logging link click:", error);
+            captureError(error, "api.public.track_click.log_failed", { linkId });
         }
 
         return apiSuccess(null);
     } catch (error) {
-        console.error("Track click error:", error);
+        captureError(error, "api.public.track_click.unhandled_error");
         return serverError();
     }
 }

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowLeft, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -118,7 +119,7 @@ export default function OnboardingOrganizationPage() {
             className="flex h-24 w-24 items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors"
           >
             {formData.logoUrl ? (
-              <img src={formData.logoUrl} alt="Logo" className="h-full w-full object-contain rounded-lg" />
+              <Image src={formData.logoUrl} alt="Logo" className="h-full w-full object-contain rounded-lg" fill unoptimized />
             ) : (
               <div className="text-center">
                 <Upload className="mx-auto h-6 w-6 text-muted-foreground" />

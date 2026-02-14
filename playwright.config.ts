@@ -9,6 +9,8 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
+const useProductionServer = process.env.CI_E2E_PRODUCTION_SERVER === 'true';
+
 export default defineConfig({
     testDir: './e2e',
     fullyParallel: true,
@@ -43,7 +45,7 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: 'npm run dev',
+        command: useProductionServer ? 'npm run start' : 'npm run dev',
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,

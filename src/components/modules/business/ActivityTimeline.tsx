@@ -79,10 +79,10 @@ const activityColors: Record<string, string> = {
 };
 
 function formatTime(dateString: string): string {
-    return new Date(dateString).toLocaleTimeString(undefined, { 
-        hour: 'numeric', 
+    return new Date(dateString).toLocaleTimeString(undefined, {
+        hour: 'numeric',
         minute: '2-digit',
-        hour12: true 
+        hour12: true
     });
 }
 
@@ -94,15 +94,15 @@ function groupActivitiesByDate(activities: Activity[]): Map<string, Activity[]> 
     activities.forEach(activity => {
         const activityDate = new Date(activity.occurred_at || activity.created_at);
         const dateString = activityDate.toDateString();
-        
+
         let groupKey: string;
         if (dateString === today) {
             groupKey = 'Today';
         } else if (dateString === yesterday) {
             groupKey = 'Yesterday';
         } else {
-            groupKey = activityDate.toLocaleDateString(undefined, { 
-                month: 'long', 
+            groupKey = activityDate.toLocaleDateString(undefined, {
+                month: 'long',
                 day: 'numeric',
                 year: activityDate.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
             });
@@ -156,9 +156,9 @@ function ActivityItem({ activity }: { activity: Activity }) {
                         </span>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                     <MoreHorizontal className="h-3.5 w-3.5" />
@@ -243,7 +243,7 @@ export function ActivityTimeline({
         },
     });
 
-    const activities: Activity[] = data?.records || [];
+    const activities: Activity[] = useMemo(() => data?.records || [], [data]);
 
     const groupedActivities = useMemo(() => {
         return groupActivitiesByDate(activities);
@@ -275,9 +275,9 @@ export function ActivityTimeline({
                             <Filter className="h-3.5 w-3.5 mr-1" />
                             Filter
                         </Button>
-                        <Button 
-                            variant="default" 
-                            size="sm" 
+                        <Button
+                            variant="default"
+                            size="sm"
                             className="h-7 px-2"
                             onClick={onAddActivity}
                         >
@@ -306,10 +306,10 @@ export function ActivityTimeline({
                 <ScrollArea className="flex-1">
                     <div className="pr-4">
                         {Array.from(groupedActivities.entries()).map(([dateLabel, dateActivities]) => (
-                            <DateGroup 
-                                key={dateLabel} 
-                                label={dateLabel} 
-                                activities={dateActivities} 
+                            <DateGroup
+                                key={dateLabel}
+                                label={dateLabel}
+                                activities={dateActivities}
                             />
                         ))}
                     </div>

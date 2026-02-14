@@ -1,17 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getServerEnv } from "@/lib/env";
+import { captureError } from "@/lib/observability";
 
 // ============================================================================
-// RATE LIMITING (middleware-level, in-memory token bucket)
+// RATE LIMITING (middleware-level, distributed token bucket)
 // ============================================================================
-
-interface RateLimitEntry {
-  tokens: number;
-  lastRefill: number;
-}
-
-const rateLimitStore = new Map<string, RateLimitEntry>();
-let lastRateLimitCleanup = Date.now();
 
 function getClientIp(request: NextRequest): string {
   return (
@@ -21,40 +15,35 @@ function getClientIp(request: NextRequest): string {
   );
 }
 
-function checkMiddlewareRateLimit(
-  ip: string,
+async function checkMiddlewareRateLimit(
+  supabase: ReturnType<typeof createServerClient>,
+  request: NextRequest,
   prefix: string,
   maxTokens: number,
   refillRate: number
-): { allowed: boolean; retryAfter?: number } {
-  const now = Date.now();
+): Promise<{ allowed: boolean; retryAfter?: number; error?: string }> {
+  const ip = getClientIp(request);
 
-  // Cleanup stale entries every 5 minutes
-  if (now - lastRateLimitCleanup > 300_000) {
-    lastRateLimitCleanup = now;
-    const stale = now - 60_000;
-    Array.from(rateLimitStore.entries()).forEach(([key, entry]) => {
-      if (entry.lastRefill < stale) rateLimitStore.delete(key);
-    });
+  const { data, error } = await supabase
+    .rpc("check_rate_limit", {
+      p_key: `${prefix}:${ip}`,
+      p_max_tokens: maxTokens,
+      p_refill_rate: refillRate,
+    })
+    .single();
+
+  if (error) {
+    return { allowed: false, error: error.message };
   }
 
-  const key = `${prefix}:${ip}`;
-  let entry = rateLimitStore.get(key);
-
-  if (!entry) {
-    entry = { tokens: maxTokens, lastRefill: now };
-    rateLimitStore.set(key, entry);
+  const result = data as { allowed?: boolean; retry_after?: number | null } | null;
+  if (!result?.allowed) {
+    return {
+      allowed: false,
+      retryAfter: Math.max(1, Number(result?.retry_after ?? 1)),
+    };
   }
 
-  const elapsed = (now - entry.lastRefill) / 1000;
-  entry.tokens = Math.min(maxTokens, entry.tokens + elapsed * refillRate);
-  entry.lastRefill = now;
-
-  if (entry.tokens < 1) {
-    return { allowed: false, retryAfter: Math.ceil((1 - entry.tokens) / refillRate) };
-  }
-
-  entry.tokens -= 1;
   return { allowed: true };
 }
 
@@ -99,13 +88,14 @@ function isPublicApiRoute(pathname: string): boolean {
 // ============================================================================
 
 export async function middleware(request: NextRequest) {
+  const env = getServerEnv();
   let supabaseResponse = NextResponse.next({
     request,
   });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -157,10 +147,19 @@ export async function middleware(request: NextRequest) {
     }
 
     // Rate limiting: stricter for auth endpoints, standard for writes
-    const ip = getClientIp(request);
-
     if (pathname.startsWith("/api/auth")) {
-      const result = checkMiddlewareRateLimit(ip, "auth", 10, 0.167);
+      const result = await checkMiddlewareRateLimit(supabase, request, "auth", 10, 0.167);
+      if (result.error) {
+        captureError(new Error(result.error), "middleware.rate_limit_check_failed", {
+          path: pathname,
+          method,
+          bucket: "auth",
+        });
+        return NextResponse.json(
+          { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
+          { status: 503 }
+        );
+      }
       if (!result.allowed) {
         return NextResponse.json(
           { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
@@ -168,7 +167,18 @@ export async function middleware(request: NextRequest) {
         );
       }
     } else if (MUTATION_METHODS.has(method)) {
-      const result = checkMiddlewareRateLimit(ip, "write", 60, 1);
+      const result = await checkMiddlewareRateLimit(supabase, request, "write", 60, 1);
+      if (result.error) {
+        captureError(new Error(result.error), "middleware.rate_limit_check_failed", {
+          path: pathname,
+          method,
+          bucket: "write",
+        });
+        return NextResponse.json(
+          { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
+          { status: 503 }
+        );
+      }
       if (!result.allowed) {
         return NextResponse.json(
           { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },
@@ -176,7 +186,18 @@ export async function middleware(request: NextRequest) {
         );
       }
     } else {
-      const result = checkMiddlewareRateLimit(ip, "read", 120, 2);
+      const result = await checkMiddlewareRateLimit(supabase, request, "read", 120, 2);
+      if (result.error) {
+        captureError(new Error(result.error), "middleware.rate_limit_check_failed", {
+          path: pathname,
+          method,
+          bucket: "read",
+        });
+        return NextResponse.json(
+          { error: { code: "RATE_LIMIT_CHECK_FAILED", message: "Rate limit service unavailable" } },
+          { status: 503 }
+        );
+      }
       if (!result.allowed) {
         return NextResponse.json(
           { error: { code: "RATE_LIMITED", message: "Too many requests. Please try again later.", details: { retry_after_seconds: result.retryAfter } } },

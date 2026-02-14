@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -80,7 +80,7 @@ export function EmailComposer({
     onSent,
 }: EmailComposerProps) {
     const queryClient = useQueryClient();
-    
+
     // Form state
     const [to, setTo] = useState<string>(defaultTo.map(r => r.address).join(', '));
     const [cc, setCc] = useState<string>('');
@@ -103,7 +103,7 @@ export function EmailComposer({
         },
     });
 
-    const accounts: EmailAccount[] = accountsData?.records || [];
+    const accounts: EmailAccount[] = useMemo(() => accountsData?.records || [], [accountsData]);
 
     // Auto-select default account
     React.useEffect(() => {
@@ -125,7 +125,7 @@ export function EmailComposer({
         },
     });
 
-    const templates: EmailTemplate[] = templatesData?.records || [];
+    const templates: EmailTemplate[] = useMemo(() => templatesData?.records || [], [templatesData]);
 
     // Apply template
     const handleTemplateSelect = useCallback((templateId: string) => {

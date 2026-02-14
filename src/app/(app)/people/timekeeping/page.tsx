@@ -28,10 +28,10 @@ export default function TimekeepingPage() {
 
         <TabsContent value="clock" className="mt-6">
           <div className="max-w-md mx-auto">
-            <TimeClock 
+            <TimeClock
               employeeName="Current User"
-              onClockIn={(data) => console.log('Clock in:', data)}
-              onClockOut={(data) => console.log('Clock out:', data)}
+              onClockIn={() => { /* TODO: implement clock in */ }}
+              onClockOut={() => { /* TODO: implement clock out */ }}
             />
           </div>
         </TabsContent>

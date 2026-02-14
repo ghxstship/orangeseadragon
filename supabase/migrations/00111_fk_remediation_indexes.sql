@@ -247,6 +247,25 @@ END $$;
 -- ═══════════════════════════════════════════════════════════════════════════
 
 DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
+      AND table_name = 'deals'
+  )
+  AND NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'deals'
+      AND column_name = 'lead_id'
+  ) THEN
+    ALTER TABLE deals ADD COLUMN lead_id UUID;
+  END IF;
+EXCEPTION WHEN undefined_table THEN NULL;
+END $$;
+
+DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'fk_deals_pipeline' AND table_name = 'deals') THEN
     ALTER TABLE deals ADD CONSTRAINT fk_deals_pipeline FOREIGN KEY (pipeline_id) REFERENCES pipelines(id) ON DELETE SET NULL;
   END IF;
@@ -427,108 +446,94 @@ END $$;
 -- delete operations. We add them for all FK columns that don't already
 -- have an index.
 
--- Support Tickets
-CREATE INDEX IF NOT EXISTS idx_support_tickets_contact ON support_tickets(contact_id);
-CREATE INDEX IF NOT EXISTS idx_support_tickets_company ON support_tickets(company_id);
-CREATE INDEX IF NOT EXISTS idx_support_tickets_category ON support_tickets(category_id);
-CREATE INDEX IF NOT EXISTS idx_support_tickets_assigned_user ON support_tickets(assigned_to_user_id);
-CREATE INDEX IF NOT EXISTS idx_support_tickets_assigned_team ON support_tickets(assigned_team_id);
-CREATE INDEX IF NOT EXISTS idx_support_tickets_event ON support_tickets(event_id);
-CREATE INDEX IF NOT EXISTS idx_support_tickets_registration ON support_tickets(registration_id);
-
--- Ticket Comments
-CREATE INDEX IF NOT EXISTS idx_ticket_comments_author ON ticket_comments(author_id);
-CREATE INDEX IF NOT EXISTS idx_ticket_comments_author_contact ON ticket_comments(author_contact_id);
-
--- Purchase Orders
-CREATE INDEX IF NOT EXISTS idx_purchase_orders_shipping_addr ON purchase_orders(shipping_address_id);
-CREATE INDEX IF NOT EXISTS idx_purchase_orders_billing_addr ON purchase_orders(billing_address_id);
-CREATE INDEX IF NOT EXISTS idx_purchase_orders_currency ON purchase_orders(currency_id);
-CREATE INDEX IF NOT EXISTS idx_po_items_asset ON purchase_order_items(asset_id);
-CREATE INDEX IF NOT EXISTS idx_po_items_gl_account ON purchase_order_items(gl_account_id);
-
--- Time Entries
-CREATE INDEX IF NOT EXISTS idx_time_entries_organization ON time_entries(organization_id);
-CREATE INDEX IF NOT EXISTS idx_time_entries_employee ON time_entries(employee_id);
-CREATE INDEX IF NOT EXISTS idx_time_entries_event ON time_entries(event_id);
-CREATE INDEX IF NOT EXISTS idx_time_entries_shift ON time_entries(shift_id);
-CREATE INDEX IF NOT EXISTS idx_time_entries_clock_in ON time_entries(clock_in_punch_id);
-CREATE INDEX IF NOT EXISTS idx_time_entries_clock_out ON time_entries(clock_out_punch_id);
-
--- Hospitality
-CREATE INDEX IF NOT EXISTS idx_hospitality_org ON hospitality_requests(org_id);
-CREATE INDEX IF NOT EXISTS idx_hospitality_contact ON hospitality_requests(contact_id);
-CREATE INDEX IF NOT EXISTS idx_hospitality_vendor ON hospitality_requests(vendor_id);
-CREATE INDEX IF NOT EXISTS idx_hospitality_approved_by ON hospitality_requests(approved_by_id);
-
--- Email & Campaigns
-CREATE INDEX IF NOT EXISTS idx_email_messages_template ON email_messages(template_id);
-CREATE INDEX IF NOT EXISTS idx_email_messages_sequence ON email_messages(sequence_id);
-CREATE INDEX IF NOT EXISTS idx_campaigns_template ON campaigns(template_id);
-CREATE INDEX IF NOT EXISTS idx_landing_pages_campaign ON landing_pages(campaign_id);
-
--- Finance
-CREATE INDEX IF NOT EXISTS idx_invoice_reminder_log_invoice ON invoice_reminder_log(invoice_id);
-CREATE INDEX IF NOT EXISTS idx_invoice_automation_rules_client ON invoice_automation_rules(client_id);
-CREATE INDEX IF NOT EXISTS idx_recurring_invoices_template ON recurring_invoices(invoice_template_id);
-CREATE INDEX IF NOT EXISTS idx_revenue_recognitions_invoice ON revenue_recognitions(invoice_id);
-CREATE INDEX IF NOT EXISTS idx_financial_ledger_budget_cat ON financial_ledger(budget_category_id);
-CREATE INDEX IF NOT EXISTS idx_expense_approval_levels_approver ON expense_approval_levels(approver_id);
-
--- Logistics
-CREATE INDEX IF NOT EXISTS idx_shipments_carrier ON shipments(carrier_id);
-CREATE INDEX IF NOT EXISTS idx_load_plans_vehicle ON load_plans(vehicle_id);
-
--- Crew & Workforce
-CREATE INDEX IF NOT EXISTS idx_crew_assignments_member ON crew_assignments(crew_member_id);
-CREATE INDEX IF NOT EXISTS idx_crew_assignments_event ON crew_assignments(event_id);
-CREATE INDEX IF NOT EXISTS idx_crew_assignments_advance ON crew_assignments(advance_id);
-CREATE INDEX IF NOT EXISTS idx_crew_assignments_advance_item ON crew_assignments(advance_item_id);
-CREATE INDEX IF NOT EXISTS idx_meal_penalties_checkin ON meal_penalties(crew_checkin_id);
-
--- CRM
-CREATE INDEX IF NOT EXISTS idx_deals_pipeline ON deals(pipeline_id);
-CREATE INDEX IF NOT EXISTS idx_deals_stage ON deals(stage_id);
-CREATE INDEX IF NOT EXISTS idx_deals_lead ON deals(lead_id);
-CREATE INDEX IF NOT EXISTS idx_leads_assignee ON leads(assignee_id);
-CREATE INDEX IF NOT EXISTS idx_leads_converted_deal ON leads(converted_deal_id);
-CREATE INDEX IF NOT EXISTS idx_rfp_responses_client ON rfp_responses(client_id);
-CREATE INDEX IF NOT EXISTS idx_quotas_team ON quotas(team_id);
-
--- Events & Venues
-CREATE INDEX IF NOT EXISTS idx_event_partners_org ON event_partners(organization_id);
-CREATE INDEX IF NOT EXISTS idx_ticket_types_currency ON ticket_types(currency_id);
-CREATE INDEX IF NOT EXISTS idx_venue_holds_converted ON venue_holds(converted_to_booking_id);
-
--- Documents
-CREATE INDEX IF NOT EXISTS idx_digital_signatures_document ON digital_signatures(document_id);
-
--- Network
-CREATE INDEX IF NOT EXISTS idx_user_follows_following ON user_follows(following_id);
-CREATE INDEX IF NOT EXISTS idx_discussion_replies_parent ON discussion_replies(parent_reply_id);
-
--- Vendor Payments
-CREATE INDEX IF NOT EXISTS idx_vendor_payment_schedules_vendor ON vendor_payment_schedules(vendor_id);
-
--- Meetings
-CREATE INDEX IF NOT EXISTS idx_meeting_types_confirm_email ON meeting_types(confirmation_email_template_id);
-CREATE INDEX IF NOT EXISTS idx_meeting_types_reminder_email ON meeting_types(reminder_email_template_id);
-
--- Webhooks
-CREATE INDEX IF NOT EXISTS idx_webhook_deliveries_endpoint ON webhook_deliveries(webhook_endpoint_id);
-
--- Reporting
-CREATE INDEX IF NOT EXISTS idx_report_formula_fields_def ON report_formula_fields(report_definition_id);
-CREATE INDEX IF NOT EXISTS idx_report_schedules_org ON report_schedules(organization_id);
-
--- Punch Items
-CREATE INDEX IF NOT EXISTS idx_punch_items_inspection ON punch_items(inspection_id);
-
--- Forms
-CREATE INDEX IF NOT EXISTS idx_form_submissions_contact ON form_submissions(contact_id);
-
--- Currencies
-CREATE INDEX IF NOT EXISTS idx_currencies_organization ON currencies(organization_id);
+DO $$
+DECLARE
+  idx RECORD;
+BEGIN
+  FOR idx IN
+    SELECT * FROM (
+      VALUES
+        ('idx_support_tickets_contact', 'support_tickets', 'contact_id'),
+        ('idx_support_tickets_company', 'support_tickets', 'company_id'),
+        ('idx_support_tickets_category', 'support_tickets', 'category_id'),
+        ('idx_support_tickets_assigned_user', 'support_tickets', 'assigned_to_user_id'),
+        ('idx_support_tickets_assigned_team', 'support_tickets', 'assigned_team_id'),
+        ('idx_support_tickets_event', 'support_tickets', 'event_id'),
+        ('idx_support_tickets_registration', 'support_tickets', 'registration_id'),
+        ('idx_ticket_comments_author', 'ticket_comments', 'author_id'),
+        ('idx_ticket_comments_author_contact', 'ticket_comments', 'author_contact_id'),
+        ('idx_purchase_orders_shipping_addr', 'purchase_orders', 'shipping_address_id'),
+        ('idx_purchase_orders_billing_addr', 'purchase_orders', 'billing_address_id'),
+        ('idx_purchase_orders_currency', 'purchase_orders', 'currency_id'),
+        ('idx_po_items_asset', 'purchase_order_items', 'asset_id'),
+        ('idx_po_items_gl_account', 'purchase_order_items', 'gl_account_id'),
+        ('idx_time_entries_organization', 'time_entries', 'organization_id'),
+        ('idx_time_entries_employee', 'time_entries', 'employee_id'),
+        ('idx_time_entries_event', 'time_entries', 'event_id'),
+        ('idx_time_entries_shift', 'time_entries', 'shift_id'),
+        ('idx_time_entries_clock_in', 'time_entries', 'clock_in_punch_id'),
+        ('idx_time_entries_clock_out', 'time_entries', 'clock_out_punch_id'),
+        ('idx_hospitality_org', 'hospitality_requests', 'org_id'),
+        ('idx_hospitality_contact', 'hospitality_requests', 'contact_id'),
+        ('idx_hospitality_vendor', 'hospitality_requests', 'vendor_id'),
+        ('idx_hospitality_approved_by', 'hospitality_requests', 'approved_by_id'),
+        ('idx_email_messages_template', 'email_messages', 'template_id'),
+        ('idx_email_messages_sequence', 'email_messages', 'sequence_id'),
+        ('idx_campaigns_template', 'campaigns', 'template_id'),
+        ('idx_landing_pages_campaign', 'landing_pages', 'campaign_id'),
+        ('idx_invoice_reminder_log_invoice', 'invoice_reminder_log', 'invoice_id'),
+        ('idx_invoice_automation_rules_client', 'invoice_automation_rules', 'client_id'),
+        ('idx_recurring_invoices_template', 'recurring_invoices', 'invoice_template_id'),
+        ('idx_revenue_recognitions_invoice', 'revenue_recognitions', 'invoice_id'),
+        ('idx_financial_ledger_budget_cat', 'financial_ledger', 'budget_category_id'),
+        ('idx_expense_approval_levels_approver', 'expense_approval_levels', 'approver_id'),
+        ('idx_shipments_carrier', 'shipments', 'carrier_id'),
+        ('idx_load_plans_vehicle', 'load_plans', 'vehicle_id'),
+        ('idx_crew_assignments_member', 'crew_assignments', 'crew_member_id'),
+        ('idx_crew_assignments_event', 'crew_assignments', 'event_id'),
+        ('idx_crew_assignments_advance', 'crew_assignments', 'advance_id'),
+        ('idx_crew_assignments_advance_item', 'crew_assignments', 'advance_item_id'),
+        ('idx_meal_penalties_checkin', 'meal_penalties', 'crew_checkin_id'),
+        ('idx_deals_pipeline', 'deals', 'pipeline_id'),
+        ('idx_deals_stage', 'deals', 'stage_id'),
+        ('idx_deals_lead', 'deals', 'lead_id'),
+        ('idx_leads_assignee', 'leads', 'assignee_id'),
+        ('idx_leads_converted_deal', 'leads', 'converted_deal_id'),
+        ('idx_rfp_responses_client', 'rfp_responses', 'client_id'),
+        ('idx_quotas_team', 'quotas', 'team_id'),
+        ('idx_event_partners_org', 'event_partners', 'organization_id'),
+        ('idx_ticket_types_currency', 'ticket_types', 'currency_id'),
+        ('idx_venue_holds_converted', 'venue_holds', 'converted_to_booking_id'),
+        ('idx_digital_signatures_document', 'digital_signatures', 'document_id'),
+        ('idx_user_follows_following', 'user_follows', 'following_id'),
+        ('idx_discussion_replies_parent', 'discussion_replies', 'parent_reply_id'),
+        ('idx_vendor_payment_schedules_vendor', 'vendor_payment_schedules', 'vendor_id'),
+        ('idx_meeting_types_confirm_email', 'meeting_types', 'confirmation_email_template_id'),
+        ('idx_meeting_types_reminder_email', 'meeting_types', 'reminder_email_template_id'),
+        ('idx_webhook_deliveries_endpoint', 'webhook_deliveries', 'webhook_endpoint_id'),
+        ('idx_report_formula_fields_def', 'report_formula_fields', 'report_definition_id'),
+        ('idx_report_schedules_org', 'report_schedules', 'organization_id'),
+        ('idx_punch_items_inspection', 'punch_items', 'inspection_id'),
+        ('idx_form_submissions_contact', 'form_submissions', 'contact_id'),
+        ('idx_currencies_organization', 'currencies', 'organization_id')
+    ) AS index_specs(index_name, table_name, column_name)
+  LOOP
+    IF EXISTS (
+      SELECT 1
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+        AND table_name = idx.table_name
+        AND column_name = idx.column_name
+    ) THEN
+      EXECUTE format(
+        'CREATE INDEX IF NOT EXISTS %I ON %I(%I)',
+        idx.index_name,
+        idx.table_name,
+        idx.column_name
+      );
+    END IF;
+  END LOOP;
+END $$;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- PHASE 4 ADDENDUM: AUDIT CASCADE BEHAVIOR ON EXISTING FINANCIAL FKs

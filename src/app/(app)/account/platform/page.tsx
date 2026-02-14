@@ -12,11 +12,13 @@ const platformSettingsTabs: SettingsTab[] = [
         title: 'Theme',
         description: 'Customize how the app looks',
         fields: [
-          { key: 'theme', label: 'Color Theme', type: 'select', options: [
-            { label: 'Light', value: 'light' },
-            { label: 'Dark', value: 'dark' },
-            { label: 'System', value: 'system' },
-          ], defaultValue: 'system' },
+          {
+            key: 'theme', label: 'Color Theme', type: 'select', options: [
+              { label: 'Light', value: 'light' },
+              { label: 'Dark', value: 'dark' },
+              { label: 'System', value: 'system' },
+            ], defaultValue: 'system'
+          },
           { key: 'compact_mode', label: 'Compact mode', type: 'switch', defaultValue: false },
           { key: 'animations', label: 'Enable animations', type: 'switch', defaultValue: true },
         ],
@@ -32,28 +34,36 @@ const platformSettingsTabs: SettingsTab[] = [
         title: 'Regional Settings',
         description: 'Language and regional preferences',
         fields: [
-          { key: 'language', label: 'Language', type: 'select', options: [
-            { label: 'English', value: 'en' },
-            { label: 'Español', value: 'es' },
-            { label: 'Français', value: 'fr' },
-            { label: 'Deutsch', value: 'de' },
-          ], defaultValue: 'en' },
-          { key: 'timezone', label: 'Timezone', type: 'select', options: [
-            { label: 'Eastern Time', value: 'America/New_York' },
-            { label: 'Central Time', value: 'America/Chicago' },
-            { label: 'Mountain Time', value: 'America/Denver' },
-            { label: 'Pacific Time', value: 'America/Los_Angeles' },
-            { label: 'London', value: 'Europe/London' },
-          ], defaultValue: 'America/New_York' },
-          { key: 'date_format', label: 'Date Format', type: 'select', options: [
-            { label: 'MM/DD/YYYY', value: 'MM/DD/YYYY' },
-            { label: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
-            { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
-          ], defaultValue: 'MM/DD/YYYY' },
-          { key: 'time_format', label: 'Time Format', type: 'select', options: [
-            { label: '12-hour (AM/PM)', value: '12h' },
-            { label: '24-hour', value: '24h' },
-          ], defaultValue: '12h' },
+          {
+            key: 'language', label: 'Language', type: 'select', options: [
+              { label: 'English', value: 'en' },
+              { label: 'Español', value: 'es' },
+              { label: 'Français', value: 'fr' },
+              { label: 'Deutsch', value: 'de' },
+            ], defaultValue: 'en'
+          },
+          {
+            key: 'timezone', label: 'Timezone', type: 'select', options: [
+              { label: 'Eastern Time', value: 'America/New_York' },
+              { label: 'Central Time', value: 'America/Chicago' },
+              { label: 'Mountain Time', value: 'America/Denver' },
+              { label: 'Pacific Time', value: 'America/Los_Angeles' },
+              { label: 'London', value: 'Europe/London' },
+            ], defaultValue: 'America/New_York'
+          },
+          {
+            key: 'date_format', label: 'Date Format', type: 'select', options: [
+              { label: 'MM/DD/YYYY', value: 'MM/DD/YYYY' },
+              { label: 'DD/MM/YYYY', value: 'DD/MM/YYYY' },
+              { label: 'YYYY-MM-DD', value: 'YYYY-MM-DD' },
+            ], defaultValue: 'MM/DD/YYYY'
+          },
+          {
+            key: 'time_format', label: 'Time Format', type: 'select', options: [
+              { label: '12-hour (AM/PM)', value: '12h' },
+              { label: '24-hour', value: '24h' },
+            ], defaultValue: '12h'
+          },
         ],
       },
     ],
@@ -100,7 +110,7 @@ export default function PlatformSettingsPage() {
       title="Platform Settings"
       description="Customize your app experience"
       tabs={platformSettingsTabs}
-      onSave={async (values) => console.log('Saving:', values)}
+      onSave={async () => { /* TODO: implement save settings */ }}
     />
   );
 }

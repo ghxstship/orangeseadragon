@@ -175,6 +175,7 @@ export function FileUpload({
                 className="flex items-center gap-3 rounded-lg border p-3"
               >
                 {uploadedFile.preview ? (
+                  /* eslint-disable-next-line @next/next/no-img-element -- blob URL preview not compatible with next/image */
                   <img
                     src={uploadedFile.preview}
                     alt={uploadedFile.file.name}

@@ -17,7 +17,7 @@ export default function AnalyticsPage() {
         key={refreshKey}
         organizationId={orgId}
         onRefresh={handleRefresh}
-        onInsightAction={(id, action) => console.log('Insight action:', id, action)}
+        onInsightAction={() => { /* TODO: implement insight actions */ }}
       />
     </div>
   );

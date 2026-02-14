@@ -19,6 +19,7 @@ export function ImageField({ field, fieldKey, value, onChange, error, disabled }
     <div className="space-y-1">
       {value && (
         <div className="mb-2">
+          {/* eslint-disable-next-line @next/next/no-img-element -- blob URL preview not compatible with next/image */}
           <img
             src={typeof value === 'string' ? value : URL.createObjectURL(value)}
             alt="Preview"
@@ -31,9 +32,8 @@ export function ImageField({ field, fieldKey, value, onChange, error, disabled }
         accept="image/*"
         onChange={handleChange}
         disabled={disabled}
-        className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${
-          error ? 'border-destructive' : 'border-input'
-        } ${disabled ? 'bg-muted' : ''}`}
+        className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${error ? 'border-destructive' : 'border-input'
+          } ${disabled ? 'bg-muted' : ''}`}
       />
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>

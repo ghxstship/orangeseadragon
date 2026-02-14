@@ -55,16 +55,16 @@ export function TopBar() {
 
   // Live data hooks
   const { user, loading: userLoading } = useUser();
-  const { 
-    notifications, 
-    unreadCount: notificationUnreadCount, 
+  const {
+    notifications,
+    unreadCount: notificationUnreadCount,
     loading: notificationsLoading,
     markAsRead: markNotificationRead,
     markAllAsRead: markAllNotificationsRead,
   } = useNotifications({ limit: 5 });
-  const { 
-    items: inboxItems, 
-    unreadCount: inboxUnreadCount, 
+  const {
+    items: inboxItems,
+    unreadCount: inboxUnreadCount,
     loading: inboxLoading,
   } = useInbox({ limit: 5 });
 
@@ -112,10 +112,10 @@ export function TopBar() {
         label: isUUID
           ? path.slice(0, 8) + "…"
           : path
-              .replace(/-/g, " ")
-              .split(" ")
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" "),
+            .replace(/-/g, " ")
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" "),
         href: "/" + paths.slice(0, index + 1).join("/"),
         isLast: index === paths.length - 1,
         isRecord: isUUID,
@@ -123,11 +123,11 @@ export function TopBar() {
         recordId: isUUID ? path : undefined,
       };
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   return (
-    <header role="banner" aria-label="Application header" className="fixed top-0 z-40 flex h-14 w-full items-center border-b bg-background px-4 safe-area-top">
+    <header role="banner" aria-label="Application header" className="fixed top-0 z-40 flex h-14 w-full items-center border-b border-white/10 glass-elevated px-4 safe-area-top transition-all duration-300">
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
@@ -187,9 +187,9 @@ export function TopBar() {
           </kbd>
         </Button>
 
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className="lg:hidden"
           onClick={() => setCommandPaletteOpen(true)}
           aria-label={t("topBar.searchLabel")}
@@ -262,7 +262,7 @@ export function TopBar() {
               ))
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="justify-center"
               onClick={() => router.push("/account/history")}
             >
@@ -327,7 +327,7 @@ export function TopBar() {
               ))
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="justify-center"
               onClick={() => router.push("/account/support")}
             >
@@ -434,9 +434,9 @@ export function TopBar() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2 pl-2 pr-3">
               <Avatar className="h-7 w-7">
-                <AvatarImage 
-                  src={user?.user_metadata?.avatar_url || "/avatars/user.png"} 
-                  alt={getUserDisplayName()} 
+                <AvatarImage
+                  src={user?.user_metadata?.avatar_url || "/avatars/user.png"}
+                  alt={getUserDisplayName()}
                 />
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>

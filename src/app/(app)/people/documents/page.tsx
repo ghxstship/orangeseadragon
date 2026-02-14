@@ -67,10 +67,10 @@ export default function DocumentsPage() {
     <div className="container mx-auto py-6 px-4">
       <DocumentManager
         documents={documents.length > 0 ? documents : undefined}
-        onUpload={(files) => console.log('Upload files:', files)}
-        onDownload={(id) => console.log('Download:', id)}
-        onDelete={(id) => console.log('Delete:', id)}
-        onView={(id) => console.log('View:', id)}
+        onUpload={() => { /* TODO: implement file upload */ }}
+        onDownload={() => { /* TODO: implement download */ }}
+        onDelete={() => { /* TODO: implement delete */ }}
+        onView={() => { /* TODO: implement view */ }}
       />
     </div>
   );

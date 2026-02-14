@@ -83,12 +83,6 @@ export function ClockInOut() {
     fetchTodayEvents();
   }, []);
 
-  // Get location on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    getLocation();
-  }, []);
-
   const fetchActiveShift = async () => {
     try {
       const response = await fetch('/api/time-entries/active');
@@ -167,9 +161,14 @@ export function ClockInOut() {
     );
   }, []);
 
+  // Get location on mount
+  useEffect(() => {
+    getLocation();
+  }, [getLocation]);
+
   const handleAction = (action: 'clock_in' | 'clock_out' | 'break_start' | 'break_end') => {
     setPendingAction(action);
-    
+
     // Show confirmation for clock out or if outside geofence
     if (action === 'clock_out' || (action === 'clock_in' && isWithinGeofence === false)) {
       setShowConfirmDialog(true);

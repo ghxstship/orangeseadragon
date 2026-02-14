@@ -73,10 +73,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       role="navigation"
       aria-label="Main navigation"
       initial={false}
-      animate={{ width: collapsed ? 64 : 256 }}
+      animate={{ width: collapsed ? 72 : 280 }}
       className={cn(
-        "fixed left-0 top-14 z-30 hidden md:flex h-[calc(100vh-3.5rem)] flex-col border-r border-border bg-background/5 backdrop-blur-3xl transition-all duration-500 shadow-2xl overflow-hidden",
-        collapsed ? "w-16" : "w-64"
+        "fixed left-0 top-14 z-30 hidden md:flex h-[calc(100vh-3.5rem)] flex-col glass-panel transition-all duration-500 overflow-hidden border-r border-white/10",
+        collapsed ? "w-[72px]" : "w-[280px]"
       )}
     >
       <SidebarContent collapsed={collapsed} onToggle={onToggle} />

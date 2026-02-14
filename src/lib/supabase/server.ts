@@ -1,13 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { Database } from "@/types/database";
+import { getServerEnv, getServiceRoleKey } from "@/lib/env";
 
 export async function createClient() {
   const cookieStore = await cookies();
+  const env = getServerEnv();
 
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -34,10 +36,11 @@ export async function createClient() {
  */
 export async function createUntypedClient() {
   const cookieStore = await cookies();
+  const env = getServerEnv();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -64,18 +67,11 @@ export async function createUntypedClient() {
  */
 export async function createServiceClient() {
   const { createClient } = await import("@supabase/supabase-js");
-  
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!serviceRoleKey) {
-    throw new Error(
-      "SUPABASE_SERVICE_ROLE_KEY is not set. " +
-      "Service client requires the service role key to bypass RLS. " +
-      "Set SUPABASE_SERVICE_ROLE_KEY in your environment variables."
-    );
-  }
+  const env = getServerEnv();
+  const serviceRoleKey = getServiceRoleKey();
 
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    env.NEXT_PUBLIC_SUPABASE_URL,
     serviceRoleKey,
     {
       auth: {
