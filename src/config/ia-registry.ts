@@ -103,7 +103,7 @@ export const authRoutes: RouteGroup = {
 
 export const onboardingRoutes: RouteGroup = {
   name: "Onboarding",
-  basePath: "/(onboarding)",
+  basePath: "/onboarding",
   description: "New user onboarding wizard",
   pages: [
     { path: "/", title: "Welcome", layout: "wizard", icon: "Sparkles", description: "Onboarding start", status: "not-started" },
