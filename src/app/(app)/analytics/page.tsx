@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { PageShell } from '@/components/common/page-shell';
 
 const sections = [
   {
@@ -48,29 +49,23 @@ export default function AnalyticsHubPage() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Analytics</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Reports, dashboards, and business intelligence
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => router.push('/analytics/reports/builder')}>
-              <FileText className="mr-2 h-4 w-4" />
-              New Report
-            </Button>
-            <Button onClick={() => router.push('/analytics/dashboards/builder')}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Dashboard
-            </Button>
-          </div>
+    <PageShell
+      title="Analytics"
+      description="Reports, dashboards, and business intelligence"
+      actions={
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => router.push('/analytics/reports/builder')}>
+            <FileText className="mr-2 h-4 w-4" />
+            New Report
+          </Button>
+          <Button onClick={() => router.push('/analytics/dashboards/builder')}>
+            <Plus className="mr-2 h-4 w-4" />
+            New Dashboard
+          </Button>
         </div>
-      </header>
-
-      <div className="flex-1 overflow-y-auto p-6 space-y-8">
+      }
+      contentClassName="space-y-8"
+    >
         {sections.map((section) => (
           <div key={section.title}>
             <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">
@@ -103,7 +98,6 @@ export default function AnalyticsHubPage() {
             </div>
           </div>
         ))}
-      </div>
-    </div>
+    </PageShell>
   );
 }

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
@@ -13,7 +13,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('finance.approve');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -187,7 +187,7 @@ export async function GET(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 

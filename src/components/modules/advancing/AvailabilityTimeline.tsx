@@ -220,15 +220,17 @@ export function AvailabilityTimeline({
               return (
                 <Tooltip key={day.toISOString()}>
                   <TooltipTrigger asChild>
-                    <button
+                    <Button
+                      type="button"
+                      variant="ghost"
                       onClick={() => handleDateClick(day)}
                       className={cn(
-                        "flex flex-col items-center min-w-[48px] p-2 rounded-lg border transition-all",
+                        "h-auto min-w-[48px] px-2 py-2 rounded-lg border transition-all flex flex-col items-center",
                         available 
                           ? "border-semantic-success/20 bg-semantic-success/10 hover:bg-semantic-success/15" 
                           : "border-destructive/30 bg-destructive/5 hover:bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/10",
                         isToday && "ring-2 ring-primary ring-offset-2",
-                        isSelected && "ring-2 ring-blue-500 ring-offset-2"
+                        isSelected && "ring-2 ring-semantic-info ring-offset-2"
                       )}
                     >
                       <span className="text-[10px] font-medium text-muted-foreground uppercase">
@@ -251,7 +253,7 @@ export function AvailabilityTimeline({
                           <X className="h-4 w-4 text-destructive" />
                         )}
                       </div>
-                    </button>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="max-w-xs">
                     <div className="space-y-2">

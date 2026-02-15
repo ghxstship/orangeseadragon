@@ -22,6 +22,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 
+const getChartLegendDotStyle = (color: string): React.CSSProperties => ({
+  backgroundColor: color,
+});
+
 export interface MetricWidgetProps {
   title: string;
   value: string | number;
@@ -389,7 +393,7 @@ export function DonutWidget({
                 <div className="flex items-center gap-3">
                   <div
                     className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.2)]"
-                    style={{ backgroundColor: d.color || defaultColors[i % defaultColors.length] }}
+                    style={getChartLegendDotStyle(d.color || defaultColors[i % defaultColors.length])}
                   />
                   <span className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity">{d.label}</span>
                 </div>

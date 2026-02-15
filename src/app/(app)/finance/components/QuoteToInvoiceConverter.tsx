@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +34,7 @@ interface QuoteToInvoiceConverterProps {
 }
 
 export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToInvoiceConverterProps) {
+  const router = useRouter();
   const [isConverting, setIsConverting] = useState(false);
   const [result, setResult] = useState<{ invoiceId: string; invoiceNumber: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +86,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
           <Button variant="outline" onClick={onCancel}>
             Close
           </Button>
-          <Button onClick={() => window.location.href = `/finance/invoices/${result.invoiceId}`}>
+          <Button onClick={() => router.push(`/finance/invoices/${result.invoiceId}`)}>
             View Invoice
           </Button>
         </CardFooter>

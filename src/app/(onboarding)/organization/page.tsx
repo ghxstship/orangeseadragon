@@ -114,9 +114,10 @@ export default function OnboardingOrganizationPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Logo upload */}
         <div className="flex justify-center">
-          <button
+          <Button
             type="button"
-            className="flex h-24 w-24 items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors"
+            variant="ghost"
+            className="h-24 w-24 p-0 rounded-lg border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors"
           >
             {formData.logoUrl ? (
               <Image src={formData.logoUrl} alt="Logo" className="h-full w-full object-contain rounded-lg" fill unoptimized />
@@ -126,7 +127,7 @@ export default function OnboardingOrganizationPage() {
                 <span className="text-xs text-muted-foreground mt-1">Logo</span>
               </div>
             )}
-          </button>
+          </Button>
         </div>
 
         {/* Organization name */}

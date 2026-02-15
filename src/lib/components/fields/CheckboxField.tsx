@@ -1,15 +1,14 @@
 import { FieldRenderProps } from './index';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export function CheckboxField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   return (
     <div className="flex items-center space-x-2">
-      <input
-        type="checkbox"
+      <Checkbox
         id={fieldKey}
         checked={Boolean(value)}
-        onChange={(e) => onChange(e.target.checked)}
+        onCheckedChange={(checked) => onChange(checked === true)}
         disabled={disabled}
-        className="h-4 w-4 text-primary border-input rounded focus:ring-ring"
       />
       <label htmlFor={fieldKey} className="text-sm text-foreground">
         {field.label}

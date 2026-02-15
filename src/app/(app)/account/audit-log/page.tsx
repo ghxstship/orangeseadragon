@@ -22,6 +22,7 @@ import {
 import { SEMANTIC_BADGE_CLASSES } from '@/lib/tokens/semantic-colors';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
+import { PageShell } from '@/components/common/page-shell';
 
 interface AuditEntry {
   id: string;
@@ -118,52 +119,46 @@ export default function AuditLogPage() {
   const actions = Array.from(new Set(allEntries.map((e) => e.action)));
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              <Shield className="h-6 w-6" />
-              Audit Log
-            </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Complete record of all actions across the platform
-            </p>
+    <PageShell
+      title="Audit Log"
+      description="Complete record of all actions across the platform"
+      icon={<Shield className="h-6 w-6" />}
+      actions={
+        <Button variant="outline">
+          <Download className="mr-2 h-4 w-4" />
+          Export Log
+        </Button>
+      }
+      underHeader={
+        <div className="py-3 flex items-center gap-3">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search actors, entities, details..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
           </div>
-          <Button variant="outline">
-            <Download className="mr-2 h-4 w-4" />
-            Export Log
-          </Button>
+          <Select value={moduleFilter} onValueChange={setModuleFilter}>
+            <SelectTrigger className="w-[150px]">
+              <Filter className="mr-2 h-3 w-3" />
+              <SelectValue placeholder="Module" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Modules</SelectItem>
+              {modules.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Select value={actionFilter} onValueChange={setActionFilter}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Action" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Actions</SelectItem>
+              {actions.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
-      </header>
-
-      <div className="px-6 py-3 border-b flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search actors, entities, details..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
-        </div>
-        <Select value={moduleFilter} onValueChange={setModuleFilter}>
-          <SelectTrigger className="w-[150px]">
-            <Filter className="mr-2 h-3 w-3" />
-            <SelectValue placeholder="Module" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Modules</SelectItem>
-            {modules.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-          </SelectContent>
-        </Select>
-        <Select value={actionFilter} onValueChange={setActionFilter}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Action" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Actions</SelectItem>
-            {actions.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex-1 overflow-y-auto">
+      }
+      contentPadding={false}
+    >
+      <div>
         <div className="divide-y">
           {filtered.map((entry) => (
             <div key={entry.id} className="px-6 py-3 hover:bg-muted/50 transition-colors">
@@ -195,6 +190,6 @@ export default function AuditLogPage() {
           )}
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -1,4 +1,5 @@
 import { FieldRenderProps } from './index';
+import { Input } from '@/components/ui/input';
 
 export function DateField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   // Handle daterange mode
@@ -9,7 +10,7 @@ export function DateField({ field, fieldKey, value, onChange, error, disabled }:
 
     return (
       <div className="flex space-x-2">
-        <input
+        <Input
           type="date"
           value={startDate || ''}
           onChange={(e) => {
@@ -17,11 +18,11 @@ export function DateField({ field, fieldKey, value, onChange, error, disabled }:
             onChange([newStart, endDate]);
           }}
           disabled={disabled}
-          className={`flex-1 px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${error ? 'border-destructive' : 'border-input'}`}
+          className={`flex-1 ${error ? 'border-destructive' : ''}`}
           placeholder={field.placeholder}
         />
         <span className="text-muted-foreground self-center">to</span>
-        <input
+        <Input
           type="date"
           value={endDate || ''}
           onChange={(e) => {
@@ -29,7 +30,7 @@ export function DateField({ field, fieldKey, value, onChange, error, disabled }:
             onChange([startDate, newEnd]);
           }}
           disabled={disabled}
-          className={`flex-1 px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${error ? 'border-destructive' : 'border-input'}`}
+          className={`flex-1 ${error ? 'border-destructive' : ''}`}
         />
       </div>
     );
@@ -37,13 +38,13 @@ export function DateField({ field, fieldKey, value, onChange, error, disabled }:
 
   // Single date mode
   return (
-    <input
+    <Input
       type="date"
       id={fieldKey}
       value={value || ''}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
-      className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${error ? 'border-destructive' : 'border-input'}`}
+      className={error ? 'border-destructive' : ''}
       placeholder={field.placeholder}
     />
   );

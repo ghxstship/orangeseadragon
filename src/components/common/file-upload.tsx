@@ -4,6 +4,7 @@ import * as React from "react";
 import { Upload, X, File, Image, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface FileUploadProps {
   accept?: string;
@@ -142,7 +143,7 @@ export function FileUpload({
           disabled && "cursor-not-allowed opacity-50"
         )}
       >
-        <input
+        <Input
           ref={inputRef}
           type="file"
           accept={accept}

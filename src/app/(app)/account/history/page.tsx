@@ -26,6 +26,7 @@ import {
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
+import { PageShell } from '@/components/common/page-shell';
 
 interface ActivityEntry {
   id: string;
@@ -141,13 +142,11 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
-        <h1 className="text-2xl font-bold tracking-tight">My Activity History</h1>
-        <p className="text-sm text-muted-foreground mt-1">All actions you&apos;ve taken across all modules</p>
-      </header>
-
-      <div className="flex-1 overflow-auto p-6 space-y-4">
+    <PageShell
+      title="My Activity History"
+      description="All actions you've taken across all modules"
+      contentClassName="space-y-4"
+    >
         {/* Filters */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1 max-w-sm">
@@ -233,7 +232,6 @@ export default function HistoryPage() {
             )}
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </PageShell>
   );
 }

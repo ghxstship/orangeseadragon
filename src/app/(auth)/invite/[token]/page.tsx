@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { UserPlus, Loader2, CheckCircle, XCircle, User, Lock } from 'lucide-react';
 import { AuthTemplate, AuthField } from '@/components/templates/AuthTemplate';
@@ -83,7 +84,7 @@ export default function AcceptInvitePage() {
           <h1 className="text-2xl font-bold tracking-tight">Invalid invitation</h1>
           <p className="text-muted-foreground">{error}</p>
         </div>
-        <a href="/login" className="text-primary hover:underline">Go to sign in</a>
+        <Link href="/login" className="text-primary hover:underline">Go to sign in</Link>
       </div>
     );
   }

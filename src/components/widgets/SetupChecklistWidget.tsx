@@ -287,7 +287,7 @@ export function SetupChecklistWidget({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-lg bg-gradient-to-r from-emerald-500/10 to-emerald-500/10 p-4 text-center"
+            className="rounded-lg bg-semantic-success/10 p-4 text-center"
           >
             <div className="text-2xl mb-2">🎉</div>
             <p className="text-sm font-medium text-semantic-success">

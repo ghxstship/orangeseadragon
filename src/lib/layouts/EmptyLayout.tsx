@@ -74,11 +74,12 @@ export function EmptyLayout({
           </h3>
           <div className="space-y-3">
             {config.suggestions.map((suggestion) => (
-              <button
+              <Button
                 key={suggestion.action.id}
+                variant="ghost"
                 onClick={() => onAction?.(suggestion.action.id)}
                 className={cn(
-                  "w-full flex items-center gap-4 p-4 rounded-lg border text-left",
+                  "w-full flex items-center gap-4 p-4 rounded-lg border text-left h-auto justify-start",
                   "hover:bg-accent transition-colors"
                 )}
               >
@@ -87,7 +88,7 @@ export function EmptyLayout({
                   <div className="text-sm text-muted-foreground">{suggestion.description}</div>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
-              </button>
+              </Button>
             ))}
           </div>
         </div>

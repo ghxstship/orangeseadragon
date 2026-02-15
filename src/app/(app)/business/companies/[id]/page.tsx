@@ -1,15 +1,49 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { EntityProfileLayout } from '@/components/modules/business/EntityProfileLayout';
 import { useCrud } from '@/lib/crud/hooks/useCrud';
 import { companySchema } from '@/lib/schemas/company';
 import { TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+import { createClient } from '@/lib/supabase/client';
+import { formatCurrency } from '@/lib/utils';
+
+interface CompanyDeal {
+    id: string;
+    name: string;
+    value: number;
+    stage: string;
+}
 
 export default function CompanyDetailPage({ params }: { params: { id: string } }) {
     const { useRecord } = useCrud(companySchema);
     const { data: company, isLoading, error } = useRecord(params.id);
+    const [deals, setDeals] = useState<CompanyDeal[]>([]);
+    const [dealsLoading, setDealsLoading] = useState(true);
+
+    useEffect(() => {
+        const supabase = createClient();
+
+        const fetchDeals = async () => {
+            setDealsLoading(true);
+            const { data } = await supabase
+                .from('deals')
+                .select('id, name, value, stage')
+                .eq('company_id', params.id)
+                .is('deleted_at', null)
+                .order('created_at', { ascending: false })
+                .limit(6);
+
+            setDeals((data ?? []) as CompanyDeal[]);
+            setDealsLoading(false);
+        };
+
+        fetchDeals();
+    }, [params.id]);
 
     if (isLoading) {
         return (
@@ -78,21 +112,34 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
 
             <TabsContent value="deals" className="h-full p-4 overflow-auto">
                 <h3 className="text-lg font-semibold mb-4">Active Deals</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Placeholder for deals related to this company */}
-                    <Card>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm">Q1 Campaign</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-2xl font-bold">$12,000</p>
-                            <Badge className="mt-2">Negotiation</Badge>
-                        </CardContent>
-                    </Card>
-                    <Card className="border-dashed flex items-center justify-center min-h-[120px] cursor-pointer hover:bg-muted/50">
-                        <p className="text-sm text-muted-foreground">+ Add Deal</p>
-                    </Card>
-                </div>
+                {dealsLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Skeleton className="h-[126px] w-full rounded-lg" />
+                        <Skeleton className="h-[126px] w-full rounded-lg" />
+                    </div>
+                ) : deals.length === 0 ? (
+                    <ContextualEmptyState
+                        type="no-data"
+                        title="No deals found"
+                        description="This company has no deals associated yet."
+                    />
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {deals.map((deal) => (
+                            <Card key={deal.id}>
+                                <CardHeader className="pb-2">
+                                    <CardTitle className="text-sm">{deal.name}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-2xl font-bold">{formatCurrency(deal.value ?? 0)}</p>
+                                    <Badge className="mt-2" variant="outline">
+                                        {(deal.stage || 'unknown').replace(/_/g, ' ')}
+                                    </Badge>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
             </TabsContent>
 
             <TabsContent value="info" className="h-full p-4 overflow-auto">

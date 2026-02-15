@@ -199,17 +199,18 @@ export function QuickActionsEditor({
                     </Badge>
                     <div className="space-y-1">
                       {categoryActions.map((action) => (
-                        <button
+                        <Button
                           key={action.id}
+                          variant="ghost"
                           onClick={() => handleAdd(action)}
-                          className="flex items-center gap-2 p-2 rounded-md border bg-card hover:bg-accent w-full text-left transition-colors"
+                          className="flex items-center gap-2 p-2 rounded-md border bg-card hover:bg-accent w-full text-left transition-colors h-auto justify-start"
                         >
                           <Plus className="h-3 w-3 text-muted-foreground" />
                           <div className="flex items-center gap-2 flex-1 min-w-0">
                             {iconMap[action.icon] || <Plus className="h-4 w-4" />}
                             <span className="text-sm truncate">{action.label}</span>
                           </div>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>

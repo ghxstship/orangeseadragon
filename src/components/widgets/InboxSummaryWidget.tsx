@@ -77,14 +77,14 @@ export function InboxSummaryWidget() {
       <CardContent className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-            <CheckCircle className="h-4 w-4 text-orange-500" />
+            <CheckCircle className="h-4 w-4 text-semantic-warning" />
             <div>
               <div className="text-lg font-bold">{data?.pendingApprovals || 0}</div>
               <div className="text-[10px] text-muted-foreground uppercase">Approvals</div>
             </div>
           </div>
           <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-            <Bell className="h-4 w-4 text-blue-500" />
+            <Bell className="h-4 w-4 text-semantic-info" />
             <div>
               <div className="text-lg font-bold">{data?.mentions || 0}</div>
               <div className="text-[10px] text-muted-foreground uppercase">Mentions</div>

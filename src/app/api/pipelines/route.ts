@@ -1,9 +1,10 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
     const { data: pipelines, error } = await query;
 
     if (error) {
-      console.error('Error fetching pipelines:', error);
+      captureError(error, 'api.pipelines.fetch_failed');
       return supabaseError(error);
     }
 
@@ -64,13 +65,13 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(pipelinesWithCounts, { total: pipelinesWithCounts.length });
   } catch (error) {
-    console.error('Error in pipelines API:', error);
+    captureError(error, 'api.pipelines.get_unhandled');
     return serverError();
   }
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.write');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error('Error creating pipeline:', error);
+      captureError(error, 'api.pipelines.create_failed');
       return supabaseError(error);
     }
 
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(pipeline);
   } catch (error) {
-    console.error('Error in pipelines POST:', error);
+    captureError(error, 'api.pipelines.post_unhandled');
     return serverError();
   }
 }

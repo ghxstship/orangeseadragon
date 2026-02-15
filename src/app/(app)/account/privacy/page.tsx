@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import {
   Shield,
   Download,
@@ -359,7 +360,7 @@ export default function PrivacySettingsPage() {
           <Separator className="my-4" />
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>Data Protection Officer: dpo@atlvs.io</span>
-            <a href="/privacy" className="underline hover:text-foreground">Privacy Policy</a>
+            <Link href="/privacy" className="underline hover:text-foreground">Privacy Policy</Link>
           </div>
         </CardContent>
       </Card>

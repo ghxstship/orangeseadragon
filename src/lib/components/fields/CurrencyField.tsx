@@ -1,6 +1,7 @@
 import React from 'react';
 import { DEFAULT_LOCALE } from '@/lib/config';
 import { FieldRenderProps } from './index';
+import { Input } from '@/components/ui/input';
 
 /**
  * Currency Field Component
@@ -25,14 +26,12 @@ export function CurrencyField({ field, fieldKey, value, onChange, error, disable
 
   return (
     <div className="space-y-1">
-      <input
+      <Input
         type="text"
         value={formatValue(value)}
         onChange={handleChange}
         disabled={disabled}
-        className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${
-          error ? 'border-destructive' : 'border-input'
-        } ${disabled ? 'bg-muted' : ''}`}
+        className={error ? 'border-destructive' : ''}
         placeholder={field.placeholder || '$0.00'}
       />
       {error && <p className="text-sm text-destructive">{error}</p>}

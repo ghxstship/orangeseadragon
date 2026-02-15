@@ -114,7 +114,11 @@ function ConflictItem({
         )}
       >
         <CollapsibleTrigger asChild>
-          <button className="w-full p-4 flex items-start gap-3 text-left hover:bg-muted/50 transition-colors">
+          <Button
+            type="button"
+            variant="ghost"
+            className="h-auto w-full p-4 justify-start items-start gap-3 text-left hover:bg-muted/50 transition-colors"
+          >
             <div className={cn("p-2 rounded-lg", config.bg)}>
               <Icon className={cn("h-4 w-4", config.color)} />
             </div>
@@ -142,7 +146,7 @@ function ConflictItem({
               "h-4 w-4 text-muted-foreground transition-transform",
               expanded && "rotate-90"
             )} />
-          </button>
+          </Button>
         </CollapsibleTrigger>
         
         <CollapsibleContent>
@@ -400,10 +404,13 @@ export function ConflictBadge({
   const Icon = config.icon;
   
   return (
-    <button
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors",
+        "h-auto inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium transition-colors",
         config.bg,
         config.color,
         "hover:opacity-80"
@@ -411,6 +418,6 @@ export function ConflictBadge({
     >
       <Icon className="h-3 w-3" />
       {count} {count === 1 ? 'conflict' : 'conflicts'}
-    </button>
+    </Button>
   );
 }

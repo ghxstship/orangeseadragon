@@ -62,8 +62,9 @@ function SidebarSection({
   return (
     <div>
       {section.title && (
-        <button
-          className="flex items-center justify-between w-full text-left mb-2 group"
+        <Button
+          variant="ghost"
+          className="flex items-center justify-between w-full text-left mb-2 group h-auto p-0 hover:bg-transparent"
           onClick={() => section.collapsible && setCollapsed(!collapsed)}
           disabled={!section.collapsible}
         >
@@ -75,7 +76,7 @@ function SidebarSection({
               ? <ChevronRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
               : <ChevronDown className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
           )}
-        </button>
+        </Button>
       )}
 
       {!collapsed && (

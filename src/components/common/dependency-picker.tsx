@@ -186,10 +186,12 @@ export function DependencyPicker({
                   </p>
                 ) : (
                   filteredTasks.map((task) => (
-                    <button
+                    <Button
+                      type="button"
+                      variant="ghost"
                       key={task.id}
                       onClick={() => handleAddDependency(task.id)}
-                      className="w-full text-left px-3 py-2 rounded-md hover:bg-muted transition-colors"
+                      className="h-auto w-full justify-start text-left px-3 py-2 rounded-md hover:bg-muted transition-colors"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium truncate">
@@ -199,7 +201,7 @@ export function DependencyPicker({
                           {task.status}
                         </Badge>
                       </div>
-                    </button>
+                    </Button>
                   ))
                 )}
               </div>

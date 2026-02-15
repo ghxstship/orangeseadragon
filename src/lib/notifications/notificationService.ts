@@ -223,7 +223,16 @@ class NotificationService {
       notification.onclick = () => {
         window.focus();
         if (payload.data?.url) {
-          window.location.href = payload.data.url as string;
+          const url = payload.data.url as string;
+          const handled = !window.dispatchEvent(
+            new CustomEvent('app:navigate', {
+              detail: { href: url },
+              cancelable: true,
+            })
+          );
+          if (!handled) {
+            window.location.assign(url);
+          }
         }
         notification.close();
       };

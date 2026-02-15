@@ -413,5 +413,24 @@ export const dealSchema = defineSchema({
     ],
   },
 
+  stateMachine: {
+    field: 'stage',
+    initial: 'prospecting',
+    terminal: ['closed_won', 'closed_lost'],
+    transitions: [
+      { from: 'prospecting', to: 'qualification', label: 'Qualify' },
+      { from: 'qualification', to: 'proposal', label: 'Send Proposal' },
+      { from: 'qualification', to: 'prospecting', label: 'Back to Prospecting' },
+      { from: 'proposal', to: 'negotiation', label: 'Negotiate' },
+      { from: 'proposal', to: 'qualification', label: 'Back to Qualification' },
+      { from: 'negotiation', to: 'closed_won', label: 'Mark Won' },
+      { from: 'negotiation', to: 'closed_lost', label: 'Mark Lost' },
+      { from: 'negotiation', to: 'proposal', label: 'Revise Proposal' },
+      { from: 'prospecting', to: 'closed_lost', label: 'Mark Lost' },
+      { from: 'qualification', to: 'closed_lost', label: 'Mark Lost' },
+      { from: 'proposal', to: 'closed_lost', label: 'Mark Lost' },
+    ],
+  },
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

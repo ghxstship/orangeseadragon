@@ -4,6 +4,7 @@ import * as React from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface TagInputProps {
@@ -81,16 +82,18 @@ export function TagInput({
         <Badge key={tag} variant="secondary" className="gap-1">
           {tag}
           {!disabled && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 removeTag(tag);
               }}
-              className="ml-1 rounded-full outline-none hover:bg-muted-foreground/20 focus:ring-2 focus:ring-ring"
+              className="ml-1 h-4 w-4 rounded-full p-0 hover:bg-muted-foreground/20 focus-visible:ring-2 focus-visible:ring-ring"
             >
               <X className="h-3 w-3" />
-            </button>
+            </Button>
           )}
         </Badge>
       ))}

@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { requireAuth } from "@/lib/api/guard";
+import { requirePolicy } from "@/lib/api/guard";
 import { apiSuccess, apiCreated, serverError } from "@/lib/api/response";
 
 /**
@@ -10,7 +10,7 @@ import { apiSuccess, apiCreated, serverError } from "@/lib/api/response";
  */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.write');
     if (auth.error) return auth.error;
 
     const { user, supabase } = auth;
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(_request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
 
     const { user, supabase } = auth;

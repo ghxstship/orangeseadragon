@@ -122,11 +122,12 @@ export function SettingsLayout({
             <ScrollArea className="h-full">
               <nav className="p-4 space-y-1">
                 {config.sections.map((section) => (
-                  <button
+                  <Button
                     key={section.key}
+                    variant="ghost"
                     onClick={() => onSectionChange?.(section.key)}
                     className={cn(
-                      "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors text-left",
+                      "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors text-left h-auto justify-start",
                       "hover:bg-accent",
                       activeSection === section.key && "bg-accent font-medium"
                     )}
@@ -138,7 +139,7 @@ export function SettingsLayout({
                         <div className="text-xs text-muted-foreground">{section.description}</div>
                       )}
                     </div>
-                  </button>
+                  </Button>
                 ))}
               </nav>
             </ScrollArea>

@@ -136,7 +136,9 @@ export function WizardLayout({
             <div className="flex items-center justify-center gap-2">
               {config.steps.map((step, index) => (
                 <React.Fragment key={step.key}>
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={() => index < currentStep && onStepChange(index)}
                     disabled={index > currentStep}
                     className={cn(
@@ -147,7 +149,7 @@ export function WizardLayout({
                     )}
                   >
                     {index < currentStep ? <Check className="h-4 w-4" /> : index + 1}
-                  </button>
+                  </Button>
                   {index < totalSteps - 1 && (
                     <div className={cn(
                       "w-12 h-0.5",

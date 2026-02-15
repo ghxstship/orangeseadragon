@@ -7,6 +7,7 @@ import { informationArchitecture, SidebarGroupDefinition, PageDefinition } from 
 import { cn } from '@/lib/utils';
 import { usePermissions } from '@/hooks/use-permissions';
 import { useBadgeCounts } from '@/hooks/use-badge-counts';
+import { Button } from '@/components/ui/button';
 
 /**
  * CONSOLIDATED SIDEBAR
@@ -57,8 +58,9 @@ function SidebarGroup({ group, currentPath }: SidebarGroupProps) {
   return (
     <div className="sidebar-group">
       {group.collapsible !== false && (
-        <button
-          className="sidebar-group-header"
+        <Button
+          variant="ghost"
+          className="sidebar-group-header w-full justify-start h-auto p-0"
           onClick={() => setExpanded(!expanded)}
           aria-expanded={expanded}
         >
@@ -67,7 +69,7 @@ function SidebarGroup({ group, currentPath }: SidebarGroupProps) {
           <span className="sidebar-group-label">{group.label}</span>
           {/* Chevron icon - placeholder */}
           <div className="sidebar-group-chevron">{expanded ? '↓' : '→'}</div>
-        </button>
+        </Button>
       )}
 
       {(expanded || group.collapsible === false) && (

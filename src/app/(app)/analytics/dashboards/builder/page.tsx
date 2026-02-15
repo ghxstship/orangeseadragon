@@ -80,10 +80,12 @@ export default function DashboardBuilderPage() {
           {widgetPalette.map((w) => {
             const Icon = w.icon;
             return (
-              <button
+              <Button
+                type="button"
+                variant="ghost"
                 key={w.type}
                 onClick={() => addWidget(w)}
-                className="flex items-center gap-3 w-full p-2 rounded-md hover:bg-muted text-left group"
+                className="h-auto w-full p-2 justify-start items-center gap-3 rounded-md hover:bg-muted text-left group"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded bg-primary/10 text-primary shrink-0">
                   <Icon className="h-4 w-4" />
@@ -93,7 +95,7 @@ export default function DashboardBuilderPage() {
                   <p className="text-[10px] text-muted-foreground">{w.description}</p>
                 </div>
                 <Plus className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100" />
-              </button>
+              </Button>
             );
           })}
         </div>

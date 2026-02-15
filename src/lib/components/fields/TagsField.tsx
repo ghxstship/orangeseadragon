@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { FieldRenderProps } from './index';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 /**
  * Tags Field Component
@@ -35,42 +38,42 @@ export function TagsField({ field, fieldKey, value, onChange, error, disabled }:
     <div className="space-y-1">
       <div className="flex flex-wrap gap-2 mb-2">
         {tags.map((tag, index) => (
-          <span
+          <Badge
             key={index}
-            className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-primary/10 text-primary"
+            variant="secondary"
+            className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs normal-case tracking-normal"
           >
             {tag}
             {!disabled && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => handleRemoveTag(tag)}
-                className="ml-1 text-primary hover:text-primary/80"
+                className="h-4 w-4 p-0 text-primary hover:text-primary/80"
               >
                 ×
-              </button>
+              </Button>
             )}
-          </span>
+          </Badge>
         ))}
       </div>
       {!disabled && (
         <div className="flex space-x-2">
-          <input
+          <Input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            className={`flex-1 px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${
-              error ? 'border-destructive' : 'border-input'
-            }`}
+            className={`flex-1 ${error ? 'border-destructive' : ''}`}
             placeholder={field.placeholder || 'Add a tag...'}
           />
-          <button
+          <Button
             type="button"
             onClick={handleAddTag}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
           >
             Add
-          </button>
+          </Button>
         </div>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}

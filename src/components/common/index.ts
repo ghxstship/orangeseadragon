@@ -1,5 +1,6 @@
 export { LoadingSpinner, LoadingOverlay, PageLoader } from "./loading-spinner";
 export { PageHeader, PageSection } from "./page-header";
+export { PageShell } from "./page-shell";
 export { StatusBadge, PriorityBadge } from "./status-badge";
 export { ConfirmDialog, DeleteConfirmDialog } from "./confirm-dialog";
 export { ConfirmationDialog, useConfirmation } from "./confirmation-dialog";

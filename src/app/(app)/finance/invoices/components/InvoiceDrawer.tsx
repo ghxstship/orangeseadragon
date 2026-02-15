@@ -6,10 +6,19 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Download, Send, CreditCard, Clock } from 'lucide-react';
 
+interface InvoiceDrawerData {
+    invoice_number?: string | number;
+    status?: string;
+    customer_name?: string | null;
+    issue_date?: string | null;
+    due_date?: string | null;
+    total_amount?: number | null;
+}
+
 interface InvoiceDrawerProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    invoice: any; // Using any for now, ideally strictly typed
+    invoice: InvoiceDrawerData | null;
 }
 
 export function InvoiceDrawer({ open, onOpenChange, invoice }: InvoiceDrawerProps) {
@@ -60,7 +69,7 @@ export function InvoiceDrawer({ open, onOpenChange, invoice }: InvoiceDrawerProp
                                 </div>
                             </div>
                             <div className="flex items-start gap-3 text-sm">
-                                <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-full"><Send className="h-3 w-3 text-blue-600" /></div>
+                                <div className="p-2 bg-semantic-info/10 rounded-full"><Send className="h-3 w-3 text-semantic-info" /></div>
                                 <div>
                                     <p className="font-medium">Sent to Client</p>
                                     <p className="text-xs text-muted-foreground">Feb 5, 2026 at 10:05 AM</p>

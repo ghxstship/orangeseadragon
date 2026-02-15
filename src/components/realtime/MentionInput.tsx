@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface User {
@@ -11,6 +12,11 @@ interface User {
   avatarUrl?: string;
   email?: string;
 }
+
+const getTextareaHeightStyle = (minHeight: string, maxHeight: string): React.CSSProperties => ({
+  minHeight,
+  maxHeight,
+});
 
 interface MentionInputProps {
   value: string;
@@ -197,7 +203,7 @@ export function MentionInput({
         placeholder={placeholder}
         disabled={disabled}
         className="resize-none"
-        style={{ minHeight, maxHeight }}
+        style={getTextareaHeightStyle(minHeight, maxHeight)}
       />
 
       {showSuggestions && filteredUsers.length > 0 && (
@@ -206,11 +212,12 @@ export function MentionInput({
           className="absolute z-50 mt-1 w-64 max-h-48 overflow-auto rounded-md border bg-popover p-1 shadow-md"
         >
           {filteredUsers.map((user, index) => (
-            <button
+            <Button
               key={user.id}
               type="button"
+              variant="ghost"
               className={cn(
-                "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
+                "h-auto w-full justify-start items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors",
                 index === suggestionIndex
                   ? "bg-accent text-accent-foreground"
                   : "hover:bg-accent hover:text-accent-foreground"
@@ -229,7 +236,7 @@ export function MentionInput({
                   <span className="text-xs text-muted-foreground">{user.email}</span>
                 )}
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       )}

@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { FieldRenderProps } from './index';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ChevronDown } from 'lucide-react';
 
 /**
  * Multiselect Field Component
@@ -42,23 +45,18 @@ export function MultiselectField({ field, fieldKey, value, onChange, error, disa
   return (
     <div className="space-y-1">
       <div className="relative">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={() => setIsOpen(!isOpen)}
           disabled={disabled}
-          className={`w-full px-3 py-2 text-left border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${
-            error ? 'border-destructive' : 'border-input'
-          } ${disabled ? 'bg-muted' : ''}`}
+          className={`w-full justify-between h-auto py-2 px-3 font-normal ${error ? 'border-destructive' : ''} ${disabled ? 'bg-muted' : ''}`}
         >
           <span className={selectedValues.length === 0 ? 'text-muted-foreground' : 'text-foreground'}>
             {getDisplayText()}
           </span>
-          <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-            <svg className="h-5 w-5 text-muted-foreground" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </span>
-        </button>
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        </Button>
 
         {isOpen && (
           <div className="absolute z-10 w-full mt-1 bg-popover border border-input rounded-md shadow-lg max-h-60 overflow-auto">
@@ -70,13 +68,23 @@ export function MultiselectField({ field, fieldKey, value, onChange, error, disa
               return (
                 <div
                   key={index}
+                  role="button"
+                  tabIndex={disabled ? -1 : 0}
+                  aria-pressed={isSelected}
                   onClick={() => handleToggle(optionValue)}
+                  onKeyDown={(e) => {
+                    if (disabled) return;
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleToggle(optionValue);
+                    }
+                  }}
                   className="px-3 py-2 hover:bg-accent cursor-pointer flex items-center"
                 >
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={isSelected}
-                    onChange={() => {}} // Handled by parent onClick
+                    onCheckedChange={() => handleToggle(optionValue)}
+                    onClick={(e) => e.stopPropagation()}
                     className="mr-2"
                   />
                   <span className="text-sm">{optionLabel}</span>

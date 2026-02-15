@@ -87,8 +87,10 @@ export function StepWizard({
                 )}
               >
                 <div className="flex items-center">
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => index < currentStep && goToStep(index)}
                     disabled={index > currentStep}
                     className={cn(
@@ -105,7 +107,7 @@ export function StepWizard({
                     ) : (
                       <span className="text-sm font-medium">{index + 1}</span>
                     )}
-                  </button>
+                  </Button>
                   {index !== steps.length - 1 && (
                     <div
                       className={cn(

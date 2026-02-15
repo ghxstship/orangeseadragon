@@ -87,11 +87,14 @@ export default function OnboardingTourPage() {
       {/* Step indicators */}
       <div className="flex justify-center gap-2">
         {tourSteps.map((_, index) => (
-          <button
+          <Button
             key={index}
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setCurrentStep(index)}
             className={cn(
-              "h-2 w-2 rounded-full transition-colors",
+              "h-2 w-2 rounded-full p-0 min-h-0 min-w-0 transition-colors",
               index === currentStep ? "bg-primary" : "bg-muted"
             )}
           />

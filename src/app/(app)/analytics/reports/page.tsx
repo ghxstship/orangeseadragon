@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { PageShell } from '@/components/common/page-shell';
 
 interface ReportCard {
   id: string;
@@ -61,35 +62,32 @@ export default function ReportLibraryPage() {
   const rest = filtered.filter((r) => !r.starred);
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Report Library</h1>
-            <p className="text-sm text-muted-foreground mt-1">Pre-built and custom reports</p>
+    <PageShell
+      title="Report Library"
+      description="Pre-built and custom reports"
+      actions={
+        <Button onClick={() => router.push('/analytics/reports/builder')}>
+          <Plus className="mr-2 h-4 w-4" />
+          New Report
+        </Button>
+      }
+      underHeader={
+        <div className="py-4 flex items-center gap-4">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search reports..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
           </div>
-          <Button onClick={() => router.push('/analytics/reports/builder')}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Report
-          </Button>
+          <div className="flex items-center gap-1">
+            {categories.map((cat) => (
+              <Button key={cat} variant={activeCategory === cat ? 'default' : 'ghost'} size="sm" onClick={() => setActiveCategory(cat)}>
+                {cat}
+              </Button>
+            ))}
+          </div>
         </div>
-      </header>
-
-      <div className="px-6 py-4 border-b flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search reports..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
-        </div>
-        <div className="flex items-center gap-1">
-          {categories.map((cat) => (
-            <Button key={cat} variant={activeCategory === cat ? 'default' : 'ghost'} size="sm" onClick={() => setActiveCategory(cat)}>
-              {cat}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      }
+      contentClassName="space-y-6"
+    >
         {starred.length > 0 && (
           <div>
             <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Starred</h2>
@@ -117,8 +115,7 @@ export default function ReportLibraryPage() {
             <p className="text-xs mt-1">Try adjusting your search or filters</p>
           </div>
         )}
-      </div>
-    </div>
+    </PageShell>
   );
 }
 
@@ -134,7 +131,7 @@ function ReportCardComponent({ report }: { report: ReportCard }) {
             </div>
             <CardTitle className="text-sm">{report.name}</CardTitle>
           </div>
-          {report.starred && <Star className="h-4 w-4 text-amber-500 fill-amber-500" />}
+          {report.starred && <Star className="h-4 w-4 text-semantic-warning fill-current" />}
         </div>
       </CardHeader>
       <CardContent>

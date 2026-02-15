@@ -2,6 +2,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowUpRight, ArrowDownRight, Activity, DollarSign, Wallet } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useUser } from '@/hooks/use-supabase';
+import { useFinanceDashboard } from '@/hooks/use-finance-dashboard';
+import { formatCurrency } from '@/lib/utils';
 
 interface MetricProps {
     title: string;
@@ -24,7 +28,7 @@ function MetricItem({ title, value, change, trend, icon: Icon, description }: Me
             <div className="flex items-baseline space-x-2">
                 <span className="text-2xl font-bold tracking-tight">{value}</span>
                 {change !== undefined && (
-                    <span className={`text-xs font-medium flex items-center ${trend === 'up' ? 'text-emerald-500 dark:text-emerald-400' : 'text-destructive'}`}>
+                    <span className={`text-xs font-medium flex items-center ${trend === 'up' ? 'text-semantic-success' : 'text-destructive'}`}>
                         {trend === 'up' ? <ArrowUpRight className="h-3 w-3 mr-0.5" /> : <ArrowDownRight className="h-3 w-3 mr-0.5" />}
                         {Math.abs(change)}%
                     </span>
@@ -36,36 +40,46 @@ function MetricItem({ title, value, change, trend, icon: Icon, description }: Me
 }
 
 export function FinancialHealthCard() {
+    const { user } = useUser();
+    const orgId = user?.user_metadata?.organization_id || null;
+    const financeDashboard = useFinanceDashboard(orgId);
+    const summary = financeDashboard?.summary;
+    const isLoading = Boolean(orgId) && !financeDashboard;
+
     return (
         <Card className="col-span-2 h-full">
             <CardHeader>
                 <CardTitle>Financial Health</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
-                <MetricItem
-                    title="Total Revenue"
-                    value="$124,500"
-                    change={12.5}
-                    trend="up"
-                    icon={DollarSign}
-                    description="vs. last month"
-                />
-                <MetricItem
-                    title="OpEx Run Rate"
-                    value="$45,200"
-                    change={2.1}
-                    trend="down"
-                    icon={Activity}
-                    description="Monthly burn"
-                />
-                <MetricItem
-                    title="Net Profit Margin"
-                    value="64%"
-                    change={4.3}
-                    trend="up"
-                    icon={Wallet}
-                    description="Healthy range (>50%)"
-                />
+                {isLoading ? (
+                    <>
+                        <Skeleton className="h-[92px] w-full rounded-xl" />
+                        <Skeleton className="h-[92px] w-full rounded-xl" />
+                        <Skeleton className="h-[92px] w-full rounded-xl" />
+                    </>
+                ) : (
+                    <>
+                        <MetricItem
+                            title="Total Revenue"
+                            value={formatCurrency(summary?.mtdRevenue ?? 0)}
+                            icon={DollarSign}
+                            description="Month-to-date paid invoices"
+                        />
+                        <MetricItem
+                            title="OpEx Run Rate"
+                            value={formatCurrency(summary?.mtdExpenses ?? 0)}
+                            icon={Activity}
+                            description="Month-to-date tracked expenses"
+                        />
+                        <MetricItem
+                            title="Net Profit Margin"
+                            value={`${(summary?.marginPercent ?? 0).toFixed(1)}%`}
+                            icon={Wallet}
+                            description="Revenue minus expenses ratio (MTD)"
+                        />
+                    </>
+                )}
             </CardContent>
         </Card>
     );

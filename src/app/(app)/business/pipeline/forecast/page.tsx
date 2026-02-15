@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { PageShell } from '@/components/common/page-shell';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
 
@@ -178,30 +179,26 @@ export default function RevenueForecastPage() {
   const funnel = forecastData?.funnel ?? [];
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Revenue Forecast</h1>
-            <p className="text-sm text-muted-foreground mt-1">Pipeline value, weighted revenue, and close rate trends</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Select value={period} onValueChange={setPeriod}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="month">This Month</SelectItem>
-                <SelectItem value="quarter">This Quarter</SelectItem>
-                <SelectItem value="year">This Year</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="sm">Export</Button>
-          </div>
+    <PageShell
+      title="Revenue Forecast"
+      description="Pipeline value, weighted revenue, and close rate trends"
+      actions={
+        <div className="flex items-center gap-2">
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="month">This Month</SelectItem>
+              <SelectItem value="quarter">This Quarter</SelectItem>
+              <SelectItem value="year">This Year</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" size="sm">Export</Button>
         </div>
-      </header>
-
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      }
+      contentClassName="space-y-6"
+    >
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {kpis.map((kpi) => {
@@ -297,7 +294,6 @@ export default function RevenueForecastPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </PageShell>
   );
 }

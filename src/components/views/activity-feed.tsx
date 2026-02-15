@@ -116,6 +116,10 @@ const activityColors: Record<ActivityType, string> = {
   settings_changed: "bg-muted text-muted-foreground",
 };
 
+const getActivityFeedScrollStyle = (maxHeight: number): React.CSSProperties => ({
+  maxHeight,
+});
+
 function getActivityDescription(activity: ActivityItem): React.ReactNode {
   const { type, user, entity, metadata } = activity;
   const entityLink = entity ? (
@@ -295,7 +299,7 @@ export function ActivityFeed({
         </div>
       </CardHeader>
       <CardContent className="p-0">
-        <ScrollArea style={{ maxHeight }}>
+        <ScrollArea style={getActivityFeedScrollStyle(maxHeight)}>
           <div className="px-4 pb-4">
             <AnimatePresence mode="popLayout">
               {Object.entries(groupedActivities).map(([date, items], groupIdx) => (

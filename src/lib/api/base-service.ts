@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 /**
+ * @deprecated DEAD CODE — This module is not imported by any API route or component.
+ * All CRUD operations now flow through the generic entity API handlers at
+ * `src/app/api/[entity]/route.ts` and `src/app/api/[entity]/[id]/route.ts`.
+ * Safe to delete once confirmed no external consumers exist.
+ *
  * Base API Service
  * Provides common CRUD operations with Supabase integration
  * 

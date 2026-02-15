@@ -236,12 +236,14 @@ export function SplitLayout({
                 ) : (
                   <div className="space-y-1">
                     {filteredItems.map((item, index) => (
-                      <button
+                      <Button
+                        type="button"
+                        variant="ghost"
                         key={item.id}
                         data-index={index}
                         onClick={() => onSelect(item.id)}
                         className={cn(
-                          "w-full text-left p-3 rounded-lg transition-colors",
+                          "h-auto w-full justify-start text-left p-3 rounded-lg transition-colors",
                           "hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-ring",
                           selectedId === item.id && "bg-accent",
                           focusedIndex === index && "ring-2 ring-ring"
@@ -269,7 +271,7 @@ export function SplitLayout({
                           </div>
                           <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-1" />
                         </div>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -375,12 +377,14 @@ export function SplitLayout({
                   ) : (
                     <div className="space-y-1">
                       {filteredItems.map((item, index) => (
-                        <button
+                        <Button
+                          type="button"
+                          variant="ghost"
                           key={item.id}
                           data-index={index}
                           onClick={() => onSelect(item.id)}
                           className={cn(
-                            "w-full text-left p-3 rounded-lg transition-colors",
+                            "h-auto w-full justify-start text-left p-3 rounded-lg transition-colors",
                             "hover:bg-accent/50 focus:outline-none focus:ring-2 focus:ring-ring",
                             selectedId === item.id && "bg-accent",
                             focusedIndex === index && "ring-2 ring-ring"
@@ -407,7 +411,7 @@ export function SplitLayout({
                               )}
                             </div>
                           </div>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}

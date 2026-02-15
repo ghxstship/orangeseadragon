@@ -17,6 +17,11 @@ export function AccountTypeSelector({ onNext }: AccountTypeSelectorProps) {
   const [selectedType, setSelectedType] = useState<string>('');
   const { data: accountTypes, isLoading } = useLookupTables('account_types');
 
+  const getTypeDescription = (metadata: unknown): string => {
+    const data = metadata as { description?: string } | undefined;
+    return data?.description || 'Configure your account for this role';
+  };
+
   const handleContinue = () => {
     if (selectedType && onNext) {
       onNext({ accountType: selectedType });
@@ -28,10 +33,10 @@ export function AccountTypeSelector({ onNext }: AccountTypeSelectorProps) {
       <Card className="max-w-2xl mx-auto">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto"></div>
+            <div className="h-6 bg-muted rounded w-1/2 mx-auto"></div>
             <div className="space-y-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="h-20 bg-gray-200 rounded"></div>
+                <div key={i} className="h-20 bg-muted rounded"></div>
               ))}
             </div>
           </div>
@@ -60,7 +65,7 @@ export function AccountTypeSelector({ onNext }: AccountTypeSelectorProps) {
                   <div>
                     <h3 className="font-semibold">{type.value}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {(type.metadata as any)?.description || 'Configure your account for this role'}
+                      {getTypeDescription(type.metadata)}
                     </p>
                   </div>
                   <Badge variant="outline" className="ml-2">

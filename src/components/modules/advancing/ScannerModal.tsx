@@ -75,6 +75,12 @@ const SCAN_ACTIONS = [
   { value: 'damage_report', label: 'Report Damage', description: 'Log damage or issue' },
 ];
 
+const getCategoryBadgeStyle = (color: string): React.CSSProperties =>
+  ({
+    "--category-color": color,
+    backgroundColor: "color-mix(in srgb, var(--category-color) 12%, transparent)",
+  } as React.CSSProperties);
+
 export function ScannerModal({ 
   open, 
   onOpenChange, 
@@ -480,7 +486,7 @@ export function ScannerModal({
                             {scanResult.item.category && (
                               <Badge 
                                 variant="secondary"
-                                style={{ "--category-color": scanResult.item.category.color, backgroundColor: "color-mix(in srgb, var(--category-color) 12%, transparent)" } as React.CSSProperties}
+                                style={getCategoryBadgeStyle(scanResult.item.category.color)}
                               >
                                 {scanResult.item.category.name}
                               </Badge>

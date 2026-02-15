@@ -243,6 +243,25 @@ export interface ComputedFieldDefinition {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// STATE MACHINE
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface StateMachineTransition {
+  from: string;
+  to: string;
+  roles?: string[];
+  guard?: (record: EntityRecord) => boolean;
+  label?: string;
+}
+
+export interface StateMachineConfig {
+  field: string;
+  initial: string;
+  transitions: StateMachineTransition[];
+  terminal?: string[];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // ENTITY SCHEMA
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -385,6 +404,11 @@ export interface EntitySchema<T = EntityRecord> {
     afterDelete?: (id: string) => void | Promise<void>;
     onView?: (record: T) => void;
   };
+
+  // ═══════════════════════════════════════════════════════════════
+  // STATE MACHINE
+  // ═══════════════════════════════════════════════════════════════
+  stateMachine?: StateMachineConfig;
 
   // ═══════════════════════════════════════════════════════════════
   // VALIDATION

@@ -1,38 +1,46 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
-import { apiPaginated, apiCreated, badRequest, notFound, supabaseError } from '@/lib/api/response';
-import { resolveAllowedEntityTable } from '@/lib/api/entity-access';
+import { requirePolicy } from '@/lib/api/guard';
+import { apiPaginated, apiCreated, badRequest, notFound, supabaseError, unprocessable } from '@/lib/api/response';
+import { resolveEntityContext } from '@/lib/api/entity-access';
 import { captureError, extractRequestContext } from '@/lib/observability';
+import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
+import { auditService } from '@/lib/audit/service';
 
 /**
  * GENERIC ENTITY LIST API
- * 
+ *
  * Handles GET (list) and POST (create) for any entity.
- * Uses service role client to bypass RLS for server-side operations.
+ * Enforces org-scoping, policy-based authorization, server-side validation,
+ * schema-aware search, and audit logging.
  */
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string }> }
 ) {
-    const auth = await requireAuth();
-    if (auth.error) return auth.error;
-    const { supabase } = auth;
-    const requestContext = extractRequestContext(request.headers);
     const { entity } = await params;
-    const tableName = resolveAllowedEntityTable(entity);
-    if (!tableName) {
+    const ctx = resolveEntityContext(entity);
+    if (!ctx) {
         return notFound('Entity');
     }
+    const { tableName, schema } = ctx;
+
+    const auth = await requirePolicy('entity.read');
+    if (auth.error) return auth.error;
+    const { supabase, membership } = auth;
+    const requestContext = extractRequestContext(request.headers);
 
     const searchParams = request.nextUrl.searchParams;
 
-    // Use the entity name as the table name
-    // Filter out soft-deleted records by default
     const includeDeleted = searchParams.get('include_deleted') === 'true';
     let query = supabase.from(tableName).select('*', { count: 'exact' });
+
+    // Org-scoping: restrict to the authenticated user's organization
+    query = query.eq('organization_id', membership.organization_id);
+
     if (!includeDeleted) {
         query = query.is('deleted_at', null);
     }
+
     const where = searchParams.get('where');
     const orderBy = searchParams.get('orderBy');
     const page = searchParams.get('page');
@@ -53,9 +61,17 @@ export async function GET(
         }
     }
 
-    // Search (simulated simple search on name if it exists)
+    // Schema-aware search: use declared search.fields, fallback to 'name'
     if (search) {
-        query = query.ilike('name', `%${search}%`);
+        const searchFields = schema.search?.fields;
+        if (searchFields && searchFields.length > 0) {
+            const orClause = searchFields
+                .map((f: string) => `${f}.ilike.%${search}%`)
+                .join(',');
+            query = query.or(orClause);
+        } else {
+            query = query.ilike('name', `%${search}%`);
+        }
     }
 
     // Sorting
@@ -67,7 +83,6 @@ export async function GET(
             captureError(e, 'api.generic_entity.orderby_parse_failed', { entity: tableName, ...requestContext });
         }
     } else {
-        // Default sort by created_at if not specified
         query = query.order('created_at', { ascending: false });
     }
 
@@ -100,24 +115,61 @@ export async function POST(
     request: NextRequest,
     { params }: { params: Promise<{ entity: string }> }
 ) {
-    const auth = await requireAuth();
-    if (auth.error) return auth.error;
-    const { supabase } = auth;
-    const requestContext = extractRequestContext(request.headers);
     const { entity } = await params;
-    const tableName = resolveAllowedEntityTable(entity);
-    if (!tableName) {
+    const ctx = resolveEntityContext(entity);
+    if (!ctx) {
         return notFound('Entity');
     }
+    const { tableName, schema } = ctx;
+
+    const auth = await requirePolicy('entity.write');
+    if (auth.error) return auth.error;
+    const { supabase, user, membership } = auth;
+    const requestContext = extractRequestContext(request.headers);
 
     try {
         const body = await request.json();
-        const { data, error } = await supabase.from(tableName).insert(body).select().single();
+
+        // Server-side Zod validation from schema field definitions
+        if (schema.data.fields && schema.layouts?.form?.sections) {
+            const formFields = extractFormFieldKeys(
+                schema.layouts.form.sections as Parameters<typeof extractFormFieldKeys>[0]
+            );
+            if (formFields.length > 0) {
+                const zodSchema = generateZodSchema(schema.data.fields, formFields, 'create');
+                const result = zodSchema.safeParse(body);
+                if (!result.success) {
+                    const fieldErrors: Record<string, string> = {};
+                    for (const issue of result.error.issues) {
+                        const path = issue.path.join('.');
+                        if (!fieldErrors[path]) {
+                            fieldErrors[path] = issue.message;
+                        }
+                    }
+                    return unprocessable('Validation failed', fieldErrors);
+                }
+            }
+        }
+
+        // Enforce org-scoping: inject the user's organization_id
+        const record = {
+            ...body,
+            organization_id: membership.organization_id,
+        };
+
+        const { data, error } = await supabase.from(tableName).insert(record).select().single();
 
         if (error) {
             captureError(error, 'api.generic_entity.insert_failed', { entity: tableName, ...requestContext });
             return supabaseError(error);
         }
+
+        // Audit log
+        auditService.logCreate(
+            membership.organization_id,
+            { id: user.id, type: 'user', email: user.email },
+            { type: tableName, id: data.id, name: data.name ?? data.title ?? data.id },
+        ).catch((e) => captureError(e, 'api.generic_entity.audit_failed', { entity: tableName }));
 
         return apiCreated(data);
     } catch (e) {

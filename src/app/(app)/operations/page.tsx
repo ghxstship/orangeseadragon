@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { PageShell } from '@/components/common/page-shell';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import {
   FileEdit,
@@ -58,28 +59,22 @@ export default function OperationsPage() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header — Layout C */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Operations</h1>
-            <p className="text-muted-foreground">Run of show management</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon">
-              <RefreshCw className="h-4 w-4" />
-            </Button>
-            <Button onClick={() => router.push('/operations/runsheets')}>
-              <PlayCircle className="h-4 w-4 mr-2" />
-              Live Shows
-            </Button>
-          </div>
+    <PageShell
+      title="Operations"
+      description="Run of show management"
+      actions={
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Button onClick={() => router.push('/operations/runsheets')}>
+            <PlayCircle className="h-4 w-4 mr-2" />
+            Live Shows
+          </Button>
         </div>
-      </header>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-6 space-y-8">
+      }
+      contentClassName="space-y-8"
+    >
         {/* KPI Stats */}
         <StatGrid columns={4}>
           <StatCard title="Active Shows" value="3" icon={PlayCircle} />
@@ -152,7 +147,6 @@ export default function OperationsPage() {
             />
           </div>
         </div>
-      </div>
-    </div>
+    </PageShell>
   );
 }

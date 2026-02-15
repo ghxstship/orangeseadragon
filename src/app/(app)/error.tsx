@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RotateCcw, Home } from 'lucide-react';
 
@@ -38,10 +39,10 @@ export default function AppError({
             Try again
           </Button>
           <Button variant="outline" size="sm" asChild>
-            <a href="/dashboard">
+            <Link href="/dashboard">
               <Home className="w-4 h-4 mr-2" />
               Dashboard
-            </a>
+            </Link>
           </Button>
         </div>
       </div>

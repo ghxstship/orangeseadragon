@@ -32,6 +32,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 
+const getKanbanColumnDotStyle = (color: string): React.CSSProperties => ({
+  backgroundColor: color,
+  color,
+});
+
 export interface KanbanColumn<T> {
   id: string;
   title: string;
@@ -249,7 +254,7 @@ export function KanbanBoard<T extends { id: string }>({
                   {column.color && (
                     <div
                       className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]"
-                      style={{ backgroundColor: column.color, color: column.color }}
+                      style={getKanbanColumnDotStyle(column.color)}
                     />
                   )}
                   <h3 className="text-[11px] font-black uppercase tracking-[0.15em] opacity-60">

@@ -1,4 +1,9 @@
 /**
+ * @deprecated DEAD CODE — This manifest is not imported by any module.
+ * API routes are now defined by the Next.js file-system router at `src/app/api/`.
+ * Auth and policy enforcement are handled by `requirePolicy()` in each route handler.
+ * Safe to delete once confirmed no external consumers exist.
+ *
  * API Route Definitions
  * Defines all API routes as per ENTERPRISE_EXTENSION_PLAN.md
  */

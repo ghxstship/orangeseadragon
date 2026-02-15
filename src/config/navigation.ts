@@ -173,61 +173,17 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Insurance", path: "/productions/compliance/insurance" },
         ],
       },
-    ],
-  },
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ADVANCING - Production Advance Coordination (5 pages)
-  // Unified module for all advance coordination: technical, logistics,
-  // hospitality, staffing, safety, marketing. Consolidates former
-  // PRODUCTIONS > Advancing and ASSETS > Logistics > Advances.
-  // Schema: production_advances, advance_items, advance_item_fulfillment,
-  //         advance_categories, vendor_ratings
-  // ═══════════════════════════════════════════════════════════════════════════
-  {
-    title: "ADVANCING",
-    defaultExpanded: false,
-    items: [
       {
-        title: "Dashboard",
-        path: "/advancing",
+        title: "Advancing",
+        path: "/productions/advancing",
         icon: ClipboardCheck,
-        description: "Advance coordination overview",
-      },
-      {
-        title: "Advances",
-        path: "/advancing/advances",
-        icon: ClipboardList,
-        description: "Production advances by event",
-      },
-      {
-        title: "Items",
-        path: "/advancing/items",
-        icon: Package,
-        description: "All advance items by category",
+        description: "Production advance coordination & logistics",
         subpages: [
-          { title: "Technical", path: "/advancing/items/technical" },
-          { title: "Logistics", path: "/advancing/items/logistics" },
-          { title: "Hospitality", path: "/advancing/items/hospitality" },
-          { title: "Staffing", path: "/advancing/items/staffing" },
-          { title: "Safety", path: "/advancing/items/safety" },
-          { title: "Marketing", path: "/advancing/items/marketing" },
-        ],
-      },
-      {
-        title: "Fulfillment",
-        path: "/advancing/fulfillment",
-        icon: Truck,
-        description: "Delivery & installation tracking",
-      },
-      {
-        title: "Vendors",
-        path: "/advancing/vendors",
-        icon: Building2,
-        description: "Vendor coordination & performance",
-        subpages: [
-          { title: "Communications", path: "/advancing/vendors/communications" },
-          { title: "Performance", path: "/advancing/vendors/performance" },
+          { title: "Advances", path: "/productions/advancing/advances" },
+          { title: "Allotments", path: "/productions/advancing/allotments" },
+          { title: "Approvals", path: "/productions/advancing/approvals" },
+          { title: "Assignments", path: "/productions/advancing/assignments" },
+          { title: "Activity", path: "/productions/advancing/activity" },
         ],
       },
     ],

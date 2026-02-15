@@ -59,6 +59,12 @@ export interface ListViewProps<T extends ListItem> {
   className?: string;
 }
 
+const getListStatusIndicatorStyle = (color?: string): React.CSSProperties =>
+  ({
+    "--status-indicator": color || "hsl(var(--muted-foreground))",
+    backgroundColor: "var(--status-indicator)",
+  } as React.CSSProperties);
+
 export function ListView<T extends ListItem>({
   items,
   title,
@@ -228,7 +234,7 @@ export function ListView<T extends ListItem>({
                         <div className="flex items-center gap-1.5 bg-muted px-2 py-0.5 rounded-full border border-border">
                           <div
                             className="h-1.5 w-1.5 rounded-full shadow-lg"
-                            style={{ "--status-indicator": item.status.color || "hsl(var(--muted-foreground))", backgroundColor: "var(--status-indicator)" } as React.CSSProperties}
+                            style={getListStatusIndicatorStyle(item.status.color)}
                           />
                           <span className="text-[10px] font-bold uppercase tracking-tight opacity-60">
                             {item.status.label}

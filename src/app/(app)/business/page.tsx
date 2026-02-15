@@ -4,30 +4,27 @@ import { PipelineStats } from '@/components/modules/business/PipelineStats';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { QuickAccessCard } from '@/components/common/quick-access-card';
+import { PageShell } from '@/components/common/page-shell';
 import { Building2, FileCheck, Handshake, Send } from 'lucide-react';
 import Link from 'next/link';
 
 export default function BusinessPage() {
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Business</h1>
-            <p className="text-muted-foreground text-sm">Revenue + relationships management</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <Link href="/business/companies">View Companies</Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link href="/business/pipeline">Open Pipeline</Link>
-            </Button>
-          </div>
+    <PageShell
+      title="Business"
+      description="Revenue + relationships management"
+      actions={
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/business/companies">View Companies</Link>
+          </Button>
+          <Button size="sm" asChild>
+            <Link href="/business/pipeline">Open Pipeline</Link>
+          </Button>
         </div>
-      </header>
-
-      <div className="flex-1 overflow-auto p-6 space-y-6">
+      }
+      contentClassName="space-y-6"
+    >
 
         {/* Pipeline Stats */}
         <section>
@@ -80,7 +77,6 @@ export default function BusinessPage() {
             </CardContent>
           </Card>
         </section>
-      </div>
-    </div>
+    </PageShell>
   );
 }

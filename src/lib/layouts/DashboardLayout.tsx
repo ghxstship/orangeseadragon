@@ -14,6 +14,10 @@ import {
 } from "@/components/ui/select";
 import type { DashboardLayoutConfig } from "./types";
 
+function getDashboardGridGapStyle(gap: number | undefined): React.CSSProperties {
+  return { gap: gap || 16 };
+}
+
 /**
  * DASHBOARD LAYOUT
  * 
@@ -151,7 +155,7 @@ export function DashboardLayout({
             config.layout?.columns === 3 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
             (!config.layout?.columns || config.layout.columns >= 4) && "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
           )}
-          style={{ gap: config.layout?.gap || 16 }}
+          style={getDashboardGridGapStyle(config.layout?.gap)}
         >
           {children}
         </div>

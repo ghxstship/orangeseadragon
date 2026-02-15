@@ -5,7 +5,7 @@ export const productionAdvanceSchema = defineSchema({
   identity: {
     name: 'productionAdvance',
     namePlural: 'Production Advances',
-    slug: 'advancing/advances',
+    slug: 'productions/advancing/advances',
     icon: 'ClipboardList',
     description: 'Production advance coordination by event',
   },
@@ -202,7 +202,7 @@ export const productionAdvanceSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/advances/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/advances/${r.id}` } },
     ],
     bulk: [],
     global: [
@@ -232,7 +232,7 @@ export const advanceItemSchema = defineSchema({
   identity: {
     name: 'advanceItem',
     namePlural: 'Advance Items',
-    slug: 'advancing/items',
+    slug: 'productions/advancing/items',
     icon: 'Package',
     description: 'Individual advance line items',
   },
@@ -427,7 +427,7 @@ export const advanceItemSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/items/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/items/${r.id}` } },
     ],
     bulk: [],
     global: [
@@ -459,7 +459,7 @@ export const advanceItemFulfillmentSchema = defineSchema({
   identity: {
     name: 'advanceItemFulfillment',
     namePlural: 'Fulfillment Stages',
-    slug: 'advancing/fulfillment',
+    slug: 'productions/advancing/fulfillment',
     icon: 'Truck',
     description: 'Fulfillment stage tracking for advance items',
   },
@@ -595,7 +595,7 @@ export const advanceItemFulfillmentSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/fulfillment/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/fulfillment/${r.id}` } },
     ],
     bulk: [],
     global: [
@@ -622,7 +622,7 @@ export const vendorRatingSchema = defineSchema({
   identity: {
     name: 'vendorRating',
     namePlural: 'Vendor Ratings',
-    slug: 'advancing/vendors/performance',
+    slug: 'productions/advancing/vendors/performance',
     icon: 'Star',
     description: 'Vendor performance ratings and feedback',
   },
@@ -773,7 +773,7 @@ export const vendorRatingSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/vendors/performance/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/vendors/performance/${r.id}` } },
     ],
     bulk: [],
     global: [
@@ -800,7 +800,7 @@ export const advanceCategorySchema = defineSchema({
   identity: {
     name: 'advanceCategory',
     namePlural: 'Advance Categories',
-    slug: 'advancing/categories',
+    slug: 'productions/advancing/categories',
     icon: 'FolderTree',
     description: 'Categories for advance items',
   },
@@ -927,7 +927,7 @@ export const advanceCategorySchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/categories/${r.id}` } },
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/categories/${r.id}` } },
     ],
     bulk: [],
     global: [
@@ -956,7 +956,7 @@ export const advancingCatalogItemSchema = defineSchema({
   identity: {
     name: 'advancingCatalogItem',
     namePlural: 'Catalog Items',
-    slug: 'advancing/catalog',
+    slug: 'productions/advancing/catalog',
     icon: 'Store',
     description: 'Standard advance items available for selection',
   },
@@ -1078,9 +1078,9 @@ export const advancingCatalogItemSchema = defineSchema({
   },
 
   actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/advancing/catalog/${r.id}` } }],
+    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/catalog/${r.id}` } }],
     bulk: [],
-    global: [{ key: 'create', label: 'Add to Catalog', variant: 'primary', handler: { type: 'navigate', path: () => '/advancing/catalog/new' } }],
+    global: [{ key: 'create', label: 'Add to Catalog', variant: 'primary', handler: { type: 'navigate', path: () => '/productions/advancing/catalog/new' } }],
   },
 
   relationships: {

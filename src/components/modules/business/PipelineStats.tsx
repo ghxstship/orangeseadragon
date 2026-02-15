@@ -36,6 +36,10 @@ const currencyFormatter = new Intl.NumberFormat(DEFAULT_LOCALE, {
     maximumFractionDigits: 0,
 });
 
+const getPipelineStageBarStyle = (value: number, maxValue: number): React.CSSProperties => ({
+    width: `${(value / maxValue) * 100}%`,
+});
+
 function StatCard({
     title,
     value,
@@ -128,7 +132,7 @@ function StageBreakdown({ stages }: { stages: DealStats['byStage'] }) {
                         <div className="h-2 bg-muted rounded-full overflow-hidden">
                             <div
                                 className="h-full bg-primary/70 rounded-full transition-all"
-                                style={{ width: `${(stage.value / maxValue) * 100}%` }}
+                                style={getPipelineStageBarStyle(stage.value, maxValue)}
                             />
                         </div>
                     </div>

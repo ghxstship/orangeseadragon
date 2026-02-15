@@ -6,6 +6,7 @@ import { LayoutDashboard, Plus, Star, Users, Lock, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { PageShell } from '@/components/common/page-shell';
 
 interface DashboardItem {
   id: string;
@@ -36,21 +37,17 @@ export default function DashboardLibraryPage() {
   const rest = dashboards.filter((d) => !d.starred);
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="border-b px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Dashboards</h1>
-            <p className="text-sm text-muted-foreground mt-1">Custom dashboards and analytics views</p>
-          </div>
-          <Button onClick={() => router.push('/analytics/dashboards/builder')}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Dashboard
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+    <PageShell
+      title="Dashboards"
+      description="Custom dashboards and analytics views"
+      actions={
+        <Button onClick={() => router.push('/analytics/dashboards/builder')}>
+          <Plus className="mr-2 h-4 w-4" />
+          New Dashboard
+        </Button>
+      }
+      contentClassName="space-y-6"
+    >
         {starred.length > 0 && (
           <div>
             <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Starred</h2>
@@ -65,8 +62,7 @@ export default function DashboardLibraryPage() {
             {rest.map((d) => <DashboardCard key={d.id} dashboard={d} />)}
           </div>
         </div>
-      </div>
-    </div>
+    </PageShell>
   );
 }
 
@@ -80,7 +76,7 @@ function DashboardCard({ dashboard }: { dashboard: DashboardItem }) {
             <LayoutDashboard className="h-4 w-4 text-primary" />
             <CardTitle className="text-sm">{dashboard.name}</CardTitle>
           </div>
-          {dashboard.starred && <Star className="h-4 w-4 text-amber-500 fill-amber-500" />}
+          {dashboard.starred && <Star className="h-4 w-4 text-semantic-warning fill-current" />}
         </div>
       </CardHeader>
       <CardContent>

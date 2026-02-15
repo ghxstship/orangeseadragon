@@ -115,7 +115,7 @@ export default function WorkloadPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">Team Workload</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Team Workload</h1>
             <p className="text-sm text-muted-foreground">
               View team capacity and task distribution
             </p>

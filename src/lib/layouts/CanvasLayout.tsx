@@ -56,6 +56,15 @@ export interface CanvasLayoutProps {
   children: React.ReactNode;
 }
 
+const getCanvasSidebarWidthStyle = (width?: number): React.CSSProperties => ({
+  width: width || 'var(--sidebar-width-sm, 240px)',
+});
+
+const getCanvasScaleStyle = (zoom: number): React.CSSProperties => ({
+  transform: `scale(${zoom / 100})`,
+  transformOrigin: 'top left',
+});
+
 export function CanvasLayout({
   config,
   loading = false,
@@ -289,7 +298,7 @@ export function CanvasLayout({
         {config.sidebar?.position === 'left' && config.sidebar.enabled && sidebarContent && (
           <aside
             className="border-r bg-muted/30 flex-shrink-0 overflow-auto"
-            style={{ width: config.sidebar.width || 'var(--sidebar-width-sm, 240px)' }}
+            style={getCanvasSidebarWidthStyle(config.sidebar.width)}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>
@@ -307,10 +316,7 @@ export function CanvasLayout({
         >
           <div
             className="min-h-full min-w-full"
-            style={{
-              transform: `scale(${zoom / 100})`,
-              transformOrigin: 'top left',
-            }}
+            style={getCanvasScaleStyle(zoom)}
           >
             {children}
           </div>
@@ -320,7 +326,7 @@ export function CanvasLayout({
         {config.sidebar?.position === 'right' && config.sidebar.enabled && sidebarContent && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 overflow-auto"
-            style={{ width: config.sidebar.width || 'var(--sidebar-width-sm, 240px)' }}
+            style={getCanvasSidebarWidthStyle(config.sidebar.width)}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>

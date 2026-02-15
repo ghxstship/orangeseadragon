@@ -101,7 +101,7 @@ export function EntityProfileLayout({
                         {meta.website && (
                             <div className="flex items-center gap-3 text-muted-foreground">
                                 <Globe className="w-4 h-4 text-primary/70" />
-                                <a href={meta.website} target="_blank" rel="noreferrer" className="hover:underline text-blue-500">
+                                <a href={meta.website} target="_blank" rel="noreferrer" className="hover:underline text-semantic-info">
                                     Visit Website
                                 </a>
                             </div>

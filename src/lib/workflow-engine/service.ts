@@ -16,6 +16,8 @@ import {
 } from "./types";
 import { WorkflowEngine, workflowEngine } from "./engine";
 import { allWorkflowTemplates } from "./templates";
+import { WorkflowPersistence, getWorkflowPersistence } from "./persistence";
+import { captureError } from "@/lib/observability";
 
 export interface CreateWorkflowInput {
   name: string;
@@ -75,13 +77,16 @@ export class WorkflowService {
   private executions: Map<string, WorkflowExecution>;
   private eventHandlers: Map<string, WorkflowEventHandler[]>;
   private scheduledJobs: Map<string, NodeJS.Timeout>;
+  private persistence: WorkflowPersistence | null;
 
-  constructor(engine?: WorkflowEngine) {
+  constructor(engine?: WorkflowEngine, persistence?: WorkflowPersistence | null) {
     this.engine = engine ?? workflowEngine;
     this.workflows = new Map();
     this.executions = new Map();
     this.eventHandlers = new Map();
     this.scheduledJobs = new Map();
+    // persistence is null only in tests; default to singleton
+    this.persistence = persistence === null ? null : (persistence ?? getWorkflowPersistence());
   }
 
   // ==================== Workflow CRUD ====================
@@ -104,13 +109,29 @@ export class WorkflowService {
     };
 
     this.workflows.set(workflow.id, workflow);
+    this.persistWorkflow(workflow);
     await this.emitEvent("workflow.created", { workflow });
 
     return workflow;
   }
 
   async getWorkflow(id: string): Promise<Workflow | null> {
-    return this.workflows.get(id) ?? null;
+    const cached = this.workflows.get(id);
+    if (cached) return cached;
+
+    // Fall through to persistence
+    if (this.persistence) {
+      try {
+        const loaded = await this.persistence.loadWorkflow(id);
+        if (loaded) {
+          this.workflows.set(loaded.id, loaded);
+          return loaded;
+        }
+      } catch (e) {
+        captureError(e, 'workflow.service.load_failed', { workflowId: id });
+      }
+    }
+    return null;
   }
 
   async updateWorkflow(id: string, input: UpdateWorkflowInput): Promise<Workflow | null> {
@@ -125,6 +146,7 @@ export class WorkflowService {
     };
 
     this.workflows.set(id, updated);
+    this.persistWorkflow(updated);
     await this.emitEvent("workflow.updated", { workflow: updated });
 
     // Handle status changes
@@ -143,6 +165,11 @@ export class WorkflowService {
     this.stopScheduledJob(id);
 
     this.workflows.delete(id);
+    if (this.persistence) {
+      this.persistence.deleteWorkflow(id).catch((e) =>
+        captureError(e, 'workflow.service.delete_persist_failed', { workflowId: id })
+      );
+    }
     await this.emitEvent("workflow.deleted", { workflowId: id });
 
     return true;
@@ -245,6 +272,7 @@ export class WorkflowService {
 
     const execution = await this.engine.executeWorkflow(workflow, input, initiatedBy);
     this.executions.set(execution.id, execution);
+    this.persistExecution(execution);
 
     await this.emitEvent("execution.completed", {
       executionId: execution.id,
@@ -255,7 +283,21 @@ export class WorkflowService {
   }
 
   async getExecution(id: string): Promise<WorkflowExecution | null> {
-    return this.executions.get(id) ?? null;
+    const cached = this.executions.get(id);
+    if (cached) return cached;
+
+    if (this.persistence) {
+      try {
+        const loaded = await this.persistence.loadExecution(id);
+        if (loaded) {
+          this.executions.set(loaded.id, loaded);
+          return loaded;
+        }
+      } catch (e) {
+        captureError(e, 'workflow.service.load_execution_failed', { executionId: id });
+      }
+    }
+    return null;
   }
 
   async listExecutions(
@@ -304,6 +346,7 @@ export class WorkflowService {
 
     execution.status = "cancelled";
     execution.completedAt = new Date();
+    this.persistExecution(execution);
 
     await this.emitEvent("execution.cancelled", { executionId: id });
 
@@ -612,6 +655,38 @@ export class WorkflowService {
       valid: errors.length === 0,
       errors,
     };
+  }
+
+  // ==================== Persistence Helpers ====================
+
+  private persistWorkflow(workflow: Workflow): void {
+    if (!this.persistence) return;
+    this.persistence.saveWorkflow(workflow).catch((e) =>
+      captureError(e, 'workflow.service.persist_workflow_failed', { workflowId: workflow.id })
+    );
+  }
+
+  private persistExecution(execution: WorkflowExecution): void {
+    if (!this.persistence) return;
+    this.persistence.saveExecution(execution).catch((e) =>
+      captureError(e, 'workflow.service.persist_execution_failed', { executionId: execution.id })
+    );
+  }
+
+  /**
+   * Hydrate in-memory cache from Supabase for a given organization.
+   * Call once at startup or on first request for an org.
+   */
+  async hydrateFromPersistence(organizationId: string): Promise<void> {
+    if (!this.persistence) return;
+    try {
+      const workflows = await this.persistence.loadWorkflows(organizationId);
+      for (const wf of workflows) {
+        this.workflows.set(wf.id, wf);
+      }
+    } catch (e) {
+      captureError(e, 'workflow.service.hydrate_failed', { organizationId });
+    }
   }
 
   private generateId(prefix: string): string {

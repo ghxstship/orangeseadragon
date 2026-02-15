@@ -209,7 +209,7 @@ export default function CallSheetPage() {
             { label: 'Schedule', done: schedule.some(s => s.time) },
           ].map(item => (
             <div key={item.label} className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${item.done ? 'bg-emerald-500 dark:bg-emerald-400' : 'bg-muted-foreground/30'}`} />
+              <div className={`h-2 w-2 rounded-full ${item.done ? 'bg-semantic-success' : 'bg-muted-foreground/30'}`} />
               <span className={item.done ? 'text-foreground' : 'text-muted-foreground'}>{item.label}</span>
             </div>
           ))}

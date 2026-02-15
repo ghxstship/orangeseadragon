@@ -146,11 +146,12 @@ interface PreviewTriggerProps {
 
 export function PreviewTrigger({ children, onClick, className }: PreviewTriggerProps) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={onClick}
       className={cn(
-        "relative group cursor-pointer",
+        "relative group cursor-pointer h-auto w-auto p-0 rounded-none text-inherit font-inherit tracking-normal hover:bg-transparent",
         className
       )}
     >
@@ -158,6 +159,6 @@ export function PreviewTrigger({ children, onClick, className }: PreviewTriggerP
       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded">
         <Eye className="h-6 w-6 text-white" />
       </div>
-    </button>
+    </Button>
   );
 }

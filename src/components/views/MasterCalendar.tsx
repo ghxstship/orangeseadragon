@@ -57,6 +57,21 @@ export interface UnifiedCalendarItem {
   visibility?: string | null;
 }
 
+const getSourceDotStyle = (color: string): React.CSSProperties => ({
+  backgroundColor: color,
+});
+
+const getCalendarItemBadgeStyle = (color?: string | null): React.CSSProperties | undefined => {
+  if (!color) {
+    return undefined;
+  }
+
+  return {
+    backgroundColor: `${color}20`,
+    color,
+  };
+};
+
 export interface CalendarAggregationResult {
   items: UnifiedCalendarItem[];
   sources: {
@@ -281,7 +296,7 @@ export function MasterCalendar({
                         >
                           <span
                             className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: source.color }}
+                            style={getSourceDotStyle(source.color)}
                           />
                           {source.label}
                         </Label>
@@ -316,7 +331,7 @@ export function MasterCalendar({
             <div key={source.type} className="flex items-center gap-1.5">
               <span
                 className="w-2.5 h-2.5 rounded-full"
-                style={{ backgroundColor: source.color }}
+                style={getSourceDotStyle(source.color)}
               />
               <span className="text-muted-foreground">{source.label}</span>
               <span className="text-muted-foreground/60">({source.count})</span>
@@ -406,7 +421,7 @@ export function CalendarItemDetail({ item, onNavigate }: CalendarItemDetailProps
           )}
         </div>
         <Badge
-          style={{ backgroundColor: `${item.color}20`, color: item.color || undefined }}
+          style={getCalendarItemBadgeStyle(item.color)}
         >
           {item.sourceType}
         </Badge>

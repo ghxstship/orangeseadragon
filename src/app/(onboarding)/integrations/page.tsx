@@ -65,7 +65,7 @@ export default function OnboardingIntegrationsPage() {
       if (response.ok) {
         const result = await response.json();
         if (result.data?.redirect_url) {
-          window.location.href = result.data.redirect_url;
+          window.open(result.data.redirect_url, "_self");
           return;
         }
         setConnected([...connected, id]);
@@ -160,13 +160,10 @@ export default function OnboardingIntegrationsPage() {
 
       {/* More integrations link */}
       <div className="text-center">
-        <a
-          href="/account/integrations"
-          className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"
-        >
+        <Link href="/account/integrations" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground">
           View all integrations
           <ExternalLink className="ml-1 h-3 w-3" />
-        </a>
+        </Link>
       </div>
 
       {/* Navigation */}

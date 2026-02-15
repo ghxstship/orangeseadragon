@@ -2,9 +2,10 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "./use-supabase";
+import { throwApiErrorResponse } from "@/lib/api/error-message";
 import type { Database } from "@/types/database";
 
-type Expense = Database["public"]["Tables"]["expenses"]["Row"];
+type _Expense = Database["public"]["Tables"]["expenses"]["Row"];
 type ExpenseInsert = Database["public"]["Tables"]["expenses"]["Insert"];
 type ExpenseUpdate = Database["public"]["Tables"]["expenses"]["Update"];
 
@@ -82,98 +83,97 @@ export function useExpense(expenseId: string | null) {
 }
 
 export function useCreateExpense() {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (expense: ExpenseInsert) => {
-      const { data, error } = await supabase
-        .from("expenses")
-        .insert(expense)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Expense;
+      const res = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(expense),
+      });
+      if (!res.ok) await throwApiErrorResponse(res, 'Failed to create expense');
+      const json = await res.json();
+      return json.data ?? json;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", data.organization_id] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
     },
   });
 }
 
 export function useUpdateExpense() {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: ExpenseUpdate & { id: string }) => {
-      const { data, error } = await supabase
-        .from("expenses")
-        .update(updates)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Expense;
+      const res = await fetch(`/api/expenses/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) await throwApiErrorResponse(res, 'Failed to update expense');
+      const json = await res.json();
+      return json.data ?? json;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", data.organization_id] });
-      queryClient.invalidateQueries({ queryKey: ["expense", data.id] });
+    onMutate: async ({ id, ...updates }) => {
+      await queryClient.cancelQueries({ queryKey: ["expense", id] });
+      const previous = queryClient.getQueryData(["expense", id]);
+      queryClient.setQueryData(["expense", id], (old: Record<string, unknown> | undefined) =>
+        old ? { ...old, ...updates } : old
+      );
+      return { previous, id };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["expense", context.id], context.previous);
+      }
+    },
+    onSettled: (_data, _err, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["expense", id] });
     },
   });
 }
 
 export function useApproveExpense() {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, approvedBy }: { id: string; approvedBy: string }) => {
-      const { data, error } = await supabase
-        .from("expenses")
-        .update({ 
-          status: "approved",
-          approved_by: approvedBy,
-          approved_at: new Date().toISOString()
-        })
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Expense;
+    mutationFn: async ({ id }: { id: string; approvedBy: string }) => {
+      const res = await fetch(`/api/expenses/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) await throwApiErrorResponse(res, 'Failed to approve expense');
+      const json = await res.json();
+      return json.data ?? json;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", data.organization_id] });
-      queryClient.invalidateQueries({ queryKey: ["expense", data.id] });
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["expense", id] });
     },
   });
 }
 
 export function useRejectExpense() {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
-      const { data, error } = await supabase
-        .from("expenses")
-        .update({ 
-          status: "rejected",
-          rejection_reason: reason
-        })
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Expense;
+      const res = await fetch(`/api/expenses/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'rejected', rejection_reason: reason }),
+      });
+      if (!res.ok) await throwApiErrorResponse(res, 'Failed to reject expense');
+      const json = await res.json();
+      return json.data ?? json;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["expenses", data.organization_id] });
-      queryClient.invalidateQueries({ queryKey: ["expense", data.id] });
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["expense", id] });
     },
   });
 }

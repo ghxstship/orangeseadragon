@@ -97,6 +97,14 @@ export interface DataTableProps<TData, TValue> {
   renderRowWrapper?: (row: TData, children: React.ReactNode) => React.ReactNode;
 }
 
+const getTableWidthStyle = (resizable: boolean, width: number): React.CSSProperties => ({
+  width: resizable ? width : "100%",
+});
+
+const getColumnWidthStyle = (width: number): React.CSSProperties => ({
+  width,
+});
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -320,7 +328,7 @@ export function DataTable<TData, TValue>({
 
       <div className="rounded-md border overflow-hidden">
         <div className="relative overflow-auto max-h-[50vh] sm:max-h-[70vh]">
-          <Table className="relative w-full border-collapse" style={{ width: resizable ? table.getCenterTotalSize() : "100%" }}>
+          <Table className="relative w-full border-collapse" style={getTableWidthStyle(resizable, table.getCenterTotalSize())}>
             <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-transparent">
@@ -329,7 +337,7 @@ export function DataTable<TData, TValue>({
                       <TableHead
                         key={header.id}
                         className="relative p-0 h-10 border-b bg-card/50 backdrop-blur-md"
-                        style={{ width: header.getSize() }}
+                        style={getColumnWidthStyle(header.getSize())}
                       >
                         {header.isPlaceholder ? null : (
                           <div className="group flex h-full items-center px-4">
@@ -436,7 +444,7 @@ export function DataTable<TData, TValue>({
                               density === "compact" ? "py-1.5" : "py-4",
                               cell.column.id === "select" && "sticky left-0 z-20 bg-card/90 backdrop-blur-sm shadow-[1px_0_0_0_rgba(0,0,0,0.05)]"
                             )}
-                            style={{ width: cell.column.getSize() }}
+                            style={getColumnWidthStyle(cell.column.getSize())}
                           >
                             {cell.getIsAggregated()
                               ? flexRender(

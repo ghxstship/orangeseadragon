@@ -35,6 +35,14 @@ import type {
 
 type ActionConfig = ActionDefinition;
 
+const getPercentageWidthStyle = (pct: number): React.CSSProperties => ({
+  width: `${pct}%`,
+});
+
+const getStatusDotStyle = (badgeColor?: string): React.CSSProperties => ({
+  backgroundColor: badgeColor || 'currentColor',
+});
+
 // Helper to normalize column definitions
 function normalizeColumn(col: string | TableColumnDefinition): TableColumnDefinition & { label: string; sortable: boolean; visible: boolean; format?: ColumnFormat } {
   if (typeof col === 'string') {
@@ -271,7 +279,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
                 pct > 80 ? "bg-semantic-success shadow-[0_0_8px_hsl(var(--semantic-success)/0.4)]" :
                   pct > 40 ? "bg-semantic-warning" : "bg-destructive"
               )}
-              style={{ width: `${pct}%` }}
+              style={getPercentageWidthStyle(pct)}
             />
           </div>
           <span className="text-[10px] font-black w-8 text-right">{pct}%</span>
@@ -305,7 +313,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
           {isStatus && (
             <div
               className="absolute left-1.5 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full animate-pulse"
-              style={{ backgroundColor: badgeColor || 'currentColor' }}
+              style={getStatusDotStyle(badgeColor)}
             />
           )}
           {String(value)}

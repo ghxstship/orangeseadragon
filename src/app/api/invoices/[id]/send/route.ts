@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/invoices/:id/send
@@ -13,7 +14,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('finance.approve');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -93,7 +94,8 @@ export async function POST(
       status: 'pending',
     }, { message: `Invoice ${invoice.invoice_number} queued for delivery to ${recipient_email}` });
   } catch (error) {
-    console.error('Error sending invoice:', error);
+    const invoiceIdForLog = (await params).id;
+    captureError(error, 'api.invoice_send.unhandled', { invoice_id: invoiceIdForLog });
     return serverError();
   }
 }

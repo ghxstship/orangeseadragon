@@ -4,6 +4,7 @@ import { EntitySchema } from '@/lib/schema/types';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { useSupabase } from '@/hooks/use-supabase';
+import { Button } from '@/components/ui/button';
 
 interface SubpageDefinition {
   key: string;
@@ -82,8 +83,9 @@ function SubpageTab({ subpage, isActive, onClick, schema }: SubpageTabProps) {
 
   return (
     <li>
-      <button
-        className={cn('subpage-tab', isActive && 'subpage-tab-active')}
+      <Button
+        variant="ghost"
+        className={cn('subpage-tab h-auto justify-start', isActive && 'subpage-tab-active')}
         onClick={onClick}
         aria-pressed={isActive}
       >
@@ -101,7 +103,7 @@ function SubpageTab({ subpage, isActive, onClick, schema }: SubpageTabProps) {
             {count}
           </span>
         )}
-      </button>
+      </Button>
     </li>
   );
 }

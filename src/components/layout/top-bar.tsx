@@ -514,10 +514,15 @@ function BreadcrumbRecordSwitcher({
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <button className="inline-flex items-center gap-1 font-medium text-foreground hover:text-primary transition-colors rounded px-1.5 py-0.5 -mx-1.5 hover:bg-accent">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-auto inline-flex items-center gap-1 font-medium text-foreground hover:text-primary transition-colors rounded px-1.5 py-0.5 -mx-1.5 hover:bg-accent"
+        >
           <span>{label}</span>
           <ChevronDown className="h-3 w-3 opacity-50" />
-        </button>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">
         <DropdownMenuLabel className="text-xs">

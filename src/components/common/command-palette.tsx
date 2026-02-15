@@ -184,7 +184,7 @@ export function CommandPalette() {
         {
           icon: Truck,
           label: "Advancing",
-          action: () => router.push("/advancing"),
+          action: () => router.push("/productions/advancing"),
         },
         {
           icon: Radio,

@@ -17,7 +17,7 @@ import { useState, useMemo } from 'react';
 import { useInvoices } from '@/hooks/use-invoices';
 import { useUser } from '@/hooks/use-supabase';
 
-interface Invoice {
+export interface InvoiceListItem {
     id: string;
     invoice_number: string;
     customer_name: string;
@@ -27,7 +27,7 @@ interface Invoice {
     status: 'paid' | 'pending' | 'overdue' | 'draft';
 }
 
-function mapInvoiceStatus(status: string | null, dueDate: string | null): Invoice['status'] {
+function mapInvoiceStatus(status: string | null, dueDate: string | null): InvoiceListItem['status'] {
     if (status === 'paid') return 'paid';
     if (status === 'draft') return 'draft';
     if (status === 'sent' || status === 'pending') {
@@ -39,7 +39,7 @@ function mapInvoiceStatus(status: string | null, dueDate: string | null): Invoic
 }
 
 interface InvoiceListProps {
-    onSelectInvoice: (invoice: Invoice) => void;
+    onSelectInvoice: (invoice: InvoiceListItem) => void;
 }
 
 export function InvoiceList({ onSelectInvoice }: InvoiceListProps) {
@@ -48,7 +48,7 @@ export function InvoiceList({ onSelectInvoice }: InvoiceListProps) {
     const { data: rawInvoices } = useInvoices(orgId);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const invoices: Invoice[] = useMemo(() => {
+    const invoices: InvoiceListItem[] = useMemo(() => {
         if (!rawInvoices) return [];
         return rawInvoices.map((inv) => ({
             id: inv.id,

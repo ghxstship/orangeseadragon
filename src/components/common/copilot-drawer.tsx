@@ -293,14 +293,16 @@ export function CopilotDrawer() {
                       </p>
                       <div className="grid grid-cols-2 gap-2">
                         {quickActions.map((action) => (
-                          <button
+                          <Button
+                            type="button"
+                            variant="ghost"
                             key={action.id}
                             onClick={() => handleSend(action.prompt)}
-                            className="flex items-center gap-2 p-3 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 hover:border-border transition-all text-left group"
+                            className="h-auto flex items-center justify-start gap-2 p-3 rounded-lg border border-border/50 bg-muted/30 hover:bg-muted/60 hover:border-border transition-all text-left group"
                           >
                             <action.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                             <span className="text-xs font-medium">{action.label}</span>
-                          </button>
+                          </Button>
                         ))}
                       </div>
                     </div>

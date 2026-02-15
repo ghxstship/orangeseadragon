@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
@@ -81,6 +82,15 @@ interface DashboardGridProps {
   onEditToggle?: () => void;
   className?: string;
 }
+
+const getGridSpanStyle = (cols: number, rows: number): React.CSSProperties => ({
+  gridColumn: `span ${cols}`,
+  gridRow: `span ${rows}`,
+});
+
+const getGridTemplateColumnsStyle = (columns: number): React.CSSProperties => ({
+  gridTemplateColumns: `repeat(${columns}, 1fr)`,
+});
 
 export function DashboardGrid({
   layout,
@@ -192,10 +202,7 @@ export function DashboardGrid({
           isEditing && "ring-2 ring-dashed ring-primary/30 rounded-lg",
           draggedWidget === widget.id && "opacity-50"
         )}
-        style={{
-          gridColumn: `span ${span.cols}`,
-          gridRow: `span ${span.rows}`,
-        }}
+        style={getGridSpanStyle(span.cols, span.rows)}
         draggable={isEditing}
         onDragStart={() => handleDragStart(widget.id)}
         onDragEnd={handleDragEnd}
@@ -308,9 +315,7 @@ export function DashboardGrid({
       {/* Grid */}
       <div
         className="grid gap-4"
-        style={{
-          gridTemplateColumns: `repeat(${layout.columns}, 1fr)`,
-        }}
+        style={getGridTemplateColumnsStyle(layout.columns)}
         onDragOver={(e) => e.preventDefault()}
         onDrop={() => handleDrop({ x: 0, y: 0 })}
       >
@@ -437,14 +442,12 @@ function WidgetConfigDialog({ widget, onClose, onSave }: WidgetConfigDialogProps
               )}
               {field.type === "boolean" && (
                 <div className="flex items-center gap-2">
-                  <input
+                  <Switch
                     id={field.key}
-                    type="checkbox"
                     checked={(config[field.key] as boolean) || false}
-                    onChange={(e) =>
-                      setConfig({ ...config, [field.key]: e.target.checked })
+                    onCheckedChange={(checked) =>
+                      setConfig({ ...config, [field.key]: checked })
                     }
-                    className="h-4 w-4"
                   />
                   <Label htmlFor={field.key} className="text-sm font-normal">
                     Enable

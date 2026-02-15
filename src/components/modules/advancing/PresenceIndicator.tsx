@@ -25,9 +25,14 @@ const sizeClasses = {
 };
 
 const ringColors = {
-  viewing: 'ring-blue-500',
-  editing: 'ring-emerald-500',
+  viewing: 'ring-semantic-info',
+  editing: 'ring-semantic-success',
 };
+
+const getCursorPositionStyle = (x: number, y: number): React.CSSProperties => ({
+  left: x,
+  top: y,
+});
 
 export function PresenceIndicator({
   users,
@@ -170,10 +175,7 @@ export function LiveCursors({ users }: LiveCursorsProps) {
           <div
             key={user.userId}
             className="pointer-events-none absolute z-50 transition-all duration-75"
-            style={{
-              left: user.cursor.x,
-              top: user.cursor.y,
-            }}
+            style={getCursorPositionStyle(user.cursor.x, user.cursor.y)}
           >
             {/* Cursor arrow */}
             <svg

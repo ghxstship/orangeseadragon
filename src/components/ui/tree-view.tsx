@@ -31,6 +31,10 @@ interface TreeItemProps {
   showIcons?: boolean;
 }
 
+const getTreeItemPaddingStyle = (level: number): React.CSSProperties => ({
+  paddingLeft: `${level * 12 + 8}px`,
+});
+
 function TreeItem({
   node,
   level,
@@ -77,7 +81,7 @@ function TreeItem({
           "focus:outline-none focus:bg-accent focus:text-accent-foreground",
           isSelected && "bg-accent text-accent-foreground font-medium"
         )}
-        style={{ paddingLeft: `${level * 12 + 8}px` }}
+        style={getTreeItemPaddingStyle(level)}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         tabIndex={0}

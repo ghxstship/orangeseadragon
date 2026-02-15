@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Shield, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -182,13 +183,13 @@ export function CookieConsentBanner() {
           {/* Privacy policy link */}
           <p className="mt-3 text-[10px] text-muted-foreground text-center">
             By continuing, you agree to our{" "}
-            <a href="/privacy" className="underline hover:text-foreground">
+            <Link href="/privacy" className="underline hover:text-foreground">
               Privacy Policy
-            </a>{" "}
+            </Link>{" "}
             and{" "}
-            <a href="/terms" className="underline hover:text-foreground">
+            <Link href="/terms" className="underline hover:text-foreground">
               Terms of Service
-            </a>
+            </Link>
             .
           </p>
         </div>

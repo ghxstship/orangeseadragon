@@ -120,7 +120,7 @@ export default function TaskTimelinePage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">Task Timeline</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Task Timeline</h1>
             <p className="text-sm text-muted-foreground">
               Visualize task schedules and dependencies
             </p>

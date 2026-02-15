@@ -2,9 +2,10 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "./use-supabase";
+import { throwApiErrorResponse } from "@/lib/api/error-message";
 import type { Database } from "@/types/database";
 
-type Budget = Database["public"]["Tables"]["budgets"]["Row"];
+type _Budget = Database["public"]["Tables"]["budgets"]["Row"];
 type BudgetInsert = Database["public"]["Tables"]["budgets"]["Insert"];
 type BudgetUpdate = Database["public"]["Tables"]["budgets"]["Update"];
 
@@ -79,45 +80,55 @@ export function useBudget(budgetId: string | null) {
 }
 
 export function useCreateBudget() {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (budget: BudgetInsert) => {
-      const { data, error } = await supabase
-        .from("budgets")
-        .insert(budget)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Budget;
+      const res = await fetch('/api/budgets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(budget),
+      });
+      if (!res.ok) await throwApiErrorResponse(res, 'Failed to create budget');
+      const json = await res.json();
+      return json.data ?? json;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["budgets", data.organization_id] });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
     },
   });
 }
 
 export function useUpdateBudget() {
-  const supabase = useSupabase();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: BudgetUpdate & { id: string }) => {
-      const { data, error } = await supabase
-        .from("budgets")
-        .update(updates)
-        .eq("id", id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data as Budget;
+      const res = await fetch(`/api/budgets/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!res.ok) await throwApiErrorResponse(res, 'Failed to update budget');
+      const json = await res.json();
+      return json.data ?? json;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["budgets", data.organization_id] });
-      queryClient.invalidateQueries({ queryKey: ["budget", data.id] });
+    onMutate: async ({ id, ...updates }) => {
+      await queryClient.cancelQueries({ queryKey: ["budget", id] });
+      const previous = queryClient.getQueryData(["budget", id]);
+      queryClient.setQueryData(["budget", id], (old: Record<string, unknown> | undefined) =>
+        old ? { ...old, ...updates } : old
+      );
+      return { previous, id };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["budget", context.id], context.previous);
+      }
+    },
+    onSettled: (_data, _err, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["budgets"] });
+      queryClient.invalidateQueries({ queryKey: ["budget", id] });
     },
   });
 }

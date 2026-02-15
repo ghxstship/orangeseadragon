@@ -65,6 +65,19 @@ export interface CalendarViewProps {
   showNavigation?: boolean;
 }
 
+const getCalendarEventStyle = (color?: string): React.CSSProperties | undefined => {
+  if (!color) return undefined;
+
+  return {
+    backgroundColor: `${color}20`,
+    color,
+  };
+};
+
+const getCalendarEventDotStyle = (color: string): React.CSSProperties => ({
+  backgroundColor: color,
+});
+
 export function CalendarView({
   events,
   view = "month",
@@ -310,7 +323,7 @@ function MonthView({ currentDate, getEventsForDate, onEventClick, onDateClick }:
                       "text-xs p-1 rounded truncate cursor-pointer",
                       event.color ? "" : "bg-primary/10 text-primary"
                     )}
-                    style={event.color ? { backgroundColor: `${event.color}20`, color: event.color } : undefined}
+                    style={getCalendarEventStyle(event.color)}
                     onClick={(e) => {
                       e.stopPropagation();
                       onEventClick?.(event);
@@ -381,7 +394,7 @@ function WeekView({ currentDate, getEventsForDate, onEventClick, onDateClick }: 
                     "text-xs p-1 rounded truncate cursor-pointer",
                     event.color ? "" : "bg-primary/10 text-primary"
                   )}
-                  style={event.color ? { backgroundColor: `${event.color}20`, color: event.color } : undefined}
+                  style={getCalendarEventStyle(event.color)}
                   onClick={(e) => {
                     e.stopPropagation();
                     onEventClick?.(event);
@@ -429,7 +442,7 @@ function DayView({ events, onEventClick }: DayViewProps) {
                       "text-xs p-2 rounded mb-1 cursor-pointer",
                       event.color ? "" : "bg-primary/10 text-primary"
                     )}
-                    style={event.color ? { backgroundColor: `${event.color}20`, color: event.color } : undefined}
+                    style={getCalendarEventStyle(event.color)}
                     onClick={() => onEventClick?.(event)}
                   >
                     <div className="font-medium">{event.title}</div>
@@ -512,7 +525,7 @@ function AgendaView({ currentDate, events, onEventClick }: AgendaViewProps) {
                     {event.color && (
                       <div
                         className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: event.color }}
+                        style={getCalendarEventDotStyle(event.color)}
                       />
                     )}
                   </div>

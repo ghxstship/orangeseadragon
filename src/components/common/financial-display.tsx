@@ -239,7 +239,7 @@ export function AgingBadge({ dueDate, className }: AgingBadgeProps) {
 
   if (diffDays <= 30) {
     return (
-      <Badge variant="outline" className={cn('gap-1 border-orange-500 text-orange-600', className)}>
+      <Badge variant="outline" className={cn('gap-1 border-semantic-orange text-semantic-orange', className)}>
         <AlertTriangle className="h-3 w-3" />
         {diffDays}d overdue
       </Badge>

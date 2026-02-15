@@ -339,10 +339,12 @@ export function CrewScheduler({ eventId, advanceId, className }: CrewSchedulerPr
                       <TooltipProvider key={day.toISOString()}>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <button
+                            <Button
+                              type="button"
+                              variant="ghost"
                               onClick={() => handleCellClick(crew, day)}
                               className={cn(
-                                "p-1 border-r last:border-r-0 min-h-[60px] transition-colors",
+                                "h-full w-full p-1 border-r last:border-r-0 min-h-[60px] rounded-none transition-colors",
                                 isToday && "bg-primary/5",
                                 dayAssignments.length === 0 && "hover:bg-muted/50",
                                 "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset"
@@ -372,7 +374,7 @@ export function CrewScheduler({ eventId, advanceId, className }: CrewSchedulerPr
                                   ))}
                                 </div>
                               )}
-                            </button>
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent side="bottom">
                             {dayAssignments.length === 0 ? (

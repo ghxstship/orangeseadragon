@@ -2,6 +2,7 @@
 
 import { formatDistanceToNow } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import {
@@ -28,6 +29,10 @@ interface ActivityFeedProps {
   onEntityClick?: (entityType: string, entityId: string) => void;
   className?: string;
 }
+
+const getActivityFeedMaxHeightStyle = (maxHeight: string): React.CSSProperties => ({
+  maxHeight,
+});
 
 const actionIcons: Record<ActivityAction, React.ReactNode> = {
   created: <Plus className="h-3.5 w-3.5" />,
@@ -124,7 +129,7 @@ export function ActivityFeed({
   }
 
   return (
-    <ScrollArea className={className} style={{ maxHeight }}>
+    <ScrollArea className={className} style={getActivityFeedMaxHeightStyle(maxHeight)}>
       <div className="space-y-4 pr-4">
         {activities.map((activity) => (
           <div key={activity.id} className="flex gap-3">
@@ -153,12 +158,15 @@ export function ActivityFeed({
                       {actionLabels[activity.action]}
                     </span>{" "}
                     {showEntityLink && onEntityClick ? (
-                      <button
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
                         onClick={() => onEntityClick(activity.entityType, activity.entityId)}
-                        className="font-medium text-primary hover:underline"
+                        className="h-auto p-0 font-medium"
                       >
                         {activity.entityName}
-                      </button>
+                      </Button>
                     ) : (
                       <span className="font-medium">{activity.entityName}</span>
                     )}

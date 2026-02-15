@@ -98,13 +98,14 @@ export function ErrorLayout({
       {/* Technical Details */}
       {(config.showDetails || config.showStackTrace) && error && (
         <div className="w-full max-w-lg">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowDetails(!showDetails)}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mx-auto"
           >
             {showDetails ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             {showDetails ? 'Hide' : 'Show'} technical details
-          </button>
+          </Button>
 
           {showDetails && (
             <div className="mt-4 p-4 rounded-lg bg-muted text-left">

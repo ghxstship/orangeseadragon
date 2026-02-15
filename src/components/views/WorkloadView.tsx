@@ -247,7 +247,7 @@ export function WorkloadView({
             <span>{summaryStats.optimal} optimal</span>
           </div>
           <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4 text-blue-500" />
+            <Clock className="h-4 w-4 text-semantic-info" />
             <span>{summaryStats.underloaded} underloaded</span>
           </div>
           <div className="flex items-center gap-1">

@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
 
 /**
@@ -9,7 +9,7 @@ import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function POST(_request: NextRequest) {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('finance.approve');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 

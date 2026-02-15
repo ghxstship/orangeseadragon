@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 /**
@@ -44,7 +44,7 @@ export async function POST(
     const { id } = await params;
 
     try {
-        const auth = await requireAuth();
+        const auth = await requirePolicy('entity.write');
         if (auth.error) return auth.error;
         const { user, supabase } = auth;
 
@@ -147,7 +147,7 @@ export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { id } = await params;

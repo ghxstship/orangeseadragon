@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/expenses/[id]/approve
@@ -13,7 +14,7 @@ export async function POST(
     const { id } = await params;
 
     try {
-        const auth = await requireAuth();
+        const auth = await requirePolicy('finance.approve');
         if (auth.error) return auth.error;
         const { user, supabase } = auth;
 
@@ -114,7 +115,7 @@ export async function POST(
 
         return apiSuccess(updatedExpense, { message: 'Expense approved' });
     } catch (e) {
-        console.error('[API] Expense approve error:', e);
+        captureError(e, 'api.expense_approve.unhandled', { expense_id: id });
         return serverError('Approval failed');
     }
 }

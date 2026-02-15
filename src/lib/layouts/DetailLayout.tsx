@@ -25,6 +25,10 @@ import {
 } from "lucide-react";
 import type { EntitySchema } from "@/lib/schema/types";
 
+function getDetailSidebarWidthStyle(width: string | number | undefined): React.CSSProperties {
+  return { width: width || 'var(--sidebar-width-lg, 320px)' };
+}
+
 /**
  * DETAIL LAYOUT
  * 
@@ -251,7 +255,7 @@ export function DetailLayout<T extends object>({
         {detailConfig.sidebar && sidebarContent && sidebarOpen && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 overflow-auto hidden lg:block"
-            style={{ width: detailConfig.sidebar.width || 'var(--sidebar-width-lg, 320px)' }}
+            style={getDetailSidebarWidthStyle(detailConfig.sidebar.width)}
           >
             <ScrollArea className="h-full">
               <div className="p-4">{sidebarContent}</div>

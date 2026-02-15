@@ -98,12 +98,13 @@ export default function OnboardingPreferencesPage() {
           <Label>Theme</Label>
           <div className="grid grid-cols-3 gap-3">
             {themes.map((theme) => (
-              <button
+              <Button
                 key={theme.value}
                 type="button"
+                variant="ghost"
                 onClick={() => setFormData({ ...formData, theme: theme.value })}
                 className={cn(
-                  "flex flex-col items-center gap-2 rounded-lg border p-4 transition-colors",
+                  "h-auto flex flex-col items-center gap-2 rounded-lg border p-4 transition-colors font-medium tracking-normal",
                   formData.theme === theme.value
                     ? "border-primary bg-primary/5"
                     : "hover:border-muted-foreground/50"
@@ -111,7 +112,7 @@ export default function OnboardingPreferencesPage() {
               >
                 <theme.icon className="h-6 w-6" />
                 <span className="text-sm font-medium">{theme.label}</span>
-              </button>
+              </Button>
             ))}
           </div>
         </div>

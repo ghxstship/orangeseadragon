@@ -78,12 +78,14 @@ export default function OnboardingProfilePage() {
               <AvatarImage src={formData.avatarUrl} />
               <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
             </Avatar>
-            <button
+            <Button
               type="button"
-              className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90"
+              variant="default"
+              size="icon"
+              className="absolute bottom-0 right-0 h-8 w-8 rounded-full shadow-lg"
             >
               <Camera className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
         </div>
 

@@ -54,6 +54,14 @@ interface ToolbarButtonProps {
   onClick: () => void;
 }
 
+const getRichTextEditorSizeStyle = (
+  minHeight: string,
+  maxHeight: string
+): React.CSSProperties => ({
+  minHeight,
+  maxHeight,
+});
+
 function ToolbarButton({ icon: Icon, label, active, disabled, onClick }: ToolbarButtonProps) {
   return (
     <Toggle
@@ -355,7 +363,7 @@ export function RichTextEditor({
           "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground empty:before:pointer-events-none",
           editorClassName
         )}
-        style={{ minHeight, maxHeight }}
+        style={getRichTextEditorSizeStyle(minHeight, maxHeight)}
         suppressContentEditableWarning
       />
     </div>

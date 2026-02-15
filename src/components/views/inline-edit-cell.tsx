@@ -3,6 +3,13 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Pencil } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────
@@ -53,6 +60,7 @@ export function InlineEditCell({
   const [isSaving, setIsSaving] = React.useState(false);
   const [error, setError] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement | HTMLSelectElement>(null);
+  const originalValue = String(value ?? "");
 
   React.useEffect(() => {
     setEditValue(String(value ?? ""));
@@ -67,14 +75,15 @@ export function InlineEditCell({
     }
   }, [isEditing]);
 
-  const handleSave = React.useCallback(async () => {
+  const handleSave = React.useCallback(async (nextValue?: string) => {
     if (!onSave) {
       setIsEditing(false);
       return;
     }
 
-    const originalValue = String(value ?? "");
-    if (editValue === originalValue) {
+    const resolvedValue = nextValue ?? editValue;
+
+    if (resolvedValue === originalValue) {
       setIsEditing(false);
       return;
     }
@@ -83,7 +92,7 @@ export function InlineEditCell({
     setError(false);
 
     try {
-      const finalValue = cellType === "number" ? Number(editValue) : editValue;
+      const finalValue = cellType === "number" ? Number(resolvedValue) : resolvedValue;
       await onSave(rowId, fieldKey, finalValue);
       setIsEditing(false);
     } catch {
@@ -93,13 +102,13 @@ export function InlineEditCell({
     } finally {
       setIsSaving(false);
     }
-  }, [onSave, editValue, value, rowId, fieldKey, cellType]);
+  }, [onSave, editValue, originalValue, rowId, fieldKey, cellType]);
 
   const handleCancel = React.useCallback(() => {
-    setEditValue(String(value ?? ""));
+    setEditValue(originalValue);
     setIsEditing(false);
     setError(false);
-  }, [value]);
+  }, [originalValue]);
 
   const handleKeyDown = React.useCallback(
     (e: React.KeyboardEvent) => {
@@ -135,25 +144,29 @@ export function InlineEditCell({
         onClick={(e) => e.stopPropagation()}
       >
         {cellType === "select" && options ? (
-          <select
-            ref={inputRef as React.RefObject<HTMLSelectElement>}
+          <Select
             value={editValue}
-            onChange={(e) => {
-              setEditValue(e.target.value);
+            onValueChange={(nextValue) => {
+              setEditValue(nextValue);
+              void handleSave(nextValue);
             }}
-            onBlur={() => {
-              if (!isSaving) handleSave();
+            onOpenChange={(open) => {
+              if (!open && !isSaving && editValue === originalValue) {
+                setIsEditing(false);
+              }
             }}
-            onKeyDown={handleKeyDown}
-            disabled={isSaving}
-            className="h-7 rounded-md border border-input bg-background px-2 text-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
           >
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="h-7 text-sm px-2 min-w-[120px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         ) : (
           <Input
             ref={inputRef as React.RefObject<HTMLInputElement>}

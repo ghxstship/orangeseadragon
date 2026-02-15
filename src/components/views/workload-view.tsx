@@ -168,6 +168,11 @@ export function WorkloadView({
     }
   };
 
+  const getWorkloadDayBarStyle = (percentage: number, hours: number): React.CSSProperties => ({
+    height: `${Math.min(percentage, 100)}%`,
+    minHeight: hours > 0 ? "4px" : "0",
+  });
+
   return (
     <Card className={className}>
       <CardHeader className="pb-2">
@@ -317,10 +322,7 @@ export function WorkloadView({
                                         "w-full rounded transition-all",
                                         getLoadColor(dayStatus)
                                       )}
-                                      style={{
-                                        height: `${Math.min(dayPercentage, 100)}%`,
-                                        minHeight: dayLoad > 0 ? "4px" : "0",
-                                      }}
+                                      style={getWorkloadDayBarStyle(dayPercentage, dayLoad)}
                                     />
                                   )}
                                 </div>

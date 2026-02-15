@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { TopBar } from "./top-bar";
 import { Sidebar, MobileSidebar } from "./sidebar";
@@ -27,6 +28,7 @@ const LayoutContext = React.createContext<LayoutContextValue>({
 export const useLayout = () => React.useContext(LayoutContext);
 
 export function AppShell({ children }: AppShellProps) {
+  const router = useRouter();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState<LayoutType | undefined>();
 
@@ -42,6 +44,22 @@ export function AppShell({ children }: AppShellProps) {
     'entity-form',
     'dashboard'
   ].includes(layoutType);
+
+  React.useEffect(() => {
+    const handleAppNavigate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ href?: string }>;
+      const href = customEvent.detail?.href;
+      if (typeof href === "string" && href.length > 0) {
+        customEvent.preventDefault();
+        router.push(href);
+      }
+    };
+
+    window.addEventListener("app:navigate", handleAppNavigate as EventListener);
+    return () => {
+      window.removeEventListener("app:navigate", handleAppNavigate as EventListener);
+    };
+  }, [router]);
 
   return (
     <LayoutContext.Provider value={contextValue}>

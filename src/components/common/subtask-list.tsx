@@ -181,6 +181,10 @@ interface SubtaskItemProps {
   maxDepth: number;
 }
 
+const getSubtaskIndentStyle = (depth: number): React.CSSProperties => ({
+  paddingLeft: `${depth * 16 + 8}px`,
+});
+
 function SubtaskItem({
   subtask,
   isExpanded,
@@ -201,23 +205,26 @@ function SubtaskItem({
           'group flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-muted/50 transition-colors',
           isDone && 'opacity-60'
         )}
-        style={{ paddingLeft: `${(subtask.depth || 0) * 16 + 8}px` }}
+        style={getSubtaskIndentStyle(subtask.depth || 0)}
       >
         {/* Drag handle */}
         <GripVertical className="h-4 w-4 text-muted-foreground/50 opacity-0 group-hover:opacity-100 cursor-grab" />
 
         {/* Expand/collapse */}
         {canExpand ? (
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={onToggleExpand}
-            className="p-0.5 hover:bg-muted rounded"
+            className="h-5 w-5 p-0.5"
           >
             {isExpanded ? (
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             ) : (
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
             )}
-          </button>
+          </Button>
         ) : (
           <div className="w-5" />
         )}

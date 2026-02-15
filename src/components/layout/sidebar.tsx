@@ -125,9 +125,11 @@ function SidebarSection({ section, collapsed, pathname, onNavigate }: SidebarSec
 
   return (
     <div className="space-y-1 mb-6">
-      <button
+      <Button
+        type="button"
+        variant="ghost"
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-primary transition-colors group"
+        className="h-auto w-full justify-between px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 hover:text-primary transition-colors group"
       >
         {section.title}
         <motion.div
@@ -136,7 +138,7 @@ function SidebarSection({ section, collapsed, pathname, onNavigate }: SidebarSec
         >
           <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
         </motion.div>
-      </button>
+      </Button>
       <AnimatePresence initial={false}>
         {expanded && (
           <motion.div
@@ -170,10 +172,12 @@ function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
   if (hasSubpages) {
     return (
       <div className="space-y-0.5">
-        <button
+        <Button
+          type="button"
+          variant="ghost"
           onClick={() => setExpanded(!expanded)}
           className={cn(
-            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
+            "h-auto w-full justify-start items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
             isActive
               ? "bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -186,7 +190,7 @@ function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
           >
             <ChevronDown className="h-3 w-3 shrink-0 opacity-40" />
           </motion.div>
-        </button>
+        </Button>
         <AnimatePresence initial={false}>
           {expanded && (
             <motion.div

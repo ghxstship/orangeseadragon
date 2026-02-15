@@ -1,4 +1,5 @@
 import { FieldRenderProps } from './index';
+import { Switch } from '@/components/ui/switch';
 
 export function SwitchField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
   return (
@@ -11,25 +12,12 @@ export function SwitchField({ field, fieldKey, value, onChange, error, disabled 
           <p className="text-xs text-muted-foreground">{field.helpText}</p>
         )}
       </div>
-      <button
-        type="button"
-        role="switch"
-        aria-checked={Boolean(value)}
-        onClick={() => onChange(!value)}
+      <Switch
+        id={fieldKey}
+        checked={Boolean(value)}
+        onCheckedChange={(checked) => onChange(checked)}
         disabled={disabled}
-        className={`
-          relative inline-flex h-6 w-11 items-center rounded-full transition-colors
-          ${Boolean(value) ? 'bg-primary' : 'bg-muted'}
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-        `}
-      >
-        <span
-          className={`
-            inline-block h-4 w-4 transform rounded-full bg-white transition-transform
-            ${Boolean(value) ? 'translate-x-6' : 'translate-x-1'}
-          `}
-        />
-      </button>
+      />
       {error && (
         <p className="text-xs text-destructive mt-1">{error}</p>
       )}

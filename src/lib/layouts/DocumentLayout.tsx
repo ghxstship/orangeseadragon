@@ -59,6 +59,13 @@ export interface DocumentLayoutProps {
   children: React.ReactNode;
 }
 
+const getCollaboratorBorderStyle = (color?: string): React.CSSProperties | undefined =>
+  color ? { borderColor: color } : undefined;
+
+const getDocumentSidebarWidthStyle = (width?: number): React.CSSProperties => ({
+  width: width || 'var(--sidebar-width-md, 300px)',
+});
+
 export function DocumentLayout({
   config,
   loading = false,
@@ -148,7 +155,7 @@ export function DocumentLayout({
                   <Avatar
                     key={collaborator.id}
                     className="h-7 w-7 border-2 border-background"
-                    style={{ borderColor: collaborator.color }}
+                    style={getCollaboratorBorderStyle(collaborator.color)}
                   >
                     <AvatarImage src={collaborator.avatar} />
                     <AvatarFallback className="text-xs">
@@ -204,22 +211,25 @@ export function DocumentLayout({
         {config.sidebar?.enabled && sidebarOpen && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 flex flex-col"
-            style={{ width: config.sidebar.width || 'var(--sidebar-width-md, 300px)' }}
+            style={getDocumentSidebarWidthStyle(config.sidebar.width)}
           >
             {/* Sidebar Tabs */}
             <div className="flex border-b">
               {sidebarSections.map((section) => (
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
                   key={section}
                   onClick={() => onSidebarSectionChange?.(section)}
                   className={cn(
-                    "flex-1 flex items-center justify-center gap-2 py-2 text-sm transition-colors",
+                    "flex-1 h-auto rounded-none flex items-center justify-center gap-2 py-2 text-sm transition-colors",
                     "hover:bg-accent",
                     activeSidebarSection === section && "border-b-2 border-primary font-medium"
                   )}
                 >
                   {sectionIcons[section]}
-                </button>
+                  <span className="sr-only">{section}</span>
+                </Button>
               ))}
             </div>
 

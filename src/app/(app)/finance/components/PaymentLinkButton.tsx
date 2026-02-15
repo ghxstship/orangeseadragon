@@ -186,7 +186,7 @@ export function PaymentLinkButton({
                       onClick={copyToClipboard}
                     >
                       {copied ? (
-                        <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                        <Check className="h-4 w-4 text-semantic-success" />
                       ) : (
                         <Copy className="h-4 w-4" />
                       )}

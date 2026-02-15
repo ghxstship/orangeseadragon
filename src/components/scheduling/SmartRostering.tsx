@@ -27,6 +27,11 @@ interface Resource {
 
 const HOURS = Array.from({ length: 16 }, (_, i) => i + 6); // 6am to 10pm
 
+const getShiftPositionStyle = (startOffsetPercent: number, widthPercent: number): React.CSSProperties => ({
+    left: `${startOffsetPercent}%`,
+    width: `${widthPercent}%`,
+});
+
 export function SmartRostering() {
     const [shifts, setShifts] = useState<Shift[]>([]);
     const [resources, setResources] = useState<Resource[]>([]);
@@ -173,10 +178,7 @@ export function SmartRostering() {
                                                             ? "bg-destructive/20 border-destructive/50 text-destructive/80 shadow-[0_0_15px_-3px_hsl(var(--destructive)/0.4)]"
                                                             : "bg-semantic-indigo/30 border-semantic-indigo/40 text-semantic-indigo"
                                                     )}
-                                                    style={{
-                                                        left: `${startOffsetPercent}%`,
-                                                        width: `${widthPercent}%`
-                                                    }}
+                                                    style={getShiftPositionStyle(startOffsetPercent, widthPercent)}
                                                 >
                                                     <Clock className="w-3 h-3 mr-1 opacity-70" />
                                                     <span className="truncate font-medium">{shift.label}</span>

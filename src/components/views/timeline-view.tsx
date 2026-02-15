@@ -78,6 +78,23 @@ const _ROW_HEIGHT = 48;
 const _HEADER_HEIGHT = 60;
 const _GROUP_WIDTH = 200;
 
+const getGroupDotStyle = (color: string): React.CSSProperties => ({
+  backgroundColor: color,
+  color,
+});
+
+const getTimelineItemStyle = (
+  position: { left: number; width: number },
+  color?: string
+): React.CSSProperties => ({
+  left: position.left + 4,
+  width: position.width - 8,
+  backgroundColor: color ? `${color}20` : undefined,
+  color: color || undefined,
+  borderColor: color ? `${color}40` : undefined,
+  boxShadow: color ? `0 4px 20px -5px ${color}40` : undefined,
+});
+
 export function TimelineView({
   items,
   groups = [],
@@ -339,7 +356,7 @@ export function TimelineView({
                       {group.color && (
                         <div
                           className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]"
-                          style={{ backgroundColor: group.color, color: group.color }}
+                          style={getGroupDotStyle(group.color)}
                         />
                       )}
                       <span className="truncate tracking-tight">{group.title}</span>
@@ -422,14 +439,7 @@ export function TimelineView({
                                     "glass-morphism transition-all duration-300",
                                     !item.color && "bg-primary/20 text-primary-foreground border-primary/30"
                                   )}
-                                  style={{
-                                    left: position.left + 4,
-                                    width: position.width - 8,
-                                    backgroundColor: item.color ? `${item.color}20` : undefined,
-                                    color: item.color || undefined,
-                                    borderColor: item.color ? `${item.color}40` : undefined,
-                                    boxShadow: item.color ? `0 4px 20px -5px ${item.color}40` : undefined
-                                  }}
+                                  style={getTimelineItemStyle(position, item.color)}
                                   onClick={() => onItemClick?.(item)}
                                 >
                                   {item.title}

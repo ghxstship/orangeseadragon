@@ -6,6 +6,7 @@ import { CrudList } from '@/lib/crud/components/CrudList';
 import { leaveRequestSchema } from '@/lib/schemas/leaveRequest';
 import { LeaveCalendar } from '@/components/people/LeaveCalendar';
 import { LeaveRequestForm } from '@/components/people/LeaveRequestForm';
+import { PageShell } from '@/components/common/page-shell';
 import {
   Dialog,
   DialogContent,
@@ -117,15 +118,12 @@ export default function LeavePage() {
   }, [requests]);
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Leave Management</h2>
-          <p className="text-muted-foreground">Request time off and view team availability</p>
-        </div>
-      </header>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-auto px-6 pt-6">
+    <PageShell
+      title="Leave Management"
+      description="Request time off and view team availability"
+      contentPadding={false}
+    >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-auto px-4 pt-6 sm:px-6">
         <TabsList>
           <TabsTrigger value="calendar">Calendar View</TabsTrigger>
           <TabsTrigger value="requests">All Requests</TabsTrigger>
@@ -177,6 +175,6 @@ export default function LeavePage() {
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </PageShell>
   );
 }

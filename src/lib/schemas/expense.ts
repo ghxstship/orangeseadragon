@@ -38,5 +38,18 @@ export const expenseSchema = defineSchema({
   },
 
 
+  stateMachine: {
+    field: 'status',
+    initial: 'pending',
+    terminal: ['reimbursed'],
+    transitions: [
+      { from: 'pending', to: 'submitted', label: 'Submit' },
+      { from: 'submitted', to: 'approved', label: 'Approve', roles: ['admin', 'finance_manager'] },
+      { from: 'submitted', to: 'rejected', label: 'Reject', roles: ['admin', 'finance_manager'] },
+      { from: 'approved', to: 'reimbursed', label: 'Reimburse', roles: ['admin', 'finance_manager'] },
+      { from: 'rejected', to: 'pending', label: 'Revise' },
+    ],
+  },
+
   permissions: { create: true, read: true, update: true, delete: true },
 });

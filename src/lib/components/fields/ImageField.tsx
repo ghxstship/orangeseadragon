@@ -1,5 +1,6 @@
 import React from 'react';
 import { FieldRenderProps } from './index';
+import { Input } from '@/components/ui/input';
 
 /**
  * Image Field Component
@@ -27,13 +28,12 @@ export function ImageField({ field, fieldKey, value, onChange, error, disabled }
           />
         </div>
       )}
-      <input
+      <Input
         type="file"
         accept="image/*"
         onChange={handleChange}
         disabled={disabled}
-        className={`w-full px-3 py-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring ${error ? 'border-destructive' : 'border-input'
-          } ${disabled ? 'bg-muted' : ''}`}
+        className={error ? 'border-destructive' : ''}
       />
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
