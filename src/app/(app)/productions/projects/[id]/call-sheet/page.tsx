@@ -132,9 +132,17 @@ export default function CallSheetPage() {
   // ── Handlers ──
   const handleSave = async () => {
     setSaving(true);
-    // TODO: Wire to API — POST /api/projects/{projectId}/call-sheet
-    await new Promise(r => setTimeout(r, 500));
-    setSaving(false);
+    try {
+      await fetch(`/api/projects/${projectId}/call-sheet`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productionInfo, contacts, departmentCalls, schedule }),
+      });
+    } catch (err) {
+      console.error('Failed to save call sheet:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const addContact = () => {
