@@ -162,18 +162,6 @@ export const sidebarNavigation: NavSection[] = [
         description: "Production schedule - installation & restoration",
       },
       {
-        title: "Compliance",
-        path: "/productions/compliance",
-        icon: Shield,
-        description: "Permits, licenses & certificates",
-        subpages: [
-          { title: "Permits", path: "/productions/compliance/permits" },
-          { title: "Licenses", path: "/productions/compliance/licenses" },
-          { title: "Certificates", path: "/productions/compliance/certificates" },
-          { title: "Insurance", path: "/productions/compliance/insurance" },
-        ],
-      },
-      {
         title: "Advancing",
         path: "/productions/advancing",
         icon: ClipboardCheck,
@@ -184,6 +172,18 @@ export const sidebarNavigation: NavSection[] = [
           { title: "Approvals", path: "/productions/advancing/approvals" },
           { title: "Assignments", path: "/productions/advancing/assignments" },
           { title: "Activity", path: "/productions/advancing/activity" },
+        ],
+      },
+      {
+        title: "Compliance",
+        path: "/productions/compliance",
+        icon: Shield,
+        description: "Permits, licenses & certificates",
+        subpages: [
+          { title: "Permits", path: "/productions/compliance/permits" },
+          { title: "Licenses", path: "/productions/compliance/licenses" },
+          { title: "Certificates", path: "/productions/compliance/certificates" },
+          { title: "Insurance", path: "/productions/compliance/insurance" },
         ],
       },
     ],

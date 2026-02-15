@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
 import { PageShell } from "@/components/common/page-shell";
-import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
+import { PageErrorState } from "@/components/common/contextual-empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -285,15 +285,12 @@ export default function MyTimesheetPage() {
         title="My Timesheet"
         description="Weekly time entry and tracking"
       >
-        <div className="flex h-full items-center justify-center p-8">
-          <ContextualEmptyState
-            type="error"
-            title="Failed to load timesheet"
-            description={error.message}
-            actionLabel="Try again"
-            onAction={() => refetch()}
-          />
-        </div>
+        <PageErrorState
+          title="Failed to load timesheet"
+          description={error.message}
+          error={error}
+          onRetry={() => refetch()}
+        />
       </PageShell>
     );
   }

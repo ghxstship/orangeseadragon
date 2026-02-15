@@ -87,6 +87,11 @@ export function TopBar() {
     return user?.user_metadata?.full_name || user?.email?.split("@")[0] || "User";
   };
 
+  const userAvatarUrl =
+    typeof user?.user_metadata?.avatar_url === "string" && user.user_metadata.avatar_url.length > 0
+      ? user.user_metadata.avatar_url
+      : undefined;
+
   const formatTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -434,10 +439,7 @@ export function TopBar() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2 pl-2 pr-3">
               <Avatar className="h-7 w-7">
-                <AvatarImage
-                  src={user?.user_metadata?.avatar_url || "/avatars/user.png"}
-                  alt={getUserDisplayName()}
-                />
+                {userAvatarUrl ? <AvatarImage src={userAvatarUrl} alt={getUserDisplayName()} /> : null}
                 <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               <span className="hidden text-sm font-medium md:inline-block">

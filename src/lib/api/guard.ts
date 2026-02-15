@@ -54,6 +54,30 @@ export interface OrgMemberError {
   error: ReturnType<typeof unauthorized> | ReturnType<typeof forbidden>;
 }
 
+const ROLE_PRIORITY: Record<string, number> = {
+  owner: 100,
+  admin: 90,
+  manager: 70,
+  member: 50,
+  contractor: 40,
+  client: 20,
+  vendor: 10,
+};
+
+function normalizeRoleName(value: string | null | undefined): string | null {
+  if (!value) return null;
+  return value.trim().toLowerCase().replace(/\s+/g, "_");
+}
+
+function getMetadataOrganizationId(user: User): string | null {
+  const metadataOrgId = (
+    user.user_metadata as { organization_id?: string } | null | undefined
+  )?.organization_id;
+  return typeof metadataOrgId === "string" && metadataOrgId.length > 0
+    ? metadataOrgId
+    : null;
+}
+
 // ============================================================================
 // AUTH GUARD
 // ============================================================================
@@ -94,6 +118,8 @@ export async function requireOrgMember(
   if (auth.error) return auth;
 
   const { user, supabase } = auth;
+  const metadataOrgId = getMetadataOrganizationId(user);
+  const resolvedOrgId = orgId ?? metadataOrgId;
 
   let query = supabase
     .from("organization_members")
@@ -103,32 +129,87 @@ export async function requireOrgMember(
       organization_id,
       role_id,
       status,
-      role:roles(name)
+      role:roles(name, slug)
     `
     )
     .eq("user_id", user.id)
     .eq("status", "active");
 
-  if (orgId) {
-    query = query.eq("organization_id", orgId);
+  if (resolvedOrgId) {
+    query = query.eq("organization_id", resolvedOrgId);
   }
 
   const { data: member, error: memberError } = await query.maybeSingle();
 
-  if (memberError || !member) {
-    return { error: forbidden("Not a member of this organization") };
+  if (member) {
+    const role = member.role as { name?: string; slug?: string } | null;
+    const normalizedRoleName =
+      normalizeRoleName(role?.slug) ?? normalizeRoleName(role?.name);
+
+    return {
+      user,
+      supabase,
+      membership: {
+        id: member.id,
+        organization_id: member.organization_id,
+        role_id: member.role_id,
+        role_name: normalizedRoleName,
+        status: member.status,
+      },
+    };
+  }
+
+  let roleQuery = supabase
+    .from("user_roles")
+    .select("id, organization_id, role_slug, created_at")
+    .eq("user_id", user.id)
+    .eq("is_active", true);
+
+  if (resolvedOrgId) {
+    roleQuery = roleQuery.eq("organization_id", resolvedOrgId);
+  }
+
+  const { data: userRoles, error: userRoleError } = await roleQuery.order("created_at", {
+    ascending: false,
+  });
+
+  if (userRoles && userRoles.length > 0) {
+    const sortedRoles = [...userRoles].sort((a, b) => {
+      const aPriority = ROLE_PRIORITY[normalizeRoleName(a.role_slug) || ""] ?? 0;
+      const bPriority = ROLE_PRIORITY[normalizeRoleName(b.role_slug) || ""] ?? 0;
+      return bPriority - aPriority;
+    });
+    const primaryRole = sortedRoles[0];
+
+    return {
+      user,
+      supabase,
+      membership: {
+        id: primaryRole.id,
+        organization_id: primaryRole.organization_id,
+        role_id: null,
+        role_name: normalizeRoleName(primaryRole.role_slug),
+        status: "active",
+      },
+    };
+  }
+
+  if (memberError) {
+    console.warn("[requireOrgMember] organization_members lookup failed", {
+      code: memberError.code,
+      orgId: resolvedOrgId,
+    });
+  }
+
+  if (userRoleError) {
+    console.warn("[requireOrgMember] user_roles fallback lookup failed", {
+      code: userRoleError.code,
+      orgId: resolvedOrgId,
+    });
   }
 
   return {
-    user,
-    supabase,
-    membership: {
-      id: member.id,
-      organization_id: member.organization_id,
-      role_id: member.role_id,
-      role_name: (member.role as { name?: string } | null)?.name ?? null,
-      status: member.status,
-    },
+    error: forbidden("Not a member of this organization"),
   };
 }
 

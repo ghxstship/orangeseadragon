@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { DashboardGrid, DashboardGridSkeleton } from "@/components/dashboard/DashboardGrid";
 import { DashboardLayout as DashboardLayoutType, defaultDashboardLayout } from "@/lib/dashboard/widget-registry";
 import { DashboardLayout } from "@/lib/layouts/DashboardLayout";
-import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
+import { PageErrorState } from "@/components/common/contextual-empty-state";
 import { useUser } from "@/hooks/use-supabase";
 import { useProjects } from "@/hooks/use-projects";
 import { useTasks } from "@/hooks/use-tasks";
@@ -283,12 +283,11 @@ export default function DashboardPage() {
         onRefresh={handleRefresh}
       >
         <div className="col-span-full">
-          <ContextualEmptyState
-            type="error"
+          <PageErrorState
             title="Failed to load dashboard"
             description={getErrorMessage(error, "Failed to load dashboard")}
-            actionLabel="Try again"
-            onAction={handleRefresh}
+            error={error}
+            onRetry={handleRefresh}
           />
         </div>
       </DashboardLayout>

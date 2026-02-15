@@ -4,8 +4,8 @@ import React from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle, Inbox, Plus } from 'lucide-react';
+import { Loader2, Inbox, Plus } from 'lucide-react';
+import { PageErrorState } from '@/components/common/contextual-empty-state';
 import { getErrorMessage } from '@/lib/api/error-message';
 import { useTranslation } from '@/lib/i18n';
 
@@ -113,25 +113,12 @@ export function ErrorState({
   className
 }: ErrorStateProps) {
   return (
-    <Alert className={className}>
-      <AlertCircle className="h-4 w-4" />
-      <AlertDescription>
-        <div className="space-y-2">
-          <p className="font-medium">{title}</p>
-          <p className="text-sm">{description}</p>
-          {retry && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={retry}
-              className="mt-2"
-            >
-              Try Again
-            </Button>
-          )}
-        </div>
-      </AlertDescription>
-    </Alert>
+    <PageErrorState
+      title={title}
+      description={description}
+      onRetry={retry}
+      className={className}
+    />
   );
 }
 

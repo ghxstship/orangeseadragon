@@ -12,7 +12,9 @@ import { NotificationCenter } from "@/components/common/notification-center";
 import { QuickAddTask } from "@/components/common/quick-add-task";
 import { CopilotDrawer, CopilotTrigger } from "@/components/common/copilot-drawer";
 import { useUIStore } from "@/stores/ui-store";
+import { useAppStore } from "@/stores/app-store";
 import { notificationService } from "@/lib/notifications/notificationService";
+import { UI_DEFAULTS } from "@/lib/config";
 import type { LayoutType } from "@/lib/layouts/types";
 
 interface AppShellProps {
@@ -34,7 +36,8 @@ export const useLayout = () => React.useContext(LayoutContext);
 export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const sidebarCollapsed = useAppStore((state) => state.isCollapsed);
+  const toggleSidebarCollapsed = useAppStore((state) => state.toggleCollapsed);
   const [layoutType, setLayoutType] = React.useState<LayoutType | undefined>();
 
   const contextValue = React.useMemo(() => ({
@@ -99,7 +102,7 @@ export function AppShell({ children }: AppShellProps) {
         {!useFullWidth && (
           <Sidebar
             collapsed={sidebarCollapsed}
-            onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+            onToggle={toggleSidebarCollapsed}
           />
         )}
 
@@ -107,10 +110,13 @@ export function AppShell({ children }: AppShellProps) {
           id="main-content"
           role="main"
           tabIndex={-1}
+          style={{
+            "--app-sidebar-offset": `${sidebarCollapsed ? UI_DEFAULTS.SIDEBAR_COLLAPSED_WIDTH : UI_DEFAULTS.SIDEBAR_WIDTH}px`,
+          } as React.CSSProperties}
           className={cn(
             "min-h-[calc(100vh-3.5rem)] pt-14 transition-all duration-300 focus:outline-none",
             // Traditional layout with sidebar
-            !useFullWidth && (sidebarCollapsed ? "md:pl-16" : "md:pl-64"),
+            !useFullWidth && "md:pl-[var(--app-sidebar-offset)]",
             // Full-width layout for new system
             useFullWidth && "pl-0"
           )}

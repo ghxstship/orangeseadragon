@@ -31,7 +31,7 @@ type PolicyRule = {
 const POLICY_RULES: Record<PolicyAction, PolicyRule[]> = {
   "entity.read": [
     {
-      roles: ["admin", "manager", "staff", "viewer"],
+      roles: ["owner", "admin", "manager", "member", "staff", "viewer", "contractor", "client", "vendor"],
       reason: "Role is permitted to view entities",
     },
     {
@@ -41,7 +41,7 @@ const POLICY_RULES: Record<PolicyAction, PolicyRule[]> = {
   ],
   "entity.write": [
     {
-      roles: ["admin", "manager", "staff"],
+      roles: ["owner", "admin", "manager", "member", "staff"],
       reason: "Role is permitted to modify entities",
     },
     {
@@ -51,25 +51,25 @@ const POLICY_RULES: Record<PolicyAction, PolicyRule[]> = {
   ],
   "entity.delete": [
     {
-      roles: ["admin", "manager"],
+      roles: ["owner", "admin", "manager"],
       reason: "Delete operations require elevated privileges",
     },
   ],
   "finance.approve": [
     {
-      roles: ["admin", "finance_manager"],
+      roles: ["owner", "admin", "finance_manager"],
       reason: "Finance approvals are restricted to privileged finance roles",
     },
   ],
   "audit.read": [
     {
-      roles: ["admin", "security_auditor", "compliance_officer"],
+      roles: ["owner", "admin", "security_auditor", "compliance_officer"],
       reason: "Audit access restricted to compliance/security administrators",
     },
   ],
   "settings.manage": [
     {
-      roles: ["admin"],
+      roles: ["owner", "admin"],
       reason: "Only tenant admins can manage settings",
     },
   ],

@@ -15,20 +15,48 @@ export async function GET(request: NextRequest) {
   const status = request.nextUrl.searchParams.get('status');
 
   try {
+    const pageEnd = offset + limit - 1;
+
     let query = supabase
-      .from('inbox_items')
+      .from('notifications')
       .select('*', { count: 'exact' })
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .range(offset, pageEnd);
 
-    if (status) query = query.eq('status', status);
+    if (status === 'read') {
+      query = query.eq('is_read', true);
+    } else if (status === 'unread') {
+      query = query.eq('is_read', false);
+    }
 
     const { data, error, count } = await query;
-    if (error) return supabaseError(error);
+    if (error) {
+      if (error.code === '42P01') {
+        return apiSuccess([], { total: 0, limit, offset, hasMore: false });
+      }
+      return supabaseError(error);
+    }
+
+    const notifications = (data ?? []).map((item) => {
+      const payload = item.data as Record<string, unknown> | null;
+      const actionUrl = payload?.actionUrl || payload?.action_url;
+      const actionLabel = payload?.actionLabel || payload?.action_label;
+
+      return {
+        id: item.id,
+        type: item.type,
+        title: item.title,
+        message: item.message ?? '',
+        timestamp: item.created_at,
+        read: item.is_read ?? false,
+        action_url: typeof actionUrl === 'string' ? actionUrl : undefined,
+        action_label: typeof actionLabel === 'string' ? actionLabel : undefined,
+      };
+    });
 
     return apiSuccess(
-      data || [],
+      notifications,
       { total: count || 0, limit, offset, hasMore: (count || 0) > offset + limit }
     );
   } catch (err) {

@@ -9,9 +9,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toolbar } from "@/components/views/toolbar";
 import { DataView } from "@/components/views/data-view";
-import { PageHeader } from "@/components/common/page-header";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
-import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
+import { ContextualEmptyState, PageErrorState } from "@/components/common/contextual-empty-state";
 import { RecordContextMenu } from "@/components/common/record-context-menu";
 import { useDataView, useFilteredData } from "@/lib/data-view-engine/hooks/use-data-view";
 import type { ViewType } from "@/lib/data-view-engine/hooks/use-data-view";
@@ -182,23 +181,6 @@ export function ListLayout<T extends object>({
     [error, t]
   );
 
-  if (error) {
-    return (
-      <div className="flex flex-col h-full bg-background">
-        <PageHeader title={schema.identity.namePlural} />
-        <div className="flex-1 flex items-center justify-center p-8">
-          <ContextualEmptyState
-            type="error"
-            title={errorTitle}
-            description={errorDescription}
-            actionLabel={onRefresh ? t('common.refresh') : undefined}
-            onAction={onRefresh}
-          />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
@@ -293,7 +275,14 @@ export function ListLayout<T extends object>({
         />
 
         {/* Data View or Children */}
-        {children ? (
+        {error ? (
+          <PageErrorState
+            title={errorTitle}
+            description={errorDescription}
+            error={error}
+            onRetry={onRefresh}
+          />
+        ) : children ? (
           children
         ) : loading ? (
           <div className="space-y-4">

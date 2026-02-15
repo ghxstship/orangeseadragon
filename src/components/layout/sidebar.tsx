@@ -9,6 +9,14 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Sheet,
   SheetContent,
   SheetTitle,
@@ -19,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { UI_DEFAULTS } from "@/lib/config";
 import { sidebarNavigation, type NavSection, type NavItem } from "@/config/navigation";
 import { useUIStore } from "@/stores/ui-store";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -28,32 +37,44 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
+const SIDEBAR_WIDTH = UI_DEFAULTS.SIDEBAR_WIDTH;
+const SIDEBAR_COLLAPSED_WIDTH = UI_DEFAULTS.SIDEBAR_COLLAPSED_WIDTH;
+
 function SidebarContent({ collapsed, onToggle, onNavigate }: SidebarProps & { onNavigate?: () => void }) {
   const pathname = usePathname();
+  const toggleLabel = collapsed ? "Expand sidebar" : "Collapse sidebar";
+
+  const navigation = (
+    <nav className="space-y-1 px-2">
+      {sidebarNavigation.map((section) => (
+        <SidebarSection
+          key={section.title}
+          section={section}
+          collapsed={collapsed}
+          pathname={pathname}
+          onNavigate={onNavigate}
+        />
+      ))}
+    </nav>
+  );
 
   return (
     <TooltipProvider delayDuration={0}>
       <>
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent pointer-events-none" />
-        <ScrollArea className="flex-1 py-2">
-          <nav className="space-y-1 px-2">
-            {sidebarNavigation.map((section) => (
-              <SidebarSection
-                key={section.title}
-                section={section}
-                collapsed={collapsed}
-                pathname={pathname}
-                onNavigate={onNavigate}
-              />
-            ))}
-          </nav>
-        </ScrollArea>
+        {collapsed ? (
+          <div className="flex-1 overflow-y-auto py-2">{navigation}</div>
+        ) : (
+          <ScrollArea className="flex-1 py-2">{navigation}</ScrollArea>
+        )}
         <div className="border-t border-border p-3">
           <Button
             variant="ghost"
             size="sm"
             className="w-full justify-center h-10 hover:bg-muted transition-colors rounded-xl"
             onClick={onToggle}
+            aria-label={toggleLabel}
+            title={toggleLabel}
           >
             {collapsed ? (
               <PanelLeft className="h-4 w-4 opacity-70" />
@@ -73,10 +94,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       role="navigation"
       aria-label="Main navigation"
       initial={false}
-      animate={{ width: collapsed ? 72 : 280 }}
+      animate={{ width: collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH }}
+      style={{ width: collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH }}
       className={cn(
-        "fixed left-0 top-14 z-30 hidden md:flex h-[calc(100vh-3.5rem)] flex-col glass-panel transition-all duration-500 overflow-hidden border-r border-white/10",
-        collapsed ? "w-[72px]" : "w-[280px]"
+        "fixed left-0 top-14 z-30 hidden md:flex h-[calc(100vh-3.5rem)] flex-col glass-panel transition-all duration-500 overflow-hidden border-r border-white/10"
       )}
     >
       <SidebarContent collapsed={collapsed} onToggle={onToggle} />
@@ -115,7 +136,8 @@ function SidebarSection({ section, collapsed, pathname, onNavigate }: SidebarSec
 
   if (collapsed) {
     return (
-      <div className="space-y-1">
+      <div className="space-y-1" role="group" aria-label={section.title}>
+        <span className="sr-only">{section.title}</span>
         {section.items.map((item) => (
           <SidebarItemCollapsed key={item.path} item={item} pathname={pathname} onNavigate={onNavigate} />
         ))}
@@ -249,6 +271,58 @@ function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
 function SidebarItemCollapsed({ item, pathname, onNavigate }: SidebarItemProps) {
   const isActive = pathname === item.path || pathname.startsWith(item.path + "/");
   const Icon = item.icon;
+  const hasSubpages = Boolean(item.subpages?.length);
+
+  const triggerClassName = cn(
+    "flex h-10 w-10 items-center justify-center rounded-md transition-colors mx-auto",
+    isActive
+      ? "bg-primary/10 text-primary"
+      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+  );
+
+  if (hasSubpages) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            className={triggerClassName}
+            aria-label={`${item.title} navigation`}
+            title={item.title}
+          >
+            <Icon className="h-5 w-5" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="right" align="start" className="w-56">
+          <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link
+              href={item.path}
+              onClick={onNavigate}
+              className={cn(pathname === item.path && "text-primary")}
+            >
+              {item.title}
+            </Link>
+          </DropdownMenuItem>
+          {item.subpages!.map((subpage) => {
+            const isSubActive = pathname === subpage.path;
+            return (
+              <DropdownMenuItem key={subpage.path} asChild>
+                <Link
+                  href={subpage.path}
+                  onClick={onNavigate}
+                  className={cn(isSubActive && "text-primary")}
+                >
+                  {subpage.title}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
 
   return (
     <Tooltip>
@@ -256,12 +330,9 @@ function SidebarItemCollapsed({ item, pathname, onNavigate }: SidebarItemProps) 
         <Link
           href={item.path}
           onClick={onNavigate}
-          className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-md transition-colors mx-auto",
-            isActive
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-          )}
+          className={triggerClassName}
+          aria-label={item.title}
+          title={item.title}
         >
           <Icon className="h-5 w-5" />
         </Link>

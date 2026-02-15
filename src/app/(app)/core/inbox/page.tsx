@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/sheet';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import { PageShell } from '@/components/common/page-shell';
-import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+import { ContextualEmptyState, PageErrorState } from '@/components/common/contextual-empty-state';
 import { InboxItemRow } from '@/components/common/inbox-item-row';
 import { InboxItemDetail } from '@/components/common/inbox-item-detail';
 import { cn } from '@/lib/utils';
@@ -371,15 +371,11 @@ export default function InboxPage() {
         title="Inbox"
         description="Notifications, approvals & action items"
       >
-        <div className="flex h-full items-center justify-center p-8">
-          <ContextualEmptyState
-            type="error"
-            title="Failed to load notifications"
-            description={error}
-            actionLabel="Try again"
-            onAction={fetchInboxItems}
-          />
-        </div>
+        <PageErrorState
+          title="Failed to load notifications"
+          description={error}
+          onRetry={fetchInboxItems}
+        />
       </PageShell>
     );
   }

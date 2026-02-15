@@ -32,6 +32,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { getErrorMessage } from "@/lib/api/error-message";
+import { useTranslation } from "@/lib/i18n";
 
 type EmptyStateType =
   | "no-data"
@@ -156,6 +158,44 @@ export function ContextualEmptyState({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+interface PageErrorStateProps {
+  title?: string;
+  description?: string;
+  error?: unknown;
+  onRetry?: () => void;
+  className?: string;
+}
+
+export function PageErrorState({
+  title,
+  description,
+  error,
+  onRetry,
+  className,
+}: PageErrorStateProps) {
+  const { t } = useTranslation();
+
+  const resolvedTitle = title || t("errors.loadFailed");
+  const resolvedDescription = description || getErrorMessage(error, t("errors.tryAgain"));
+
+  return (
+    <div
+      className={cn(
+        "flex min-h-[22rem] items-center justify-center rounded-lg border border-border/60 bg-muted/20 p-6",
+        className
+      )}
+    >
+      <ContextualEmptyState
+        type="error"
+        title={resolvedTitle}
+        description={resolvedDescription}
+        actionLabel={onRetry ? t("common.refresh") : undefined}
+        onAction={onRetry}
+      />
     </div>
   );
 }

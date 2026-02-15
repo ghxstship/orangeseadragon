@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMyTasks, useCompleteTask } from "@/hooks/use-my-tasks";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
 import { PageShell } from "@/components/common/page-shell";
-import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
+import { ContextualEmptyState, PageErrorState } from "@/components/common/contextual-empty-state";
 import { Toolbar } from "@/components/views/toolbar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -220,15 +220,12 @@ export default function MyTasksPage() {
         title="My Tasks"
         description="Your personal task view across all projects"
       >
-        <div className="flex h-full items-center justify-center p-8">
-          <ContextualEmptyState
-            type="error"
-            title="Failed to load tasks"
-            description={error.message || "Failed to load tasks"}
-            actionLabel="Try again"
-            onAction={() => refetch()}
-          />
-        </div>
+        <PageErrorState
+          title="Failed to load tasks"
+          description={error.message || "Failed to load tasks"}
+          error={error}
+          onRetry={() => refetch()}
+        />
       </PageShell>
     );
   }

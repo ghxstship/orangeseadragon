@@ -202,8 +202,8 @@ class NotificationService {
 
     const options: NotificationOptions = {
       body: payload.body,
-      icon: payload.icon || '/icons/notification-icon.png',
-      badge: payload.badge || '/icons/badge-icon.png',
+      icon: payload.icon || '/favicon.ico',
+      badge: payload.badge || '/favicon.ico',
       tag: payload.tag || payload.id,
       data: payload.data,
       requireInteraction: payload.requireInteraction ?? payload.type === 'incident_critical',

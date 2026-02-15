@@ -5,7 +5,7 @@
  * for the Operations module PWA.
  */
 
-const CACHE_NAME = 'atlvs-operations-v1';
+const CACHE_NAME = 'atlvs-operations-v2';
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache for offline use
@@ -13,8 +13,7 @@ const STATIC_ASSETS = [
   '/',
   '/offline.html',
   '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
+  '/favicon.ico',
 ];
 
 // Install event - cache static assets
@@ -97,8 +96,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: payload.body,
-    icon: payload.icon || '/icons/notification-icon.png',
-    badge: payload.badge || '/icons/badge-icon.png',
+    icon: payload.icon || '/favicon.ico',
+    badge: payload.badge || '/favicon.ico',
     tag: payload.tag || 'atlvs-notification',
     data: payload.data || {},
     requireInteraction: payload.requireInteraction || false,

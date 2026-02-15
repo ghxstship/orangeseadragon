@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
-import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+import { ContextualEmptyState, PageErrorState } from '@/components/common/contextual-empty-state';
 import { LiveClockWidget } from '@/components/productions/widgets/LiveClockWidget';
 import { ActiveProductionCard } from '@/components/productions/widgets/ActiveProductionCard';
 import { WeatherWidget } from '@/components/productions/widgets/WeatherWidget';
@@ -86,15 +86,12 @@ export default function ProductionsPage() {
         title="Productions"
         description="Live Operations & Mission Control"
       >
-        <div className="flex h-full items-center justify-center p-8">
-          <ContextualEmptyState
-            type="error"
-            title="Failed to load productions"
-            description={getErrorMessage(eventsError, 'Failed to load productions')}
-            actionLabel="Try again"
-            onAction={() => refetchEvents()}
-          />
-        </div>
+        <PageErrorState
+          title="Failed to load productions"
+          description={getErrorMessage(eventsError, 'Failed to load productions')}
+          error={eventsError}
+          onRetry={() => refetchEvents()}
+        />
       </PageShell>
     );
   }
