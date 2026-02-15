@@ -110,7 +110,13 @@ export default function PlatformSettingsPage() {
       title="Platform Settings"
       description="Customize your app experience"
       tabs={platformSettingsTabs}
-      onSave={async () => { /* TODO: implement save settings */ }}
+      onSave={async (values) => {
+        await fetch('/api/settings/platform', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values),
+        });
+      }}
     />
   );
 }

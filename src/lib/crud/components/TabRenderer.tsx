@@ -639,7 +639,28 @@ function OverviewBlock({ block, record }: { block: OverviewBlockDefinition; reco
         </div>
       )}
 
-      {/* TODO: Implement other block types */}
+      {block.content.type === 'stats' && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {block.content.stats.map((statKey: string) => (
+            <div key={statKey} className="text-center p-3 rounded-md bg-muted/30">
+              <div className="text-xl font-bold text-foreground">{record[statKey] ?? '—'}</div>
+              <div className="text-xs text-muted-foreground mt-1">{statKey}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {block.content.type === 'chart' && (
+        <div className="flex items-center justify-center p-8 text-muted-foreground text-sm">
+          Chart: {block.content.chartType}
+        </div>
+      )}
+
+      {block.content.type === 'custom' && (
+        <div className="flex items-center justify-center p-8 text-muted-foreground text-sm">
+          Custom component: {block.content.component}
+        </div>
+      )}
     </div>
   );
 }

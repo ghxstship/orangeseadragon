@@ -56,10 +56,19 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     }
   }, [pathname, progressHook.isLoaded, currentStepKey, progressHook]);
 
+  const syncStepToServer = (stepSlug: string, action: 'complete' | 'skip') => {
+    fetch('/api/onboarding/step', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stepSlug, action }),
+    }).catch(() => {});
+  };
+
   const nextStep = () => {
     const nextIndex = currentStepIndex + 1;
     if (nextIndex < ONBOARDING_STEPS.length) {
       progressHook.completeStep(currentStepKey);
+      syncStepToServer(currentStepKey, 'complete');
       router.push(ONBOARDING_STEPS[nextIndex].path);
     }
   };
@@ -72,11 +81,13 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
   };
 
   const skipStep = () => {
+    syncStepToServer(currentStepKey, 'skip');
     nextStep();
   };
 
   const completeOnboarding = () => {
     progressHook.completeStep(currentStepKey);
+    syncStepToServer(currentStepKey, 'complete');
     progressHook.goToStep('complete');
     router.push('/onboarding/complete');
   };

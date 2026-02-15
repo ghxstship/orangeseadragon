@@ -6,6 +6,11 @@ import { CheckCircle, ArrowRight, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function OnboardingCompletePage() {
+  // Persist onboarding completion to the server
+  React.useEffect(() => {
+    fetch('/api/onboarding/complete', { method: 'POST' }).catch(() => {});
+  }, []);
+
   return (
     <div className="space-y-8 text-center">
       {/* Success icon */}
