@@ -6,6 +6,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createClient } from "@/lib/supabase/client";
+import { getErrorMessage } from "@/lib/api/error-message";
 
 // Helper to access tables dynamically
 function getTable(tableName: string) {
@@ -708,7 +709,7 @@ async function sendWebhookNotification(
       success: false,
       channel: "webhook",
       recipients: 0,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: getErrorMessage(error, "Unknown error"),
     };
   }
 }
