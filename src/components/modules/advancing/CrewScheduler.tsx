@@ -18,7 +18,7 @@ import {
 import { format, addDays, startOfWeek, endOfWeek, isSameDay, isWithinInterval } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
-import { extractApiErrorMessage } from '@/lib/api/error-message';
+import { extractApiErrorMessage, getErrorMessage } from '@/lib/api/error-message';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -519,7 +519,7 @@ function AssignmentDialog({
       console.error('Error creating assignment:', error);
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create assignment.',
+        description: getErrorMessage(error, 'Failed to create assignment.'),
         variant: 'destructive',
       });
     } finally {
