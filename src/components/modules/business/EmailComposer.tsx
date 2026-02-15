@@ -29,6 +29,7 @@ import {
     Loader2,
     AlertCircle,
 } from 'lucide-react';
+import { throwApiErrorResponse } from '@/lib/api/error-message';
 
 interface EmailRecipient {
     address: string;
@@ -98,7 +99,9 @@ export function EmailComposer({
         queryKey: ['email-accounts'],
         queryFn: async () => {
             const res = await fetch('/api/email-accounts');
-            if (!res.ok) throw new Error('Failed to load accounts');
+            if (!res.ok) {
+                await throwApiErrorResponse(res, 'Failed to load accounts');
+            }
             return res.json();
         },
     });
@@ -120,7 +123,9 @@ export function EmailComposer({
         queryKey: ['email-templates'],
         queryFn: async () => {
             const res = await fetch('/api/email-templates?is_active=true');
-            if (!res.ok) throw new Error('Failed to load templates');
+            if (!res.ok) {
+                await throwApiErrorResponse(res, 'Failed to load templates');
+            }
             return res.json();
         },
     });
@@ -171,8 +176,7 @@ export function EmailComposer({
             });
 
             if (!res.ok) {
-                const error = await res.json();
-                throw new Error(error.message || 'Failed to send email');
+                await throwApiErrorResponse(res, 'Failed to send email');
             }
 
             return res.json();

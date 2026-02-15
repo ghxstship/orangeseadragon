@@ -3,16 +3,18 @@
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { EntitySchema } from '@/lib/schema/types';
+import { EntityRecord, EntitySchema, FormSectionDefinition } from '@/lib/schema/types';
 import { FieldRenderer } from '../../components/fields';
 import { Button } from '@/components/ui/button';
 import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
 
+type FormData = Record<string, unknown>;
+
 interface DynamicFormProps {
   schema: EntitySchema;
   mode: 'create' | 'edit';
-  initialData?: any;
-  onSubmit: (data: any) => void | Promise<void>;
+  initialData?: FormData;
+  onSubmit: (data: FormData) => void | Promise<void>;
   autosave?: boolean;
 }
 
@@ -27,7 +29,12 @@ interface DynamicFormProps {
 export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: DynamicFormProps) {
   // Generate Zod schema from field definitions
   const zodSchema = useMemo(() => {
-    const formFieldKeys = extractFormFieldKeys(schema.layouts.form.sections as any[]);
+    const formFieldKeys = extractFormFieldKeys(
+      schema.layouts.form.sections as Array<{
+        fields: (string | { fields?: string[] })[];
+        condition?: (data: Record<string, unknown>) => boolean;
+      }>
+    );
     return generateZodSchema(schema.data.fields, formFieldKeys, mode);
   }, [schema, mode]);
 
@@ -38,7 +45,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
     formState: { errors: rhfErrors, isSubmitting },
     setError,
     clearErrors,
-  } = useForm({
+  } = useForm<FormData>({
     resolver: zodResolver(zodSchema),
     defaultValues: initialData || {},
     mode: 'onBlur',
@@ -54,6 +61,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
   const onFormSubmit = async (data: Record<string, unknown>) => {
     // Run schema-level validation (backward compat)
     const validationErrors: Record<string, string> = {};
+    const recordContext: EntityRecord = { id: String(data.id ?? ''), ...data };
 
     if (schema.validate) {
       const schemaErrors = schema.validate(data, mode);
@@ -67,8 +75,8 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
       if (fieldDef.validate) {
         const error = fieldDef.validate(data[fieldKey], {
           mode,
-          record: data as any,
-          formData: data as any,
+          record: recordContext,
+          formData: data,
         });
         if (error) {
           validationErrors[fieldKey] = error;
@@ -97,11 +105,12 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
     return typeof err.message === 'string' ? err.message : undefined;
   };
 
-  const renderSection = (section: any) => {
+  const renderSection = (section: FormSectionDefinition) => {
     // Check section-level condition
-    if (section.condition && !section.condition(formData)) return null;
+    if (section.condition && !section.condition(formData, mode)) return null;
+    const formRecord: EntityRecord = { id: String(formData.id ?? ''), ...formData };
 
-    const fields = section.fields.map((field: any) => {
+    const fields = section.fields.map((field) => {
       const fieldKey = typeof field === 'string' ? field : field.fields?.[0];
       const fieldDef = schema.data.fields[fieldKey];
 
@@ -110,7 +119,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
       // Check visibility conditions
       if (fieldDef.hidden) {
         const isHidden = typeof fieldDef.hidden === 'function' 
-          ? fieldDef.hidden({ mode, record: formData, formData })
+          ? fieldDef.hidden({ mode, record: formRecord, formData })
           : fieldDef.hidden;
         if (isHidden) return null;
       }

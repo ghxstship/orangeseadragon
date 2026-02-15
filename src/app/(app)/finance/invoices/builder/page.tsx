@@ -27,6 +27,7 @@ import {
   Calculator,
 } from 'lucide-react';
 import { CurrencyDisplay } from '@/components/common/financial-display';
+import { formatCurrency } from '@/lib/utils';
 
 // ─────────────────────────────────────────────────────────────
 // TYPES
@@ -255,7 +256,7 @@ export default function InvoiceBuilderPage() {
                     <Input type="number" value={item.quantity || ''} onChange={e => updateLineItem(item.id, 'quantity', Number(e.target.value))} className="h-8 text-right" min={0} />
                     <Input type="number" value={item.unitPrice || ''} onChange={e => updateLineItem(item.id, 'unitPrice', Number(e.target.value))} className="h-8 text-right" min={0} step={0.01} />
                     <Input type="number" value={item.taxRate || ''} onChange={e => updateLineItem(item.id, 'taxRate', Number(e.target.value))} className="h-8 text-right" min={0} max={100} />
-                    <div className="text-right text-sm font-medium">${lineSubtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                    <div className="text-right text-sm font-medium">{formatCurrency(lineSubtotal)}</div>
                     <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeLineItem(item.id)} disabled={lineItems.length === 1}>
                       <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
                     </Button>
@@ -265,7 +266,7 @@ export default function InvoiceBuilderPage() {
               <div className="grid grid-cols-[1fr_80px_110px_80px_100px_40px] gap-3 p-3 border-t bg-muted/30 font-medium text-sm">
                 <span>{lineItems.length} item{lineItems.length !== 1 ? 's' : ''}</span>
                 <span /><span /><span />
-                <span className="text-right">${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                <span className="text-right">{formatCurrency(subtotal)}</span>
                 <span />
               </div>
             </div>
@@ -312,12 +313,12 @@ export default function InvoiceBuilderPage() {
               <CardHeader><CardTitle className="text-base">Summary</CardTitle></CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tax</span><span>${taxTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
-                  {discount > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Discount</span><span className="text-semantic-success">-${discount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>}
-                  <div className="border-t pt-2 flex justify-between font-semibold"><span>Total</span><span>${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
-                  {depositCredit > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Deposit Credit</span><span className="text-semantic-success">-${depositCredit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>}
-                  <div className="border-t pt-2 flex justify-between text-lg font-bold"><span>Amount Due</span><span>${amountDue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Tax</span><span>{formatCurrency(taxTotal)}</span></div>
+                  {discount > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Discount</span><span className="text-semantic-success">-{formatCurrency(discount)}</span></div>}
+                  <div className="border-t pt-2 flex justify-between font-semibold"><span>Total</span><span>{formatCurrency(total)}</span></div>
+                  {depositCredit > 0 && <div className="flex justify-between text-sm"><span className="text-muted-foreground">Deposit Credit</span><span className="text-semantic-success">-{formatCurrency(depositCredit)}</span></div>}
+                  <div className="border-t pt-2 flex justify-between text-lg font-bold"><span>Amount Due</span><span>{formatCurrency(amountDue)}</span></div>
                 </div>
               </CardContent>
             </Card>
@@ -375,21 +376,21 @@ export default function InvoiceBuilderPage() {
                 <div key={item.id} className="grid grid-cols-[1fr_80px_110px_80px_100px] gap-3 p-3 border-t text-sm">
                   <span>{item.description}</span>
                   <span className="text-right">{item.quantity}</span>
-                  <span className="text-right">${item.unitPrice.toFixed(2)}</span>
+                  <span className="text-right">{formatCurrency(item.unitPrice)}</span>
                   <span className="text-right">{item.taxRate}%</span>
-                  <span className="text-right font-medium">${(item.quantity * item.unitPrice).toFixed(2)}</span>
+                  <span className="text-right font-medium">{formatCurrency(item.quantity * item.unitPrice)}</span>
                 </div>
               ))}
             </div>
 
             <div className="flex justify-end">
               <div className="w-64 space-y-1.5 text-sm">
-                <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>${taxTotal.toFixed(2)}</span></div>
-                {discount > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span>-${discount.toFixed(2)}</span></div>}
-                <div className="border-t pt-1.5 flex justify-between font-semibold"><span>Total</span><span>${total.toFixed(2)}</span></div>
-                {depositCredit > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Deposit</span><span>-${depositCredit.toFixed(2)}</span></div>}
-                <div className="border-t pt-1.5 flex justify-between text-lg font-bold"><span>Amount Due</span><span>${amountDue.toFixed(2)}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Subtotal</span><span>{formatCurrency(subtotal)}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Tax</span><span>{formatCurrency(taxTotal)}</span></div>
+                {discount > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span>-{formatCurrency(discount)}</span></div>}
+                <div className="border-t pt-1.5 flex justify-between font-semibold"><span>Total</span><span>{formatCurrency(total)}</span></div>
+                {depositCredit > 0 && <div className="flex justify-between"><span className="text-muted-foreground">Deposit</span><span>-{formatCurrency(depositCredit)}</span></div>}
+                <div className="border-t pt-1.5 flex justify-between text-lg font-bold"><span>Amount Due</span><span>{formatCurrency(amountDue)}</span></div>
               </div>
             </div>
 

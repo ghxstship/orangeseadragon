@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useMyTasks, useCompleteTask } from "@/hooks/use-my-tasks";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
+import { PageShell } from "@/components/common/page-shell";
 import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
 import { Toolbar } from "@/components/views/toolbar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -206,74 +207,63 @@ export default function MyTasksPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [router]);
 
+  const headerActions = (
+    <Button onClick={() => router.push("/core/tasks/new")}>
+      <Plus className="h-4 w-4 mr-2" />
+      New Task
+    </Button>
+  );
+
   if (error) {
     return (
-      <div className="flex flex-col h-full bg-background">
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">My Tasks</h1>
-              <p className="text-muted-foreground">Your personal task view across all projects</p>
-            </div>
-          </div>
-        </header>
-        <div className="flex-1 flex items-center justify-center p-8">
+      <PageShell
+        title="My Tasks"
+        description="Your personal task view across all projects"
+      >
+        <div className="flex h-full items-center justify-center p-8">
           <ContextualEmptyState
             type="error"
             title="Failed to load tasks"
-            description={error.message}
+            description={error.message || "Failed to load tasks"}
             actionLabel="Try again"
             onAction={() => refetch()}
           />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header — Layout A */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">My Tasks</h1>
-            <p className="text-muted-foreground">Your personal task view across all projects</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button onClick={() => router.push("/core/tasks/new")}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Task
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-6 space-y-6">
-        {/* KPI Stats */}
-        <StatGrid columns={4}>
-          <StatCard
-            title="Total Open"
-            value={isLoading ? "..." : String(stats.total)}
-            icon={CheckSquare}
-          />
-          <StatCard
-            title="Due Today"
-            value={isLoading ? "..." : String(stats.dueToday)}
-            icon={Calendar}
-          />
-          <StatCard
-            title="In Progress"
-            value={isLoading ? "..." : String(stats.inProgress)}
-            icon={Timer}
-          />
-          <StatCard
-            title="Overdue"
-            value={isLoading ? "..." : String(stats.overdue)}
-            icon={AlertTriangle}
-            trend={stats.overdue > 0 ? { value: stats.overdue, isPositive: false } : undefined}
-          />
-        </StatGrid>
+    <PageShell
+      title="My Tasks"
+      description="Your personal task view across all projects"
+      actions={headerActions}
+      contentClassName="space-y-6"
+    >
+      {/* KPI Stats */}
+      <StatGrid columns={4}>
+        <StatCard
+          title="Total Open"
+          value={isLoading ? "..." : String(stats.total)}
+          icon={CheckSquare}
+        />
+        <StatCard
+          title="Due Today"
+          value={isLoading ? "..." : String(stats.dueToday)}
+          icon={Calendar}
+        />
+        <StatCard
+          title="In Progress"
+          value={isLoading ? "..." : String(stats.inProgress)}
+          icon={Timer}
+        />
+        <StatCard
+          title="Overdue"
+          value={isLoading ? "..." : String(stats.overdue)}
+          icon={AlertTriangle}
+          trend={stats.overdue > 0 ? { value: stats.overdue, isPositive: false } : undefined}
+        />
+      </StatGrid>
 
         {/* Toolbar */}
         <Toolbar
@@ -454,8 +444,7 @@ export default function MyTasksPage() {
         {viewType === "calendar" && (
           <CalendarTaskView tasks={filteredTasks} isLoading={isLoading} onTaskClick={handleTaskClick} />
         )}
-      </div>
-    </div>
+    </PageShell>
   );
 }
 

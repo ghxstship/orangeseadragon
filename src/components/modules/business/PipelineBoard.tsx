@@ -24,6 +24,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { createPortal } from 'react-dom';
 
 import { useCrud } from '@/lib/crud/hooks/useCrud';
+import type { EntityRecord, EntitySchema } from '@/lib/schema/types';
 import { dealSchema } from '@/lib/schemas/deal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,8 +33,22 @@ import { DEFAULT_LOCALE } from '@/lib/config';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 // --- Types ---
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Deal = any;
+interface Deal extends EntityRecord {
+    stage?: string;
+    name?: string;
+    companyId?: string;
+    value?: number | string;
+    probability?: number;
+    closeDate?: string;
+    lastActivityAt?: string;
+    last_activity_at?: string;
+}
+
+interface PipelineStageOption {
+    label: string;
+    value: string;
+    color?: string;
+}
 
 // --- Utilities ---
 const currencyFormatter = new Intl.NumberFormat(DEFAULT_LOCALE, {
@@ -195,17 +210,17 @@ interface PipelineBoardProps {
 }
 
 export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
-    const { data: deals, update, loading } = useCrud(dealSchema, {
+    const { data: deals, update, loading } = useCrud<Deal>(dealSchema as EntitySchema<Deal>, {
         query: pipelineId ? { where: { pipeline_id: pipelineId } } : undefined,
     });
     const [activeDeal, setActiveDeal] = useState<Deal | null>(null);
 
     // Define columns based on schema options
-    const columns = useMemo(() => {
+    const columns = useMemo<PipelineStageOption[]>(() => {
         const rawOptions = dealSchema.data.fields.stage.options;
         // Handle the case where options might be a function or undefined, though we know it's an array for deals
         if (Array.isArray(rawOptions)) {
-            return rawOptions as { label: string; value: string; color?: string }[];
+            return rawOptions as PipelineStageOption[];
         }
         return [];
     }, []);
@@ -224,11 +239,11 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
     // Group deals by stage
     const dealsByStage = useMemo(() => {
         const groups: Record<string, Deal[]> = {};
-        columns.forEach((col: any) => { groups[col.value] = [] });
+        columns.forEach((col) => { groups[col.value] = [] });
 
         if (Array.isArray(deals)) {
-            deals.forEach((deal: any) => {
-                const stage = deal.stage || (columns[0] as any)?.value;
+            deals.forEach((deal) => {
+                const stage = deal.stage || columns[0]?.value;
                 if (groups[stage]) {
                     groups[stage].push(deal);
                 } else {
@@ -262,7 +277,7 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
         let newStage = '';
 
         // Check if we dropped directly on a column
-        const overColumn = columns.find((c: any) => c.value === overId);
+        const overColumn = columns.find((c) => c.value === overId);
         if (overColumn) {
             newStage = overColumn.value;
         } else {
@@ -290,7 +305,7 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
     };
 
     const getColorForStage = (stage: string) => {
-        const option = columns.find((c: any) => c.value === stage);
+        const option = columns.find((c) => c.value === stage);
         const colorMap: Record<string, string> = {
             gray: 'bg-muted-foreground',
             blue: 'bg-semantic-info',
@@ -314,7 +329,7 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
             onDragEnd={onDragEnd}
         >
             <div className="flex h-[calc(100vh-140px)] gap-4 overflow-x-auto pb-4 px-1">
-                {columns.map((col: any) => (
+                {columns.map((col) => (
                     <PipelineColumn
                         key={col.value}
                         id={col.value}

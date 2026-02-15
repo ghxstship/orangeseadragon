@@ -1,4 +1,5 @@
 import type { SendEmailParams, SendEmailResult, ContactParams } from './types';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const SENDGRID_FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'noreply@atlvs.io';
@@ -74,7 +75,7 @@ export class SendGridService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }
@@ -128,7 +129,7 @@ export class SendGridService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }
@@ -167,7 +168,7 @@ export class SendGridService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }
@@ -188,7 +189,7 @@ export class SendGridService {
     } catch (error) {
       return {
         lists: [],
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }

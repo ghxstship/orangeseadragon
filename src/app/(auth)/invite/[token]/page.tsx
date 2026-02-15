@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { UserPlus, Loader2, CheckCircle, XCircle, User, Lock } from 'lucide-react';
 import { AuthTemplate, AuthField } from '@/components/templates/AuthTemplate';
+import { throwApiErrorResponse } from '@/lib/api/error-message';
 
 interface InviteData {
   organizationName: string;
@@ -59,8 +60,7 @@ export default function AcceptInvitePage() {
       }),
     });
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.message ?? 'Failed to accept invitation');
+      await throwApiErrorResponse(response, 'Failed to accept invitation');
     }
     router.push('/core/dashboard');
   };

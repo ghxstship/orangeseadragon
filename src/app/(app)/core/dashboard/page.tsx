@@ -21,6 +21,7 @@ import { FadeIn, StaggerList, StaggerItem, AnimatedCounter } from "@/components/
 import { GlassCard } from "@/components/ui/glass-card";
 import { cn } from "@/lib/utils";
 import { DEFAULT_LOCALE } from "@/lib/config";
+import { getErrorMessage, throwApiErrorResponse } from "@/lib/api/error-message";
 import {
   FolderOpen,
   CheckSquare,
@@ -190,8 +191,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function fetchLayout() {
+      setError(null);
       try {
         const response = await fetch("/api/dashboard-layouts");
+        if (!response.ok) {
+          await throwApiErrorResponse(response, "Failed to load dashboard");
+        }
         const result = await response.json();
 
         if (result.data && result.data.length > 0) {
@@ -221,6 +226,9 @@ export default function DashboardPage() {
     setError(null);
     try {
       const response = await fetch("/api/dashboard-layouts");
+      if (!response.ok) {
+        await throwApiErrorResponse(response, "Failed to refresh dashboard");
+      }
       const result = await response.json();
       if (result.data && result.data.length > 0) {
         const defaultLayout = result.data.find((l: DashboardLayoutType) => l.isDefault) || result.data[0];
@@ -276,7 +284,7 @@ export default function DashboardPage() {
           <ContextualEmptyState
             type="error"
             title="Failed to load dashboard"
-            description={error.message}
+            description={getErrorMessage(error, "Failed to load dashboard")}
             actionLabel="Try again"
             onAction={handleRefresh}
           />

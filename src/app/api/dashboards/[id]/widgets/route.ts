@@ -68,8 +68,7 @@ export async function POST(
       return badRequest('title and widget_type are required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase generated types stale; columns exist in migration 00082
-    const { data: widget, error: insertError } = await (supabase as any)
+    const { data: widget, error: insertError } = await supabase
       .from('dashboard_widgets')
       .insert({
         dashboard_id: dashboardId,
@@ -117,9 +116,8 @@ export async function PATCH(
       return badRequest('widgets array is required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase generated types stale; columns exist in migration 00082
     const updates = widgets.map((w: { id: string; position_x: number; position_y: number; width: number; height: number }) =>
-      (supabase as any)
+      supabase
         .from('dashboard_widgets')
         .update({
           position_x: w.position_x,

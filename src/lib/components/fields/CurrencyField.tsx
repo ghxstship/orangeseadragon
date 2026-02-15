@@ -16,12 +16,14 @@ export function CurrencyField({ field, fieldKey, value, onChange, error, disable
     onChange(isNaN(numValue) ? 0 : numValue);
   };
 
-  const formatValue = (val: number) => {
-    if (val === null || val === undefined) return '';
+  const formatValue = (val: unknown) => {
+    if (val === null || val === undefined || val === '') return '';
+    const numericValue = typeof val === 'number' ? val : Number(val);
+    if (Number.isNaN(numericValue)) return '';
     return new Intl.NumberFormat(DEFAULT_LOCALE, {
       style: 'currency',
       currency: 'USD',
-    }).format(val);
+    }).format(numericValue);
   };
 
   return (

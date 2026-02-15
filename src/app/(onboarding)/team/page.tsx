@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { extractApiErrorMessage } from "@/lib/api/error-message";
 
 const roles = [
   { value: "admin", label: "Admin" },
@@ -56,8 +57,8 @@ export default function OnboardingTeamPage() {
           body: JSON.stringify({ invites: invites.map(({ email, role }) => ({ email, role })) }),
         });
         if (!response.ok) {
-          const err = await response.json().catch(() => ({}));
-          console.error('[Onboarding] Invite send failed:', err);
+          const err = await response.json().catch(() => null);
+          console.error('[Onboarding] Invite send failed:', extractApiErrorMessage(err, 'Failed to send team invites'));
         }
       }
       router.push("/onboarding/preferences");

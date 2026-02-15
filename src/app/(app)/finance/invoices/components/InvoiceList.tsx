@@ -16,6 +16,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { useState, useMemo } from 'react';
 import { useInvoices } from '@/hooks/use-invoices';
 import { useUser } from '@/hooks/use-supabase';
+import { formatCurrency } from '@/lib/utils';
 
 export interface InvoiceListItem {
     id: string;
@@ -107,7 +108,7 @@ export function InvoiceList({ onSelectInvoice }: InvoiceListProps) {
                                 <TableCell>{invoice.customer_name}</TableCell>
                                 <TableCell>{invoice.issue_date}</TableCell>
                                 <TableCell>{invoice.due_date}</TableCell>
-                                <TableCell className="text-right font-mono">${invoice.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</TableCell>
+                                <TableCell className="text-right font-mono">{formatCurrency(invoice.amount)}</TableCell>
                                 <TableCell>
                                     <StatusBadge status={invoice.status} />
                                 </TableCell>

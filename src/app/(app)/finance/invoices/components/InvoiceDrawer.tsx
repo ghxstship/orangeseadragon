@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Download, Send, CreditCard, Clock } from 'lucide-react';
+import { formatCurrency } from '@/lib/utils';
 
 interface InvoiceDrawerData {
     invoice_number?: string | number;
@@ -51,7 +52,7 @@ export function InvoiceDrawer({ open, onOpenChange, invoice }: InvoiceDrawerProp
                         </div>
                         <div>
                             <p className="text-muted-foreground">Amount</p>
-                            <p className="font-medium text-lg">${invoice.total_amount?.toLocaleString()}</p>
+                            <p className="font-medium text-lg">{formatCurrency(invoice.total_amount ?? 0)}</p>
                         </div>
                     </div>
 

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from './use-supabase';
+import type { Json } from '@/lib/supabase/database.types';
 import type {
   LookupTable,
   PageLayout,
@@ -11,8 +12,9 @@ import type {
 } from '@/lib/schemas/configuration';
 
 // Create supabase client instance
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const supabase = createClient() as any;
+const supabase: ReturnType<typeof createClient> = createClient();
+
+const toJson = (value: unknown): Json => value as Json;
 
 // ============================================================================
 // LOOKUP TABLES HOOKS
@@ -337,7 +339,7 @@ export function useUserPermissions(organizationId: string, userId: string) {
       if (error) throw error;
 
       // Flatten and deduplicate permissions
-      const allPermissions = data.flatMap((role: UserRole) => role.permissions || []) as string[];
+      const allPermissions = (data ?? []).flatMap((role) => role.permissions || []);
       return Array.from(new Set(allPermissions));
     },
     enabled: !!organizationId && !!userId,
@@ -428,7 +430,7 @@ export function useUpdateTenantConfig() {
     }: {
       organizationId: string;
       configKey: string;
-      configValue: any;
+      configValue: unknown;
       configType: string;
       environment?: string;
     }) => {
@@ -437,7 +439,7 @@ export function useUpdateTenantConfig() {
         .upsert({
           organization_id: organizationId,
           config_key: configKey,
-          config_value: configValue,
+          config_value: toJson(configValue),
           config_type: configType,
           environment,
           is_active: true,
@@ -470,7 +472,7 @@ export function useUpdateTenantFeature() {
       organizationId: string;
       featureSlug: string;
       isEnabled: boolean;
-      config?: Record<string, any>;
+      config?: Record<string, unknown>;
       rolloutPercentage?: number;
       allowedUsers?: string[];
     }) => {
@@ -480,7 +482,7 @@ export function useUpdateTenantFeature() {
           organization_id: organizationId,
           feature_slug: featureSlug,
           is_enabled: isEnabled,
-          config,
+          config: toJson(config),
           rollout_percentage: rolloutPercentage,
           allowed_users: allowedUsers,
           updated_at: new Date().toISOString(),
@@ -520,7 +522,7 @@ export function useAssignUserRole() {
           user_id: userId,
           role_slug: roleSlug,
           permissions,
-          granted_by: user?.id,
+          granted_by: user?.id ?? userId,
           granted_at: new Date().toISOString(),
           is_active: true,
           updated_at: new Date().toISOString(),

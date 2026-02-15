@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
+import { formatCurrency } from '@/lib/utils';
 
 interface Transaction {
     id: string;
@@ -105,11 +106,11 @@ export function TransactionFeed() {
                                 </TableCell>
                                 <TableCell className="text-right font-mono">
                                     <span className={tx.type === 'credit' ? 'text-semantic-success' : ''}>
-                                        {tx.type === 'credit' ? '+' : '-'}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                        {tx.type === 'credit' ? '+' : '-'}{formatCurrency(tx.amount)}
                                     </span>
                                 </TableCell>
                                 <TableCell className="text-right font-mono text-muted-foreground">
-                                    ${tx.runningBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                    {formatCurrency(tx.runningBalance)}
                                 </TableCell>
                                 <TableCell>
                                     <span className={`inline-flex items-center text-xs ${tx.status === 'pending' ? 'text-semantic-warning' : 'text-semantic-success'}`}>

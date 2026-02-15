@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { getErrorMessage, throwApiErrorResponse } from "@/lib/api/error-message";
 import {
   Filter,
   RefreshCw,
@@ -133,12 +134,12 @@ export function MasterCalendar({
     try {
       const response = await fetch(`/api/calendar/aggregated?${params}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch calendar data");
+        await throwApiErrorResponse(response, "Failed to fetch calendar data");
       }
       const result: CalendarAggregationResult = await response.json();
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unknown error");
+      setError(getErrorMessage(err, "Failed to fetch calendar data"));
     } finally {
       setLoading(false);
     }

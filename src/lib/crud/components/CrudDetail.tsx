@@ -9,6 +9,7 @@ import { TabRenderer } from './TabRenderer';
 import { SidebarRenderer } from './SidebarRenderer';
 import { LoadingState, ErrorState, EmptyState } from '@/components/states/AsyncStates';
 import { useConfirmation } from '@/components/common/confirmation-dialog';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface CrudDetailProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
@@ -35,7 +36,9 @@ export function CrudDetail<T extends EntityRecord>({
   const { confirm, ConfirmDialog } = useConfirmation();
 
   if (loading) return <LoadingState />;
-  if (error) return <ErrorState description={error.message} retry={refresh} />;
+  if (error) {
+    return <ErrorState description={getErrorMessage(error, `Failed to load ${schema.identity.name}`)} retry={refresh} />;
+  }
   if (!record) return <EmptyState title="Record Not Found" description={`The requested ${schema.identity.name} could not be found.`} />;
 
   const tabConfig = schema.layouts.detail.tabs.find(t => t.key === currentTab) || schema.layouts.detail.tabs[0];

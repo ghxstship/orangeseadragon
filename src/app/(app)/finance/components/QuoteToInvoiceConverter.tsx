@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, FileText, Receipt, Check, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import { DEFAULT_LOCALE } from '@/lib/config';
+import { formatCurrency } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface Quote {
   id: string;
@@ -49,7 +50,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
       const invoiceResult = await onConvert(quote.id);
       setResult(invoiceResult);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to convert quote');
+      setError(getErrorMessage(err, 'Failed to convert quote'));
     } finally {
       setIsConverting(false);
     }
@@ -121,7 +122,7 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold">
-                {quote.currency} {quote.totalAmount.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
+                {formatCurrency(quote.totalAmount, quote.currency)}
               </p>
               <Badge variant={quote.status === 'accepted' ? 'default' : 'secondary'}>
                 {quote.status}
@@ -149,8 +150,8 @@ export function QuoteToInvoiceConverter({ quote, onConvert, onCancel }: QuoteToI
                   <tr key={i} className="border-b last:border-0">
                     <td className="p-2">{item.description}</td>
                     <td className="p-2 text-right">{item.quantity}</td>
-                    <td className="p-2 text-right">${item.unitPrice.toFixed(2)}</td>
-                    <td className="p-2 text-right font-medium">${item.total.toFixed(2)}</td>
+                    <td className="p-2 text-right">{formatCurrency(item.unitPrice, quote.currency)}</td>
+                    <td className="p-2 text-right font-medium">{formatCurrency(item.total, quote.currency)}</td>
                   </tr>
                 ))}
               </tbody>

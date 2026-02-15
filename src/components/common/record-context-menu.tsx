@@ -56,12 +56,13 @@ export function RecordContextMenu({
 }: RecordContextMenuProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const appOrigin = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
 
   const detailPath = `${basePath}/${recordId}`;
   const editPath = `${detailPath}/edit`;
 
   const handleCopyLink = () => {
-    const url = `${window.location.origin}${detailPath}`;
+    const url = appOrigin ? `${appOrigin}${detailPath}` : detailPath;
     navigator.clipboard.writeText(url);
     toast({
       title: 'Link copied',

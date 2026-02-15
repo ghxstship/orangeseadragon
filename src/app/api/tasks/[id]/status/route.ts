@@ -40,7 +40,8 @@ export async function POST(
 
         // Dependency Enforcement: Cannot move to in_progress/done if dependencies are not done
         if (['in_progress', 'done'].includes(targetStatus)) {
-            const depIds = task.dependencies?.map((d: any) => d.depends_on_task_id) || [];
+            const dependencies = (task.dependencies ?? []) as Array<{ depends_on_task_id: string }>;
+            const depIds = dependencies.map((d) => d.depends_on_task_id);
             if (depIds.length > 0) {
                 const { data: openDeps, error: depError } = await supabase
                     .from('tasks')

@@ -7,6 +7,7 @@ import { performanceReviewSchema } from '@/lib/schemas/performanceReview';
 import { PerformanceReviewDashboard } from '@/components/people/PerformanceReviewDashboard';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
+import { PageShell } from '@/components/common/page-shell';
 
 type ReviewStatus = 'not_started' | 'self_review' | 'manager_review' | 'calibration' | 'completed';
 
@@ -93,15 +94,11 @@ export default function PerformancePage() {
   }, [orgId]);
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Performance Management</h2>
-          <p className="text-muted-foreground">Reviews, goals, and continuous feedback</p>
-        </div>
-      </header>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 overflow-auto px-6 pt-6">
+    <PageShell
+      title="Performance Management"
+      description="Reviews, goals, and continuous feedback"
+    >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="reviews">All Reviews</TabsTrigger>
@@ -119,6 +116,6 @@ export default function PerformancePage() {
           <CrudList schema={performanceReviewSchema} />
         </TabsContent>
       </Tabs>
-    </div>
+    </PageShell>
   );
 }

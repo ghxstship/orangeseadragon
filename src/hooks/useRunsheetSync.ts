@@ -87,6 +87,7 @@ export function useRunsheetSync({
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pendingUpdatesRef = useRef<SyncMessage[]>([]);
   const localVersionRef = useRef<number>(0);
+  const handleMessageRef = useRef<(message: SyncMessage) => void>(() => {});
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
@@ -118,7 +119,7 @@ export function useRunsheetSync({
       ws.onmessage = (event) => {
         try {
           const message: SyncMessage = JSON.parse(event.data);
-          handleMessage(message);
+          handleMessageRef.current(message);
         } catch (e) {
           console.error('Failed to parse WebSocket message:', e);
         }
@@ -222,6 +223,8 @@ export function useRunsheetSync({
         break;
     }
   }, [userId, onStateChange, onPresenceChange, onConflict]);
+
+  handleMessageRef.current = handleMessage;
 
   const sendMessage = useCallback((message: Omit<SyncMessage, 'timestamp' | 'userId'>) => {
     const fullMessage: SyncMessage = {

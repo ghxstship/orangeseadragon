@@ -3,43 +3,56 @@
 import { useState } from 'react';
 import { useCrud } from '@/lib/crud/hooks/useCrud';
 import { peopleSchema } from '@/lib/schemas/people';
+import type { EntityRecord, EntitySchema } from '@/lib/schema/types';
 import { HolographicDirectory } from '@/components/people/HolographicDirectory';
 import { LifeStreamProfile } from '@/components/people/LifeStreamProfile';
+import { PageShell } from '@/components/common/page-shell';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { Loader2 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+interface PersonListItem extends EntityRecord {
+  headline?: string;
+  location?: string;
+  is_available_for_hire?: boolean;
+}
 
 export default function RostersPage() {
-  const { data: people, loading } = useCrud(peopleSchema);
+  const { data: people, loading } = useCrud<PersonListItem>(peopleSchema as EntitySchema<PersonListItem>);
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
 
   // In a real app, we might want to fetch the single record detail here when selected
   // For now, we find from the list or just pass the ID to LifeStreamProfile if it fetches itself
   // But LifeStreamProfile currently expects a 'person' object.
-  const selectedPerson = people.find((p: any) => p.id === selectedPersonId);
+  const selectedPerson = people.find((p: PersonListItem) => p.id === selectedPersonId);
+  const directoryPeople = people.map((p: PersonListItem) => ({
+    ...p,
+    // Map schema fields to component props if needed, or ensure schema matches
+    status: p.is_available_for_hire ? 'online' : 'offline', // Simple mapping for now
+    headline: p.headline || 'Untitled Staff',
+    location: p.location ?? undefined,
+  }));
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Live Roster</h2>
-          <p className="text-muted-foreground">Real-time workforce directory</p>
-        </div>
-      </header>
-
-      <div className="flex-1 overflow-auto p-6">
-
+    <PageShell
+      title="Live Roster"
+      description="Real-time workforce directory"
+    >
       {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton key={index} className="h-24 w-full" />
+          ))}
         </div>
+      ) : people.length === 0 ? (
+        <ContextualEmptyState
+          type="no-data"
+          title="No roster members yet"
+          description="Add team members to build a live roster."
+        />
       ) : (
         <HolographicDirectory
-          people={people.map((p: any) => ({
-            ...p,
-            // Map schema fields to component props if needed, or ensure schema matches
-            status: p.is_available_for_hire ? 'online' : 'offline', // Simple mapping for now
-            headline: p.headline || 'Untitled Staff'
-          }))}
+          people={directoryPeople}
           onSelectPerson={setSelectedPersonId}
         />
       )}
@@ -61,7 +74,6 @@ export default function RostersPage() {
           )}
         </SheetContent>
       </Sheet>
-      </div>
-    </div>
+    </PageShell>
   );
 }

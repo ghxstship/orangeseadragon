@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, supabaseError } from '@/lib/api/response';
 
@@ -206,9 +207,8 @@ function getTableName(entityType: string): string | null {
   return tableMap[entityType] || null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client type
 async function executeStep(
-  supabase: any,
+  supabase: SupabaseClient,
   step: WorkflowStep,
   context: Record<string, unknown>,
   organizationId: string
@@ -288,9 +288,8 @@ function executeCondition(
   return { success: result, output: { field, operator, fieldValue, compareValue, result } };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client type
 async function executeAction(
-  supabase: any,
+  supabase: SupabaseClient,
   action: string,
   config: Record<string, unknown>,
   context: Record<string, unknown>,

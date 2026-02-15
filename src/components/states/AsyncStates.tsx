@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle, Inbox, Plus } from 'lucide-react';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface LoadingStateProps {
   variant?: 'skeleton' | 'spinner' | 'card';
@@ -165,7 +166,7 @@ export function AsyncStateWrapper<T>({
     return (
       <ErrorState
         title="Failed to load data"
-        description={error.message}
+        description={getErrorMessage(error, 'Failed to load data')}
         retry={retry}
         className={className}
       />
@@ -203,7 +204,9 @@ export function useAsyncState<T>() {
       setData(result);
       return result;
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
+      const error = err instanceof Error
+        ? err
+        : new Error(getErrorMessage(err, 'Unknown error'));
       setError(error);
       throw error;
     } finally {

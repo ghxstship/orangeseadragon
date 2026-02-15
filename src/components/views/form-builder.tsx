@@ -268,9 +268,9 @@ export function FormBuilder({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     draggable={!readOnly}
-                    onDragStart={(e: any) => handleDragStart(e, field.id)}
-                    onDragOver={(e: any) => handleDragOver(e, field.id)}
-                    onDragEnd={handleDragEnd}
+                    onDragStartCapture={(e) => handleDragStart(e, field.id)}
+                    onDragOverCapture={(e) => handleDragOver(e, field.id)}
+                    onDragEndCapture={() => handleDragEnd()}
                     className={cn(
                       "group relative p-5 border border-border rounded-2xl cursor-pointer transition-all duration-300",
                       selectedFieldId === field.id

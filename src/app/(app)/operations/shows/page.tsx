@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, ArrowRight, Settings, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageShell } from "@/components/common/page-shell";
+import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
 import { useUser } from "@/hooks/use-supabase";
 import { useEvents } from "@/hooks/use-events";
 
@@ -67,22 +69,24 @@ export default function ShowsPage() {
   }));
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Shows</h1>
-            <p className="text-muted-foreground">Manage productions, stages, and events</p>
-          </div>
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            New Show
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex-1 overflow-auto p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <PageShell
+      title="Shows"
+      description="Manage productions, stages, and events"
+      actions={
+        <Button className="gap-2">
+          <Plus className="h-4 w-4" />
+          New Show
+        </Button>
+      }
+    >
+      {shows.length === 0 ? (
+        <ContextualEmptyState
+          type="no-data"
+          title="No shows found"
+          description="Create a show to start managing production events."
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {shows.map((show, index) => (
             <motion.div
               key={show.id}
@@ -140,7 +144,7 @@ export default function ShowsPage() {
             </motion.div>
           ))}
         </div>
-      </div>
-    </div>
+      )}
+    </PageShell>
   );
 }

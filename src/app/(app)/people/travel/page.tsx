@@ -1,6 +1,7 @@
 'use client';
 
 import { MapView, MapMarker } from '@/components/views/map-view';
+import { PageShell } from '@/components/common/page-shell';
 
 // Mock data for Global Mobility
 const STAFF_LOCATIONS: MapMarker[] = [
@@ -44,15 +45,12 @@ const STAFF_LOCATIONS: MapMarker[] = [
 
 export default function TravelPage() {
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Global Mobility</h2>
-          <p className="text-muted-foreground">Real-time staff location and travel tracking</p>
-        </div>
-      </header>
-
-      <div className="flex-1 rounded-xl overflow-hidden border m-6">
+    <PageShell
+      title="Global Mobility"
+      description="Real-time staff location and travel tracking"
+      contentPadding={false}
+    >
+      <div className="m-4 h-full overflow-hidden rounded-xl border sm:m-6">
         <MapView
           markers={STAFF_LOCATIONS}
           title="Global Workforce"
@@ -60,6 +58,6 @@ export default function TravelPage() {
           center={{ lat: 20, lng: 0 }} // Center on Atlantic to show global view
         />
       </div>
-    </div>
+    </PageShell>
   );
 }

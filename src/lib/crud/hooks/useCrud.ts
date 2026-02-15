@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { EntitySchema } from '@/lib/schema/types';
+import { EntityRecord, EntitySchema } from '@/lib/schema/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { throwApiErrorResponse } from '@/lib/api/error-message';
 
@@ -9,7 +9,7 @@ import { throwApiErrorResponse } from '@/lib/api/error-message';
  * Handles data operations for ANY entity based on schema.
  * NEVER add entity-specific logic here.
  */
-export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions) {
+export function useCrud<T extends EntityRecord = EntityRecord>(schema: EntitySchema<T>, options?: CrudOptions) {
   const queryClient = useQueryClient();
   const endpoint = schema.data.endpoint;
 
@@ -194,17 +194,17 @@ export function useCrud<T = any>(schema: EntitySchema<T>, options?: CrudOptions)
 
 interface CrudOptions {
   query?: {
-    where?: Record<string, any>;
+    where?: Record<string, unknown>;
     orderBy?: { field: string; direction: 'asc' | 'desc' };
   };
   pagination?: {
     page: number;
     pageSize: number;
   };
-  onPaginationChange?: (pagination: any) => void;
+  onPaginationChange?: (pagination: { page: number; pageSize: number }) => void;
   search?: string;
   sort?: { field: string; direction: 'asc' | 'desc' };
-  onSortChange?: (sort: any) => void;
+  onSortChange?: (sort: { field: string; direction: 'asc' | 'desc' }) => void;
   selection?: string[];
   onSelectionChange?: (ids: string[]) => void;
 }

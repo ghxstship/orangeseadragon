@@ -1,9 +1,17 @@
-import { EntitySchema } from '@/lib/schema/types';
+import {
+  DetailTabDefinition,
+  EntityRecord,
+  EntitySchema,
+  OverviewBlockDefinition,
+  QuickStatDefinition,
+} from '@/lib/schema/types';
+import { CrudList } from './CrudList';
+import { getSchema } from '@/lib/schemas';
 
 interface TabRendererProps {
   schema: EntitySchema;
-  tabConfig: any;
-  record: any;
+  tabConfig?: DetailTabDefinition;
+  record: EntityRecord;
   onRefresh: () => void;
 }
 
@@ -32,7 +40,6 @@ export function TabRenderer({ schema, tabConfig, record, onRefresh }: TabRendere
     case 'related':
       return (
         <RelatedTab
-          schema={schema}
           relatedSchema={content.entity}
           foreignKey={content.foreignKey}
           record={record}
@@ -66,7 +73,7 @@ export function TabRenderer({ schema, tabConfig, record, onRefresh }: TabRendere
 /**
  * Overview tab showing stats and key information
  */
-function OverviewTab({ schema, record }: { schema: EntitySchema; record: any }) {
+function OverviewTab({ schema, record }: { schema: EntitySchema; record: EntityRecord }) {
   const overview = schema.layouts.detail.overview;
 
   return (
@@ -88,14 +95,19 @@ function OverviewTab({ schema, record }: { schema: EntitySchema; record: any }) 
   );
 }
 
-import { CrudList } from './CrudList';
-import { getSchema } from '@/lib/schemas';
-
 /**
  * Related entities tab
  */
+interface RelatedTabProps {
+  relatedSchema: string;
+  foreignKey: string;
+  record: EntityRecord;
+  defaultView?: string;
+  allowCreate?: boolean;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function RelatedTab({ relatedSchema, foreignKey, record, defaultView, allowCreate }: any) {
+function RelatedTab({ relatedSchema, foreignKey, record, defaultView, allowCreate }: RelatedTabProps) {
   const schema = getSchema(relatedSchema);
 
   if (!schema) {
@@ -109,7 +121,7 @@ function RelatedTab({ relatedSchema, foreignKey, record, defaultView, allowCreat
   return (
     <div className="p-2">
       <CrudList
-        schema={schema as any}
+        schema={schema as EntitySchema<EntityRecord>}
         filter={{ [foreignKey]: record.id }}
       />
     </div>
@@ -119,7 +131,7 @@ function RelatedTab({ relatedSchema, foreignKey, record, defaultView, allowCreat
 /**
  * Activity timeline tab
  */
-function ActivityTab({ record }: { record: any }) {
+function ActivityTab({ record }: { record: EntityRecord }) {
   return (
     <div className="p-6">
       <h3 className="text-lg font-medium mb-4">Activity</h3>
@@ -132,7 +144,7 @@ function ActivityTab({ record }: { record: any }) {
 /**
  * Comments tab
  */
-function CommentsTab({ record }: { record: any }) {
+function CommentsTab({ record }: { record: EntityRecord }) {
   return (
     <div className="p-6">
       <h3 className="text-lg font-medium mb-4">Comments</h3>
@@ -145,7 +157,7 @@ function CommentsTab({ record }: { record: any }) {
 /**
  * Files tab
  */
-function FilesTab({ record }: { record: any }) {
+function FilesTab({ record }: { record: EntityRecord }) {
   return (
     <div className="p-6">
       <h3 className="text-lg font-medium mb-4">Files</h3>
@@ -158,7 +170,7 @@ function FilesTab({ record }: { record: any }) {
 /**
  * Quick stat card component
  */
-function StatCard({ stat, record }: { stat: any; record: any }) {
+function StatCard({ stat, record }: { stat: QuickStatDefinition; record: EntityRecord }) {
   // Compute stat value
   let value: string | number = '';
 
@@ -186,7 +198,7 @@ function StatCard({ stat, record }: { stat: any; record: any }) {
 /**
  * Overview block component
  */
-function OverviewBlock({ block, record }: { block: any; record: any }) {
+function OverviewBlock({ block, record }: { block: OverviewBlockDefinition; record: EntityRecord }) {
   return (
     <div className="bg-card p-6 rounded-lg border border-border">
       <h4 className="text-lg font-medium mb-4">{block.title || block.key}</h4>
@@ -199,12 +211,6 @@ function OverviewBlock({ block, record }: { block: any; record: any }) {
               <span className="font-medium">{record[field] || 'N/A'}</span>
             </div>
           ))}
-        </div>
-      )}
-
-      {block.content.type === 'description' && (
-        <div className="text-foreground whitespace-pre-wrap">
-          {record[block.content.field]}
         </div>
       )}
 

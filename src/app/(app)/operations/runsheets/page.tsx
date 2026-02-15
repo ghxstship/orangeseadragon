@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageShell } from "@/components/common/page-shell";
+import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
 import { Play, Clock, Calendar, ChevronRight, CheckCircle2, Maximize2, Plus } from "lucide-react";
 import { useUser } from "@/hooks/use-supabase";
 import { useRunsheets } from "@/hooks/use-runsheets";
@@ -74,21 +76,23 @@ export default function RunsheetsPage() {
   }));
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Runsheets</h1>
-            <p className="text-muted-foreground">Manage live show flows and cue sheets</p>
-          </div>
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Create Runsheet
-          </Button>
-        </div>
-      </header>
-
-      <div className="flex-1 overflow-auto p-6">
+    <PageShell
+      title="Runsheets"
+      description="Manage live show flows and cue sheets"
+      actions={
+        <Button className="gap-2">
+          <Plus className="h-4 w-4" />
+          Create Runsheet
+        </Button>
+      }
+    >
+      {runsheets.length === 0 ? (
+        <ContextualEmptyState
+          type="no-data"
+          title="No runsheets yet"
+          description="Create a runsheet to organize cues and show flow."
+        />
+      ) : (
         <div className="grid gap-4">
           {runsheets.map((sheet, index) => {
             const StatusIcon = statusIcon[sheet.status];
@@ -171,7 +175,7 @@ export default function RunsheetsPage() {
             );
           })}
         </div>
-      </div>
-    </div>
+      )}
+    </PageShell>
   );
 }

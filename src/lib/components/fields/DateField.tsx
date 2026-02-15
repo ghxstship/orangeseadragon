@@ -6,7 +6,9 @@ export function DateField({ field, fieldKey, value, onChange, error, disabled }:
   const isRange = field.type === 'daterange';
 
   if (isRange) {
-    const [startDate, endDate] = Array.isArray(value) ? value : [value, null];
+    const [startRaw, endRaw] = Array.isArray(value) ? value : [value, null];
+    const startDate = typeof startRaw === 'string' ? startRaw : '';
+    const endDate = typeof endRaw === 'string' ? endRaw : '';
 
     return (
       <div className="flex space-x-2">
@@ -41,7 +43,7 @@ export function DateField({ field, fieldKey, value, onChange, error, disabled }:
     <Input
       type="date"
       id={fieldKey}
-      value={value || ''}
+      value={typeof value === 'string' ? value : ''}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
       className={error ? 'border-destructive' : ''}

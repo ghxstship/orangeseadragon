@@ -33,6 +33,7 @@ import {
 import { PageShell } from '@/components/common/page-shell';
 import { useFinanceDashboard } from '@/hooks/use-finance-dashboard';
 import { useUser } from '@/hooks/use-supabase';
+import { formatCurrency } from '@/lib/utils';
 
 export default function FinancialDashboardPage() {
   const { user } = useUser();
@@ -102,7 +103,7 @@ export default function FinancialDashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="month" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
                   <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]} />
+                  <Tooltip formatter={(value: number) => [formatCurrency(value), undefined]} />
                   <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Revenue" />
                   <Bar dataKey="expenses" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} opacity={0.5} name="Expenses" />
                   <Legend />
@@ -118,7 +119,7 @@ export default function FinancialDashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                   <YAxis type="category" dataKey="client" tick={{ fontSize: 11 }} className="fill-muted-foreground" width={100} />
-                  <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, 'Profit']} />
+                  <Tooltip formatter={(value: number) => [formatCurrency(value), 'Profit']} />
                   <Bar dataKey="profit" fill="hsl(var(--semantic-success))" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -174,7 +175,7 @@ export default function FinancialDashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="week" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
                   <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]} />
+                  <Tooltip formatter={(value: number) => [formatCurrency(value), undefined]} />
                   <Area type="monotone" dataKey="inflow" stackId="1" stroke="hsl(var(--semantic-success))" fill="hsl(var(--semantic-success))" fillOpacity={0.3} name="Cash In" />
                   <Area type="monotone" dataKey="outflow" stackId="2" stroke="hsl(var(--destructive))" fill="hsl(var(--destructive))" fillOpacity={0.3} name="Cash Out" />
                   <Legend />

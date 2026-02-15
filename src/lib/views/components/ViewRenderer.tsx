@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface ViewRendererProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
@@ -98,7 +99,7 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
       <div className="flex bg-destructive/10 items-center justify-center h-64 rounded-lg border border-destructive/20 p-6 text-center">
         <div>
           <h3 className="text-destructive font-semibold">Error loading data</h3>
-          <p className="text-destructive/80 text-sm mt-1">{error.message || 'There was a problem fetching the data.'}</p>
+          <p className="text-destructive/80 text-sm mt-1">{getErrorMessage(error, 'There was a problem fetching the data.')}</p>
         </div>
       </div>
     );

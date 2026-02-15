@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { DEFAULT_LOCALE } from '@/lib/config';
+import { formatCurrency } from '@/lib/utils';
 
 interface ExpenseApprovalData {
   id: string;
@@ -166,7 +166,7 @@ export function ExpenseApprovalCard({
               <div>
                 <p className="text-muted-foreground">Amount</p>
                 <p className="font-semibold">
-                  {approval.expense.currency} {approval.expense.amount.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
+                  {formatCurrency(approval.expense.amount, approval.expense.currency)}
                 </p>
               </div>
             </div>

@@ -28,10 +28,12 @@ import {
   SheetContent,
 } from '@/components/ui/sheet';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
+import { PageShell } from '@/components/common/page-shell';
 import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { InboxItemRow } from '@/components/common/inbox-item-row';
 import { InboxItemDetail } from '@/components/common/inbox-item-detail';
 import { cn } from '@/lib/utils';
+import { getErrorMessage, throwApiErrorResponse } from '@/lib/api/error-message';
 
 type InboxItemType = 'approval' | 'mention' | 'alert' | 'assignment' | 'comment' | 'update';
 type InboxItemStatus = 'unread' | 'read' | 'actioned' | 'dismissed';
@@ -133,12 +135,14 @@ export default function InboxPage() {
       if (activeTab === 'alerts') params.set('type', 'alert');
 
       const response = await fetch(`/api/inbox?${params}`);
-      if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
+      if (!response.ok) {
+        await throwApiErrorResponse(response, 'Failed to load notifications');
+      }
       const data = await response.json();
       setItems(data.data || []);
     } catch (err) {
       console.error('Failed to fetch inbox items:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load notifications');
+      setError(getErrorMessage(err, 'Failed to load notifications'));
     } finally {
       setLoading(false);
     }
@@ -175,11 +179,14 @@ export default function InboxPage() {
 
   const handleMarkRead = async (ids: string[]) => {
     try {
-      await fetch('/api/inbox/mark-read', {
+      const response = await fetch('/api/inbox/mark-read', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids }),
       });
+      if (!response.ok) {
+        await throwApiErrorResponse(response, 'Failed to mark notifications as read');
+      }
       setItems((prev) =>
         prev.map((item) =>
           ids.includes(item.id) ? { ...item, status: 'read' as InboxItemStatus } : item
@@ -200,7 +207,10 @@ export default function InboxPage() {
 
   const handleApprove = async (item: InboxItem) => {
     try {
-      await fetch(`/api/inbox/${item.id}/approve`, { method: 'POST' });
+      const response = await fetch(`/api/inbox/${item.id}/approve`, { method: 'POST' });
+      if (!response.ok) {
+        await throwApiErrorResponse(response, 'Failed to approve notification');
+      }
       setItems((prev) =>
         prev.map((i) => (i.id === item.id ? { ...i, status: 'actioned' as InboxItemStatus } : i))
       );
@@ -212,7 +222,10 @@ export default function InboxPage() {
 
   const handleReject = async (item: InboxItem) => {
     try {
-      await fetch(`/api/inbox/${item.id}/reject`, { method: 'POST' });
+      const response = await fetch(`/api/inbox/${item.id}/reject`, { method: 'POST' });
+      if (!response.ok) {
+        await throwApiErrorResponse(response, 'Failed to reject notification');
+      }
       setItems((prev) =>
         prev.map((i) => (i.id === item.id ? { ...i, status: 'actioned' as InboxItemStatus } : i))
       );
@@ -224,11 +237,14 @@ export default function InboxPage() {
 
   const handleDismiss = async (ids: string[]) => {
     try {
-      await fetch('/api/inbox/dismiss', {
+      const response = await fetch('/api/inbox/dismiss', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids }),
       });
+      if (!response.ok) {
+        await throwApiErrorResponse(response, 'Failed to dismiss notifications');
+      }
       setItems((prev) => prev.filter((item) => !ids.includes(item.id)));
       setSelectedIds(new Set());
     } catch (err) {
@@ -294,18 +310,68 @@ export default function InboxPage() {
       }));
   }, [items]);
 
+  const headerActions = selectedIds.size > 0 ? (
+    <>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handleMarkRead(Array.from(selectedIds))}
+      >
+        <Check className="mr-2 h-4 w-4" />
+        Mark Read ({selectedIds.size})
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handleDismiss(Array.from(selectedIds))}
+      >
+        <Trash2 className="mr-2 h-4 w-4" />
+        Dismiss ({selectedIds.size})
+      </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setSelectedIds(new Set())}
+      >
+        Clear
+      </Button>
+    </>
+  ) : (
+    <>
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={fetchInboxItems}
+        disabled={loading}
+      >
+        <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={handleMarkAllRead}
+        disabled={unreadCount === 0}
+      >
+        <Check className="mr-2 h-4 w-4" />
+        Mark all read
+      </Button>
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() => router.push('/account/notifications')}
+      >
+        <Settings className="h-4 w-4" />
+      </Button>
+    </>
+  );
+
   if (error && !loading) {
     return (
-      <div className="flex flex-col h-full bg-background">
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Inbox</h1>
-              <p className="text-sm text-muted-foreground">Notifications, approvals & action items</p>
-            </div>
-          </div>
-        </header>
-        <div className="flex-1 flex items-center justify-center p-8">
+      <PageShell
+        title="Inbox"
+        description="Notifications, approvals & action items"
+      >
+        <div className="flex h-full items-center justify-center p-8">
           <ContextualEmptyState
             type="error"
             title="Failed to load notifications"
@@ -314,82 +380,17 @@ export default function InboxPage() {
             onAction={fetchInboxItems}
           />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header — Layout A */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Inbox</h1>
-            <p className="text-sm text-muted-foreground">
-              Notifications, approvals & action items
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            {selectedIds.size > 0 ? (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleMarkRead(Array.from(selectedIds))}
-                >
-                  <Check className="mr-2 h-4 w-4" />
-                  Mark Read ({selectedIds.size})
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleDismiss(Array.from(selectedIds))}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Dismiss ({selectedIds.size})
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSelectedIds(new Set())}
-                >
-                  Clear
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={fetchInboxItems}
-                  disabled={loading}
-                >
-                  <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleMarkAllRead}
-                  disabled={unreadCount === 0}
-                >
-                  <Check className="mr-2 h-4 w-4" />
-                  Mark all read
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => router.push('/account/notifications')}
-                >
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-6 space-y-6">
+    <PageShell
+      title="Inbox"
+      description="Notifications, approvals & action items"
+      actions={headerActions}
+      contentClassName="space-y-6"
+    >
         {/* KPI Stats */}
         <StatGrid columns={4}>
           <StatCard
@@ -527,7 +528,6 @@ export default function InboxPage() {
             ))}
           </div>
         )}
-      </div>
 
       {/* Detail Sheet */}
       <Sheet open={!!detailItem} onOpenChange={() => setDetailItem(null)}>
@@ -544,6 +544,6 @@ export default function InboxPage() {
           )}
         </SheetContent>
       </Sheet>
-    </div>
+    </PageShell>
   );
 }

@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Clock, Filter, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageShell } from "@/components/common/page-shell";
+import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
 import { useUser } from "@/hooks/use-supabase";
 import { useIncidents } from "@/hooks/use-incidents";
 
@@ -59,27 +61,29 @@ export default function IncidentsPage() {
   }));
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Incident Log</h1>
-            <p className="text-muted-foreground">Track and resolve operational issues</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" className="gap-2">
-              <Filter className="h-4 w-4" />
-              Filter
-            </Button>
-            <Button variant="destructive" className="gap-2">
-              <AlertCircle className="h-4 w-4" />
-              Log Incident
-            </Button>
-          </div>
+    <PageShell
+      title="Incident Log"
+      description="Track and resolve operational issues"
+      actions={
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="gap-2">
+            <Filter className="h-4 w-4" />
+            Filter
+          </Button>
+          <Button variant="destructive" className="gap-2">
+            <AlertCircle className="h-4 w-4" />
+            Log Incident
+          </Button>
         </div>
-      </header>
-
-      <div className="flex-1 overflow-auto p-6">
+      }
+    >
+      {incidents.length === 0 ? (
+        <ContextualEmptyState
+          type="no-data"
+          title="No incidents logged"
+          description="Operational incidents will appear here once they are reported."
+        />
+      ) : (
         <div className="grid gap-4">
           {incidents.map((incident, index) => (
             <motion.div
@@ -136,7 +140,7 @@ export default function IncidentsPage() {
             </motion.div>
           ))}
         </div>
-      </div>
-    </div>
+      )}
+    </PageShell>
   );
 }

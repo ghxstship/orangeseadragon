@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
+import { PageShell } from "@/components/common/page-shell";
 import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -227,19 +228,64 @@ export default function MyTimesheetPage() {
   );
 
   const statusBadge = weekStatusConfig[weekStatus];
+  const headerActions = (
+    <>
+      <Badge variant="outline" className={cn("text-[10px] h-5 px-2 gap-1", statusBadge.color)}>
+        {statusBadge.icon}
+        {statusBadge.label}
+      </Badge>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline" size="icon" onClick={() => refetch()} disabled={isLoading}>
+              <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Refresh</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <Button variant="outline" size="sm" onClick={() => setWeekOffset((w) => w - 1)}>
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <Button
+        variant={isCurrentWeek ? "secondary" : "outline"}
+        size="sm"
+        onClick={() => setWeekOffset(0)}
+      >
+        This Week
+      </Button>
+      <Button variant="outline" size="sm" onClick={() => setWeekOffset((w) => w + 1)}>
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="outline" size="sm" onClick={handleCopyPreviousWeek}>
+              <Copy className="h-4 w-4 mr-2" />
+              Copy Last Week
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Copy time entries from the previous week</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <Button size="sm" onClick={handleSubmitWeek} disabled={submitWeek.isPending || grandTotal === 0 || weekStatus === "submitted"}>
+        {submitWeek.isPending ? (
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+        ) : (
+          <Send className="h-4 w-4 mr-2" />
+        )}
+        Submit for Approval
+      </Button>
+    </>
+  );
 
   if (error) {
     return (
-      <div className="flex flex-col h-full bg-background">
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">My Timesheet</h1>
-              <p className="text-muted-foreground">Weekly time entry and tracking</p>
-            </div>
-          </div>
-        </header>
-        <div className="flex-1 flex items-center justify-center p-8">
+      <PageShell
+        title="My Timesheet"
+        description="Weekly time entry and tracking"
+      >
+        <div className="flex h-full items-center justify-center p-8">
           <ContextualEmptyState
             type="error"
             title="Failed to load timesheet"
@@ -248,74 +294,17 @@ export default function MyTimesheetPage() {
             onAction={() => refetch()}
           />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header — Layout A */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">My Timesheet</h1>
-              <p className="text-muted-foreground">Weekly time entry and tracking</p>
-            </div>
-            <Badge variant="outline" className={cn("text-[10px] h-5 px-2 gap-1", statusBadge.color)}>
-              {statusBadge.icon}
-              {statusBadge.label}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="icon" onClick={() => refetch()} disabled={isLoading}>
-                    <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Refresh</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <Button variant="outline" size="sm" onClick={() => setWeekOffset((w) => w - 1)}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={isCurrentWeek ? "secondary" : "outline"}
-              size="sm"
-              onClick={() => setWeekOffset(0)}
-            >
-              This Week
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setWeekOffset((w) => w + 1)}>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="outline" size="sm" onClick={handleCopyPreviousWeek}>
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy Last Week
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Copy time entries from the previous week</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <Button size="sm" onClick={handleSubmitWeek} disabled={submitWeek.isPending || grandTotal === 0 || weekStatus === "submitted"}>
-              {submitWeek.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Send className="h-4 w-4 mr-2" />
-              )}
-              Submit for Approval
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-6 space-y-6">
+    <PageShell
+      title="My Timesheet"
+      description="Weekly time entry and tracking"
+      actions={headerActions}
+      contentClassName="space-y-6"
+    >
         {/* KPI Stats */}
         <StatGrid columns={4}>
           <StatCard
@@ -573,7 +562,6 @@ export default function MyTimesheetPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </PageShell>
   );
 }

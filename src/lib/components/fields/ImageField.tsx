@@ -16,13 +16,24 @@ export function ImageField({ field, fieldKey, value, onChange, error, disabled }
     }
   };
 
+  const previewSrc = React.useMemo(() => {
+    if (typeof value === 'string') return value;
+    if (value instanceof Blob) return URL.createObjectURL(value);
+    return null;
+  }, [value]);
+
+  React.useEffect(() => {
+    if (!previewSrc || typeof value === 'string') return;
+    return () => URL.revokeObjectURL(previewSrc);
+  }, [previewSrc, value]);
+
   return (
     <div className="space-y-1">
-      {value && (
+      {previewSrc && (
         <div className="mb-2">
           {/* eslint-disable-next-line @next/next/no-img-element -- blob URL preview not compatible with next/image */}
           <img
-            src={typeof value === 'string' ? value : URL.createObjectURL(value)}
+            src={previewSrc}
             alt="Preview"
             className="max-w-full h-32 object-cover rounded-md border"
           />

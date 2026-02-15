@@ -13,9 +13,9 @@ interface WizardTemplateProps {
   steps?: Array<{
     title: string;
     component: string;
-    data?: Record<string, any>;
+    data?: Record<string, unknown>;
   }>;
-  onComplete?: (allData: Record<string, any>) => void;
+  onComplete?: (allData: Record<string, unknown>) => void;
   className?: string;
 }
 
@@ -28,14 +28,14 @@ export function WizardTemplate({
 }: WizardTemplateProps) {
   const { user } = useUser();
   const [currentStep, setCurrentStep] = useState(0);
-  const [wizardData, setWizardData] = useState<Record<string, any>>({});
+  const [wizardData, setWizardData] = useState<Record<string, unknown>>({});
 
   // Use custom steps or get from layout
   const steps = customSteps || [];
 
   const progress = steps.length > 0 ? ((currentStep + 1) / steps.length) * 100 : 0;
 
-  const handleNext = (stepData?: Record<string, any>) => {
+  const handleNext = (stepData?: Record<string, unknown>) => {
     if (stepData) {
       setWizardData(prev => ({ ...prev, ...stepData }));
     }

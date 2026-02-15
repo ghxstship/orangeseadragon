@@ -10,6 +10,10 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 
 const RESEND_COOLDOWN = 60;
+const appOrigin = (
+  process.env.NEXT_PUBLIC_APP_URL ||
+  ''
+).replace(/\/$/, '');
 
 export default function MagicLinkPage() {
   const supabase = createClient();
@@ -40,12 +44,13 @@ export default function MagicLinkPage() {
     }
 
     setIsLoading(true);
+    const emailRedirectTo = appOrigin ? `${appOrigin}/auth/callback` : undefined;
 
     try {
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          ...(emailRedirectTo ? { emailRedirectTo } : {}),
         },
       });
 

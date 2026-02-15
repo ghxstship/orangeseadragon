@@ -5,9 +5,10 @@ import { Timeline, TimelineItem, TimelineDot, TimelineContent, TimelineHeader, T
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Award, Briefcase, Star } from 'lucide-react';
+import type { EntityRecord } from '@/lib/schema/types';
 
 interface LifeStreamProfileProps {
-    person: any; // Using any for flexibility with schema, ideally strictly typed
+    person: EntityRecord;
 }
 
 // Mock data for visualizations

@@ -9,11 +9,14 @@ import { Input } from '@/components/ui/input';
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function LocationField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
+  const inputValue = typeof value === 'string' || typeof value === 'number' ? String(value) : '';
+
   return (
     <div className="space-y-1">
       <Input
+        id={fieldKey}
         type="text"
-        value={value || ''}
+        value={inputValue}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         className={error ? 'border-destructive' : ''}

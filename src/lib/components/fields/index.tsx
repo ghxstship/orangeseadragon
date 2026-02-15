@@ -67,12 +67,12 @@ export const fieldRenderers: Record<FieldType, React.ComponentType<FieldRenderPr
 export interface FieldRenderProps {
   field: FieldDefinition;
   fieldKey: string;
-  value: any;
-  onChange: (value: any) => void;
+  value: unknown;
+  onChange: (value: unknown) => void;
   error?: string;
   disabled?: boolean;
   mode: 'create' | 'edit' | 'table' | 'detail' | 'filter';
-  record?: any;
+  record?: Record<string, unknown>;
 }
 
 /**

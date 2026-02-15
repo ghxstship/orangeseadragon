@@ -15,8 +15,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, Copy, Check, ExternalLink, Loader2, Mail } from 'lucide-react';
 import { toast } from 'sonner';
-import { DEFAULT_LOCALE } from '@/lib/config';
 import { throwApiErrorResponse } from '@/lib/api/error-message';
+import { formatCurrency } from '@/lib/utils';
 
 interface PaymentLinkButtonProps {
   invoiceId: string;
@@ -148,7 +148,7 @@ export function PaymentLinkButton({
               <div>
                 <p className="font-medium">Invoice {invoiceNumber}</p>
                 <p className="text-sm text-muted-foreground">
-                  {currency} {amount.toLocaleString(DEFAULT_LOCALE, { minimumFractionDigits: 2 })}
+                  {formatCurrency(amount, currency)}
                 </p>
               </div>
               <Badge variant="secondary">Stripe</Badge>

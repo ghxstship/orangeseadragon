@@ -16,6 +16,20 @@ export function FileField({ field, fieldKey, value, onChange, error, disabled }:
     }
   };
 
+  const selectedValue = (() => {
+    if (value instanceof File) return value.name;
+    if (typeof value === 'string') return value;
+    if (
+      value &&
+      typeof value === 'object' &&
+      'name' in value &&
+      typeof value.name === 'string'
+    ) {
+      return value.name;
+    }
+    return '';
+  })();
+
   return (
     <div className="space-y-1">
       <Input
@@ -25,9 +39,9 @@ export function FileField({ field, fieldKey, value, onChange, error, disabled }:
         className={error ? 'border-destructive' : ''}
         accept={field.type === 'image' ? 'image/*' : undefined}
       />
-      {value && (
+      {selectedValue && (
         <p className="text-sm text-muted-foreground">
-          Selected: {value.name || value}
+          Selected: {selectedValue}
         </p>
       )}
       {error && <p className="text-sm text-destructive">{error}</p>}

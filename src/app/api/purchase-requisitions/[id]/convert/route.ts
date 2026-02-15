@@ -46,7 +46,18 @@ export async function POST(
 
         // 4. Group items by preferred vendor if applicable, or just create one PO for now
         // For simplicity, we create one PO. In a real system, we might create multiple POs if vendors differ.
-        const vendorId = requisition.items?.[0]?.preferred_vendor_id || null;
+        const requisitionItems = (requisition.items ?? []) as Array<{
+            id: string;
+            preferred_vendor_id?: string | null;
+            description: string;
+            quantity: number;
+            estimated_unit_price?: number | null;
+            estimated_total?: number | null;
+            unit_of_measure?: string | null;
+            position?: number | null;
+            notes?: string | null;
+        }>;
+        const vendorId = requisitionItems[0]?.preferred_vendor_id || null;
 
         // 5. Create the Purchase Order
         const poNumber = `PO-${Date.now().toString().slice(-6)}`;
@@ -74,7 +85,7 @@ export async function POST(
         }
 
         // 6. Create PO Items
-        const poItems = requisition.items.map((item: any) => ({
+        const poItems = requisitionItems.map((item) => ({
             purchase_order_id: po.id,
             requisition_item_id: item.id,
             description: item.description,

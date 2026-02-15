@@ -6,24 +6,24 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { MatrixViewConfig } from "@/lib/schema/types";
 
-interface MatrixItem {
+interface MatrixItem<TData extends Record<string, unknown> = Record<string, unknown>> {
     id: string;
     title: string;
     subtitle?: string;
     xValue: number;
     yValue: number;
-    data: any;
+    data: TData;
 }
 
-interface MatrixViewProps {
-    items: MatrixItem[];
+interface MatrixViewProps<TData extends Record<string, unknown> = Record<string, unknown>> {
+    items: MatrixItem<TData>[];
     config: MatrixViewConfig;
-    onItemClick?: (item: any) => void;
+    onItemClick?: (item: TData) => void;
 }
 
 import { motion, AnimatePresence } from "framer-motion";
 
-export function MatrixView({ items, config, onItemClick }: MatrixViewProps) {
+export function MatrixView<TData extends Record<string, unknown>>({ items, config, onItemClick }: MatrixViewProps<TData>) {
     const getQuadrantItems = (quadrantId: number) => {
         return items.filter((item) => {
             const x = item.xValue;

@@ -90,7 +90,7 @@ export function CrudList<T extends EntityRecord>({
       <ViewRenderer
         schema={schema}
         viewType={currentView}
-        viewConfig={(schema.views as Record<string, any>)[currentView] as Record<string, unknown>}
+        viewConfig={(schema.views as Record<string, unknown>)[currentView] as Record<string, unknown>}
         data={crud.data as T[]}
         loading={crud.loading}
         error={crud.error || undefined}

@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { getErrorMessage } from "@/lib/api/error-message";
 
 export interface User {
   id: string;
@@ -112,7 +113,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Login failed",
+        error: getErrorMessage(error, "Login failed"),
       };
     }
   }
@@ -160,7 +161,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Registration failed",
+        error: getErrorMessage(error, "Registration failed"),
       };
     }
   }
@@ -247,7 +248,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Invitation acceptance failed",
+        error: getErrorMessage(error, "Invitation acceptance failed"),
       };
     }
   }
@@ -305,7 +306,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Session refresh failed",
+        error: getErrorMessage(error, "Session refresh failed"),
       };
     }
   }
@@ -401,7 +402,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Profile update failed",
+        error: getErrorMessage(error, "Profile update failed"),
       };
     }
   }
@@ -421,7 +422,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to mark profile complete",
+        error: getErrorMessage(error, "Failed to mark profile complete"),
       };
     }
   }
@@ -441,7 +442,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to mark onboarding complete",
+        error: getErrorMessage(error, "Failed to mark onboarding complete"),
       };
     }
   }
@@ -460,7 +461,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Password change failed",
+        error: getErrorMessage(error, "Password change failed"),
       };
     }
   }
@@ -479,7 +480,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Password reset request failed",
+        error: getErrorMessage(error, "Password reset request failed"),
       };
     }
   }
@@ -499,7 +500,7 @@ export class AuthService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Email verification failed",
+        error: getErrorMessage(error, "Email verification failed"),
       };
     }
   }

@@ -4,6 +4,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
+import { formatCurrency } from '@/lib/utils';
 
 const data = [
     { name: 'Jan', income: 40000, expense: 24000 },
@@ -73,7 +74,7 @@ export function CashFlowChart() {
                             <Tooltip
                                 contentStyle={{ backgroundColor: 'hsl(var(--chart-tooltip-bg) / 0.8)', borderColor: 'hsl(var(--chart-tooltip-border))', borderRadius: '8px' }}
                                 itemStyle={{ color: 'hsl(var(--chart-tooltip-text))' }}
-                                formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
+                                formatter={(value: number) => [formatCurrency(value), '']}
                             />
                             <Area
                                 type="monotone"

@@ -19,6 +19,7 @@ import type { EntitySchema } from "@/lib/schema/types";
 import { useColumnPreference } from "@/lib/crud/hooks/useColumnPreference";
 import { Plus, RefreshCw } from "lucide-react";
 import { DEFAULT_LOCALE } from "@/lib/config";
+import { getErrorMessage } from "@/lib/api/error-message";
 
 /**
  * LIST LAYOUT
@@ -165,6 +166,11 @@ export function ListLayout<T extends object>({
     }));
   }, [columnPreferences]);
 
+  const errorDescription = React.useMemo(
+    () => getErrorMessage(error, `Failed to load ${schema.identity.namePlural.toLowerCase()}`),
+    [error, schema.identity.namePlural]
+  );
+
   if (error) {
     return (
       <div className="flex flex-col h-full bg-background">
@@ -173,7 +179,7 @@ export function ListLayout<T extends object>({
           <ContextualEmptyState
             type="error"
             title="Failed to load data"
-            description={error.message}
+            description={errorDescription}
             actionLabel={onRefresh ? "Try again" : undefined}
             onAction={onRefresh}
           />

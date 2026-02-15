@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input';
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function DatetimeField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
-  const formatDateTime = (date: Date | string | null) => {
+  const formatDateTime = (date: unknown) => {
     if (!date) return '';
-    const d = new Date(date);
+    const d = date instanceof Date ? date : new Date(String(date));
+    if (Number.isNaN(d.getTime())) return '';
     return d.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM format
   };
 

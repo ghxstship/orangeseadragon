@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
@@ -68,7 +69,7 @@ export async function POST(
             .eq('is_active', true)
             .single();
 
-        let approvalRequest: any = null;
+        let approvalRequest: Record<string, unknown> | null = null;
 
         if (workflow) {
             // Create approval request
@@ -140,9 +141,8 @@ export async function POST(
 /**
  * Helper to get approvers based on workflow configuration
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client type
 async function getApprovers(
-    supabase: any,
+    supabase: SupabaseClient,
     workflow: { approval_type: string; config: Record<string, unknown> },
     timesheet: { organization_id: string; user_id: string }
 ): Promise<string[]> {

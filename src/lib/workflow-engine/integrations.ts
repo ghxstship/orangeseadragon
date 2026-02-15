@@ -3,6 +3,8 @@
  * Adapters for external services (email, SMS, push, calendar)
  */
 
+import { getErrorMessage } from "@/lib/api/error-message";
+
 export interface EmailProvider {
   send(options: EmailOptions): Promise<EmailResult>;
 }
@@ -226,7 +228,7 @@ export class SendGridEmailProvider implements EmailProvider {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: getErrorMessage(error, "Unknown error"),
       };
     }
   }
@@ -279,7 +281,7 @@ export class TwilioSMSProvider implements SMSProvider {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: getErrorMessage(error, "Unknown error"),
       };
     }
   }
@@ -334,7 +336,7 @@ export class FirebasePushProvider implements PushProvider {
         success: false,
         successCount: 0,
         failureCount: options.tokens.length,
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [getErrorMessage(error, "Unknown error")],
       };
     }
   }

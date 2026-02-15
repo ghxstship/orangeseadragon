@@ -47,7 +47,10 @@ export function PipelineSelector({
         },
     });
 
-    const pipelines: Pipeline[] = data?.records || [];
+    const pipelines = React.useMemo<Pipeline[]>(() => {
+        const records = data?.records;
+        return Array.isArray(records) ? (records as Pipeline[]) : [];
+    }, [data?.records]);
 
     // Auto-select default pipeline if none selected
     React.useEffect(() => {

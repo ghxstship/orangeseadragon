@@ -9,10 +9,13 @@ import { Textarea } from '@/components/ui/textarea';
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function RichtextField({ field, fieldKey, value, onChange, error, disabled }: FieldRenderProps) {
+  const textValue = typeof value === 'string' ? value : '';
+
   return (
     <div className="space-y-1">
       <Textarea
-        value={value || ''}
+        id={fieldKey}
+        value={textValue}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         rows={6}

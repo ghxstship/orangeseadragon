@@ -132,13 +132,18 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
 
   if (!relation) return null;
 
+  const selectedValue =
+    typeof value === 'string' ? value :
+    typeof value === 'number' ? String(value) :
+    '';
+
   void fieldKey;
   void searchTerm;
 
   return (
     <div className="space-y-1">
       <Select
-        value={value || ''}
+        value={selectedValue}
         onValueChange={(val) => onChange(val)}
         disabled={disabled || loading}
       >

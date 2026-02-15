@@ -15,6 +15,7 @@ import type {
   SendNotificationRequest,
   SendNotificationResponse,
 } from "./types";
+import { extractApiErrorMessage, getErrorMessage } from "@/lib/api/error-message";
 
 type NotificationEventType =
   | "notification.created"
@@ -115,7 +116,7 @@ export class NotificationService {
       } catch (error) {
         errors.push({
           channel,
-          error: error instanceof Error ? error.message : "Unknown error",
+          error: getErrorMessage(error, "Unknown error"),
         });
       }
     }
@@ -346,8 +347,7 @@ export class NotificationService {
     if (notification.retryCount >= notification.maxRetries) {
       notification.status = "failed";
       notification.failedAt = new Date();
-      notification.failureReason =
-        error instanceof Error ? error.message : "Unknown error";
+      notification.failureReason = getErrorMessage(error, "Unknown error");
 
       await this.emitEvent("notification.failed", {
         notificationId: notification.id,
@@ -399,8 +399,8 @@ export class NotificationService {
     });
 
     if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.message || `Email send failed: ${response.status}`);
+      const err = await response.json().catch(() => null);
+      throw new Error(extractApiErrorMessage(err, `Email send failed: ${response.status}`));
     }
   }
 

@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { getErrorMessage } from "@/lib/api/error-message";
 
 export interface OnboardingStep {
   id: string;
@@ -207,7 +208,7 @@ export class OnboardingService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to initialize onboarding",
+        error: getErrorMessage(error, "Failed to initialize onboarding"),
       };
     }
   }
@@ -291,7 +292,7 @@ export class OnboardingService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to start step",
+        error: getErrorMessage(error, "Failed to start step"),
       };
     }
   }
@@ -340,7 +341,7 @@ export class OnboardingService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to complete step",
+        error: getErrorMessage(error, "Failed to complete step"),
       };
     }
   }
@@ -391,7 +392,7 @@ export class OnboardingService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to skip step",
+        error: getErrorMessage(error, "Failed to skip step"),
       };
     }
   }
@@ -450,7 +451,7 @@ export class OnboardingService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to dismiss onboarding",
+        error: getErrorMessage(error, "Failed to dismiss onboarding"),
       };
     }
   }
@@ -474,7 +475,7 @@ export class OnboardingService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to resume onboarding",
+        error: getErrorMessage(error, "Failed to resume onboarding"),
       };
     }
   }

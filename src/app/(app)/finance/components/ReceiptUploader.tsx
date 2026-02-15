@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -204,10 +205,13 @@ export function ReceiptUploader({ onUploadComplete, maxFiles = 10 }: ReceiptUplo
               >
                 <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md bg-muted">
                   {receipt.file.type.startsWith('image/') ? (
-                    <img
+                    <Image
                       src={receipt.preview}
                       alt="Receipt"
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="64px"
+                      unoptimized
+                      className="object-cover"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">

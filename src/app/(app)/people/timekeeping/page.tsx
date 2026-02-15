@@ -6,20 +6,17 @@ import { CrudList } from '@/lib/crud/components/CrudList';
 import { timesheetSchema } from '@/lib/schemas/timesheet';
 import { clockEntrySchema } from '@/lib/schemas/clockEntry';
 import { TimeClock } from '@/components/people/TimeClock';
+import { PageShell } from '@/components/common/page-shell';
 
 export default function TimekeepingPage() {
   const [activeTab, setActiveTab] = useState('clock');
 
   return (
-    <div className="space-y-6">
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 px-6 py-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Time & Attendance</h2>
-          <p className="text-muted-foreground">Clock in/out, timesheets, and attendance tracking</p>
-        </div>
-      </div>
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="px-6 pt-6">
+    <PageShell
+      title="Time & Attendance"
+      description="Clock in/out, timesheets, and attendance tracking"
+    >
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>
           <TabsTrigger value="clock">Time Clock</TabsTrigger>
           <TabsTrigger value="entries">Clock Entries</TabsTrigger>
@@ -44,6 +41,6 @@ export default function TimekeepingPage() {
           <CrudList schema={timesheetSchema} />
         </TabsContent>
       </Tabs>
-    </div>
+    </PageShell>
   );
 }

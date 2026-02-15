@@ -1,4 +1,5 @@
 import type { SlackMessage, SlackMessageResult, SlackChannel, SlackBlock } from './types';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 const SLACK_BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 const SLACK_API_URL = 'https://slack.com/api';
@@ -39,7 +40,7 @@ export class SlackService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }
@@ -155,7 +156,7 @@ export class SlackService {
     } catch (error) {
       return {
         channels: [],
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }
@@ -183,7 +184,7 @@ export class SlackService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }
@@ -202,7 +203,7 @@ export class SlackService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: getErrorMessage(error, 'Unknown error'),
       };
     }
   }

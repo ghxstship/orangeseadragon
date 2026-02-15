@@ -31,6 +31,22 @@ export function extractApiErrorMessage(errorPayload: unknown, fallbackMessage: s
   return fallbackMessage;
 }
 
+export function getErrorMessage(error: unknown, fallbackMessage: string): string {
+  if (error instanceof Error) {
+    const message = error.message.trim();
+    if (message && message !== '[object Object]') {
+      return message;
+    }
+    return fallbackMessage;
+  }
+
+  if (typeof error === 'string' && error.trim()) {
+    return error;
+  }
+
+  return extractApiErrorMessage(error, fallbackMessage);
+}
+
 export async function parseApiErrorResponse(response: Response, fallbackMessage: string): Promise<string> {
   const contentType = response.headers.get('content-type') || '';
   const payload = contentType.includes('application/json')

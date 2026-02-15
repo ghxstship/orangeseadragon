@@ -15,7 +15,9 @@ import { useEvents } from '@/hooks/use-events';
 import { useProjects } from '@/hooks/use-projects';
 import { useBudgets } from '@/hooks/use-budgets';
 import { useUser } from '@/hooks/use-supabase';
-import { cn } from '@/lib/utils';
+import { PageShell } from '@/components/common/page-shell';
+import { cn, formatCurrency } from '@/lib/utils';
+import { getErrorMessage } from '@/lib/api/error-message';
 import {
   CalendarDays,
   DollarSign,
@@ -75,59 +77,42 @@ export default function ProductionsPage() {
     return { eventsCount, crewCount, revenueMTD, incidents };
   }, [upcomingEvents, activeProjects, budgets]);
 
-  const formatCurrency = (amount: number) => {
-    if (amount >= 1000000) return `$${(amount / 1000000).toFixed(1)}M`;
-    if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`;
-    return `$${amount}`;
-  };
-
   if (eventsError) {
     return (
-      <div className="flex flex-col h-full bg-background">
-        <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Productions</h1>
-              <p className="text-muted-foreground">Live Operations & Mission Control</p>
-            </div>
-          </div>
-        </header>
-        <div className="flex-1 flex items-center justify-center p-8">
+      <PageShell
+        title="Productions"
+        description="Live Operations & Mission Control"
+      >
+        <div className="flex h-full items-center justify-center p-8">
           <ContextualEmptyState
             type="error"
             title="Failed to load productions"
-            description={eventsError.message}
+            description={getErrorMessage(eventsError, 'Failed to load productions')}
             actionLabel="Try again"
             onAction={() => refetchEvents()}
           />
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      {/* Header — Layout C */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Productions</h1>
-            <p className="text-muted-foreground">Live Operations & Mission Control</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={() => refetchEvents()} disabled={isLoading}>
-              <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
-            </Button>
-            <Button onClick={() => router.push('/productions/events')}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Event
-            </Button>
-          </div>
+    <PageShell
+      title="Productions"
+      description="Live Operations & Mission Control"
+      actions={
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" onClick={() => refetchEvents()} disabled={isLoading}>
+            <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
+          </Button>
+          <Button onClick={() => router.push('/productions/events')}>
+            <Plus className="h-4 w-4 mr-2" />
+            New Event
+          </Button>
         </div>
-      </header>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-6 space-y-8">
+      }
+      contentClassName="space-y-8"
+    >
         {/* Mission Control Row */}
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Mission Control</h2>
@@ -191,10 +176,12 @@ export default function ProductionsPage() {
                   ))}
                 </div>
               ) : upcomingEvents.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CalendarDays className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                  <p className="text-sm">No upcoming events</p>
-                </div>
+                <ContextualEmptyState
+                  type="no-data"
+                  title="No upcoming events"
+                  description="Upcoming productions will appear here."
+                  className="py-8"
+                />
               ) : (
                 <div className="space-y-2">
                   {upcomingEvents.map((event: Record<string, unknown>) => {
@@ -262,10 +249,12 @@ export default function ProductionsPage() {
                   ))}
                 </div>
               ) : activeProjects.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Hammer className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                  <p className="text-sm">No active projects</p>
-                </div>
+                <ContextualEmptyState
+                  type="no-data"
+                  title="No active projects"
+                  description="Active production workstreams will appear here."
+                  className="py-8"
+                />
               ) : (
                 <div className="space-y-2">
                   {activeProjects.slice(0, 5).map((project: Record<string, unknown>) => (
@@ -293,7 +282,6 @@ export default function ProductionsPage() {
             </CardContent>
           </Card>
         </div>
-      </div>
-    </div>
+    </PageShell>
   );
 }
