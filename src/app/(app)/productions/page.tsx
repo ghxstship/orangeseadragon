@@ -16,6 +16,8 @@ import { useProjects } from '@/hooks/use-projects';
 import { useBudgets } from '@/hooks/use-budgets';
 import { useUser } from '@/hooks/use-supabase';
 import { PageShell } from '@/components/common/page-shell';
+import { FadeIn, StaggerList, StaggerItem } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 import { cn, formatCurrency } from '@/lib/utils';
 import { getErrorMessage } from '@/lib/api/error-message';
 import {
@@ -35,6 +37,7 @@ export default function ProductionsPage() {
   const router = useRouter();
   const { user } = useUser();
   const orgId = user?.user_metadata?.organization_id || null;
+  useCopilotContext({ module: 'productions' });
 
   const { data: events, isLoading: eventsLoading, error: eventsError, refetch: refetchEvents } = useEvents(orgId);
   const { data: projects, isLoading: projectsLoading } = useProjects(orgId);
@@ -114,6 +117,7 @@ export default function ProductionsPage() {
       contentClassName="space-y-8"
     >
         {/* Mission Control Row */}
+        <FadeIn>
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Mission Control</h2>
           <div className="grid gap-4 md:grid-cols-4">
@@ -124,6 +128,7 @@ export default function ProductionsPage() {
             <WeatherWidget />
           </div>
         </div>
+        </FadeIn>
 
         {/* KPI Stats */}
         <StatGrid columns={4}>
@@ -155,6 +160,7 @@ export default function ProductionsPage() {
         </StatGrid>
 
         {/* Lists */}
+        <FadeIn delay={0.15}>
         <div className="grid gap-4 md:grid-cols-2">
           {/* Upcoming Events */}
           <Card className="border-border">
@@ -183,7 +189,7 @@ export default function ProductionsPage() {
                   className="py-8"
                 />
               ) : (
-                <div className="space-y-2">
+                <StaggerList className="space-y-2">
                   {upcomingEvents.map((event: Record<string, unknown>) => {
                     const startDate = event.start_date ? new Date(event.start_date as string) : null;
                     return (
@@ -222,9 +228,10 @@ export default function ProductionsPage() {
                         </Badge>
                         <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-40 transition-opacity" />
                       </div>
+                    </StaggerItem>
                     );
                   })}
-                </div>
+                </StaggerList>
               )}
             </CardContent>
           </Card>
@@ -256,10 +263,10 @@ export default function ProductionsPage() {
                   className="py-8"
                 />
               ) : (
-                <div className="space-y-2">
+                <StaggerList className="space-y-2">
                   {activeProjects.slice(0, 5).map((project: Record<string, unknown>) => (
+                    <StaggerItem key={project.id as string}>
                     <div
-                      key={project.id as string}
                       className="flex items-center gap-3 rounded-lg border border-border p-3 cursor-pointer hover:bg-accent/50 transition-colors group"
                       onClick={() => router.push(`/${project.slug || `productions/${project.id}`}`)}
                     >
@@ -276,12 +283,14 @@ export default function ProductionsPage() {
                       </div>
                       <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-40 transition-opacity" />
                     </div>
+                    </StaggerItem>
                   ))}
-                </div>
+                </StaggerList>
               )}
             </CardContent>
           </Card>
         </div>
+        </FadeIn>
     </PageShell>
   );
 }

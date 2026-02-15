@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, serverError } from '@/lib/api/response';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 /**
  * POST /api/webhooks/test
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
         errorMessage = `HTTP ${response.status}: ${responseBody.substring(0, 500)}`;
       }
     } catch (fetchErr) {
-      errorMessage = fetchErr instanceof Error ? fetchErr.message : 'Unknown fetch error';
+      errorMessage = getErrorMessage(fetchErr, 'Unknown fetch error');
     }
 
     // Log the delivery

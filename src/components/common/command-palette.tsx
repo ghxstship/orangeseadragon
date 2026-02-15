@@ -46,6 +46,7 @@ import {
   Plug,
   Lock,
   Clapperboard,
+  Sparkles,
 } from "lucide-react";
 import {
   CommandDialog,
@@ -327,6 +328,12 @@ export function CommandPalette() {
     {
       heading: "Quick Actions",
       items: [
+        {
+          icon: Sparkles,
+          label: "Open AI Copilot",
+          shortcut: "⌘.",
+          action: () => useUIStore.getState().toggleCopilot(),
+        },
         {
           icon: Search,
           label: "Search everything...",

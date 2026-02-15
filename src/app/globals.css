@@ -259,6 +259,36 @@
     border-color: hsl(var(--glass-highlight));
   }
 
+  .glass-card--elevated {
+    background: hsl(var(--glass-bg-elevated));
+    backdrop-filter: blur(var(--glass-blur-elevated));
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-spatial);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .glass-card--elevated:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-spatial-hover);
+    border-color: hsl(var(--glass-highlight));
+  }
+
+  .glass-card--floating {
+    background: hsl(var(--glass-bg-floating));
+    backdrop-filter: blur(var(--glass-blur-floating));
+    border: 1px solid hsl(var(--glass-border));
+    box-shadow: var(--shadow-spatial-hover);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .glass-card--floating:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 16px 48px -8px rgba(0, 0, 0, 0.15);
+    border-color: hsl(var(--glass-highlight));
+  }
+
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70;
   }

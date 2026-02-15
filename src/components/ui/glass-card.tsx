@@ -27,11 +27,11 @@ interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantStyles: Record<GlassVariant, string> = {
-  default: "bg-card/80 backdrop-blur-xl border border-border/50 shadow-sm",
+  default: "glass-card border border-border/50 shadow-sm",
   elevated:
-    "bg-card/70 backdrop-blur-2xl border border-border/40 shadow-lg shadow-black/[0.03] dark:shadow-black/[0.15]",
+    "glass-card--elevated border border-border/40 shadow-lg shadow-black/[0.03] dark:shadow-black/[0.15]",
   floating:
-    "bg-card/60 backdrop-blur-3xl border border-white/10 dark:border-white/5 shadow-2xl shadow-black/[0.08] dark:shadow-black/[0.3]",
+    "glass-card--floating border border-white/10 dark:border-white/5 shadow-2xl shadow-black/[0.08] dark:shadow-black/[0.3]",
   solid: "bg-card border border-border shadow-sm",
 };
 

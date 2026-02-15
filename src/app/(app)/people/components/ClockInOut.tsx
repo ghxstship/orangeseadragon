@@ -35,7 +35,7 @@ import {
 } from 'lucide-react';
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
-import { throwApiErrorResponse } from '@/lib/api/error-message';
+import { getErrorMessage, throwApiErrorResponse } from '@/lib/api/error-message';
 
 interface LocationData {
   latitude: number;
@@ -228,7 +228,7 @@ export function ClockInOut() {
       setNotes('');
     } catch (error) {
       console.error('Error:', error);
-      toast.error(error instanceof Error ? error.message : 'Action failed');
+      toast.error(getErrorMessage(error, 'Action failed'));
     } finally {
       setIsLoading(false);
       setPendingAction(null);

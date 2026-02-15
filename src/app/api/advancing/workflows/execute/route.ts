@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, supabaseError } from '@/lib/api/response';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface WorkflowStep {
   type: 'action' | 'condition' | 'wait' | 'branch';
@@ -163,7 +164,7 @@ export async function POST(request: NextRequest) {
           step: currentStep,
           type: step.type,
           status: 'failed',
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: getErrorMessage(error, 'Unknown error'),
           completed_at: new Date().toISOString(),
         });
         

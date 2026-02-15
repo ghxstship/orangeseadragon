@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { stripeService } from '@/lib/integrations/stripe';
 import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, badRequest, serverError } from '@/lib/api/response';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 export async function POST(request: NextRequest) {
   const auth = await requireAuth();
@@ -39,6 +40,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Create checkout session error:', error);
-    return serverError(error instanceof Error ? error.message : 'Failed to create checkout session');
+    return serverError(getErrorMessage(error, 'Failed to create checkout session'));
   }
 }

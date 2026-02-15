@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getServerEnv, getServiceRoleKey } from '@/lib/env';
 import { captureError } from '@/lib/observability';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -33,7 +34,7 @@ export async function GET() {
         : { status: 'ok', latency_ms: Date.now() - start };
     } catch (e) {
       captureError(e, 'health.supabase_connectivity_failed');
-      checks.supabase = { status: 'error', latency_ms: Date.now() - start, error: e instanceof Error ? e.message : 'unknown' };
+      checks.supabase = { status: 'error', latency_ms: Date.now() - start, error: getErrorMessage(e, 'unknown') };
     }
   } else {
     checks.supabase = { status: 'error', error: 'Missing SUPABASE env vars' };

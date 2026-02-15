@@ -209,7 +209,7 @@ export default function DashboardPage() {
         }
       } catch (err) {
         console.error("Failed to fetch dashboard layout:", err);
-        setError(err instanceof Error ? err : new Error("Failed to load dashboard"));
+        setError(new Error(getErrorMessage(err, "Failed to load dashboard")));
       } finally {
         setIsLoading(false);
       }
@@ -236,7 +236,7 @@ export default function DashboardPage() {
         setLayoutId(defaultLayout.id);
       }
     } catch (err) {
-      setError(err instanceof Error ? err : new Error("Failed to refresh"));
+      setError(new Error(getErrorMessage(err, "Failed to refresh")));
     } finally {
       setIsLoading(false);
     }

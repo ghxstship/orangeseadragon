@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { getErrorMessage } from "@/lib/api/error-message";
 
 interface Notification {
   id: string;
@@ -100,7 +101,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
         unreadCount: unreadCount ?? 0,
       });
     } catch (err) {
-      setError(err instanceof Error ? err : new Error("Failed to fetch notifications"));
+      setError(new Error(getErrorMessage(err, "Failed to fetch notifications")));
       setNotifications([]);
       setMeta({ page, limit, total: 0, totalPages: 0, unreadCount: 0 });
     } finally {

@@ -9,6 +9,7 @@ import { CommandPalette } from "@/components/common/command-palette";
 import { NotificationCenter } from "@/components/common/notification-center";
 import { QuickAddTask } from "@/components/common/quick-add-task";
 import { CopilotDrawer, CopilotTrigger } from "@/components/common/copilot-drawer";
+import { useUIStore } from "@/stores/ui-store";
 import type { LayoutType } from "@/lib/layouts/types";
 
 interface AppShellProps {
@@ -44,6 +45,18 @@ export function AppShell({ children }: AppShellProps) {
     'entity-form',
     'dashboard'
   ].includes(layoutType);
+
+  // Global keyboard shortcut: ⌘. to toggle AI Copilot
+  React.useEffect(() => {
+    const handleCopilotShortcut = (e: KeyboardEvent) => {
+      if (e.key === "." && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        useUIStore.getState().toggleCopilot();
+      }
+    };
+    document.addEventListener("keydown", handleCopilotShortcut);
+    return () => document.removeEventListener("keydown", handleCopilotShortcut);
+  }, []);
 
   React.useEffect(() => {
     const handleAppNavigate = (event: Event) => {

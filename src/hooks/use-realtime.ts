@@ -9,6 +9,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { getErrorMessage } from "@/lib/api/error-message";
 import { 
   getRealtimeService, 
   getPresenceService,
@@ -208,7 +209,7 @@ export function useActivityFeed(
       setActivities(result.data);
       setTotal(result.total);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch activities'));
+      setError(new Error(getErrorMessage(err, 'Failed to fetch activities')));
     } finally {
       setLoading(false);
     }
@@ -285,7 +286,7 @@ export function useComments(
       setThreads(result.threads);
       setCount(result.comments.length + Array.from(result.threads.values()).flat().length);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch comments'));
+      setError(new Error(getErrorMessage(err, 'Failed to fetch comments')));
     } finally {
       setLoading(false);
     }
