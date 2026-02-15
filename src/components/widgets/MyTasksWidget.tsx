@@ -4,9 +4,11 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { useUser } from '@/hooks/use-supabase';
 import { useTasks } from '@/hooks/use-tasks';
 import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface MyTasksWidgetProps {
   title?: string;
@@ -16,7 +18,7 @@ interface MyTasksWidgetProps {
 export function MyTasksWidget({ title = "My Tasks", limit = 5 }: MyTasksWidgetProps) {
   const { user } = useUser();
   const organizationId = user?.user_metadata?.organization_id || null;
-  const { data: tasks, isLoading, error } = useTasks(organizationId);
+  const { data: tasks, isLoading, error, refetch } = useTasks(organizationId);
 
   const myTasks = React.useMemo(() => {
     if (!tasks) return [];
@@ -56,7 +58,16 @@ export function MyTasksWidget({ title = "My Tasks", limit = 5 }: MyTasksWidgetPr
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Failed to load your tasks.</p>
+          <ContextualEmptyState
+            type="error"
+            title="Failed to load your tasks"
+            description={getErrorMessage(error, 'Please try again.')}
+            actionLabel="Refresh"
+            onAction={() => {
+              void refetch();
+            }}
+            className="py-6"
+          />
         </CardContent>
       </Card>
     );

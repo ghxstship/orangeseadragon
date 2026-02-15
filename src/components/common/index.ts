@@ -25,6 +25,7 @@ export { ImportModal } from "./import-modal";
 export { KeyboardShortcutsDialog } from "./keyboard-shortcuts-dialog";
 export {
   ContextualEmptyState,
+  PageErrorState,
   NoDataEmptyState,
   NoResultsEmptyState,
   ErrorEmptyState,

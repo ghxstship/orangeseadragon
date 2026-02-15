@@ -4,6 +4,7 @@ import React from 'react';
 import { DataTable } from '@/components/views/data-table';
 import { EntitySchema, EntityRecord } from '@/lib/schema/types';
 import { ColumnDef } from '@tanstack/react-table';
+import { PageErrorState } from '@/components/common/contextual-empty-state';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -96,12 +97,12 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
   // Handle error state
   if (error) {
     return (
-      <div className="flex bg-destructive/10 items-center justify-center h-64 rounded-lg border border-destructive/20 p-6 text-center">
-        <div>
-          <h3 className="text-destructive font-semibold">Error loading data</h3>
-          <p className="text-destructive/80 text-sm mt-1">{getErrorMessage(error, 'There was a problem fetching the data.')}</p>
-        </div>
-      </div>
+      <PageErrorState
+        title="Error loading data"
+        description={getErrorMessage(error, 'There was a problem fetching the data.')}
+        error={error}
+        className="h-64 min-h-0"
+      />
     );
   }
 

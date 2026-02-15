@@ -1,11 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { UserPlus, Loader2, CheckCircle, XCircle, User, Lock } from 'lucide-react';
+import { UserPlus, Loader2, CheckCircle, User, Lock } from 'lucide-react';
 import { AuthTemplate, AuthField } from '@/components/templates/AuthTemplate';
 import { throwApiErrorResponse } from '@/lib/api/error-message';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 
 interface InviteData {
   organizationName: string;
@@ -76,16 +76,13 @@ export default function AcceptInvitePage() {
 
   if (error) {
     return (
-      <div className="space-y-6 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-          <XCircle className="h-8 w-8 text-destructive" />
-        </div>
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">Invalid invitation</h1>
-          <p className="text-muted-foreground">{error}</p>
-        </div>
-        <Link href="/login" className="text-primary hover:underline">Go to sign in</Link>
-      </div>
+      <ContextualEmptyState
+        type="error"
+        title="Invalid invitation"
+        description={error}
+        actionLabel="Go to sign in"
+        onAction={() => router.push('/login')}
+      />
     );
   }
 

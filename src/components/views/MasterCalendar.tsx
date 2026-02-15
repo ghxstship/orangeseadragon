@@ -15,6 +15,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageErrorState } from "@/components/common/contextual-empty-state";
 import { cn } from "@/lib/utils";
 import { getErrorMessage, throwApiErrorResponse } from "@/lib/api/error-message";
 import {
@@ -342,18 +343,12 @@ export function MasterCalendar({
 
       {/* Error State */}
       {error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive">
-          <p className="text-sm font-medium">Failed to load calendar</p>
-          <p className="text-xs mt-1">{error}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-2"
-            onClick={fetchCalendarData}
-          >
-            Retry
-          </Button>
-        </div>
+        <PageErrorState
+          title="Failed to load calendar"
+          description={error}
+          onRetry={fetchCalendarData}
+          className="min-h-[16rem]"
+        />
       )}
 
       {/* Loading State */}

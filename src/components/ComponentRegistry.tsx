@@ -3,9 +3,10 @@ import { usePageLayout, usePageLayouts, useDefaultPageLayout } from '@/hooks/use
 import { useUser } from '@/hooks/use-supabase';
 import { useOrganization } from '@/hooks/use-organization';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ContextualEmptyState, PageErrorState } from '@/components/common/contextual-empty-state';
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { getErrorMessage } from '@/lib/api/error-message';
 
 // ============================================================================
 // COMPONENT REGISTRY
@@ -207,11 +208,11 @@ export function ComponentRenderer({
 
   if (!Component) {
     return (
-      <Alert className={className}>
-        <AlertDescription>
-          Unknown component type: {componentType}
-        </AlertDescription>
-      </Alert>
+      <PageErrorState
+        title="Unknown component"
+        description={`Component "${componentType}" is not registered in the component registry.`}
+        className={cn("min-h-[12rem]", className)}
+      />
     );
   }
 
@@ -256,9 +257,9 @@ export function PageLayoutRenderer({
   const { data: organization } = useOrganization(organizationId);
 
   // Get layout by slug or default by type
-  const { data: layoutBySlug, isLoading: loadingSlug, error: errorSlug } = usePageLayout(layoutSlug || '');
+  const { data: layoutBySlug, isLoading: loadingSlug, error: errorSlug, refetch: refetchSlug } = usePageLayout(layoutSlug || '');
 
-  const { data: defaultLayout, isLoading: loadingDefault, error: errorDefault } = useDefaultPageLayout(layoutType || '');
+  const { data: defaultLayout, isLoading: loadingDefault, error: errorDefault, refetch: refetchDefault } = useDefaultPageLayout(layoutType || '');
 
   const layout = layoutBySlug || defaultLayout;
   const isLoading = loadingSlug || loadingDefault;
@@ -270,11 +271,16 @@ export function PageLayoutRenderer({
 
   if (error || !layout) {
     return (
-      <Alert className={className}>
-        <AlertDescription>
-          {error ? `Failed to load layout: ${error.message}` : 'No layout found'}
-        </AlertDescription>
-      </Alert>
+      <PageErrorState
+        title={error ? 'Failed to load layout' : 'No layout found'}
+        description={error ? getErrorMessage(error, 'We could not load this page layout.') : 'No layout configuration is available for this route.'}
+        error={error || undefined}
+        onRetry={() => {
+          void refetchSlug();
+          void refetchDefault();
+        }}
+        className={className}
+      />
     );
   }
 
@@ -288,11 +294,12 @@ export function PageLayoutRenderer({
 
     if (!hasPermission) {
       return (
-        <Alert className={className}>
-          <AlertDescription>
-            You don&apos;t have permission to view this page.
-          </AlertDescription>
-        </Alert>
+        <ContextualEmptyState
+          type="no-permission"
+          title="Access restricted"
+          description="You don&apos;t have permission to view this page."
+          className={className}
+        />
       );
     }
   }
@@ -305,11 +312,12 @@ export function PageLayoutRenderer({
 
     if (!isCompatible) {
       return (
-        <Alert className={className}>
-          <AlertDescription>
-            This page is not available for your account type.
-          </AlertDescription>
-        </Alert>
+        <ContextualEmptyState
+          type="no-permission"
+          title="Unavailable for this account"
+          description="This page is not available for your account type."
+          className={className}
+        />
       );
     }
   }
@@ -480,11 +488,11 @@ export function useDynamicComponent(componentType: string, props: Record<string,
   if (!Component) {
     return {
       Component: () => (
-        <Alert>
-          <AlertDescription>
-            Component &quot;{componentType}&quot; not found in registry.
-          </AlertDescription>
-        </Alert>
+        <PageErrorState
+          title="Unknown component"
+          description={`Component "${componentType}" was not found in the registry.`}
+          className="min-h-[12rem]"
+        />
       ),
       isValid: false
     };

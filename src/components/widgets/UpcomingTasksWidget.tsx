@@ -4,10 +4,12 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { useUser } from '@/hooks/use-supabase';
 import { useTasks } from '@/hooks/use-tasks';
 import { formatDistanceToNow } from 'date-fns';
 import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface UpcomingTasksWidgetProps {
   title?: string;
@@ -17,7 +19,7 @@ interface UpcomingTasksWidgetProps {
 export function UpcomingTasksWidget({ title = "Upcoming Tasks", limit = 5 }: UpcomingTasksWidgetProps) {
   const { user } = useUser();
   const organizationId = user?.user_metadata?.organization_id || null;
-  const { data: tasks, isLoading, error } = useTasks(organizationId);
+  const { data: tasks, isLoading, error, refetch } = useTasks(organizationId);
 
   const upcomingTasks = React.useMemo(() => {
     if (!tasks) return [];
@@ -63,7 +65,16 @@ export function UpcomingTasksWidget({ title = "Upcoming Tasks", limit = 5 }: Upc
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Failed to load upcoming tasks.</p>
+          <ContextualEmptyState
+            type="error"
+            title="Failed to load upcoming tasks"
+            description={getErrorMessage(error, 'Please try again.')}
+            actionLabel="Refresh"
+            onAction={() => {
+              void refetch();
+            }}
+            className="py-6"
+          />
         </CardContent>
       </Card>
     );

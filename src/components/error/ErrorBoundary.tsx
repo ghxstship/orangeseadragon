@@ -1,7 +1,5 @@
 import React from 'react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { PageErrorState } from '@/components/common/contextual-empty-state';
 import { captureError } from '@/lib/observability';
 
 interface ErrorBoundaryState {
@@ -58,35 +56,27 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
 function DefaultErrorFallback({ error, resetError }: ErrorFallbackProps) {
   return (
-    <Alert className="m-4">
-      <AlertTriangle className="h-4 w-4" />
-      <AlertTitle>Something went wrong</AlertTitle>
-      <AlertDescription className="mt-2">
-        <div className="space-y-2">
-          <p>An unexpected error occurred. Please try refreshing the page.</p>
-          {process.env.NODE_ENV === 'development' && error && (
-            <details className="mt-2">
-              <summary className="cursor-pointer text-sm font-medium">
-                Error Details (Development)
-              </summary>
-              <pre className="mt-2 text-xs bg-muted p-2 rounded overflow-auto">
-                {error.message}
-                {error.stack && `\n${error.stack}`}
-              </pre>
-            </details>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={resetError}
-            className="mt-2"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Try Again
-          </Button>
-        </div>
-      </AlertDescription>
-    </Alert>
+    <div className="m-4 space-y-3">
+      <PageErrorState
+        title="Something went wrong"
+        description="An unexpected error occurred. Please try refreshing the page."
+        error={error}
+        onRetry={resetError}
+        className="min-h-[14rem]"
+      />
+
+      {process.env.NODE_ENV === 'development' && error && (
+        <details className="rounded-lg border border-border/60 bg-muted/30 p-3">
+          <summary className="cursor-pointer text-sm font-medium">
+            Error Details (Development)
+          </summary>
+          <pre className="mt-2 text-xs bg-muted p-2 rounded overflow-auto">
+            {error.message}
+            {error.stack && `\n${error.stack}`}
+          </pre>
+        </details>
+      )}
+    </div>
   );
 }
 

@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PageErrorState } from '@/components/common/contextual-empty-state';
 import {
     Phone,
     Mail,
@@ -230,7 +231,7 @@ export function ActivityTimeline({
     onAddActivity,
 }: ActivityTimelineProps) {
     // Fetch activities for this entity
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['activities', entityType, entityId],
         queryFn: async () => {
             const params = new URLSearchParams({
@@ -260,9 +261,14 @@ export function ActivityTimeline({
 
     if (error) {
         return (
-            <div className="text-center py-12 text-muted-foreground">
-                <p>Failed to load activities</p>
-            </div>
+            <PageErrorState
+                title="Failed to load activities"
+                error={error}
+                onRetry={() => {
+                    void refetch();
+                }}
+                className="min-h-[14rem]"
+            />
         );
     }
 

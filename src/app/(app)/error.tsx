@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, RotateCcw, Home } from 'lucide-react';
+import { Home } from 'lucide-react';
+import { PageErrorState } from '@/components/common/contextual-empty-state';
 
 export default function AppError({
   error,
@@ -18,26 +19,22 @@ export default function AppError({
 
   return (
     <div className="flex items-center justify-center min-h-[60vh] px-6">
-      <div className="text-center space-y-6 max-w-md">
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-destructive/10 flex items-center justify-center">
-          <AlertTriangle className="w-7 h-7 text-destructive" />
-        </div>
-        <div>
-          <h2 className="text-xl font-bold tracking-tight">Something went wrong</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            An error occurred while loading this page. You can try again or return to the dashboard.
-          </p>
+      <div className="w-full max-w-md space-y-3">
+        <PageErrorState
+          title="Something went wrong"
+          description="An error occurred while loading this page. You can try again or return to the dashboard."
+          error={error}
+          onRetry={reset}
+          className="min-h-[16rem]"
+        />
+
+        <div className="space-y-2 text-center">
           {error.digest && (
-            <p className="mt-1 text-xs text-muted-foreground/50 font-mono">
+            <p className="text-xs text-muted-foreground/50 font-mono">
               Error ID: {error.digest}
             </p>
           )}
-        </div>
-        <div className="flex items-center justify-center gap-3">
-          <Button onClick={reset} variant="default" size="sm">
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Try again
-          </Button>
+
           <Button variant="outline" size="sm" asChild>
             <Link href="/dashboard">
               <Home className="w-4 h-4 mr-2" />

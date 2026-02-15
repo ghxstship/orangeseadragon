@@ -8,8 +8,9 @@ import { TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+import { ContextualEmptyState, PageErrorState } from '@/components/common/contextual-empty-state';
 import { createClient } from '@/lib/supabase/client';
+import { getErrorMessage } from '@/lib/api/error-message';
 import { formatCurrency } from '@/lib/utils';
 
 interface CompanyDeal {
@@ -21,7 +22,7 @@ interface CompanyDeal {
 
 export default function CompanyDetailPage({ params }: { params: { id: string } }) {
     const { useRecord } = useCrud(companySchema);
-    const { data: company, isLoading, error } = useRecord(params.id);
+    const { data: company, isLoading, error, refetch } = useRecord(params.id);
     const [deals, setDeals] = useState<CompanyDeal[]>([]);
     const [dealsLoading, setDealsLoading] = useState(true);
 
@@ -53,11 +54,27 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
         );
     }
 
-    if (error || !company) {
+    if (error) {
         return (
-            <div className="p-8 text-center text-destructive">
-                <h1 className="text-xl font-bold">Company not found</h1>
-                <p>The requested company could not be loaded.</p>
+            <div className="p-4 sm:p-6">
+                <PageErrorState
+                    title="Failed to load company"
+                    description={getErrorMessage(error, "The requested company could not be loaded.")}
+                    error={error}
+                    onRetry={() => refetch()}
+                />
+            </div>
+        );
+    }
+
+    if (!company) {
+        return (
+            <div className="p-4 sm:p-6">
+                <ContextualEmptyState
+                    type="no-data"
+                    title="Company not found"
+                    description="The requested company could not be loaded."
+                />
             </div>
         );
     }

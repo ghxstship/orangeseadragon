@@ -4,10 +4,12 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { useUser } from '@/hooks/use-supabase';
 import { useTasks } from '@/hooks/use-tasks';
 import { formatDistanceToNow } from 'date-fns';
 import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
+import { getErrorMessage } from '@/lib/api/error-message';
 
 interface RecentActivityWidgetProps {
   title?: string;
@@ -17,7 +19,7 @@ interface RecentActivityWidgetProps {
 export function RecentActivityWidget({ title = "Recent Activity", limit = 5 }: RecentActivityWidgetProps) {
   const { user } = useUser();
   const organizationId = user?.user_metadata?.organization_id || null;
-  const { data: tasks, isLoading, error } = useTasks(organizationId);
+  const { data: tasks, isLoading, error, refetch } = useTasks(organizationId);
 
   const recentTasks = React.useMemo(() => {
     if (!tasks) return [];
@@ -58,7 +60,16 @@ export function RecentActivityWidget({ title = "Recent Activity", limit = 5 }: R
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Failed to load recent activity.</p>
+          <ContextualEmptyState
+            type="error"
+            title="Failed to load recent activity"
+            description={getErrorMessage(error, 'Please try again.')}
+            actionLabel="Refresh"
+            onAction={() => {
+              void refetch();
+            }}
+            className="py-6"
+          />
         </CardContent>
       </Card>
     );

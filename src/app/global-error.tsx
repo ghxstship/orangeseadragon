@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Home } from 'lucide-react';
+import { PageErrorState } from '@/components/common/contextual-empty-state';
 
 export default function GlobalError({
   error,
@@ -17,37 +20,28 @@ export default function GlobalError({
   return (
     <html lang="en">
       <body className="bg-background text-foreground flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-6 max-w-md px-6">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center">
-            <svg className="w-8 h-8 text-destructive" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Something went wrong</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              An unexpected error occurred. Please try again or contact support if the issue persists.
-            </p>
+        <div className="w-full max-w-md px-6 space-y-3">
+          <PageErrorState
+            title="Something went wrong"
+            description="An unexpected error occurred. Please try again or contact support if the issue persists."
+            error={error}
+            onRetry={reset}
+            className="min-h-[16rem]"
+          />
+
+          <div className="space-y-2 text-center">
             {error.digest && (
-              <p className="mt-1 text-xs text-muted-foreground/70 font-mono">
+              <p className="text-xs text-muted-foreground/70 font-mono">
                 Error ID: {error.digest}
               </p>
             )}
-          </div>
-          <div className="flex items-center justify-center gap-3">
-            <Button
-              onClick={reset}
-              variant="default"
-              size="sm"
-            >
-              Try again
+
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/dashboard">
+                <Home className="w-4 h-4 mr-2" />
+                Go to Dashboard
+              </Link>
             </Button>
-            <a
-              href="/dashboard"
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors"
-            >
-              Go to Dashboard
-            </a>
           </div>
         </div>
       </body>
