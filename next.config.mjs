@@ -1,11 +1,5 @@
-import { generateNextRedirects } from './src/lib/navigation/redirects.js';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    // ESLint runs during builds. Only warnings remain (no-explicit-any in CRUD generics).
-    ignoreDuringBuilds: false,
-  },
   async headers() {
     return [
       {
@@ -60,10 +54,7 @@ const nextConfig = {
     ];
   },
   async redirects() {
-    return [
-      ...generateNextRedirects(),
-      // Any additional redirects
-    ];
+    return [];
   },
   async rewrites() {
     return {

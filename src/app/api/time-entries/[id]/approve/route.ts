@@ -3,15 +3,15 @@ import { requireAuth } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
 
 export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth();
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
-    const { id } = params;
+    const { id } = await params;
 
     // Get the time entry
     const { data: timeEntry, error: fetchError } = await supabase

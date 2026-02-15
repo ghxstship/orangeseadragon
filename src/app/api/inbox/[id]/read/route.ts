@@ -1,16 +1,18 @@
 import { requireAuth } from "@/lib/api/guard";
 import { apiSuccess, supabaseError, serverError } from "@/lib/api/response";
 
-export async function POST(_request: Request, { params }: { params: { id: string } }) {
+export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const auth = await requireAuth();
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
+    const { id } = await params;
+
     const { error } = await supabase
       .from("notifications")
       .update({ is_read: true, read_at: new Date().toISOString() })
-      .eq("id", params.id)
+      .eq("id", id)
       .eq("user_id", user.id);
 
     if (error) {
