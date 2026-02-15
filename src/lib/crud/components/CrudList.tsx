@@ -14,6 +14,8 @@ interface CrudListProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
   initialSubpage?: string;
   filter?: Record<string, unknown>;
+  editableFields?: string[];
+  onCellEdit?: (rowId: string, fieldKey: string, value: unknown) => Promise<void> | void;
 }
 
 /**
@@ -25,7 +27,9 @@ interface CrudListProps<T extends EntityRecord = EntityRecord> {
 export function CrudList<T extends EntityRecord>({
   schema,
   initialSubpage,
-  filter
+  filter,
+  editableFields,
+  onCellEdit,
 }: CrudListProps<T>) {
   const router = useRouter();
   const [currentSubpage, setCurrentSubpage] = useState(
@@ -86,22 +90,26 @@ export function CrudList<T extends EntityRecord>({
       onRowClick={handleRowClick}
       onAction={handleAction}
       onRefresh={crud.refetch}
+      onCellEdit={onCellEdit}
+      editableFields={editableFields}
     >
-      <ViewRenderer
-        schema={schema}
-        viewType={currentView}
-        viewConfig={(schema.views as Record<string, unknown>)[currentView] as Record<string, unknown>}
-        data={crud.data as T[]}
-        loading={crud.loading}
-        error={crud.error || undefined}
-        selection={crud.selection}
-        onSelectionChange={crud.setSelection}
-        pagination={crud.pagination}
-        onPaginationChange={crud.setPagination}
-        sort={crud.sort}
-        onSortChange={crud.onSortChange}
-        visibleColumns={currentView === 'table' ? visibleColumnIds : undefined}
-      />
+      {editableFields?.length ? undefined : (
+        <ViewRenderer
+          schema={schema}
+          viewType={currentView}
+          viewConfig={(schema.views as Record<string, unknown>)[currentView] as Record<string, unknown>}
+          data={crud.data as T[]}
+          loading={crud.loading}
+          error={crud.error || undefined}
+          selection={crud.selection}
+          onSelectionChange={crud.setSelection}
+          pagination={crud.pagination}
+          onPaginationChange={crud.setPagination}
+          sort={crud.sort}
+          onSortChange={crud.onSortChange}
+          visibleColumns={currentView === 'table' ? visibleColumnIds : undefined}
+        />
+      )}
     </ListLayout>
   );
 }

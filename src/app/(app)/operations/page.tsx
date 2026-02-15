@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/common/page-shell';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
+import { StaggerList } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 import {
   FileEdit,
   AlertTriangle,
@@ -57,6 +59,7 @@ function NavCard({ href, icon: Icon, title, description, badge, badgeVariant = '
 
 export default function OperationsPage() {
   const router = useRouter();
+  useCopilotContext({ module: 'operations' });
 
   return (
     <PageShell
@@ -86,7 +89,7 @@ export default function OperationsPage() {
         {/* Navigation Cards */}
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Operations Modules</h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <StaggerList className="grid gap-4 md:grid-cols-3">
             <NavCard
               href="/operations/runsheets"
               icon={FileEdit}
@@ -145,7 +148,7 @@ export default function OperationsPage() {
               title="Crew Check-In"
               description="Kiosk mode for on-site check-in"
             />
-          </div>
+          </StaggerList>
         </div>
     </PageShell>
   );

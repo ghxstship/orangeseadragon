@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { PageTransition } from "@/components/ui/motion";
 import { TopBar } from "./top-bar";
 import { Sidebar, MobileSidebar } from "./sidebar";
 import { CommandPalette } from "@/components/common/command-palette";
@@ -30,6 +32,7 @@ export const useLayout = () => React.useContext(LayoutContext);
 
 export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [layoutType, setLayoutType] = React.useState<LayoutType | undefined>();
 
@@ -106,13 +109,17 @@ export function AppShell({ children }: AppShellProps) {
             useFullWidth && "pl-0"
           )}
         >
-          {useFullWidth ? (
-            // New layout system - no container wrapper, layouts control their own spacing
-            children
-          ) : (
-            // Traditional layout with container
-            <div className="container mx-auto p-6">{children}</div>
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            <PageTransition key={pathname}>
+              {useFullWidth ? (
+                // New layout system - no container wrapper, layouts control their own spacing
+                children
+              ) : (
+                // Traditional layout with container
+                <div className="container mx-auto p-6">{children}</div>
+              )}
+            </PageTransition>
+          </AnimatePresence>
         </main>
 
         <MobileSidebar />

@@ -51,6 +51,8 @@ export interface ListLayoutProps<T extends object> {
   onRowClick?: (item: T) => void;
   onAction?: (actionId: string, payload?: unknown) => void;
   onRefresh?: () => void;
+  onCellEdit?: (rowId: string, fieldKey: string, value: unknown) => Promise<void> | void;
+  editableFields?: string[];
   
   children?: React.ReactNode;
 }
@@ -69,6 +71,8 @@ export function ListLayout<T extends object>({
   onRowClick,
   onAction,
   onRefresh,
+  onCellEdit,
+  editableFields,
   children,
 }: ListLayoutProps<T>) {
   const pathname = usePathname();
@@ -336,6 +340,8 @@ export function ListLayout<T extends object>({
             loading={loading}
             emptyMessage={`No ${schema.identity.namePlural.toLowerCase()} found.`}
             renderRowWrapper={rowContextMenuWrapper}
+            onCellEdit={onCellEdit}
+            editableFields={editableFields}
           />
         )}
 

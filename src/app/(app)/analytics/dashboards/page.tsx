@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/common/page-shell';
+import { StaggerList } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 
 interface DashboardItem {
   id: string;
@@ -32,6 +34,7 @@ const visibilityIcons = { personal: Lock, team: Users, public: Globe };
 
 export default function DashboardLibraryPage() {
   const router = useRouter();
+  useCopilotContext({ module: 'analytics' });
 
   const starred = dashboards.filter((d) => d.starred);
   const rest = dashboards.filter((d) => !d.starred);
@@ -51,16 +54,16 @@ export default function DashboardLibraryPage() {
         {starred.length > 0 && (
           <div>
             <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Starred</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <StaggerList className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {starred.map((d) => <DashboardCard key={d.id} dashboard={d} />)}
-            </div>
+            </StaggerList>
           </div>
         )}
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">All Dashboards</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <StaggerList className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {rest.map((d) => <DashboardCard key={d.id} dashboard={d} />)}
-          </div>
+          </StaggerList>
         </div>
     </PageShell>
   );

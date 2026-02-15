@@ -31,6 +31,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { PageShell } from '@/components/common/page-shell';
+import { FadeIn } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 import { useFinanceDashboard } from '@/hooks/use-finance-dashboard';
 import { useUser } from '@/hooks/use-supabase';
 import { formatCurrency } from '@/lib/utils';
@@ -40,6 +42,7 @@ export default function FinancialDashboardPage() {
   const orgId = user?.user_metadata?.organization_id || null;
   const dashData = useFinanceDashboard(orgId);
   const [period, setPeriod] = React.useState('month');
+  useCopilotContext({ module: 'finance' });
 
   const kpis = dashData?.kpis ?? [];
   const revenueVsExpenses = dashData?.revenueVsExpenses ?? [];
@@ -71,6 +74,7 @@ export default function FinancialDashboardPage() {
       contentClassName="space-y-6"
     >
         {/* KPI Cards */}
+        <FadeIn>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {kpis.map((kpi) => {
             const Icon = kpi.icon;
@@ -92,8 +96,10 @@ export default function FinancialDashboardPage() {
             );
           })}
         </div>
+        </FadeIn>
 
         {/* Charts */}
+        <FadeIn delay={0.1}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card>
             <CardHeader><CardTitle className="text-sm">Revenue vs Expenses</CardTitle></CardHeader>
@@ -126,6 +132,7 @@ export default function FinancialDashboardPage() {
             </CardContent>
           </Card>
         </div>
+        </FadeIn>
 
         {/* AR Aging */}
         <Card>
@@ -150,6 +157,7 @@ export default function FinancialDashboardPage() {
         </Card>
 
         {/* Budget Health Distribution */}
+        <FadeIn delay={0.2}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Card>
             <CardHeader><CardTitle className="text-sm">Budget Health Distribution</CardTitle></CardHeader>
@@ -184,6 +192,7 @@ export default function FinancialDashboardPage() {
             </CardContent>
           </Card>
         </div>
+        </FadeIn>
     </PageShell>
   );
 }

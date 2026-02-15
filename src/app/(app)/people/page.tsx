@@ -6,6 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/common/page-shell';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
+import { StaggerList, StaggerItem } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 import {
   Users,
   UserCheck,
@@ -54,6 +56,7 @@ function NavCard({ href, icon: Icon, title, description }: NavCardProps) {
 
 export default function PeoplePage() {
   const router = useRouter();
+  useCopilotContext({ module: 'people' });
 
   return (
     <PageShell
@@ -83,20 +86,20 @@ export default function PeoplePage() {
         {/* Navigation Cards */}
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Quick Access</h2>
-          <div className="grid gap-3 md:grid-cols-3">
-            <NavCard href="/people/portal" icon={User} title="My Portal" description="Self-service employee portal" />
-            <NavCard href="/people/rosters" icon={Users} title="Rosters" description="Staff, crew, contractors & talent" />
-            <NavCard href="/people/scheduling" icon={CalendarDays} title="Scheduling" description="Person schedule assignments" />
-            <NavCard href="/people/timekeeping" icon={Clock} title="Time & Attendance" description="Clock in/out and timesheets" />
-            <NavCard href="/people/org" icon={Building2} title="Org Chart" description="Organization structure" />
-            <NavCard href="/people/compliance" icon={ShieldCheck} title="Compliance" description="Certifications & training status" />
-            <NavCard href="/people/leave" icon={Palmtree} title="Leave Management" description="Request time off and view calendar" />
-            <NavCard href="/people/documents" icon={FileText} title="Documents" description="Employee documents and files" />
-            <NavCard href="/people/training" icon={GraduationCap} title="Training" description="Courses, certifications & LMS" />
-            <NavCard href="/people/travel" icon={Plane} title="Travel" description="Bookings, flights & accommodations" />
-            <NavCard href="/people/performance" icon={Star} title="Performance" description="Reviews, goals & feedback" />
-            <NavCard href="/people/analytics" icon={BarChart3} title="Workforce Analytics" description="AI-powered insights and predictions" />
-          </div>
+          <StaggerList className="grid gap-3 md:grid-cols-3">
+            <StaggerItem><NavCard href="/people/portal" icon={User} title="My Portal" description="Self-service employee portal" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/rosters" icon={Users} title="Rosters" description="Staff, crew, contractors & talent" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/scheduling" icon={CalendarDays} title="Scheduling" description="Person schedule assignments" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/timekeeping" icon={Clock} title="Time & Attendance" description="Clock in/out and timesheets" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/org" icon={Building2} title="Org Chart" description="Organization structure" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/compliance" icon={ShieldCheck} title="Compliance" description="Certifications & training status" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/leave" icon={Palmtree} title="Leave Management" description="Request time off and view calendar" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/documents" icon={FileText} title="Documents" description="Employee documents and files" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/training" icon={GraduationCap} title="Training" description="Courses, certifications & LMS" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/travel" icon={Plane} title="Travel" description="Bookings, flights & accommodations" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/performance" icon={Star} title="Performance" description="Reviews, goals & feedback" /></StaggerItem>
+            <StaggerItem><NavCard href="/people/analytics" icon={BarChart3} title="Workforce Analytics" description="AI-powered insights and predictions" /></StaggerItem>
+          </StaggerList>
         </div>
     </PageShell>
   );

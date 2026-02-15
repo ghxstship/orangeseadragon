@@ -6,6 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/common/page-shell';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
+import { StaggerList, StaggerItem } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 import {
   Package,
   CheckCircle,
@@ -49,6 +51,7 @@ function NavCard({ href, icon: Icon, title, description }: NavCardProps) {
 
 export default function AssetsPage() {
   const router = useRouter();
+  useCopilotContext({ module: 'assets' });
 
   return (
     <PageShell
@@ -76,17 +79,17 @@ export default function AssetsPage() {
 
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Quick Access</h2>
-          <div className="grid gap-3 md:grid-cols-3">
-            <NavCard href="/assets/catalog" icon={BookOpen} title="Catalog" description="Equipment catalog (Uline-style SSOT)" />
-            <NavCard href="/assets/inventory" icon={Boxes} title="Inventory" description="Physical asset instances" />
-            <NavCard href="/assets/locations" icon={MapPin} title="Locations" description="Warehouses, bins & staging areas" />
-            <NavCard href="/assets/reservations" icon={CalendarCheck} title="Reservations" description="Book and track equipment" />
-            <NavCard href="/assets/maintenance" icon={Wrench} title="Maintenance" description="Repairs and scheduled service" />
-            <NavCard href="/assets/logistics" icon={Truck} title="Logistics" description="Shipments, vehicles & deployment" />
-            <NavCard href="/assets/status" icon={Activity} title="Status" description="Real-time asset tracking" />
-            <NavCard href="/assets/deployment" icon={Package} title="Deployment" description="Deploy assets to events" />
-            <NavCard href="/assets/advances" icon={BarChart3} title="Reports" description="Asset utilization analytics" />
-          </div>
+          <StaggerList className="grid gap-3 md:grid-cols-3">
+            <StaggerItem><NavCard href="/assets/catalog" icon={BookOpen} title="Catalog" description="Equipment catalog (Uline-style SSOT)" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/inventory" icon={Boxes} title="Inventory" description="Physical asset instances" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/locations" icon={MapPin} title="Locations" description="Warehouses, bins & staging areas" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/reservations" icon={CalendarCheck} title="Reservations" description="Book and track equipment" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/maintenance" icon={Wrench} title="Maintenance" description="Repairs and scheduled service" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/logistics" icon={Truck} title="Logistics" description="Shipments, vehicles & deployment" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/status" icon={Activity} title="Status" description="Real-time asset tracking" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/deployment" icon={Package} title="Deployment" description="Deploy assets to events" /></StaggerItem>
+            <StaggerItem><NavCard href="/assets/advances" icon={BarChart3} title="Reports" description="Asset utilization analytics" /></StaggerItem>
+          </StaggerList>
         </div>
     </PageShell>
   );

@@ -5,10 +5,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { QuickAccessCard } from '@/components/common/quick-access-card';
 import { PageShell } from '@/components/common/page-shell';
+import { StaggerList } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 import { Building2, FileCheck, Handshake, Send } from 'lucide-react';
 import Link from 'next/link';
 
 export default function BusinessPage() {
+  useCopilotContext({ module: 'business' });
+
   return (
     <PageShell
       title="Business"
@@ -35,7 +39,7 @@ export default function BusinessPage() {
         {/* Quick Access */}
         <section>
           <h2 className="text-lg font-semibold mb-3">Quick Access</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StaggerList className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <QuickAccessCard
               title="Pipeline"
               description="Sales opportunities & deals"
@@ -60,7 +64,7 @@ export default function BusinessPage() {
               href="/business/campaigns"
               icon={Send}
             />
-          </div>
+          </StaggerList>
         </section>
 
         {/* Recent Activity */}

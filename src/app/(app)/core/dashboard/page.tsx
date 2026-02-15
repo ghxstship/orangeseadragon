@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BentoGrid, BentoItem, BentoItemHeader, BentoItemTitle, BentoItemContent, BentoItemValue } from "@/components/ui/bento-grid";
 import { FadeIn, StaggerList, StaggerItem, AnimatedCounter } from "@/components/ui/motion";
 import { GlassCard } from "@/components/ui/glass-card";
+import { useCopilotContext } from "@/hooks/use-copilot-context";
 import { cn } from "@/lib/utils";
 import { DEFAULT_LOCALE } from "@/lib/config";
 import { getErrorMessage, throwApiErrorResponse } from "@/lib/api/error-message";
@@ -83,6 +84,7 @@ const quickActions: QuickActionItem[] = [
 export default function DashboardPage() {
   const router = useRouter();
   const { user } = useUser();
+  useCopilotContext({ module: 'dashboard' });
   const organizationId = user?.user_metadata?.organization_id || null;
 
   const { data: projects, isLoading: projectsLoading } = useProjects(organizationId);

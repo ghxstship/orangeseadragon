@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/common/page-shell';
+import { StaggerList, StaggerItem } from '@/components/ui/motion';
+import { useCopilotContext } from '@/hooks/use-copilot-context';
 import { CashFlowChart } from './components/CashFlowChart';
 import { FinancialHealthCard } from './components/FinancialHealthCard';
 import { ActionCenter } from './components/ActionCenter';
@@ -50,6 +52,7 @@ function NavCard({ href, icon: Icon, title, description }: NavCardProps) {
 
 export default function FinancePage() {
   const router = useRouter();
+  useCopilotContext({ module: 'finance' });
 
   return (
     <PageShell
@@ -80,17 +83,17 @@ export default function FinancePage() {
         {/* Quick Access */}
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Quick Access</h2>
-          <div className="grid gap-3 md:grid-cols-3">
-            <NavCard href="/finance/invoices" icon={FileText} title="Invoices" description="Create and manage invoices" />
-            <NavCard href="/finance/expenses" icon={Receipt} title="Expenses" description="Track and categorize expenses" />
-            <NavCard href="/finance/budgets" icon={PiggyBank} title="Budgets" description="Budget planning and tracking" />
-            <NavCard href="/finance/payments" icon={CreditCard} title="Payments" description="Payment processing and history" />
-            <NavCard href="/finance/payroll" icon={Banknote} title="Payroll" description="Payroll runs and history" />
-            <NavCard href="/finance/quotes" icon={Calculator} title="Quotes" description="Estimates and proposals" />
-            <NavCard href="/finance/procurement" icon={ShoppingCart} title="Procurement" description="Purchase orders and vendors" />
-            <NavCard href="/finance/banking" icon={Wallet} title="Banking" description="Bank accounts and reconciliation" />
-            <NavCard href="/finance/reports" icon={BarChart3} title="Reports" description="Financial reports and analytics" />
-          </div>
+          <StaggerList className="grid gap-3 md:grid-cols-3">
+            <StaggerItem><NavCard href="/finance/invoices" icon={FileText} title="Invoices" description="Create and manage invoices" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/expenses" icon={Receipt} title="Expenses" description="Track and categorize expenses" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/budgets" icon={PiggyBank} title="Budgets" description="Budget planning and tracking" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/payments" icon={CreditCard} title="Payments" description="Payment processing and history" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/payroll" icon={Banknote} title="Payroll" description="Payroll runs and history" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/quotes" icon={Calculator} title="Quotes" description="Estimates and proposals" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/procurement" icon={ShoppingCart} title="Procurement" description="Purchase orders and vendors" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/banking" icon={Wallet} title="Banking" description="Bank accounts and reconciliation" /></StaggerItem>
+            <StaggerItem><NavCard href="/finance/reports" icon={BarChart3} title="Reports" description="Financial reports and analytics" /></StaggerItem>
+          </StaggerList>
         </div>
     </PageShell>
   );

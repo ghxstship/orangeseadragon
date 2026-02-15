@@ -193,42 +193,42 @@ export default function ProductionsPage() {
                   {upcomingEvents.map((event: Record<string, unknown>) => {
                     const startDate = event.start_date ? new Date(event.start_date as string) : null;
                     return (
-                      <div
-                        key={event.id as string}
-                        className="flex items-center gap-3 rounded-lg border border-border p-3 cursor-pointer hover:bg-accent/50 transition-colors group"
-                        onClick={() => router.push(`/productions/events/${event.id}`)}
-                      >
-                        <div className="flex flex-col items-center justify-center h-10 w-10 rounded-lg bg-primary/10 text-primary text-center">
-                          <span className="text-[10px] font-bold uppercase leading-none">
-                            {startDate?.toLocaleDateString(undefined, { month: 'short' })}
-                          </span>
-                          <span className="text-sm font-bold leading-none">
-                            {startDate?.getDate()}
-                          </span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{event.name as string}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            {typeof event.venue_name === 'string' && event.venue_name && (
-                              <span className="text-[10px] font-bold uppercase tracking-wider opacity-40 flex items-center gap-0.5">
-                                <MapPin className="h-2.5 w-2.5" />
-                                {event.venue_name}
-                              </span>
-                            )}
-                            {startDate && (
-                              <span className="text-[10px] font-bold uppercase tracking-wider opacity-40 flex items-center gap-0.5">
-                                <Clock className="h-2.5 w-2.5" />
-                                {startDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            )}
+                      <StaggerItem key={event.id as string}>
+                        <div
+                          className="flex items-center gap-3 rounded-lg border border-border p-3 cursor-pointer hover:bg-accent/50 transition-colors group"
+                          onClick={() => router.push(`/productions/events/${event.id}`)}
+                        >
+                          <div className="flex flex-col items-center justify-center h-10 w-10 rounded-lg bg-primary/10 text-primary text-center">
+                            <span className="text-[10px] font-bold uppercase leading-none">
+                              {startDate?.toLocaleDateString(undefined, { month: 'short' })}
+                            </span>
+                            <span className="text-sm font-bold leading-none">
+                              {startDate?.getDate()}
+                            </span>
                           </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{event.name as string}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {typeof event.venue_name === 'string' && event.venue_name && (
+                                <span className="text-[10px] font-bold uppercase tracking-wider opacity-40 flex items-center gap-0.5">
+                                  <MapPin className="h-2.5 w-2.5" />
+                                  {event.venue_name}
+                                </span>
+                              )}
+                              {startDate && (
+                                <span className="text-[10px] font-bold uppercase tracking-wider opacity-40 flex items-center gap-0.5">
+                                  <Clock className="h-2.5 w-2.5" />
+                                  {startDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="text-[9px] h-5 px-1.5">
+                            {(event.status as string) || 'scheduled'}
+                          </Badge>
+                          <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-40 transition-opacity" />
                         </div>
-                        <Badge variant="outline" className="text-[9px] h-5 px-1.5">
-                          {(event.status as string) || 'scheduled'}
-                        </Badge>
-                        <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-40 transition-opacity" />
-                      </div>
-                    </StaggerItem>
+                      </StaggerItem>
                     );
                   })}
                 </StaggerList>

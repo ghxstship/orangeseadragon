@@ -139,8 +139,6 @@ interface AsyncStateWrapperProps<T> {
   data: T[] | undefined;
   loading: boolean;
   error: Error | null;
-  errorTitle?: string;
-  errorFallbackMessage?: string;
   emptyState?: Omit<EmptyStateProps, 'className'>;
   loadingVariant?: LoadingStateProps['variant'];
   loadingCount?: number;
@@ -153,8 +151,6 @@ export function AsyncStateWrapper<T>({
   data,
   loading,
   error,
-  errorTitle,
-  errorFallbackMessage,
   emptyState,
   loadingVariant = 'card',
   loadingCount = 3,
@@ -169,8 +165,8 @@ export function AsyncStateWrapper<T>({
   if (error) {
     return (
       <ErrorState
-        title={errorTitle ?? "Something went wrong"}
-        description={getErrorMessage(error, errorFallbackMessage ?? "We couldn't load this content. Please try again.")}
+        title="Failed to load data"
+        description={getErrorMessage(error, 'Failed to load data')}
         retry={retry}
         className={className}
       />
