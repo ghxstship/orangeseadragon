@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import { DocumentManager } from '@/components/people/DocumentManager';
 import { useUser } from '@/hooks/use-supabase';
 import { useDocuments } from '@/hooks/use-documents';
@@ -40,9 +41,39 @@ function mapDocCategory(docType: string | null): DocumentCategory {
 }
 
 export default function DocumentsPage() {
+  const router = useRouter();
   const { user } = useUser();
   const orgId = user?.user_metadata?.organization_id || null;
-  const { data: rawDocs } = useDocuments(orgId);
+  const { data: rawDocs, refetch } = useDocuments(orgId);
+
+  const handleUpload = async (files: FileList) => {
+    const formData = new FormData();
+    formData.append('entityId', orgId || '');
+    Array.from(files).forEach((f) => formData.append('files', f));
+    try {
+      await fetch('/api/files/upload', { method: 'POST', body: formData });
+      refetch?.();
+    } catch (err) {
+      console.error('Upload failed:', err);
+    }
+  };
+
+  const handleDownload = (docId: string) => {
+    window.open(`/api/documents/${docId}/download`, '_blank');
+  };
+
+  const handleDelete = async (docId: string) => {
+    try {
+      await fetch(`/api/files/${docId}`, { method: 'DELETE' });
+      refetch?.();
+    } catch (err) {
+      console.error('Delete failed:', err);
+    }
+  };
+
+  const handleView = (docId: string) => {
+    router.push(`/people/documents/${docId}`);
+  };
 
   const documents: MappedDocument[] = React.useMemo(() => {
     if (!rawDocs) return [];
@@ -67,10 +98,10 @@ export default function DocumentsPage() {
     <div className="container mx-auto py-6 px-4">
       <DocumentManager
         documents={documents.length > 0 ? documents : undefined}
-        onUpload={() => { /* TODO: implement file upload */ }}
-        onDownload={() => { /* TODO: implement download */ }}
-        onDelete={() => { /* TODO: implement delete */ }}
-        onView={() => { /* TODO: implement view */ }}
+        onUpload={handleUpload}
+        onDownload={handleDownload}
+        onDelete={handleDelete}
+        onView={handleView}
       />
     </div>
   );

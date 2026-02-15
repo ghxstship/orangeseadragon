@@ -7,9 +7,47 @@ import { timesheetSchema } from '@/lib/schemas/timesheet';
 import { clockEntrySchema } from '@/lib/schemas/clockEntry';
 import { TimeClock } from '@/components/people/TimeClock';
 import { PageShell } from '@/components/common/page-shell';
+import { useUser } from '@/hooks/use-supabase';
 
 export default function TimekeepingPage() {
+  const { user } = useUser();
   const [activeTab, setActiveTab] = useState('clock');
+
+  const handleClockIn = async (data: { timestamp: Date; location?: { lat: number; lng: number }; locationName?: string }) => {
+    try {
+      await fetch('/api/clock-entries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'clock_in',
+          timestamp: data.timestamp.toISOString(),
+          latitude: data.location?.lat,
+          longitude: data.location?.lng,
+          location_name: data.locationName,
+        }),
+      });
+    } catch (err) {
+      console.error('Clock in failed:', err);
+    }
+  };
+
+  const handleClockOut = async (data: { timestamp: Date; location?: { lat: number; lng: number }; locationName?: string }) => {
+    try {
+      await fetch('/api/clock-entries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'clock_out',
+          timestamp: data.timestamp.toISOString(),
+          latitude: data.location?.lat,
+          longitude: data.location?.lng,
+          location_name: data.locationName,
+        }),
+      });
+    } catch (err) {
+      console.error('Clock out failed:', err);
+    }
+  };
 
   return (
     <PageShell
@@ -26,9 +64,9 @@ export default function TimekeepingPage() {
         <TabsContent value="clock" className="mt-6">
           <div className="max-w-md mx-auto">
             <TimeClock
-              employeeName="Current User"
-              onClockIn={() => { /* TODO: implement clock in */ }}
-              onClockOut={() => { /* TODO: implement clock out */ }}
+              employeeName={user?.user_metadata?.full_name || 'Current User'}
+              onClockIn={handleClockIn}
+              onClockOut={handleClockOut}
             />
           </div>
         </TabsContent>

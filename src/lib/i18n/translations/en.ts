@@ -390,7 +390,8 @@ export const en = {
     importFailed: "Failed to import data",
     deleteFailed: "Failed to delete",
     saveFailed: "Failed to save",
-    loadFailed: "Failed to load data",
+    loadFailed: "Failed to load content",
+    loadFailedForEntity: "Failed to load {entity}",
   },
   time: {
     justNow: "Just now",

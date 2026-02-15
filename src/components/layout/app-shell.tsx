@@ -12,6 +12,7 @@ import { NotificationCenter } from "@/components/common/notification-center";
 import { QuickAddTask } from "@/components/common/quick-add-task";
 import { CopilotDrawer, CopilotTrigger } from "@/components/common/copilot-drawer";
 import { useUIStore } from "@/stores/ui-store";
+import { notificationService } from "@/lib/notifications/notificationService";
 import type { LayoutType } from "@/lib/layouts/types";
 
 interface AppShellProps {
@@ -48,6 +49,11 @@ export function AppShell({ children }: AppShellProps) {
     'entity-form',
     'dashboard'
   ].includes(layoutType);
+
+  // Initialize push notification service
+  React.useEffect(() => {
+    notificationService.initialize();
+  }, []);
 
   // Global keyboard shortcut: ⌘. to toggle AI Copilot
   React.useEffect(() => {

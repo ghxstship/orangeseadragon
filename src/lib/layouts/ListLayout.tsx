@@ -20,6 +20,7 @@ import { useColumnPreference } from "@/lib/crud/hooks/useColumnPreference";
 import { Plus, RefreshCw } from "lucide-react";
 import { DEFAULT_LOCALE } from "@/lib/config";
 import { getErrorMessage } from "@/lib/api/error-message";
+import { useTranslation } from "@/lib/i18n";
 
 /**
  * LIST LAYOUT
@@ -76,6 +77,7 @@ export function ListLayout<T extends object>({
   children,
 }: ListLayoutProps<T>) {
   const pathname = usePathname();
+  const { t } = useTranslation();
   const listConfig = schema.layouts.list;
   const tableConfig = schema.views?.table;
 
@@ -170,9 +172,14 @@ export function ListLayout<T extends object>({
     }));
   }, [columnPreferences]);
 
+  const errorTitle = React.useMemo(
+    () => t('errors.loadFailedForEntity', { entity: schema.identity.namePlural.toLowerCase() }),
+    [schema.identity.namePlural, t]
+  );
+
   const errorDescription = React.useMemo(
-    () => getErrorMessage(error, `Failed to load ${schema.identity.namePlural.toLowerCase()}`),
-    [error, schema.identity.namePlural]
+    () => getErrorMessage(error, t('errors.tryAgain')),
+    [error, t]
   );
 
   if (error) {
@@ -182,9 +189,9 @@ export function ListLayout<T extends object>({
         <div className="flex-1 flex items-center justify-center p-8">
           <ContextualEmptyState
             type="error"
-            title="Failed to load data"
+            title={errorTitle}
             description={errorDescription}
-            actionLabel={onRefresh ? "Try again" : undefined}
+            actionLabel={onRefresh ? t('common.refresh') : undefined}
             onAction={onRefresh}
           />
         </div>

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
+import { useRouter } from 'next/navigation';
 
 type LeaveType = 'annual' | 'sick' | 'parental' | 'bereavement' | 'study' | 'unpaid';
 type LeaveStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
@@ -47,6 +48,7 @@ function mapLeaveType(typeId: string | null, typeMap: Map<string, string>): Leav
 }
 
 export default function LeavePage() {
+  const router = useRouter();
   const { user } = useUser();
   const orgId = user?.user_metadata?.organization_id || null;
   const [activeTab, setActiveTab] = useState('calendar');
@@ -134,8 +136,10 @@ export default function LeavePage() {
           <LeaveCalendar
             requests={requests.length > 0 ? requests : undefined}
             onNewRequest={() => setShowRequestForm(true)}
-            onRequestClick={() => { /* TODO: implement view request */ }}
-            onDateClick={() => { /* TODO: implement date click */ }}
+            onRequestClick={(request) => {
+              if (request?.id) router.push(`/people/leave/${request.id}`);
+            }}
+            onDateClick={() => setShowRequestForm(true)}
           />
         </TabsContent>
 
@@ -167,9 +171,19 @@ export default function LeavePage() {
       <Dialog open={showRequestForm} onOpenChange={setShowRequestForm}>
         <DialogContent className="max-w-2xl">
           <LeaveRequestForm
-            onSubmit={(_data) => {
-              // TODO: implement leave request submission
-              setShowRequestForm(false);
+            onSubmit={async (formData) => {
+              try {
+                await fetch('/api/leave-requests', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(formData),
+                });
+                setShowRequestForm(false);
+                // Refresh data
+                window.location.reload();
+              } catch (err) {
+                console.error('Leave request submission failed:', err);
+              }
             }}
             onCancel={() => setShowRequestForm(false)}
           />

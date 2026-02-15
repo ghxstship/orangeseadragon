@@ -7,6 +7,7 @@ import { performanceReviewSchema } from '@/lib/schemas/performanceReview';
 import { PerformanceReviewDashboard } from '@/components/people/PerformanceReviewDashboard';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
+import { useRouter } from 'next/navigation';
 import { PageShell } from '@/components/common/page-shell';
 
 type ReviewStatus = 'not_started' | 'self_review' | 'manager_review' | 'calibration' | 'completed';
@@ -33,6 +34,7 @@ function mapReviewStatus(status: string | null): ReviewStatus {
 }
 
 export default function PerformancePage() {
+  const router = useRouter();
   const { user } = useUser();
   const orgId = user?.user_metadata?.organization_id || null;
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -107,8 +109,12 @@ export default function PerformancePage() {
         <TabsContent value="dashboard" className="mt-6">
           <PerformanceReviewDashboard
             reviews={reviews.length > 0 ? reviews : undefined}
-            onStartReview={() => { /* TODO: implement start review */ }}
-            onViewReview={() => { /* TODO: implement view review */ }}
+            onStartReview={(reviewId) => {
+              router.push(`/people/performance/${reviewId}/edit`);
+            }}
+            onViewReview={(reviewId) => {
+              router.push(`/people/performance/${reviewId}`);
+            }}
           />
         </TabsContent>
 

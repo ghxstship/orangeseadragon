@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, AlertCircle, Inbox, Plus } from 'lucide-react';
 import { getErrorMessage } from '@/lib/api/error-message';
+import { useTranslation } from '@/lib/i18n';
 
 interface LoadingStateProps {
   variant?: 'skeleton' | 'spinner' | 'card';
@@ -158,6 +159,8 @@ export function AsyncStateWrapper<T>({
   children,
   className
 }: AsyncStateWrapperProps<T>) {
+  const { t } = useTranslation();
+
   if (loading) {
     return <LoadingState variant={loadingVariant} count={loadingCount} className={className} />;
   }
@@ -165,8 +168,8 @@ export function AsyncStateWrapper<T>({
   if (error) {
     return (
       <ErrorState
-        title="Failed to load data"
-        description={getErrorMessage(error, 'Failed to load data')}
+        title={t('errors.loadFailed')}
+        description={getErrorMessage(error, t('errors.tryAgain'))}
         retry={retry}
         className={className}
       />
