@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, Copy, Check, ExternalLink, Loader2, Mail } from 'lucide-react';
 import { toast } from 'sonner';
-import { throwApiErrorResponse } from '@/lib/api/error-message';
+import { getErrorMessage, throwApiErrorResponse } from '@/lib/api/error-message';
 import { formatCurrency } from '@/lib/utils';
 
 interface PaymentLinkButtonProps {
@@ -68,7 +68,7 @@ export function PaymentLinkButton({
       toast.success('Payment link created successfully');
     } catch (error) {
       console.error('Error creating payment link:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to create payment link');
+      toast.error(getErrorMessage(error, 'Failed to create payment link'));
     } finally {
       setIsLoading(false);
     }
@@ -111,7 +111,7 @@ export function PaymentLinkButton({
       setIsOpen(false);
     } catch (error) {
       console.error('Error sending email:', error);
-      toast.error('Failed to send payment link email');
+      toast.error(getErrorMessage(error, 'Failed to send payment link email'));
     } finally {
       setIsLoading(false);
     }
