@@ -144,6 +144,7 @@ function isPublicApiRoute(pathname: string): boolean {
 export async function middleware(request: NextRequest) {
   const security = createSecurityContext(request);
   const env = getServerEnv();
+  const pathname = request.nextUrl.pathname;
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-request-id", security.requestId);
   requestHeaders.set("x-correlation-id", security.correlationId);
@@ -157,6 +158,13 @@ export async function middleware(request: NextRequest) {
     }),
     security
   );
+
+  // ========================================================================
+  // STATIC ASSETS — pass through immediately
+  // ========================================================================
+  if (pathname.startsWith("/_next") || pathname.includes(".")) {
+    return applySecurityHeaders(supabaseResponse, security);
+  }
 
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -186,22 +194,8 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Always refresh the Supabase session (keeps cookies alive for API + page routes)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const pathname = request.nextUrl.pathname;
-
   // ========================================================================
-  // STATIC ASSETS — pass through immediately
-  // ========================================================================
-  if (pathname.startsWith("/_next") || pathname.includes(".")) {
-    return applySecurityHeaders(supabaseResponse, security);
-  }
-
-  // ========================================================================
-  // API ROUTES — CSRF + rate limiting + session refresh (auth enforced per-route)
+  // API ROUTES — CSRF + rate limiting (auth enforced per-route)
   // ========================================================================
   if (pathname.startsWith("/api")) {
     const method = request.method;
@@ -333,6 +327,11 @@ export async function middleware(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(`${route}/`)
   );
 
+  // Refresh/read Supabase auth only for page-route protection flow
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   // Not authenticated - redirect to login (except for public routes)
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone();
@@ -348,13 +347,26 @@ export async function middleware(request: NextRequest) {
     const needsOnboardingCheck = isAuthPage || isOnboardingPage || (!isPublicRoute && pathname.startsWith("/"));
 
     if (needsOnboardingCheck) {
-      const { data: userData } = await supabase
-        .from("users")
-        .select("onboarding_completed_at")
-        .eq("id", user.id)
-        .single();
+      const metadata = user.user_metadata as
+        | { onboarding_completed?: boolean; onboarding_completed_at?: string | null }
+        | null
+        | undefined;
 
-      const onboardingDone = !!userData?.onboarding_completed_at;
+      const metadataOnboardingDone =
+        metadata?.onboarding_completed === true || Boolean(metadata?.onboarding_completed_at);
+
+      let onboardingDone = metadataOnboardingDone;
+
+      if (!metadataOnboardingDone) {
+        const { data: userData } = await supabase
+          .from("users")
+          .select("onboarding_completed_at")
+          .eq("id", user.id)
+          .single();
+
+        onboardingDone = !!userData?.onboarding_completed_at;
+      }
+
       const url = request.nextUrl.clone();
 
       if (isAuthPage) {

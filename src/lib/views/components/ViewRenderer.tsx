@@ -24,6 +24,8 @@ interface ViewRendererProps<T extends EntityRecord = EntityRecord> {
   pagination?: {
     page: number;
     pageSize: number;
+    total?: number;
+    totalPages?: number;
   };
   onPaginationChange?: (pagination: { page: number; pageSize: number }) => void;
   sort?: { field: string; direction: 'asc' | 'desc' };
@@ -47,6 +49,8 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
   error,
   onRowClick,
   visibleColumns,
+  pagination,
+  onPaginationChange,
   // selection, onSelectionChange, pagination, onPaginationChange, sort, onSortChange
   // are accepted via props interface but not yet consumed — reserved for future use
   ...rest
@@ -387,6 +391,8 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
           columns={columns}
           data={data}
           showSearch={false}
+          pagination={pagination}
+          onPaginationChange={onPaginationChange}
         />
       );
 
@@ -417,6 +423,8 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
           columns={columns}
           data={data}
           showSearch={false}
+          pagination={pagination}
+          onPaginationChange={onPaginationChange}
         />
       );
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   DollarSign,
   TrendingUp,
@@ -8,7 +9,7 @@ import {
   Receipt,
   Clock,
 } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
+import { useSupabase } from '@/hooks/use-supabase';
 import { formatCurrency } from '@/lib/utils';
 
 export interface FinanceKpi {
@@ -44,60 +45,91 @@ export interface FinanceDashboardData {
 }
 
 export function useFinanceDashboard(orgId: string | null) {
-  const [data, setData] = React.useState<FinanceDashboardData | null>(null);
+  const supabase = useSupabase();
 
-  React.useEffect(() => {
-    if (!orgId) {
-      setData(null);
-      return;
-    }
+  const query = useQuery({
+    queryKey: ['finance-dashboard', orgId],
+    enabled: Boolean(orgId),
+    staleTime: 2 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async (): Promise<FinanceDashboardData> => {
+      if (!orgId) {
+        throw new Error('Organization id is required');
+      }
 
-    const supabase = createClient();
-
-    const fetchData = async () => {
-      const { data: invoices } = await supabase
-        .from('invoices')
-        .select('id, total_amount, status, due_date, paid_at, company_id, created_at')
-        .eq('organization_id', orgId);
-
-      const { data: expenses } = await supabase
-        .from('expenses')
-        .select('id, amount, status, created_at')
-        .eq('organization_id', orgId);
-
-      const { data: budgets } = await supabase
-        .from('budgets')
-        .select('id, total_amount, status')
-        .eq('organization_id', orgId);
-
-      const { data: companies } = await supabase
-        .from('companies')
-        .select('id, name')
-        .eq('organization_id', orgId);
-
-      const companyMap = new Map((companies ?? []).map((company) => [company.id, company.name]));
       const now = new Date();
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const sixMonthWindowStart = new Date(now.getFullYear(), now.getMonth() - 5, 1).toISOString();
 
-      const paidInvoices = (invoices ?? []).filter((invoice) => invoice.status === 'paid');
+      const [
+        paidInvoicesRes,
+        openInvoicesRes,
+        recentExpensesRes,
+        openExpensesRes,
+        budgetsRes,
+        companiesRes,
+      ] = await Promise.all([
+        supabase
+          .from('invoices')
+          .select('id, total_amount, due_date, paid_at, company_id')
+          .eq('organization_id', orgId)
+          .eq('status', 'paid')
+          .gte('paid_at', sixMonthWindowStart),
+        supabase
+          .from('invoices')
+          .select('id, total_amount, due_date, status')
+          .eq('organization_id', orgId)
+          .in('status', ['sent', 'overdue']),
+        supabase
+          .from('expenses')
+          .select('id, amount, status, created_at')
+          .eq('organization_id', orgId)
+          .gte('created_at', sixMonthWindowStart),
+        supabase
+          .from('expenses')
+          .select('id, amount, status')
+          .eq('organization_id', orgId)
+          .in('status', ['submitted', 'approved']),
+        supabase
+          .from('budgets')
+          .select('id, total_amount, status')
+          .eq('organization_id', orgId),
+        supabase
+          .from('companies')
+          .select('id, name')
+          .eq('organization_id', orgId),
+      ]);
+
+      if (paidInvoicesRes.error) throw paidInvoicesRes.error;
+      if (openInvoicesRes.error) throw openInvoicesRes.error;
+      if (recentExpensesRes.error) throw recentExpensesRes.error;
+      if (openExpensesRes.error) throw openExpensesRes.error;
+      if (budgetsRes.error) throw budgetsRes.error;
+      if (companiesRes.error) throw companiesRes.error;
+
+      const paidInvoices = paidInvoicesRes.data ?? [];
+      const openInvoices = openInvoicesRes.data ?? [];
+      const recentExpenses = recentExpensesRes.data ?? [];
+      const openExpenses = openExpensesRes.data ?? [];
+      const budgets = budgetsRes.data ?? [];
+      const companies = companiesRes.data ?? [];
+
+      const companyMap = new Map(companies.map((company) => [company.id, company.name]));
 
       const mtdRevenue = paidInvoices
         .filter((invoice) => invoice.paid_at && new Date(invoice.paid_at) >= monthStart)
         .reduce((sum, invoice) => sum + (invoice.total_amount ?? 0), 0);
 
-      const mtdExpenses = (expenses ?? [])
+      const mtdExpenses = recentExpenses
         .filter((expense) => expense.created_at && new Date(expense.created_at) >= monthStart)
         .reduce((sum, expense) => sum + (expense.amount ?? 0), 0);
 
       const marginPercent = mtdRevenue > 0 ? ((mtdRevenue - mtdExpenses) / mtdRevenue) * 100 : 0;
 
-      const outstandingAR = (invoices ?? [])
-        .filter((invoice) => invoice.status === 'sent' || invoice.status === 'overdue')
-        .reduce((sum, invoice) => sum + (invoice.total_amount ?? 0), 0);
+      const outstandingAR = openInvoices.reduce((sum, invoice) => sum + (invoice.total_amount ?? 0), 0);
 
-      const outstandingAP = (expenses ?? [])
-        .filter((expense) => expense.status === 'submitted' || expense.status === 'approved')
-        .reduce((sum, expense) => sum + (expense.amount ?? 0), 0);
+      const outstandingAP = openExpenses.reduce((sum, expense) => sum + (expense.amount ?? 0), 0);
 
       const cashForecast30d = mtdRevenue - mtdExpenses;
 
@@ -136,7 +168,7 @@ export function useFinanceDashboard(orgId: string | null) {
           )
           .reduce((sum, invoice) => sum + (invoice.total_amount ?? 0), 0);
 
-        const expensesForMonth = (expenses ?? [])
+        const expensesForMonth = recentExpenses
           .filter(
             (expense) =>
               expense.created_at &&
@@ -163,10 +195,9 @@ export function useFinanceDashboard(orgId: string | null) {
         .slice(0, 5)
         .map(([client, profit]) => ({ client, profit }));
 
-      const allBudgets = budgets ?? [];
-      const onTrack = allBudgets.filter((budget) => budget.status === 'active' || budget.status === 'approved').length;
-      const atRisk = allBudgets.filter((budget) => budget.status === 'pending_approval' || budget.status === 'draft').length;
-      const overBudget = allBudgets.filter((budget) => budget.status === 'closed').length;
+      const onTrack = budgets.filter((budget) => budget.status === 'active' || budget.status === 'approved').length;
+      const atRisk = budgets.filter((budget) => budget.status === 'pending_approval' || budget.status === 'draft').length;
+      const overBudget = budgets.filter((budget) => budget.status === 'closed').length;
 
       const agingConfig = [
         { label: 'Current', color: 'bg-semantic-success' },
@@ -177,10 +208,6 @@ export function useFinanceDashboard(orgId: string | null) {
       ];
       const agingAmounts = [0, 0, 0, 0, 0];
       const agingCounts = [0, 0, 0, 0, 0];
-
-      const openInvoices = (invoices ?? []).filter(
-        (invoice) => invoice.status === 'sent' || invoice.status === 'overdue'
-      );
 
       for (const invoice of openInvoices) {
         const daysOverdue = invoice.due_date
@@ -201,7 +228,7 @@ export function useFinanceDashboard(orgId: string | null) {
         color: bucket.color,
       }));
 
-      setData({
+      return {
         summary: {
           mtdRevenue,
           mtdExpenses,
@@ -225,11 +252,9 @@ export function useFinanceDashboard(orgId: string | null) {
           outflow: month.expenses,
         })),
         arAging,
-      });
-    };
+      };
+    },
+  });
 
-    fetchData();
-  }, [orgId]);
-
-  return data;
+  return query.data ?? null;
 }

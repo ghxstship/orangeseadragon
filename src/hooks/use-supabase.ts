@@ -1,72 +1,95 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { useEffect, useState } from "react";
 import type { User, Session } from "@supabase/supabase-js";
+import { useState, useSyncExternalStore } from "react";
+
+type AuthSnapshot = {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+};
+
+let authSnapshot: AuthSnapshot = {
+  user: null,
+  session: null,
+  loading: true,
+};
+
+let authInitialized = false;
+const listeners = new Set<() => void>();
+
+function notifyListeners() {
+  listeners.forEach((listener) => listener());
+}
+
+function setAuthSnapshot(next: Partial<AuthSnapshot>) {
+  authSnapshot = { ...authSnapshot, ...next };
+  notifyListeners();
+}
+
+function initializeAuthStore() {
+  if (authInitialized || typeof window === "undefined") {
+    return;
+  }
+
+  authInitialized = true;
+  const supabase = createClient();
+
+  void supabase.auth
+    .getSession()
+    .then(({ data: { session } }) => {
+      setAuthSnapshot({
+        session,
+        user: session?.user ?? null,
+        loading: false,
+      });
+    })
+    .catch(() => {
+      setAuthSnapshot({ loading: false });
+    });
+
+  supabase.auth.onAuthStateChange((_event, session) => {
+    setAuthSnapshot({
+      session,
+      user: session?.user ?? null,
+      loading: false,
+    });
+  });
+}
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  initializeAuthStore();
+
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot() {
+  return authSnapshot;
+}
 
 export function useSupabase() {
-  const supabase = createClient();
+  const [supabase] = useState(() => createClient());
   return supabase;
 }
 
 export function useUser() {
-  const supabase = useSupabase();
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-      setLoading(false);
-    };
-
-    getUser();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase]);
-
-  return { user, loading };
+  return {
+    user: snapshot.user,
+    loading: snapshot.loading,
+  };
 }
 
 export function useSession() {
-  const supabase = useSupabase();
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-  useEffect(() => {
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      setSession(session);
-      setLoading(false);
-    };
-
-    getSession();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase]);
-
-  return { session, loading };
+  return {
+    session: snapshot.session,
+    loading: snapshot.loading,
+  };
 }

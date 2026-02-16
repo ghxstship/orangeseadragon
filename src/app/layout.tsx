@@ -6,11 +6,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "@/components/providers";
 import { CookieConsentBanner } from "@/components/common/cookie-consent-banner";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const notoJP = Noto_Sans_JP({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-jp" });
-const notoKR = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-kr" });
-const notoSC = Noto_Sans_SC({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-sc" });
-const notoAR = Noto_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "500", "700"], variable: "--font-noto-ar" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const notoJP = Noto_Sans_JP({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-jp", display: "swap", preload: false });
+const notoKR = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-kr", display: "swap", preload: false });
+const notoSC = Noto_Sans_SC({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-noto-sc", display: "swap", preload: false });
+const notoAR = Noto_Sans_Arabic({ subsets: ["arabic"], weight: ["400", "500", "700"], variable: "--font-noto-ar", display: "swap", preload: false });
 
 export const viewport: Viewport = {
     width: "device-width",

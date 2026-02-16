@@ -9,12 +9,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
   Sheet,
@@ -27,6 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ResponsiveMenu } from "@/components/common/responsive-menu";
 import { UI_DEFAULTS } from "@/lib/config";
 import { sidebarNavigation, type NavSection, type NavItem } from "@/config/navigation";
 import { useUIStore } from "@/stores/ui-store";
@@ -95,7 +93,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       aria-label="Main navigation"
       initial={false}
       animate={{ width: collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH }}
-      style={{ width: collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH }}
       className={cn(
         "fixed left-0 top-14 z-30 hidden md:flex h-[calc(100vh-3.5rem)] flex-col glass-panel transition-all duration-500 overflow-hidden border-r border-white/10"
       )}
@@ -282,45 +279,49 @@ function SidebarItemCollapsed({ item, pathname, onNavigate }: SidebarItemProps) 
 
   if (hasSubpages) {
     return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
+      <ResponsiveMenu
+        trigger={
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             className={triggerClassName}
             aria-label={`${item.title} navigation`}
             title={item.title}
           >
             <Icon className="h-5 w-5" />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" align="start" className="w-56">
-          <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link
-              href={item.path}
-              onClick={onNavigate}
-              className={cn(pathname === item.path && "text-primary")}
-            >
-              {item.title}
-            </Link>
-          </DropdownMenuItem>
-          {item.subpages!.map((subpage) => {
-            const isSubActive = pathname === subpage.path;
-            return (
-              <DropdownMenuItem key={subpage.path} asChild>
-                <Link
-                  href={subpage.path}
-                  onClick={onNavigate}
-                  className={cn(isSubActive && "text-primary")}
-                >
-                  {subpage.title}
-                </Link>
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </Button>
+        }
+        title={item.title}
+        side="right"
+        align="start"
+      >
+        <DropdownMenuLabel>{item.title}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link
+            href={item.path}
+            onClick={onNavigate}
+            className={cn(pathname === item.path && "text-primary")}
+          >
+            {item.title}
+          </Link>
+        </DropdownMenuItem>
+        {item.subpages!.map((subpage) => {
+          const isSubActive = pathname === subpage.path;
+          return (
+            <DropdownMenuItem key={subpage.path} asChild>
+              <Link
+                href={subpage.path}
+                onClick={onNavigate}
+                className={cn(isSubActive && "text-primary")}
+              >
+                {subpage.title}
+              </Link>
+            </DropdownMenuItem>
+          );
+        })}
+      </ResponsiveMenu>
     );
   }
 

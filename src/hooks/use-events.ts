@@ -8,6 +8,9 @@ type Event = Database["public"]["Tables"]["events"]["Row"];
 type EventInsert = Database["public"]["Tables"]["events"]["Insert"];
 type EventUpdate = Database["public"]["Tables"]["events"]["Update"];
 
+const QUERY_STALE_TIME_MS = 2 * 60 * 1000;
+const QUERY_GC_TIME_MS = 10 * 60 * 1000;
+
 export function useEvents(organizationId: string | null) {
     const supabase = useSupabase();
 
@@ -34,6 +37,8 @@ export function useEvents(organizationId: string | null) {
             return data;
         },
         enabled: !!organizationId,
+        staleTime: QUERY_STALE_TIME_MS,
+        gcTime: QUERY_GC_TIME_MS,
     });
 }
 
@@ -67,6 +72,8 @@ export function useEvent(eventId: string | null) {
             return data;
         },
         enabled: !!eventId,
+        staleTime: QUERY_STALE_TIME_MS,
+        gcTime: QUERY_GC_TIME_MS,
     });
 }
 

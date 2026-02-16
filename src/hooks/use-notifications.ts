@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { getErrorMessage } from "@/lib/api/error-message";
+import { useSupabase, useUser } from "@/hooks/use-supabase";
 
 interface Notification {
   id: string;
@@ -30,9 +30,13 @@ interface UseNotificationsOptions {
   limit?: number;
   read?: boolean;
   type?: string;
+  enabled?: boolean;
+  summaryOnly?: boolean;
 }
 
 export function useNotifications(options: UseNotificationsOptions = {}) {
+  const supabase = useSupabase();
+  const { user } = useUser();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [meta, setMeta] = useState<NotificationsMeta | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,23 +44,46 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
 
   const limit = options.limit || 20;
   const page = options.page || 1;
+  const enabled = options.enabled ?? true;
+  const summaryOnly = options.summaryOnly ?? false;
 
   const fetchNotifications = useCallback(async () => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setNotifications([]);
         setMeta({ page, limit, total: 0, totalPages: 0, unreadCount: 0 });
         return;
       }
 
+      const { count: unreadCount } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("is_read", false);
+
+      if (summaryOnly) {
+        setNotifications([]);
+        setMeta({
+          page,
+          limit,
+          total: 0,
+          totalPages: 0,
+          unreadCount: unreadCount ?? 0,
+        });
+        return;
+      }
+
       let query = supabase
         .from("notifications")
-        .select("*", { count: "exact" })
+        .select("id,type,title,message,is_read,data,entity_type,entity_id,user_id,created_at,read_at", { count: "exact" })
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .range((page - 1) * limit, page * limit - 1);
@@ -71,12 +98,6 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
       const { data, count, error: fetchError } = await query;
 
       if (fetchError) throw fetchError;
-
-      const { count: unreadCount } = await supabase
-        .from("notifications")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("is_read", false);
 
       const total = count ?? 0;
       const mapped: Notification[] = (data ?? []).map((n) => ({
@@ -107,7 +128,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, options.read, options.type]);
+  }, [enabled, user, page, limit, options.read, options.type, summaryOnly, supabase]);
 
   useEffect(() => {
     fetchNotifications();
@@ -115,42 +136,32 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
 
   // Real-time subscription for new notifications
   useEffect(() => {
-    const supabase = createClient();
-    let userId: string | null = null;
+    if (!enabled || !user?.id) {
+      return;
+    }
 
-    const setup = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      userId = user.id;
-
-      supabase
-        .channel(`notifications:${userId}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "notifications",
-            filter: `user_id=eq.${userId}`,
-          },
-          () => {
-            fetchNotifications();
-          }
-        )
-        .subscribe();
-    };
-
-    setup();
+    const channel = supabase
+      .channel(`notifications:${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          fetchNotifications();
+        }
+      )
+      .subscribe();
 
     return () => {
-      if (userId) {
-        supabase.channel(`notifications:${userId}`).unsubscribe();
-      }
+      void supabase.removeChannel(channel);
     };
-  }, [fetchNotifications]);
+  }, [enabled, user?.id, fetchNotifications, supabase]);
 
   const markAsRead = useCallback(async (id: string) => {
-    const supabase = createClient();
     await supabase
       .from("notifications")
       .update({ is_read: true, read_at: new Date().toISOString() })
@@ -164,18 +175,16 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     if (meta) {
       setMeta({ ...meta, unreadCount: Math.max(0, meta.unreadCount - 1) });
     }
-  }, [meta]);
+  }, [meta, supabase]);
 
   const markAllAsRead = useCallback(async () => {
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from("notifications")
-        .update({ is_read: true, read_at: new Date().toISOString() })
-        .eq("user_id", user.id)
-        .eq("is_read", false);
-    }
+    if (!user) return;
+
+    await supabase
+      .from("notifications")
+      .update({ is_read: true, read_at: new Date().toISOString() })
+      .eq("user_id", user.id)
+      .eq("is_read", false);
 
     setNotifications((prev) =>
       prev.map((n) => ({ ...n, read: true, readAt: new Date().toISOString() }))
@@ -183,7 +192,7 @@ export function useNotifications(options: UseNotificationsOptions = {}) {
     if (meta) {
       setMeta({ ...meta, unreadCount: 0 });
     }
-  }, [meta]);
+  }, [meta, supabase, user]);
 
   return {
     notifications,

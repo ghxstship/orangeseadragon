@@ -152,23 +152,39 @@ export function NotificationCenter() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
+    if (!notificationsPanelOpen) {
+      return;
+    }
+
+    let cancelled = false;
+
     async function fetchNotifications() {
+      setLoading(true);
+
       try {
         const response = await fetch("/api/v1/notifications");
         if (response.ok) {
           const result = await response.json();
           const data: ApiNotification[] = result.data || [];
-          setNotifications(data.map(mapApiNotification));
+          if (!cancelled) {
+            setNotifications(data.map(mapApiNotification));
+          }
         }
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     fetchNotifications();
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [notificationsPanelOpen]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const unreadNotifications = notifications.filter((n) => !n.read);

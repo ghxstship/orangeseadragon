@@ -284,7 +284,7 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
             // We dropped on a card, find its deal to get the stage
             const overDeal = deals.find((d: Deal) => d.id === overId);
             if (overDeal) {
-                newStage = overDeal.stage;
+                newStage = overDeal.stage ?? '';
             }
         }
 

@@ -2,20 +2,37 @@
 
 import * as React from "react";
 import { useRouter, usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PageTransition } from "@/components/ui/motion";
+import { PageTransition } from "@/components/ui/page-transition";
 import { TopBar } from "./top-bar";
 import { Sidebar, MobileSidebar } from "./sidebar";
-import { CommandPalette } from "@/components/common/command-palette";
-import { NotificationCenter } from "@/components/common/notification-center";
-import { QuickAddTask } from "@/components/common/quick-add-task";
-import { CopilotDrawer, CopilotTrigger } from "@/components/common/copilot-drawer";
 import { useUIStore } from "@/stores/ui-store";
 import { useAppStore } from "@/stores/app-store";
 import { notificationService } from "@/lib/notifications/notificationService";
-import { UI_DEFAULTS } from "@/lib/config";
 import type { LayoutType } from "@/lib/layouts/types";
+
+const CommandPalette = dynamic(
+  () => import("@/components/common/command-palette").then((mod) => mod.CommandPalette),
+  { ssr: false }
+);
+
+const NotificationCenter = dynamic(
+  () => import("@/components/common/notification-center").then((mod) => mod.NotificationCenter),
+  { ssr: false }
+);
+
+const QuickAddTask = dynamic(
+  () => import("@/components/common/quick-add-task").then((mod) => mod.QuickAddTask),
+  { ssr: false }
+);
+
+const CopilotDrawer = dynamic(
+  () => import("@/components/common/copilot-drawer").then((mod) => mod.CopilotDrawer),
+  { ssr: false }
+);
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -36,6 +53,11 @@ export const useLayout = () => React.useContext(LayoutContext);
 export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const commandPaletteOpen = useUIStore((state) => state.commandPaletteOpen);
+  const notificationsPanelOpen = useUIStore((state) => state.notificationsPanelOpen);
+  const quickAddTaskOpen = useUIStore((state) => state.quickAddTaskOpen);
+  const copilotOpen = useUIStore((state) => state.copilotOpen);
+  const toggleCopilot = useUIStore((state) => state.toggleCopilot);
   const sidebarCollapsed = useAppStore((state) => state.isCollapsed);
   const toggleSidebarCollapsed = useAppStore((state) => state.toggleCollapsed);
   const [layoutType, setLayoutType] = React.useState<LayoutType | undefined>();
@@ -58,16 +80,33 @@ export function AppShell({ children }: AppShellProps) {
     notificationService.initialize();
   }, []);
 
-  // Global keyboard shortcut: ⌘. to toggle AI Copilot
+  // Global keyboard shortcuts for on-demand shell overlays
   React.useEffect(() => {
-    const handleCopilotShortcut = (e: KeyboardEvent) => {
-      if (e.key === "." && (e.metaKey || e.ctrlKey)) {
+    const handleGlobalShortcuts = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey)) {
+        return;
+      }
+
+      if (e.key === "k" && !e.shiftKey) {
+        e.preventDefault();
+        useUIStore.getState().setCommandPaletteOpen(true);
+        return;
+      }
+
+      if (e.key.toLowerCase() === "t" && e.shiftKey) {
+        e.preventDefault();
+        useUIStore.getState().setQuickAddTaskOpen(true);
+        return;
+      }
+
+      if (e.key === ".") {
         e.preventDefault();
         useUIStore.getState().toggleCopilot();
       }
     };
-    document.addEventListener("keydown", handleCopilotShortcut);
-    return () => document.removeEventListener("keydown", handleCopilotShortcut);
+
+    document.addEventListener("keydown", handleGlobalShortcuts);
+    return () => document.removeEventListener("keydown", handleGlobalShortcuts);
   }, []);
 
   React.useEffect(() => {
@@ -110,13 +149,10 @@ export function AppShell({ children }: AppShellProps) {
           id="main-content"
           role="main"
           tabIndex={-1}
-          style={{
-            "--app-sidebar-offset": `${sidebarCollapsed ? UI_DEFAULTS.SIDEBAR_COLLAPSED_WIDTH : UI_DEFAULTS.SIDEBAR_WIDTH}px`,
-          } as React.CSSProperties}
           className={cn(
             "min-h-[calc(100vh-3.5rem)] pt-14 transition-all duration-300 focus:outline-none",
             // Traditional layout with sidebar
-            !useFullWidth && "md:pl-[var(--app-sidebar-offset)]",
+            !useFullWidth && (sidebarCollapsed ? "md:pl-16" : "md:pl-[280px]"),
             // Full-width layout for new system
             useFullWidth && "pl-0"
           )}
@@ -135,11 +171,19 @@ export function AppShell({ children }: AppShellProps) {
         </main>
 
         <MobileSidebar />
-        <CommandPalette />
-        <NotificationCenter />
-        <QuickAddTask />
-        <CopilotDrawer />
-        <CopilotTrigger />
+        {commandPaletteOpen ? <CommandPalette /> : null}
+        {notificationsPanelOpen ? <NotificationCenter /> : null}
+        {quickAddTaskOpen ? <QuickAddTask /> : null}
+        {copilotOpen ? <CopilotDrawer /> : null}
+        <button
+          type="button"
+          onClick={toggleCopilot}
+          className="fixed bottom-6 right-6 z-[80] h-12 w-12 rounded-2xl bg-primary text-primary-foreground shadow-lg transition-shadow hover:shadow-xl hover:shadow-primary/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          aria-label={copilotOpen ? "Close AI Copilot" : "Open AI Copilot"}
+        >
+          <span className="sr-only">{copilotOpen ? "Close AI Copilot" : "Open AI Copilot"}</span>
+          <Sparkles className="mx-auto h-5 w-5" />
+        </button>
       </div>
     </LayoutContext.Provider>
   );

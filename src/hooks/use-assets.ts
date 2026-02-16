@@ -8,6 +8,9 @@ type Asset = Database["public"]["Tables"]["assets"]["Row"];
 type AssetInsert = Database["public"]["Tables"]["assets"]["Insert"];
 type AssetUpdate = Database["public"]["Tables"]["assets"]["Update"];
 
+const QUERY_STALE_TIME_MS = 2 * 60 * 1000;
+const QUERY_GC_TIME_MS = 10 * 60 * 1000;
+
 export function useAssets(organizationId: string | null) {
     const supabase = useSupabase();
 
@@ -35,10 +38,7 @@ export function useAssets(organizationId: string | null) {
             avatar_url
           )
         `)
-                //.eq("organization_id", organizationId) // Assets might not have org_id directly if it's inferred from category/location? 
-                // Checking schema in step 385, no organization_id in first few lines, let's assume it's there or handle error if not. 
-                // Actually step 385 output truncated, but usually assets are org scoped.
-                // Let's assume standard pattern.
+                .eq("organization_id", organizationId)
                 .is("deleted_at", null)
                 .order("created_at", { ascending: false });
 
@@ -46,6 +46,8 @@ export function useAssets(organizationId: string | null) {
             return data;
         },
         enabled: !!organizationId,
+        staleTime: QUERY_STALE_TIME_MS,
+        gcTime: QUERY_GC_TIME_MS,
     });
 }
 
@@ -83,6 +85,8 @@ export function useAsset(assetId: string | null) {
             return data;
         },
         enabled: !!assetId,
+        staleTime: QUERY_STALE_TIME_MS,
+        gcTime: QUERY_GC_TIME_MS,
     });
 }
 

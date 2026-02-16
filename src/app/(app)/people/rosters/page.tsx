@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import { useCrud } from '@/lib/crud/hooks/useCrud';
 import { peopleSchema } from '@/lib/schemas/people';
 import type { EntityRecord, EntitySchema } from '@/lib/schema/types';
@@ -17,6 +17,8 @@ interface PersonListItem extends EntityRecord {
   is_available_for_hire?: boolean;
 }
 
+type DirectoryPerson = ComponentProps<typeof HolographicDirectory>['people'][number];
+
 export default function RostersPage() {
   const { data: people, loading } = useCrud<PersonListItem>(peopleSchema as EntitySchema<PersonListItem>);
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
@@ -25,12 +27,14 @@ export default function RostersPage() {
   // For now, we find from the list or just pass the ID to LifeStreamProfile if it fetches itself
   // But LifeStreamProfile currently expects a 'person' object.
   const selectedPerson = people.find((p: PersonListItem) => p.id === selectedPersonId);
-  const directoryPeople = people.map((p: PersonListItem) => ({
-    ...p,
-    // Map schema fields to component props if needed, or ensure schema matches
-    status: p.is_available_for_hire ? 'online' : 'offline', // Simple mapping for now
+  const directoryPeople: DirectoryPerson[] = people.map((p: PersonListItem): DirectoryPerson => ({
+    id: p.id,
     headline: p.headline || 'Untitled Staff',
     location: p.location ?? undefined,
+    status: p.is_available_for_hire ? 'online' : 'offline',
+    is_available_for_hire: Boolean(p.is_available_for_hire),
+    avatar_url: typeof p.avatar_url === 'string' ? p.avatar_url : undefined,
+    department: typeof p.department === 'string' ? p.department : undefined,
   }));
 
   return (

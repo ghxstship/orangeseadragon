@@ -2,15 +2,13 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { DashboardGrid, DashboardGridSkeleton } from "@/components/dashboard/DashboardGrid";
 import { DashboardLayout as DashboardLayoutType, defaultDashboardLayout } from "@/lib/dashboard/widget-registry";
 import { DashboardLayout } from "@/lib/layouts/DashboardLayout";
 import { PageErrorState } from "@/components/common/contextual-empty-state";
 import { useUser } from "@/hooks/use-supabase";
-import { useProjects } from "@/hooks/use-projects";
-import { useTasks } from "@/hooks/use-tasks";
-import { useEvents } from "@/hooks/use-events";
-import { useBudgets } from "@/hooks/use-budgets";
+import { useDashboardSnapshot } from "@/hooks/use-dashboard-snapshot";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -81,178 +79,173 @@ const quickActions: QuickActionItem[] = [
   { id: "deal", label: "Create Deal", icon: Briefcase, href: "/business/pipeline/new", description: "Start a new deal in the pipeline" },
 ];
 
+interface DashboardLayoutsResponse {
+  data?: Record<string, unknown>[];
+}
+
+function normalizeDashboardLayout(rawLayout: Record<string, unknown>): DashboardLayoutType {
+  return {
+    id: String(rawLayout.id ?? "default"),
+    name: typeof rawLayout.name === "string" ? rawLayout.name : "Dashboard",
+    description: typeof rawLayout.description === "string" ? rawLayout.description : undefined,
+    widgets: Array.isArray(rawLayout.widgets) ? (rawLayout.widgets as DashboardLayoutType["widgets"]) : [],
+    columns: typeof rawLayout.columns === "number" ? rawLayout.columns : 12,
+    isDefault: typeof rawLayout.isDefault === "boolean"
+      ? rawLayout.isDefault
+      : rawLayout.is_default === true,
+    isShared: typeof rawLayout.isShared === "boolean"
+      ? rawLayout.isShared
+      : rawLayout.is_shared === true,
+    userId: typeof rawLayout.userId === "string"
+      ? rawLayout.userId
+      : typeof rawLayout.user_id === "string"
+        ? rawLayout.user_id
+        : undefined,
+    organizationId: typeof rawLayout.organizationId === "string"
+      ? rawLayout.organizationId
+      : typeof rawLayout.organization_id === "string"
+        ? rawLayout.organization_id
+        : undefined,
+    createdAt: typeof rawLayout.createdAt === "string"
+      ? rawLayout.createdAt
+      : typeof rawLayout.created_at === "string"
+        ? rawLayout.created_at
+        : undefined,
+    updatedAt: typeof rawLayout.updatedAt === "string"
+      ? rawLayout.updatedAt
+      : typeof rawLayout.updated_at === "string"
+        ? rawLayout.updated_at
+        : undefined,
+  };
+}
+
 export default function DashboardPage() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   useCopilotContext({ module: 'dashboard' });
   const organizationId = user?.user_metadata?.organization_id || null;
 
-  const { data: projects, isLoading: projectsLoading } = useProjects(organizationId);
-  const { data: tasks, isLoading: tasksLoading } = useTasks(organizationId);
-  const { data: events, isLoading: eventsLoading } = useEvents(organizationId);
-  const { data: budgets, isLoading: budgetsLoading } = useBudgets(organizationId);
+  const { data: snapshot, isLoading: snapshotLoading, refetch: refetchSnapshot } = useDashboardSnapshot(organizationId);
+  const kpi = snapshot?.kpi;
+  const projectStatusDistribution = snapshot?.projectStatusDistribution ?? [];
+  const myTasksDueToday = snapshot?.myTasksDueToday ?? [];
+  const overdueTasks = snapshot?.overdueTasks ?? [];
+  const upcomingEvents = snapshot?.upcomingEvents ?? [];
+  const budgets = snapshot?.budgets ?? [];
+
+  const {
+    data: dashboardLayouts = [],
+    isLoading: layoutLoading,
+    error: layoutQueryError,
+    refetch: refetchLayouts,
+  } = useQuery({
+    queryKey: ["dashboard-layouts", user?.id],
+    enabled: Boolean(user?.id),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    queryFn: async (): Promise<DashboardLayoutType[]> => {
+      const response = await fetch("/api/dashboard-layouts");
+      if (!response.ok) {
+        await throwApiErrorResponse(response, "Failed to load dashboard");
+      }
+
+      const result = (await response.json()) as DashboardLayoutsResponse;
+      const payload = Array.isArray(result.data) ? result.data : [];
+      return payload.map(normalizeDashboardLayout);
+    },
+  });
 
   const [layout, setLayout] = useState<DashboardLayoutType>(defaultDashboardLayout);
   const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [layoutId, setLayoutId] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("month");
   const [error, setError] = useState<Error | null>(null);
 
-  const isDataLoading = projectsLoading || tasksLoading || eventsLoading || budgetsLoading;
+  const isDataLoading = userLoading || snapshotLoading;
+  const effectiveError = error ?? (layoutQueryError ? new Error(getErrorMessage(layoutQueryError, "Failed to load dashboard")) : null);
+
+  useEffect(() => {
+    if (isEditing) {
+      return;
+    }
+
+    if (dashboardLayouts.length === 0) {
+      setLayout(defaultDashboardLayout);
+      setLayoutId(null);
+      return;
+    }
+
+    const preferredLayout = dashboardLayouts.find((candidate) => candidate.isDefault) ?? dashboardLayouts[0];
+    setLayout({
+      ...preferredLayout,
+      widgets: preferredLayout.widgets || [],
+    });
+    setLayoutId(preferredLayout.id);
+  }, [dashboardLayouts, isEditing]);
 
   const kpiStats = useMemo(() => {
-    const activeProjects = projects?.filter((p: Record<string, unknown>) => p.status === "active").length ?? 0;
-    const totalProjects = projects?.length ?? 0;
-    const openTasks = tasks?.filter((t: Record<string, unknown>) => t.status !== "done" && t.status !== "cancelled").length ?? 0;
-    const completedTasks = tasks?.filter((t: Record<string, unknown>) => t.status === "done").length ?? 0;
-    const totalTasks = tasks?.length ?? 0;
+    const totalProjects = kpi?.totalProjects ?? 0;
+    const activeProjects = kpi?.activeProjects ?? 0;
+    const totalTasks = kpi?.totalTasks ?? 0;
+    const openTasks = kpi?.openTasks ?? 0;
+    const completedTasks = kpi?.completedTasks ?? 0;
     const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-    const now = new Date();
-    const weekEnd = new Date(now);
-    weekEnd.setDate(weekEnd.getDate() + 7);
-    const eventsThisWeek = events?.filter((e: Record<string, unknown>) => {
-      const dateStr = (e.start_date ?? e.created_at) as string | null;
-      if (!dateStr) return false;
-      const eventDate = new Date(dateStr);
-      return eventDate >= now && eventDate <= weekEnd;
-    }).length ?? 0;
-
-    const totalBudget = budgets?.reduce((sum: number, b: Record<string, unknown>) => sum + (Number(b.total_amount) || 0), 0) ?? 0;
-    const activeBudgets = budgets?.filter((b: Record<string, unknown>) => b.status === "active") ?? [];
-    const burnedBudget = activeBudgets.reduce((sum: number, b: Record<string, unknown>) => {
-      return sum + (Number(b.total_amount) || 0) * 0.6;
-    }, 0);
+    const totalBudget = kpi?.totalBudget ?? 0;
+    const activeBudgetTotal = kpi?.activeBudgetTotal ?? 0;
+    const burnedBudget = activeBudgetTotal * 0.6;
     const budgetHealthPct = totalBudget > 0 ? Math.round(((totalBudget - burnedBudget) / totalBudget) * 100) : 100;
-
-    const teamUtilization = totalProjects > 0 ? Math.min(100, Math.round((activeProjects / Math.max(totalProjects, 1)) * 100)) : 0;
-
-    const revenueMTD = budgets?.filter((b: Record<string, unknown>) => {
-      const created = b.created_at as string | null;
-      if (!created) return false;
-      const d = new Date(created);
-      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-    }).reduce((sum: number, b: Record<string, unknown>) => sum + (Number(b.total_amount) || 0), 0) ?? 0;
 
     return {
       activeProjects,
       openTasks,
-      eventsThisWeek,
+      eventsThisWeek: kpi?.eventsThisWeek ?? 0,
       budgetHealthPct,
       taskCompletionRate,
       totalBudget,
-      teamUtilization,
-      revenueMTD,
+      teamUtilization: kpi?.teamUtilization ?? (totalProjects > 0 ? Math.min(100, Math.round((activeProjects / totalProjects) * 100)) : 0),
+      revenueMTD: kpi?.revenueMTD ?? 0,
+      totalProjects,
     };
-  }, [projects, tasks, events, budgets]);
-
-  const myTasksDueToday = useMemo(() => {
-    if (!tasks) return [];
-    const now = new Date();
-    const todayStr = now.toISOString().split("T")[0];
-    return (tasks as Record<string, unknown>[])
-      .filter((t) => {
-        const due = t.due_date as string | null;
-        return due?.startsWith(todayStr) && t.status !== "done" && t.status !== "cancelled";
-      })
-      .slice(0, 5);
-  }, [tasks]);
-
-  const overdueTasks = useMemo(() => {
-    if (!tasks) return [];
-    const now = new Date();
-    return (tasks as Record<string, unknown>[])
-      .filter((t) => {
-        const due = t.due_date as string | null;
-        return due && new Date(due) < now && t.status !== "done" && t.status !== "cancelled";
-      })
-      .slice(0, 5);
-  }, [tasks]);
-
-  const upcomingEvents = useMemo(() => {
-    if (!events) return [];
-    const now = new Date();
-    return (events as Record<string, unknown>[])
-      .filter((e) => {
-        const dateStr = (e.start_date ?? e.created_at) as string | null;
-        return dateStr && new Date(dateStr) >= now;
-      })
-      .slice(0, 4);
-  }, [events]);
-
-  const projectStatusDistribution = useMemo(() => {
-    if (!projects) return [];
-    const counts: Record<string, number> = {};
-    (projects as Record<string, unknown>[]).forEach((p) => {
-      const status = (p.status as string) || "unknown";
-      counts[status] = (counts[status] || 0) + 1;
-    });
-    return Object.entries(counts).map(([status, count]) => ({ status, count }));
-  }, [projects]);
-
-  useEffect(() => {
-    async function fetchLayout() {
-      setError(null);
-      try {
-        const response = await fetch("/api/dashboard-layouts");
-        if (!response.ok) {
-          await throwApiErrorResponse(response, "Failed to load dashboard");
-        }
-        const result = await response.json();
-
-        if (result.data && result.data.length > 0) {
-          const defaultLayout = result.data.find((l: DashboardLayoutType) => l.isDefault) || result.data[0];
-          setLayout({
-            ...defaultLayout,
-            widgets: defaultLayout.widgets || [],
-          });
-          setLayoutId(defaultLayout.id);
-        }
-      } catch (err) {
-        console.error("Failed to fetch dashboard layout:", err);
-        setError(new Error(getErrorMessage(err, "Failed to load dashboard")));
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchLayout();
-  }, []);
+  }, [kpi]);
 
   const handleLayoutChange = useCallback((newLayout: DashboardLayoutType) => {
     setLayout(newLayout);
   }, []);
 
   const handleRefresh = useCallback(async () => {
-    setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/dashboard-layouts");
-      if (!response.ok) {
-        await throwApiErrorResponse(response, "Failed to refresh dashboard");
+      const [layoutResult, snapshotResult] = await Promise.all([
+        refetchLayouts(),
+        refetchSnapshot(),
+      ]);
+
+      if (layoutResult.error) {
+        throw layoutResult.error;
       }
-      const result = await response.json();
-      if (result.data && result.data.length > 0) {
-        const defaultLayout = result.data.find((l: DashboardLayoutType) => l.isDefault) || result.data[0];
-        setLayout({ ...defaultLayout, widgets: defaultLayout.widgets || [] });
-        setLayoutId(defaultLayout.id);
+
+      if (snapshotResult.error) {
+        throw snapshotResult.error;
       }
     } catch (err) {
       setError(new Error(getErrorMessage(err, "Failed to refresh")));
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+  }, [refetchLayouts, refetchSnapshot]);
 
   const handleEditToggle = useCallback(async () => {
     if (isEditing) {
       try {
         if (layoutId) {
-          await fetch(`/api/dashboard-layouts/${layoutId}`, {
+          const response = await fetch(`/api/dashboard-layouts/${layoutId}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ widgets: layout.widgets, columns: layout.columns }),
           });
+          if (!response.ok) {
+            await throwApiErrorResponse(response, "Failed to save dashboard layout");
+          }
         } else {
           const response = await fetch("/api/dashboard-layouts", {
             method: "POST",
@@ -264,19 +257,26 @@ export default function DashboardPage() {
               is_default: true,
             }),
           });
+          if (!response.ok) {
+            await throwApiErrorResponse(response, "Failed to create dashboard layout");
+          }
+
           const result = await response.json();
           if (result.data?.id) {
             setLayoutId(result.data.id);
           }
         }
+
+        await refetchLayouts();
       } catch (err) {
         console.error("Failed to save dashboard layout:", err);
+        setError(new Error(getErrorMessage(err, "Failed to save dashboard layout")));
       }
     }
     setIsEditing(!isEditing);
-  }, [isEditing, layout, layoutId]);
+  }, [isEditing, layout, layoutId, refetchLayouts]);
 
-  if (error && !isLoading) {
+  if (effectiveError && !layoutLoading) {
     return (
       <DashboardLayout
         config={dashboardConfig}
@@ -285,8 +285,8 @@ export default function DashboardPage() {
         <div className="col-span-full">
           <PageErrorState
             title="Failed to load dashboard"
-            description={getErrorMessage(error, "Failed to load dashboard")}
-            error={error}
+            description={getErrorMessage(effectiveError, "Failed to load dashboard")}
+            error={effectiveError}
             onRetry={handleRefresh}
           />
         </div>
@@ -297,7 +297,7 @@ export default function DashboardPage() {
   return (
     <DashboardLayout
       config={dashboardConfig}
-      loading={isLoading && isDataLoading}
+      loading={layoutLoading || isDataLoading}
       dateRange={dateRange}
       onDateRangeChange={setDateRange}
       onRefresh={handleRefresh}
@@ -567,7 +567,7 @@ export default function DashboardPage() {
                 ) : (
                   <StaggerList className="space-y-3">
                     {projectStatusDistribution.map(({ status, count }) => {
-                      const total = projects?.length ?? 1;
+                      const total = kpiStats.totalProjects || 1;
                       const pct = Math.round((count / total) * 100);
                       return (
                         <StaggerItem key={status}>
@@ -662,7 +662,7 @@ export default function DashboardPage() {
 
       {/* Widget Grid */}
       <div className="col-span-full">
-        {isLoading ? (
+        {layoutLoading ? (
           <DashboardGridSkeleton />
         ) : (
           <DashboardGrid

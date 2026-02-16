@@ -8,6 +8,9 @@ type Document = Database["public"]["Tables"]["documents"]["Row"];
 type DocumentInsert = Database["public"]["Tables"]["documents"]["Insert"];
 type DocumentUpdate = Database["public"]["Tables"]["documents"]["Update"];
 
+const QUERY_STALE_TIME_MS = 2 * 60 * 1000;
+const QUERY_GC_TIME_MS = 10 * 60 * 1000;
+
 export function useDocuments(organizationId: string | null) {
   const supabase = useSupabase();
 
@@ -38,6 +41,8 @@ export function useDocuments(organizationId: string | null) {
       return data;
     },
     enabled: !!organizationId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 
@@ -70,6 +75,8 @@ export function useDocument(documentId: string | null) {
       return data;
     },
     enabled: !!documentId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 

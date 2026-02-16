@@ -1,0 +1,282 @@
+[
+  {
+    "file": "src/app/(app)/core/dashboard/page.tsx",
+    "line": 196,
+    "endpoint": "/api/dashboard-layouts",
+    "check_path": "/api/dashboard-layouts",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/core/dashboard/page.tsx",
+    "line": 228,
+    "endpoint": "/api/dashboard-layouts",
+    "check_path": "/api/dashboard-layouts",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/core/dashboard/page.tsx",
+    "line": 249,
+    "endpoint": "/api/dashboard-layouts/${layoutId}",
+    "check_path": "/api/dashboard-layouts/",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/core/dashboard/page.tsx",
+    "line": 255,
+    "endpoint": "/api/dashboard-layouts",
+    "check_path": "/api/dashboard-layouts",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/core/inbox/page.tsx",
+    "line": 137,
+    "endpoint": "/api/inbox?${params}",
+    "check_path": "/api/inbox?",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/core/inbox/page.tsx",
+    "line": 182,
+    "endpoint": "/api/inbox/mark-read",
+    "check_path": "/api/inbox/mark-read",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/core/inbox/page.tsx",
+    "line": 210,
+    "endpoint": "/api/inbox/${item.id}/approve",
+    "check_path": "/api/inbox/",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/core/inbox/page.tsx",
+    "line": 225,
+    "endpoint": "/api/inbox/${item.id}/reject",
+    "check_path": "/api/inbox/",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/core/inbox/page.tsx",
+    "line": 240,
+    "endpoint": "/api/inbox/dismiss",
+    "check_path": "/api/inbox/dismiss",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/core/tasks/my-timesheet/page.tsx",
+    "line": 199,
+    "endpoint": "/api/time-entries/copy-week",
+    "check_path": "/api/time-entries/copy-week",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/core/tasks/timeline/page.tsx",
+    "line": 46,
+    "endpoint": "/api/task-dependencies?task_id=${task.id}",
+    "check_path": "/api/task-dependencies?task_id=",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+    "line": 53,
+    "endpoint": "/api/expense-approval-requests",
+    "check_path": "/api/expense-approval-requests",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+    "line": 66,
+    "endpoint": "/api/expense-approval-requests/approve",
+    "check_path": "/api/expense-approval-requests/approve",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+    "line": 82,
+    "endpoint": "/api/expense-approval-requests/reject",
+    "check_path": "/api/expense-approval-requests/reject",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+    "line": 98,
+    "endpoint": "/api/expense-approval-requests/return",
+    "check_path": "/api/expense-approval-requests/return",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+    "line": 118,
+    "endpoint": "/api/expense-approval-requests/bulk-approve",
+    "check_path": "/api/expense-approval-requests/bulk-approve",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(onboarding)/onboarding/integrations/page.tsx",
+    "line": 64,
+    "endpoint": "/api/integrations/${id}/connect",
+    "check_path": "/api/integrations/",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(onboarding)/onboarding/integrations/page.tsx",
+    "line": 83,
+    "endpoint": "/api/onboarding/complete",
+    "check_path": "/api/onboarding/complete",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(onboarding)/onboarding/team/page.tsx",
+    "line": 54,
+    "endpoint": "/api/invitations/batch",
+    "check_path": "/api/invitations/batch",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/payments/success/page.tsx",
+    "line": 33,
+    "endpoint": "/api/invoices/${invoiceId}/payment-status",
+    "check_path": "/api/invoices/",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/people/compliance/page.tsx",
+    "line": 8,
+    "endpoint": "/api/notifications/send-reminder",
+    "check_path": "/api/notifications/send-reminder",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/people/documents/page.tsx",
+    "line": 54,
+    "endpoint": "/api/files/upload",
+    "check_path": "/api/files/upload",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/people/documents/page.tsx",
+    "line": 67,
+    "endpoint": "/api/files/${docId}",
+    "check_path": "/api/files/",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/people/leave/page.tsx",
+    "line": 176,
+    "endpoint": "/api/leave-requests",
+    "check_path": "/api/leave-requests",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/people/timekeeping/page.tsx",
+    "line": 18,
+    "endpoint": "/api/clock-entries",
+    "check_path": "/api/clock-entries",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/people/timekeeping/page.tsx",
+    "line": 36,
+    "endpoint": "/api/clock-entries",
+    "check_path": "/api/clock-entries",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/page.tsx",
+    "line": 103,
+    "endpoint": "/api/advancing/dashboard",
+    "check_path": "/api/advancing/dashboard",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/page.tsx",
+    "line": 118,
+    "endpoint": "/api/advancing/conflicts?status=open",
+    "check_path": "/api/advancing/conflicts?status=open",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/activity/page.tsx",
+    "line": 86,
+    "endpoint": "/api/advancing/activity?${params}",
+    "check_path": "/api/advancing/activity?",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/advances/page.tsx",
+    "line": 47,
+    "endpoint": "/api/advancing/advances",
+    "check_path": "/api/advancing/advances",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/allotments/page.tsx",
+    "line": 70,
+    "endpoint": "/api/advancing/allotments?${params}",
+    "check_path": "/api/advancing/allotments?",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/approvals/page.tsx",
+    "line": 57,
+    "endpoint": "/api/advancing/approvals",
+    "check_path": "/api/advancing/approvals",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/approvals/page.tsx",
+    "line": 75,
+    "endpoint": "/api/advancing/approvals/${id}",
+    "check_path": "/api/advancing/approvals/",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/advancing/assignments/page.tsx",
+    "line": 85,
+    "endpoint": "/api/advancing/assignments?${params}",
+    "check_path": "/api/advancing/assignments?",
+    "exists": false,
+    "matched": null
+  },
+  {
+    "file": "src/app/(app)/productions/projects/[id]/call-sheet/page.tsx",
+    "line": 136,
+    "endpoint": "/api/projects/${projectId}/call-sheet",
+    "check_path": "/api/projects/",
+    "exists": true,
+    "matched": "/[entity]/[id]"
+  }
+]

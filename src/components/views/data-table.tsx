@@ -93,6 +93,16 @@ export interface DataTableProps<TData, TValue> {
   resizable?: boolean;
   grouping?: string[];
   onGroupingChange?: (grouping: string[]) => void;
+  pagination?: {
+    page: number;
+    pageSize: number;
+    total?: number;
+    totalPages?: number;
+  };
+  onPaginationChange?: (pagination: { page: number; pageSize: number }) => void;
+  virtualizeRows?: boolean;
+  virtualizeThreshold?: number;
+  virtualRowHeight?: number;
   /** Optional wrapper around each data row (e.g. RecordContextMenu) */
   renderRowWrapper?: (row: TData, children: React.ReactNode) => React.ReactNode;
 }
@@ -128,6 +138,11 @@ export function DataTable<TData, TValue>({
   resizable = true,
   grouping: externalGrouping,
   onGroupingChange,
+  pagination,
+  onPaginationChange,
+  virtualizeRows = true,
+  virtualizeThreshold = 100,
+  virtualRowHeight,
   renderRowWrapper,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -137,6 +152,22 @@ export function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [columnSizing, setColumnSizing] = React.useState<ColumnSizingState>({});
   const [grouping, setGrouping] = React.useState<GroupingState>(externalGrouping || []);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  const [scrollTop, setScrollTop] = React.useState(0);
+  const [viewportHeight, setViewportHeight] = React.useState(0);
+  const estimatedRowHeight = React.useMemo(
+    () => virtualRowHeight ?? (density === "compact" ? 40 : 56),
+    [density, virtualRowHeight]
+  );
+
+  const isServerPagination = Boolean(pagination && onPaginationChange);
+  const controlledPaginationState = React.useMemo(
+    () => ({
+      pageIndex: Math.max((pagination?.page ?? 1) - 1, 0),
+      pageSize: pagination?.pageSize ?? pageSize,
+    }),
+    [pagination?.page, pagination?.pageSize, pageSize]
+  );
 
   // Sync external grouping
   React.useEffect(() => {
@@ -245,6 +276,22 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getGroupedRowModel: getGroupedRowModel(),
+    manualPagination: isServerPagination,
+    pageCount: isServerPagination
+      ? Math.max(pagination?.totalPages ?? 0, 0)
+      : undefined,
+    onPaginationChange: isServerPagination
+      ? (updater) => {
+        const nextPagination = typeof updater === "function"
+          ? updater(controlledPaginationState)
+          : updater;
+
+        onPaginationChange?.({
+          page: nextPagination.pageIndex + 1,
+          pageSize: nextPagination.pageSize,
+        });
+      }
+      : undefined,
     onGroupingChange: (updater) => {
       const next = typeof updater === "function" ? updater(grouping) : updater;
       setGrouping(next);
@@ -264,11 +311,82 @@ export function DataTable<TData, TValue>({
       globalFilter,
       columnSizing,
       grouping,
+      ...(isServerPagination ? { pagination: controlledPaginationState } : {}),
     },
-    initialState: {
-      pagination: { pageSize },
-    },
+    initialState: isServerPagination
+      ? undefined
+      : {
+        pagination: { pageSize },
+      },
   });
+
+  const allRows = table.getRowModel().rows;
+  const virtualizationEnabled =
+    virtualizeRows &&
+    !loading &&
+    !isServerPagination &&
+    grouping.length === 0 &&
+    allRows.length >= virtualizeThreshold;
+
+  React.useEffect(() => {
+    if (!virtualizationEnabled) {
+      setScrollTop(0);
+      return;
+    }
+
+    const container = scrollContainerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const updateViewportHeight = () => {
+      setViewportHeight(container.clientHeight);
+    };
+
+    const handleScroll = () => {
+      setScrollTop(container.scrollTop);
+    };
+
+    updateViewportHeight();
+    handleScroll();
+
+    container.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", updateViewportHeight);
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(updateViewportHeight)
+        : null;
+    resizeObserver?.observe(container);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updateViewportHeight);
+      resizeObserver?.disconnect();
+    };
+  }, [virtualizationEnabled]);
+
+  const virtualWindow = React.useMemo(() => {
+    if (!virtualizationEnabled) {
+      return {
+        rows: allRows,
+        topPadding: 0,
+        bottomPadding: 0,
+      };
+    }
+
+    const safeViewportHeight = Math.max(viewportHeight, estimatedRowHeight);
+    const visibleCount = Math.ceil(safeViewportHeight / estimatedRowHeight);
+    const overscan = Math.max(4, Math.ceil(visibleCount / 2));
+    const startIndex = Math.max(0, Math.floor(scrollTop / estimatedRowHeight) - overscan);
+    const endIndex = Math.min(allRows.length, startIndex + visibleCount + overscan * 2);
+
+    return {
+      rows: allRows.slice(startIndex, endIndex),
+      topPadding: startIndex * estimatedRowHeight,
+      bottomPadding: Math.max(0, (allRows.length - endIndex) * estimatedRowHeight),
+    };
+  }, [allRows, estimatedRowHeight, scrollTop, viewportHeight, virtualizationEnabled]);
 
   React.useEffect(() => {
     if (onSelectionChange) {
@@ -327,7 +445,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="rounded-md border overflow-hidden">
-        <div className="relative overflow-auto max-h-[50vh] sm:max-h-[70vh]">
+        <div ref={scrollContainerRef} className="relative overflow-auto max-h-[50vh] sm:max-h-[70vh]">
           <Table className="relative w-full border-collapse" style={getTableWidthStyle(resizable, table.getCenterTotalSize())}>
             <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -391,8 +509,18 @@ export function DataTable<TData, TValue>({
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => {
+              ) : allRows.length ? (
+                <>
+                  {virtualizationEnabled && virtualWindow.topPadding > 0 ? (
+                    <TableRow aria-hidden="true" className="pointer-events-none hover:bg-transparent">
+                      <TableCell
+                        colSpan={tableColumns.length}
+                        className="p-0 border-0"
+                        style={{ height: virtualWindow.topPadding }}
+                      />
+                    </TableRow>
+                  ) : null}
+                  {virtualWindow.rows.map((row) => {
                   if (row.getIsGrouped()) {
                     return (
                       <TableRow key={row.id} className="bg-muted/30 group hover:bg-muted/50">
@@ -461,7 +589,17 @@ export function DataTable<TData, TValue>({
                   return renderRowWrapper
                     ? <React.Fragment key={row.id}>{renderRowWrapper(row.original, tableRow)}</React.Fragment>
                     : tableRow;
-                })
+                  })}
+                  {virtualizationEnabled && virtualWindow.bottomPadding > 0 ? (
+                    <TableRow aria-hidden="true" className="pointer-events-none hover:bg-transparent">
+                      <TableCell
+                        colSpan={tableColumns.length}
+                        className="p-0 border-0"
+                        style={{ height: virtualWindow.bottomPadding }}
+                      />
+                    </TableRow>
+                  ) : null}
+                </>
               ) : (
                 <TableRow>
                   <TableCell colSpan={tableColumns.length} className="h-24 text-center">

@@ -19,6 +19,7 @@ interface ResponsiveMenuProps {
   children: React.ReactNode;
   title?: string;
   align?: "start" | "center" | "end";
+  side?: "top" | "right" | "bottom" | "left";
 }
 
 /**
@@ -30,6 +31,7 @@ export function ResponsiveMenu({
   children,
   title = "Actions",
   align = "end",
+  side = "bottom",
 }: ResponsiveMenuProps) {
   const { isMobile } = useBreakpoint();
   const [open, setOpen] = React.useState(false);
@@ -56,7 +58,7 @@ export function ResponsiveMenu({
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
-      <DropdownMenuContent align={align}>{children}</DropdownMenuContent>
+      <DropdownMenuContent align={align} side={side}>{children}</DropdownMenuContent>
     </DropdownMenu>
   );
 }

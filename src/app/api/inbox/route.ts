@@ -27,10 +27,33 @@ export async function GET(request: NextRequest) {
   const limit = parseNumber(searchParams.get("limit"), 20);
   const read = parseBoolean(searchParams.get("read"));
   const type = searchParams.get("type");
+  const summaryOnly = searchParams.get("summary") === "1" || searchParams.get("summary") === "true";
+
+  if (summaryOnly) {
+    let unreadQuery = supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("is_read", false);
+
+    if (type) {
+      unreadQuery = unreadQuery.eq("type", type);
+    }
+
+    const { count: unreadCountResult, error: unreadCountError } = await unreadQuery;
+
+    return apiSuccess([], {
+      page,
+      limit,
+      total: 0,
+      totalPages: 0,
+      unreadCount: unreadCountError ? 0 : unreadCountResult ?? 0,
+    });
+  }
 
   let query = supabase
     .from("notifications")
-    .select("*", { count: "exact" })
+    .select("id,type,title,message,is_read,created_at,data", { count: "exact" })
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -71,9 +94,39 @@ export async function GET(request: NextRequest) {
   });
 
   const filtered = type ? mapped.filter((item) => item.type === type) : mapped;
-  const total = type ? filtered.length : count ?? filtered.length;
+  let unreadCount = 0;
+  let total = type ? 0 : count ?? filtered.length;
+
+  if (type) {
+    const { count: typeCount, error: typeCountError } = await supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("type", type);
+
+    if (!typeCountError) {
+      total = typeCount ?? 0;
+    } else {
+      total = filtered.length;
+    }
+  }
+
+  let unreadQuery = supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("is_read", false);
+
+  if (type) {
+    unreadQuery = unreadQuery.eq("type", type);
+  }
+
+  const { count: unreadCountResult, error: unreadCountError } = await unreadQuery;
+  if (!unreadCountError) {
+    unreadCount = unreadCountResult ?? 0;
+  }
+
   const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
-  const unreadCount = filtered.filter((item) => !item.read).length;
 
   return apiSuccess(filtered, {
     page,

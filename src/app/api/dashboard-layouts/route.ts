@@ -1,6 +1,31 @@
 import { NextRequest } from "next/server";
 import { requireAuth } from "@/lib/api/guard";
 import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from "@/lib/api/response";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
+
+async function resolveOrganizationId(supabase: SupabaseClient, user: User) {
+  const metadataOrganizationId = (
+    user.user_metadata as { organization_id?: string } | null | undefined
+  )?.organization_id;
+
+  if (metadataOrganizationId) {
+    return {
+      organizationId: metadataOrganizationId,
+      profileError: null,
+    };
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("users")
+    .select("organization_id")
+    .eq("id", user.id)
+    .single();
+
+  return {
+    organizationId: profile?.organization_id ?? null,
+    profileError,
+  };
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
@@ -8,17 +33,7 @@ export async function GET(_request: NextRequest) {
   if (auth.error) return auth.error;
   const { user, supabase } = auth;
 
-  // Get user's organization
-  const { data: profile, error: profileError } = await supabase
-    .from("users")
-    .select("organization_id")
-    .eq("id", user.id)
-    .single();
-
-  const metadataOrganizationId = (
-    user.user_metadata as { organization_id?: string } | null | undefined
-  )?.organization_id;
-  const organizationId = profile?.organization_id ?? metadataOrganizationId ?? null;
+  const { organizationId, profileError } = await resolveOrganizationId(supabase, user);
 
   // Fetch user's layouts and optionally org-shared layouts
   let layoutsQuery = supabase
@@ -68,17 +83,7 @@ export async function POST(request: NextRequest) {
       return badRequest('name and widgets are required');
     }
 
-    // Get user's organization
-    const { data: profile, error: profileError } = await supabase
-      .from("users")
-      .select("organization_id")
-      .eq("id", user.id)
-      .single();
-
-    const metadataOrganizationId = (
-      user.user_metadata as { organization_id?: string } | null | undefined
-    )?.organization_id;
-    const organizationId = profile?.organization_id ?? metadataOrganizationId ?? null;
+    const { organizationId, profileError } = await resolveOrganizationId(supabase, user);
 
     if (!organizationId) {
       if (profileError) {

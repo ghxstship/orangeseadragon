@@ -8,6 +8,9 @@ type Company = Database["public"]["Tables"]["companies"]["Row"];
 type CompanyInsert = Database["public"]["Tables"]["companies"]["Insert"];
 type CompanyUpdate = Database["public"]["Tables"]["companies"]["Update"];
 
+const QUERY_STALE_TIME_MS = 2 * 60 * 1000;
+const QUERY_GC_TIME_MS = 10 * 60 * 1000;
+
 export function useCompanies(organizationId: string | null) {
   const supabase = useSupabase();
 
@@ -44,6 +47,8 @@ export function useCompanies(organizationId: string | null) {
       }));
     },
     enabled: !!organizationId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 
@@ -69,6 +74,8 @@ export function useCompany(companyId: string | null) {
       return data;
     },
     enabled: !!companyId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 

@@ -1,0 +1,3404 @@
+{
+  "summary": {
+    "total_pages": 310,
+    "flagged_pages": 38,
+    "issue_counts": {
+      "simulated_async_timer": 9,
+      "mock_or_placeholder_marker": 5,
+      "console_logging": 23,
+      "window_side_effect": 5,
+      "hardcoded_dataset": 1,
+      "todo_comment": 1,
+      "empty_handler": 3
+    }
+  },
+  "flagged": [
+    {
+      "file": "src/app/(auth)/sso/[provider]/page.tsx",
+      "route": "/sso/[provider]",
+      "kind": "auth_template",
+      "issues": [
+        "todo_comment",
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "api_calls": [],
+      "line_count": 54,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/integrations/page.tsx",
+      "route": "/onboarding/integrations",
+      "kind": "custom",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/onboarding/complete"
+      ],
+      "line_count": 201,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/compliance/page.tsx",
+      "route": "/people/compliance",
+      "kind": "custom",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/notifications/send-reminder"
+      ],
+      "line_count": 27,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/documents/page.tsx",
+      "route": "/people/documents",
+      "kind": "custom",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/files/upload"
+      ],
+      "line_count": 109,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/leave/page.tsx",
+      "route": "/people/leave",
+      "kind": "crud_list",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/leave-requests"
+      ],
+      "line_count": 195,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/travel/page.tsx",
+      "route": "/people/travel",
+      "kind": "page_shell",
+      "issues": [
+        "mock_or_placeholder_marker",
+        "hardcoded_dataset"
+      ],
+      "api_calls": [],
+      "line_count": 64,
+      "hardcoded_arrays": [
+        [
+          "STAFF_LOCATIONS",
+          4
+        ]
+      ]
+    },
+    {
+      "file": "src/app/(auth)/verify-email/page.tsx",
+      "route": "/verify-email",
+      "kind": "auth_template",
+      "issues": [
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "api_calls": [],
+      "line_count": 74,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/verify-mfa/page.tsx",
+      "route": "/verify-mfa",
+      "kind": "auth_template",
+      "issues": [
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "api_calls": [],
+      "line_count": 109,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/sandbox/page.tsx",
+      "route": "/account/sandbox",
+      "kind": "settings_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 78,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/analytics/scheduled/page.tsx",
+      "route": "/analytics/scheduled",
+      "kind": "settings_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 67,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/companies/[id]/page.tsx",
+      "route": "/business/companies/[id]",
+      "kind": "custom",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 177,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/dashboard/page.tsx",
+      "route": "/core/dashboard",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/dashboard-layouts"
+      ],
+      "line_count": 677,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/dashboard/customize/page.tsx",
+      "route": "/core/dashboard/customize",
+      "kind": "custom",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 129,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/inbox/page.tsx",
+      "route": "/core/inbox",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/inbox/dismiss",
+        "/api/inbox/mark-read"
+      ],
+      "line_count": 546,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/my-timesheet/page.tsx",
+      "route": "/core/tasks/my-timesheet",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/time-entries/copy-week"
+      ],
+      "line_count": 565,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/timeline/page.tsx",
+      "route": "/core/tasks/timeline",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 189,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/workload/page.tsx",
+      "route": "/core/tasks/workload",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 138,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+      "route": "/finance/expense-approvals",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/expense-approval-requests",
+        "/api/expense-approval-requests/approve",
+        "/api/expense-approval-requests/bulk-approve",
+        "/api/expense-approval-requests/reject",
+        "/api/expense-approval-requests/return"
+      ],
+      "line_count": 235,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/rate-cards/page.tsx",
+      "route": "/finance/rate-cards",
+      "kind": "settings_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 102,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/forgot-password/page.tsx",
+      "route": "/forgot-password",
+      "kind": "auth_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 30,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/magic-link/page.tsx",
+      "route": "/magic-link",
+      "kind": "custom",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 205,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/organization/page.tsx",
+      "route": "/onboarding/organization",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 227,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/preferences/page.tsx",
+      "route": "/onboarding/preferences",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 235,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/profile/page.tsx",
+      "route": "/onboarding/profile",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 169,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/team/page.tsx",
+      "route": "/onboarding/team",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/invitations/batch"
+      ],
+      "line_count": 200,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/tour/page.tsx",
+      "route": "/onboarding/tour",
+      "kind": "custom",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 144,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/payments/success/page.tsx",
+      "route": "/payments/success",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 133,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/org/page.tsx",
+      "route": "/people/org",
+      "kind": "page_shell",
+      "issues": [
+        "window_side_effect"
+      ],
+      "api_calls": [],
+      "line_count": 26,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/rosters/page.tsx",
+      "route": "/people/rosters",
+      "kind": "page_shell",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 80,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/timekeeping/page.tsx",
+      "route": "/people/timekeeping",
+      "kind": "crud_list",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/clock-entries"
+      ],
+      "line_count": 85,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/page.tsx",
+      "route": "/productions",
+      "kind": "page_shell",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 294,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/page.tsx",
+      "route": "/productions/advancing",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/advancing/conflicts?status=open",
+        "/api/advancing/dashboard"
+      ],
+      "line_count": 285,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/activity/page.tsx",
+      "route": "/productions/advancing/activity",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 246,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/advances/page.tsx",
+      "route": "/productions/advancing/advances",
+      "kind": "crud_list",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/advancing/advances"
+      ],
+      "line_count": 66,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/allotments/page.tsx",
+      "route": "/productions/advancing/allotments",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 226,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/approvals/page.tsx",
+      "route": "/productions/advancing/approvals",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/advancing/approvals"
+      ],
+      "line_count": 237,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/assignments/page.tsx",
+      "route": "/productions/advancing/assignments",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 255,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/projects/[id]/call-sheet/page.tsx",
+      "route": "/productions/projects/[id]/call-sheet",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 527,
+      "hardcoded_arrays": []
+    }
+  ],
+  "all": [
+    {
+      "file": "src/app/(app)/account/audit-log/page.tsx",
+      "route": "/account/audit-log",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 196,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/billing/page.tsx",
+      "route": "/account/billing",
+      "kind": "settings_template",
+      "issues": [],
+      "api_calls": [
+        "/api/billing/subscription"
+      ],
+      "line_count": 48,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/history/page.tsx",
+      "route": "/account/history",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 238,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/organization/page.tsx",
+      "route": "/account/organization",
+      "kind": "settings_template",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 68,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/platform/page.tsx",
+      "route": "/account/platform",
+      "kind": "settings_template",
+      "issues": [],
+      "api_calls": [
+        "/api/settings/platform"
+      ],
+      "line_count": 123,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/privacy/page.tsx",
+      "route": "/account/privacy",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [
+        "/api/privacy/delete-request",
+        "/api/privacy/export"
+      ],
+      "line_count": 370,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/profile/page.tsx",
+      "route": "/account/profile",
+      "kind": "settings_template",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 158,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/resources/page.tsx",
+      "route": "/account/resources",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 48,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/sandbox/page.tsx",
+      "route": "/account/sandbox",
+      "kind": "settings_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 78,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/account/support/page.tsx",
+      "route": "/account/support",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 48,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/analytics/dashboards/builder/page.tsx",
+      "route": "/analytics/dashboards/builder",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 195,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/analytics/dashboards/page.tsx",
+      "route": "/analytics/dashboards",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 100,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/analytics/page.tsx",
+      "route": "/analytics",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 104,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/analytics/reports/builder/page.tsx",
+      "route": "/analytics/reports/builder",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 308,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/analytics/reports/page.tsx",
+      "route": "/analytics/reports",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 149,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/analytics/scheduled/page.tsx",
+      "route": "/analytics/scheduled",
+      "kind": "settings_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 67,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/advances/page.tsx",
+      "route": "/assets/advances",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/catalog/categories/page.tsx",
+      "route": "/assets/catalog/categories",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/catalog/consumables/page.tsx",
+      "route": "/assets/catalog/consumables",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/catalog/inventory/page.tsx",
+      "route": "/assets/catalog/inventory",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/catalog/page.tsx",
+      "route": "/assets/catalog",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/deployment/page.tsx",
+      "route": "/assets/deployment",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/inventory/[id]/page.tsx",
+      "route": "/assets/inventory/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/inventory/page.tsx",
+      "route": "/assets/inventory",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/locations/bins/page.tsx",
+      "route": "/assets/locations/bins",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/locations/page.tsx",
+      "route": "/assets/locations",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/locations/staging/page.tsx",
+      "route": "/assets/locations/staging",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/locations/warehouses/page.tsx",
+      "route": "/assets/locations/warehouses",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/logistics/advances/page.tsx",
+      "route": "/assets/logistics/advances",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/logistics/deployment/page.tsx",
+      "route": "/assets/logistics/deployment",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/logistics/page.tsx",
+      "route": "/assets/logistics",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/logistics/shipments/page.tsx",
+      "route": "/assets/logistics/shipments",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/logistics/vehicles/page.tsx",
+      "route": "/assets/logistics/vehicles",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/maintenance/history/page.tsx",
+      "route": "/assets/maintenance/history",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/maintenance/page.tsx",
+      "route": "/assets/maintenance",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/maintenance/repairs/page.tsx",
+      "route": "/assets/maintenance/repairs",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/maintenance/scheduled/page.tsx",
+      "route": "/assets/maintenance/scheduled",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/page.tsx",
+      "route": "/assets",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 97,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/reservations/check/page.tsx",
+      "route": "/assets/reservations/check",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/reservations/page.tsx",
+      "route": "/assets/reservations",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/reservations/transfers/page.tsx",
+      "route": "/assets/reservations/transfers",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/status/check/page.tsx",
+      "route": "/assets/status/check",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/status/page.tsx",
+      "route": "/assets/status",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/status/service/page.tsx",
+      "route": "/assets/status/service",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/assets/warehouse/page.tsx",
+      "route": "/assets/warehouse",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 221,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/brand/assets/page.tsx",
+      "route": "/business/brand/assets",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/brand/colors/page.tsx",
+      "route": "/business/brand/colors",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/brand/logos/page.tsx",
+      "route": "/business/brand/logos",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/brand/page.tsx",
+      "route": "/business/brand",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/brand/typography/page.tsx",
+      "route": "/business/brand/typography",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/campaigns/content/page.tsx",
+      "route": "/business/campaigns/content",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/campaigns/email/page.tsx",
+      "route": "/business/campaigns/email",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/campaigns/forms/page.tsx",
+      "route": "/business/campaigns/forms",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/campaigns/page.tsx",
+      "route": "/business/campaigns",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/campaigns/subscribers/page.tsx",
+      "route": "/business/campaigns/subscribers",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/campaigns/templates/page.tsx",
+      "route": "/business/campaigns/templates",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/companies/[id]/page.tsx",
+      "route": "/business/companies/[id]",
+      "kind": "custom",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 177,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/companies/contacts/page.tsx",
+      "route": "/business/companies/contacts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/companies/contracts/page.tsx",
+      "route": "/business/companies/contracts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/companies/page.tsx",
+      "route": "/business/companies",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/companies/sponsors/page.tsx",
+      "route": "/business/companies/sponsors",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/companies/vendors/page.tsx",
+      "route": "/business/companies/vendors",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/contacts/[id]/page.tsx",
+      "route": "/business/contacts/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/contacts/page.tsx",
+      "route": "/business/contacts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/contracts/page.tsx",
+      "route": "/business/contracts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/page.tsx",
+      "route": "/business",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 87,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/pipeline/activities/page.tsx",
+      "route": "/business/pipeline/activities",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/pipeline/forecast/page.tsx",
+      "route": "/business/pipeline/forecast",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 300,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/pipeline/leads/page.tsx",
+      "route": "/business/pipeline/leads",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/pipeline/opportunities/[id]/page.tsx",
+      "route": "/business/pipeline/opportunities/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/pipeline/opportunities/page.tsx",
+      "route": "/business/pipeline/opportunities",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/pipeline/page.tsx",
+      "route": "/business/pipeline",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 55,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/pipeline/proposals/page.tsx",
+      "route": "/business/pipeline/proposals",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/products/list/page.tsx",
+      "route": "/business/products/list",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/products/packages/page.tsx",
+      "route": "/business/products/packages",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/products/page.tsx",
+      "route": "/business/products",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/products/pricing/page.tsx",
+      "route": "/business/products/pricing",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/products/services/page.tsx",
+      "route": "/business/products/services",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/proposals/page.tsx",
+      "route": "/business/proposals",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/business/subscribers/page.tsx",
+      "route": "/business/subscribers",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/calendar/[id]/edit/page.tsx",
+      "route": "/core/calendar/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/calendar/[id]/page.tsx",
+      "route": "/core/calendar/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/calendar/new/page.tsx",
+      "route": "/core/calendar/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/calendar/page.tsx",
+      "route": "/core/calendar",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 26,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/dashboard/customize/page.tsx",
+      "route": "/core/dashboard/customize",
+      "kind": "custom",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 129,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/dashboard/page.tsx",
+      "route": "/core/dashboard",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/dashboard-layouts"
+      ],
+      "line_count": 677,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/[id]/edit/page.tsx",
+      "route": "/core/documents/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/[id]/page.tsx",
+      "route": "/core/documents/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/folder/[id]/edit/page.tsx",
+      "route": "/core/documents/folder/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/folder/[id]/page.tsx",
+      "route": "/core/documents/folder/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/folder/new/page.tsx",
+      "route": "/core/documents/folder/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/folders/page.tsx",
+      "route": "/core/documents/folders",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/page.tsx",
+      "route": "/core/documents",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/templates/page.tsx",
+      "route": "/core/documents/templates",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/documents/upload/page.tsx",
+      "route": "/core/documents/upload",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/inbox/approvals/page.tsx",
+      "route": "/core/inbox/approvals",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/inbox/notifications/page.tsx",
+      "route": "/core/inbox/notifications",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/inbox/page.tsx",
+      "route": "/core/inbox",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/inbox/dismiss",
+        "/api/inbox/mark-read"
+      ],
+      "line_count": 546,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/messages/page.tsx",
+      "route": "/core/messages",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 295,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/[id]/edit/page.tsx",
+      "route": "/core/tasks/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/[id]/page.tsx",
+      "route": "/core/tasks/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/checklists/page.tsx",
+      "route": "/core/tasks/checklists",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/lists/[id]/edit/page.tsx",
+      "route": "/core/tasks/lists/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/lists/[id]/page.tsx",
+      "route": "/core/tasks/lists/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/lists/new/page.tsx",
+      "route": "/core/tasks/lists/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/lists/page.tsx",
+      "route": "/core/tasks/lists",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/my-tasks/page.tsx",
+      "route": "/core/tasks/my-tasks",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 674,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/my-timesheet/page.tsx",
+      "route": "/core/tasks/my-timesheet",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/time-entries/copy-week"
+      ],
+      "line_count": 565,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/new/page.tsx",
+      "route": "/core/tasks/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/page.tsx",
+      "route": "/core/tasks",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/sprints/page.tsx",
+      "route": "/core/tasks/sprints",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/timeline/page.tsx",
+      "route": "/core/tasks/timeline",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 189,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/tasks/workload/page.tsx",
+      "route": "/core/tasks/workload",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 138,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/workflows/[id]/edit/page.tsx",
+      "route": "/core/workflows/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/workflows/[id]/page.tsx",
+      "route": "/core/workflows/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/workflows/[id]/runs/page.tsx",
+      "route": "/core/workflows/[id]/runs",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 14,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/workflows/automations/page.tsx",
+      "route": "/core/workflows/automations",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/workflows/new/page.tsx",
+      "route": "/core/workflows/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/workflows/page.tsx",
+      "route": "/core/workflows",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/core/workflows/triggers/page.tsx",
+      "route": "/core/workflows/triggers",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/accounts/bank/page.tsx",
+      "route": "/finance/accounts/bank",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/accounts/gl/page.tsx",
+      "route": "/finance/accounts/gl",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/accounts/page.tsx",
+      "route": "/finance/accounts",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 25,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/accounts/reconciliation/page.tsx",
+      "route": "/finance/accounts/reconciliation",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/accounts/transactions/page.tsx",
+      "route": "/finance/accounts/transactions",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/banking/page.tsx",
+      "route": "/finance/banking",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/budgets/[id]/page.tsx",
+      "route": "/finance/budgets/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/budgets/line-items/page.tsx",
+      "route": "/finance/budgets/line-items",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/budgets/page.tsx",
+      "route": "/finance/budgets",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/budgets/procurement/page.tsx",
+      "route": "/finance/budgets/procurement",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/budgets/purchase-orders/page.tsx",
+      "route": "/finance/budgets/purchase-orders",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/dashboard/page.tsx",
+      "route": "/finance/dashboard",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 199,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+      "route": "/finance/expense-approvals",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/expense-approval-requests",
+        "/api/expense-approval-requests/approve",
+        "/api/expense-approval-requests/bulk-approve",
+        "/api/expense-approval-requests/reject",
+        "/api/expense-approval-requests/return"
+      ],
+      "line_count": 235,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/expenses/page.tsx",
+      "route": "/finance/expenses",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/expenses/receipts/page.tsx",
+      "route": "/finance/expenses/receipts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/expenses/reimbursements/page.tsx",
+      "route": "/finance/expenses/reimbursements",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/invoices/[id]/page.tsx",
+      "route": "/finance/invoices/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/invoices/builder/page.tsx",
+      "route": "/finance/invoices/builder",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 423,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/invoices/credit-notes/page.tsx",
+      "route": "/finance/invoices/credit-notes",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/invoices/line-items/page.tsx",
+      "route": "/finance/invoices/line-items",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/invoices/overview/page.tsx",
+      "route": "/finance/invoices/overview",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 358,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/invoices/page.tsx",
+      "route": "/finance/invoices",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 40,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/invoices/payments/page.tsx",
+      "route": "/finance/invoices/payments",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/page.tsx",
+      "route": "/finance",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 101,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/payments/incoming/page.tsx",
+      "route": "/finance/payments/incoming",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/payments/outgoing/page.tsx",
+      "route": "/finance/payments/outgoing",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/payments/page.tsx",
+      "route": "/finance/payments",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/payroll/deductions/page.tsx",
+      "route": "/finance/payroll/deductions",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/payroll/page.tsx",
+      "route": "/finance/payroll",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/payroll/rates/page.tsx",
+      "route": "/finance/payroll/rates",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/payroll/stubs/page.tsx",
+      "route": "/finance/payroll/stubs",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/procurement/page.tsx",
+      "route": "/finance/procurement",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/quotes/[id]/page.tsx",
+      "route": "/finance/quotes/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/quotes/page.tsx",
+      "route": "/finance/quotes",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/rate-cards/page.tsx",
+      "route": "/finance/rate-cards",
+      "kind": "settings_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 102,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/receipts/page.tsx",
+      "route": "/finance/receipts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/recurring-invoices/[id]/page.tsx",
+      "route": "/finance/recurring-invoices/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/recurring-invoices/page.tsx",
+      "route": "/finance/recurring-invoices",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/reports/ar-ap/page.tsx",
+      "route": "/finance/reports/ar-ap",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/reports/cash-flow/page.tsx",
+      "route": "/finance/reports/cash-flow",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/reports/page.tsx",
+      "route": "/finance/reports",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 56,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/reports/pnl/page.tsx",
+      "route": "/finance/reports/pnl",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/finance/settings/reminders/page.tsx",
+      "route": "/finance/settings/reminders",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/badges/page.tsx",
+      "route": "/network/badges",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/challenges/[id]/edit/page.tsx",
+      "route": "/network/challenges/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/challenges/[id]/page.tsx",
+      "route": "/network/challenges/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/challenges/new/page.tsx",
+      "route": "/network/challenges/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/challenges/page.tsx",
+      "route": "/network/challenges",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/connections/[id]/edit/page.tsx",
+      "route": "/network/connections/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/connections/[id]/page.tsx",
+      "route": "/network/connections/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/connections/new/page.tsx",
+      "route": "/network/connections/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/connections/page.tsx",
+      "route": "/network/connections",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/discover/page.tsx",
+      "route": "/network/discover",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 156,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/discussions/[id]/edit/page.tsx",
+      "route": "/network/discussions/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/discussions/[id]/page.tsx",
+      "route": "/network/discussions/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/discussions/new/page.tsx",
+      "route": "/network/discussions/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/discussions/page.tsx",
+      "route": "/network/discussions",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/feed/page.tsx",
+      "route": "/network/feed",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/leaderboard/page.tsx",
+      "route": "/network/leaderboard",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/marketplace/[id]/edit/page.tsx",
+      "route": "/network/marketplace/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/marketplace/[id]/page.tsx",
+      "route": "/network/marketplace/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/marketplace/new/page.tsx",
+      "route": "/network/marketplace/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/marketplace/page.tsx",
+      "route": "/network/marketplace",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/messages/[id]/page.tsx",
+      "route": "/network/messages/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 15,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/messages/page.tsx",
+      "route": "/network/messages",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/opportunities/[id]/edit/page.tsx",
+      "route": "/network/opportunities/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/opportunities/[id]/page.tsx",
+      "route": "/network/opportunities/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/opportunities/new/page.tsx",
+      "route": "/network/opportunities/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/opportunities/page.tsx",
+      "route": "/network/opportunities",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/profiles/[id]/page.tsx",
+      "route": "/network/profiles/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/profiles/page.tsx",
+      "route": "/network/profiles",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/showcase/[id]/edit/page.tsx",
+      "route": "/network/showcase/[id]/edit",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/showcase/[id]/page.tsx",
+      "route": "/network/showcase/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/showcase/new/page.tsx",
+      "route": "/network/showcase/new",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/network/showcase/page.tsx",
+      "route": "/network/showcase",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/comms/daily-reports/page.tsx",
+      "route": "/operations/comms/daily-reports",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/comms/page.tsx",
+      "route": "/operations/comms",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/comms/radio/page.tsx",
+      "route": "/operations/comms/radio",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/comms/weather/page.tsx",
+      "route": "/operations/comms/weather",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/crew-checkins/kiosk/page.tsx",
+      "route": "/operations/crew-checkins/kiosk",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 12,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/daily-reports/page.tsx",
+      "route": "/operations/daily-reports",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/events/crew-calls/page.tsx",
+      "route": "/operations/events/crew-calls",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/events/page.tsx",
+      "route": "/operations/events",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/events/runsheets/page.tsx",
+      "route": "/operations/events/runsheets",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/events/talent-bookings/page.tsx",
+      "route": "/operations/events/talent-bookings",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/incidents/control-room/page.tsx",
+      "route": "/operations/incidents/control-room",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 12,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/incidents/page.tsx",
+      "route": "/operations/incidents",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 147,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/incidents/punch-lists/page.tsx",
+      "route": "/operations/incidents/punch-lists",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/page.tsx",
+      "route": "/operations",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 156,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/runsheets/[id]/show-mode/page.tsx",
+      "route": "/operations/runsheets/[id]/show-mode",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 115,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/runsheets/page.tsx",
+      "route": "/operations/runsheets",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 182,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/shows/page.tsx",
+      "route": "/operations/shows",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 151,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/venues/checkpoints/page.tsx",
+      "route": "/operations/venues/checkpoints",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/venues/floor-plans/page.tsx",
+      "route": "/operations/venues/floor-plans",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/venues/page.tsx",
+      "route": "/operations/venues",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/venues/stages/page.tsx",
+      "route": "/operations/venues/stages",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/venues/zones/page.tsx",
+      "route": "/operations/venues/zones",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/operations/work-orders/page.tsx",
+      "route": "/operations/work-orders",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/analytics/page.tsx",
+      "route": "/people/analytics",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 38,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/availability/page.tsx",
+      "route": "/people/availability",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/certifications/page.tsx",
+      "route": "/people/certifications",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/compliance/page.tsx",
+      "route": "/people/compliance",
+      "kind": "custom",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/notifications/send-reminder"
+      ],
+      "line_count": 27,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/documents/page.tsx",
+      "route": "/people/documents",
+      "kind": "custom",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/files/upload"
+      ],
+      "line_count": 109,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/leave/page.tsx",
+      "route": "/people/leave",
+      "kind": "crud_list",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/leave-requests"
+      ],
+      "line_count": 195,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/onboarding/page.tsx",
+      "route": "/people/onboarding",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/org/page.tsx",
+      "route": "/people/org",
+      "kind": "page_shell",
+      "issues": [
+        "window_side_effect"
+      ],
+      "api_calls": [],
+      "line_count": 26,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/page.tsx",
+      "route": "/people",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 107,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/performance/feedback/page.tsx",
+      "route": "/people/performance/feedback",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/performance/goals/page.tsx",
+      "route": "/people/performance/goals",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/performance/page.tsx",
+      "route": "/people/performance",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 128,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/performance/reviews/page.tsx",
+      "route": "/people/performance/reviews",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/portal/page.tsx",
+      "route": "/people/portal",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 12,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/positions/page.tsx",
+      "route": "/people/positions",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/recruitment/applications/page.tsx",
+      "route": "/people/recruitment/applications",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/recruitment/candidates/page.tsx",
+      "route": "/people/recruitment/candidates",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/recruitment/onboarding/page.tsx",
+      "route": "/people/recruitment/onboarding",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/recruitment/page.tsx",
+      "route": "/people/recruitment",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/rosters/[id]/page.tsx",
+      "route": "/people/rosters/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 11,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/rosters/departments/page.tsx",
+      "route": "/people/rosters/departments",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/rosters/page.tsx",
+      "route": "/people/rosters",
+      "kind": "page_shell",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 80,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/rosters/positions/page.tsx",
+      "route": "/people/rosters/positions",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/rosters/teams/page.tsx",
+      "route": "/people/rosters/teams",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/availability/page.tsx",
+      "route": "/people/scheduling/availability",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/clock/page.tsx",
+      "route": "/people/scheduling/clock",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 16,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/crew-calls/page.tsx",
+      "route": "/people/scheduling/crew-calls",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/open-shifts/page.tsx",
+      "route": "/people/scheduling/open-shifts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/page.tsx",
+      "route": "/people/scheduling",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 16,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/shift-swaps/page.tsx",
+      "route": "/people/scheduling/shift-swaps",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/shifts/page.tsx",
+      "route": "/people/scheduling/shifts",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/scheduling/timekeeping/page.tsx",
+      "route": "/people/scheduling/timekeeping",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/timekeeping/page.tsx",
+      "route": "/people/timekeeping",
+      "kind": "crud_list",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/clock-entries"
+      ],
+      "line_count": 85,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/training/certifications/page.tsx",
+      "route": "/people/training/certifications",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/training/compliance/page.tsx",
+      "route": "/people/training/compliance",
+      "kind": "page_shell",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 16,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/training/courses/page.tsx",
+      "route": "/people/training/courses",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/training/enrollments/page.tsx",
+      "route": "/people/training/enrollments",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/training/materials/page.tsx",
+      "route": "/people/training/materials",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/training/page.tsx",
+      "route": "/people/training",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/travel/accommodations/page.tsx",
+      "route": "/people/travel/accommodations",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/travel/bookings/page.tsx",
+      "route": "/people/travel/bookings",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/travel/flights/page.tsx",
+      "route": "/people/travel/flights",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/travel/ground-transport/page.tsx",
+      "route": "/people/travel/ground-transport",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/people/travel/page.tsx",
+      "route": "/people/travel",
+      "kind": "page_shell",
+      "issues": [
+        "mock_or_placeholder_marker",
+        "hardcoded_dataset"
+      ],
+      "api_calls": [],
+      "line_count": 64,
+      "hardcoded_arrays": [
+        [
+          "STAFF_LOCATIONS",
+          4
+        ]
+      ]
+    },
+    {
+      "file": "src/app/(app)/productions/activations/page.tsx",
+      "route": "/productions/activations",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/activity/page.tsx",
+      "route": "/productions/advancing/activity",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 246,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/advances/page.tsx",
+      "route": "/productions/advancing/advances",
+      "kind": "crud_list",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/advancing/advances"
+      ],
+      "line_count": 66,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/allotments/page.tsx",
+      "route": "/productions/advancing/allotments",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 226,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/approvals/page.tsx",
+      "route": "/productions/advancing/approvals",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/advancing/approvals"
+      ],
+      "line_count": 237,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/assignments/page.tsx",
+      "route": "/productions/advancing/assignments",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 255,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/catering/page.tsx",
+      "route": "/productions/advancing/catering",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/guest-lists/page.tsx",
+      "route": "/productions/advancing/guest-lists",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/hospitality/page.tsx",
+      "route": "/productions/advancing/hospitality",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/page.tsx",
+      "route": "/productions/advancing",
+      "kind": "page_shell",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/advancing/conflicts?status=open",
+        "/api/advancing/dashboard"
+      ],
+      "line_count": 285,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/riders/page.tsx",
+      "route": "/productions/advancing/riders",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/tech-specs/page.tsx",
+      "route": "/productions/advancing/tech-specs",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/build-strike/page.tsx",
+      "route": "/productions/build-strike",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/compliance/certificates/page.tsx",
+      "route": "/productions/compliance/certificates",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/compliance/insurance/page.tsx",
+      "route": "/productions/compliance/insurance",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/compliance/licenses/page.tsx",
+      "route": "/productions/compliance/licenses",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/compliance/page.tsx",
+      "route": "/productions/compliance",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/compliance/permits/page.tsx",
+      "route": "/productions/compliance/permits",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/events/page.tsx",
+      "route": "/productions/events",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/inspections/page.tsx",
+      "route": "/productions/inspections",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/page.tsx",
+      "route": "/productions",
+      "kind": "page_shell",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 294,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/projects/[id]/call-sheet/page.tsx",
+      "route": "/productions/projects/[id]/call-sheet",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 527,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/projects/[id]/page.tsx",
+      "route": "/productions/projects/[id]",
+      "kind": "crud_detail",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/projects/[id]/run-sheet/page.tsx",
+      "route": "/productions/projects/[id]/run-sheet",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 351,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/projects/[id]/settlement/page.tsx",
+      "route": "/productions/projects/[id]/settlement",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 380,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/projects/page.tsx",
+      "route": "/productions/projects",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/punch-lists/page.tsx",
+      "route": "/productions/punch-lists",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(app)/productions/stages/page.tsx",
+      "route": "/productions/stages",
+      "kind": "crud_list",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 9,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/forgot-password/page.tsx",
+      "route": "/forgot-password",
+      "kind": "auth_template",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 30,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/invite/[token]/page.tsx",
+      "route": "/invite/[token]",
+      "kind": "auth_template",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 108,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/login/page.tsx",
+      "route": "/login",
+      "kind": "auth_template",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 70,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/magic-link/page.tsx",
+      "route": "/magic-link",
+      "kind": "custom",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "api_calls": [],
+      "line_count": 205,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/register/page.tsx",
+      "route": "/register",
+      "kind": "auth_template",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 76,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/reset-password/page.tsx",
+      "route": "/reset-password",
+      "kind": "auth_template",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 41,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/sso/[provider]/page.tsx",
+      "route": "/sso/[provider]",
+      "kind": "auth_template",
+      "issues": [
+        "todo_comment",
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "api_calls": [],
+      "line_count": 54,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/verify-email/page.tsx",
+      "route": "/verify-email",
+      "kind": "auth_template",
+      "issues": [
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "api_calls": [],
+      "line_count": 74,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(auth)/verify-mfa/page.tsx",
+      "route": "/verify-mfa",
+      "kind": "auth_template",
+      "issues": [
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "api_calls": [],
+      "line_count": 109,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/complete/page.tsx",
+      "route": "/onboarding/complete",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [
+        "/api/onboarding/complete"
+      ],
+      "line_count": 75,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/integrations/page.tsx",
+      "route": "/onboarding/integrations",
+      "kind": "custom",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "api_calls": [
+        "/api/onboarding/complete"
+      ],
+      "line_count": 201,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/organization/page.tsx",
+      "route": "/onboarding/organization",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 227,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/page.tsx",
+      "route": "/onboarding",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 74,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/preferences/page.tsx",
+      "route": "/onboarding/preferences",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 235,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/profile/page.tsx",
+      "route": "/onboarding/profile",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 169,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/team/page.tsx",
+      "route": "/onboarding/team",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [
+        "/api/invitations/batch"
+      ],
+      "line_count": 200,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/tour/page.tsx",
+      "route": "/onboarding/tour",
+      "kind": "custom",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "api_calls": [],
+      "line_count": 144,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/p/[slug]/page.tsx",
+      "route": "/p/[slug]",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 295,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/page.tsx",
+      "route": "/",
+      "kind": "custom",
+      "issues": [],
+      "api_calls": [],
+      "line_count": 6,
+      "hardcoded_arrays": []
+    },
+    {
+      "file": "src/app/payments/success/page.tsx",
+      "route": "/payments/success",
+      "kind": "custom",
+      "issues": [
+        "console_logging"
+      ],
+      "api_calls": [],
+      "line_count": 133,
+      "hardcoded_arrays": []
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { EntitySchema, EntityRecord } from '@/lib/schema/types';
 import { useCrud } from '../hooks/useCrud';
@@ -32,9 +32,18 @@ export function CrudList<T extends EntityRecord>({
   onCellEdit,
 }: CrudListProps<T>) {
   const router = useRouter();
+  const defaultPageSize = schema.layouts.list.pageSize ?? 20;
+  const searchDebounceMs = schema.search.debounce ?? 250;
+  const hasDelegatedChildView = !editableFields?.length;
   const [currentSubpage, setCurrentSubpage] = useState(
     initialSubpage || schema.layouts.list.subpages[0]?.key || 'all'
   );
+  const [pagination, setPagination] = useState({
+    page: 1,
+    pageSize: defaultPageSize,
+  });
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const [currentView, setCurrentView] = useViewPreference(
     schema.identity.slug,
@@ -55,6 +64,26 @@ export function CrudList<T extends EntityRecord>({
 
   const subpageConfig = schema.layouts.list.subpages.find(s => s.key === currentSubpage);
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(searchInput.trim());
+    }, searchDebounceMs);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [searchDebounceMs, searchInput]);
+
+  const handleSubpageChange = (subpage: string) => {
+    setCurrentSubpage(subpage);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const handleSearchChange = (search: string) => {
+    setSearchInput(search);
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
   const crud = useCrud(schema, {
     query: {
       ...subpageConfig?.query,
@@ -63,6 +92,9 @@ export function CrudList<T extends EntityRecord>({
         ...filter,
       }
     },
+    pagination,
+    onPaginationChange: setPagination,
+    search: hasDelegatedChildView && debouncedSearch.length > 0 ? debouncedSearch : undefined,
   });
 
   const handleRowClick = (item: T) => {
@@ -83,7 +115,7 @@ export function CrudList<T extends EntityRecord>({
       loading={crud.loading}
       error={crud.error}
       currentSubpage={currentSubpage}
-      onSubpageChange={setCurrentSubpage}
+      onSubpageChange={handleSubpageChange}
       currentView={currentView}
       onViewChange={setCurrentView}
       getRowId={(item) => String((item as Record<string, unknown>)[schema.data.primaryKey || 'id'])}
@@ -92,6 +124,8 @@ export function CrudList<T extends EntityRecord>({
       onRefresh={crud.refetch}
       onCellEdit={onCellEdit}
       editableFields={editableFields}
+      searchValue={hasDelegatedChildView ? searchInput : undefined}
+      onSearchChange={hasDelegatedChildView ? handleSearchChange : undefined}
     >
       {editableFields?.length ? undefined : (
         <ViewRenderer

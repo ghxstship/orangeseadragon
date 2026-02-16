@@ -53,6 +53,8 @@ export interface ListLayoutProps<T extends object> {
   onRefresh?: () => void;
   onCellEdit?: (rowId: string, fieldKey: string, value: unknown) => Promise<void> | void;
   editableFields?: string[];
+  searchValue?: string;
+  onSearchChange?: (search: string) => void;
   
   children?: React.ReactNode;
 }
@@ -73,6 +75,8 @@ export function ListLayout<T extends object>({
   onRefresh,
   onCellEdit,
   editableFields,
+  searchValue,
+  onSearchChange,
   children,
 }: ListLayoutProps<T>) {
   const pathname = usePathname();
@@ -142,7 +146,15 @@ export function ListLayout<T extends object>({
     state,
     searchFields,
     getItemId: getRowId,
+    skipProcessing: Boolean(children),
   });
+
+  const handleSearchChange = React.useCallback((search: string) => {
+    actions.setSearch(search);
+    onSearchChange?.(search);
+  }, [actions, onSearchChange]);
+
+  const activeSearchValue = onSearchChange ? (searchValue ?? "") : state.search;
 
   const activeSubpage = currentSubpage || listConfig.subpages[0]?.key;
 
@@ -256,8 +268,8 @@ export function ListLayout<T extends object>({
         {/* Toolbar */}
         <Toolbar
           search={schema.search?.enabled ? {
-            value: state.search,
-            onChange: actions.setSearch,
+            value: activeSearchValue,
+            onChange: handleSearchChange,
             placeholder: schema.search.placeholder,
           } : undefined}
           columns={state.viewType === 'table' && (tableConfig?.features?.columnVisibility !== false) ? {

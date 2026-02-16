@@ -201,6 +201,7 @@ export interface UseDataViewFilterOptions<T> {
   state: DataViewState;
   searchFields?: (keyof T)[];
   getItemId: (item: T) => string;
+  skipProcessing?: boolean;
 }
 
 export function useFilteredData<T>({
@@ -208,6 +209,7 @@ export function useFilteredData<T>({
   state,
   searchFields = [],
   getItemId,
+  skipProcessing = false,
 }: UseDataViewFilterOptions<T>): {
   filteredData: T[];
   paginatedData: T[];
@@ -216,6 +218,10 @@ export function useFilteredData<T>({
   selectedItems: T[];
 } {
   const filteredData = React.useMemo(() => {
+    if (skipProcessing) {
+      return data;
+    }
+
     let result = [...data];
 
     if (state.search && searchFields.length > 0) {
@@ -253,16 +259,20 @@ export function useFilteredData<T>({
     }
 
     return result;
-  }, [data, state.search, state.filters, searchFields]);
+  }, [data, skipProcessing, state.search, state.filters, searchFields]);
 
   const totalCount = filteredData.length;
-  const totalPages = Math.ceil(totalCount / state.pageSize);
+  const totalPages = Math.ceil(totalCount / Math.max(state.pageSize, 1));
 
   const paginatedData = React.useMemo(() => {
+    if (skipProcessing) {
+      return data;
+    }
+
     const start = (state.page - 1) * state.pageSize;
     const end = start + state.pageSize;
     return filteredData.slice(start, end);
-  }, [filteredData, state.page, state.pageSize]);
+  }, [data, filteredData, skipProcessing, state.page, state.pageSize]);
 
   const selectedItems = React.useMemo(() => {
     return data.filter((item) => state.selectedIds.includes(getItemId(item)));

@@ -9,6 +9,9 @@ type _Budget = Database["public"]["Tables"]["budgets"]["Row"];
 type BudgetInsert = Database["public"]["Tables"]["budgets"]["Insert"];
 type BudgetUpdate = Database["public"]["Tables"]["budgets"]["Update"];
 
+const QUERY_STALE_TIME_MS = 2 * 60 * 1000;
+const QUERY_GC_TIME_MS = 10 * 60 * 1000;
+
 export function useBudgets(organizationId: string | null) {
   const supabase = useSupabase();
 
@@ -50,6 +53,8 @@ export function useBudgets(organizationId: string | null) {
       }));
     },
     enabled: !!organizationId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 
@@ -76,6 +81,8 @@ export function useBudget(budgetId: string | null) {
       return data;
     },
     enabled: !!budgetId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 

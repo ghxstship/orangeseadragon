@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('notifications')
-      .select('*', { count: 'exact' })
+      .select('id,type,title,message,created_at,is_read,data,entity_type,entity_id', { count: 'exact' })
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .range(offset, pageEnd);

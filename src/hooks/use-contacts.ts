@@ -8,6 +8,9 @@ type Contact = Database["public"]["Tables"]["contacts"]["Row"];
 type ContactInsert = Database["public"]["Tables"]["contacts"]["Insert"];
 type ContactUpdate = Database["public"]["Tables"]["contacts"]["Update"];
 
+const QUERY_STALE_TIME_MS = 2 * 60 * 1000;
+const QUERY_GC_TIME_MS = 10 * 60 * 1000;
+
 export function useContacts(organizationId: string | null) {
   const supabase = useSupabase();
 
@@ -48,6 +51,8 @@ export function useContacts(organizationId: string | null) {
       }));
     },
     enabled: !!organizationId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 
@@ -72,6 +77,8 @@ export function useContact(contactId: string | null) {
       return data;
     },
     enabled: !!contactId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 

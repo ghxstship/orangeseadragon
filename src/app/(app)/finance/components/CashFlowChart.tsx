@@ -6,6 +6,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useState } from 'react';
 import { formatCurrency } from '@/lib/utils';
 
+const CHART_TOOLTIP_CONTENT_STYLE = {
+    backgroundColor: 'hsl(var(--chart-tooltip-bg) / 0.8)',
+    borderColor: 'hsl(var(--chart-tooltip-border))',
+    borderRadius: '8px',
+};
+
+const CHART_TOOLTIP_ITEM_STYLE = {
+    color: 'hsl(var(--chart-tooltip-text))',
+};
+
 const data = [
     { name: 'Jan', income: 40000, expense: 24000 },
     { name: 'Feb', income: 30000, expense: 13980 },
@@ -72,8 +82,8 @@ export function CashFlowChart() {
                             />
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--chart-grid) / 0.05)" />
                             <Tooltip
-                                contentStyle={{ backgroundColor: 'hsl(var(--chart-tooltip-bg) / 0.8)', borderColor: 'hsl(var(--chart-tooltip-border))', borderRadius: '8px' }}
-                                itemStyle={{ color: 'hsl(var(--chart-tooltip-text))' }}
+                                contentStyle={CHART_TOOLTIP_CONTENT_STYLE}
+                                itemStyle={CHART_TOOLTIP_ITEM_STYLE}
                                 formatter={(value: number) => [formatCurrency(value), '']}
                             />
                             <Area

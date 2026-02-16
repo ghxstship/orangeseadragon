@@ -8,6 +8,9 @@ type Project = Database["public"]["Tables"]["projects"]["Row"];
 type ProjectInsert = Database["public"]["Tables"]["projects"]["Insert"];
 type ProjectUpdate = Database["public"]["Tables"]["projects"]["Update"];
 
+const QUERY_STALE_TIME_MS = 2 * 60 * 1000;
+const QUERY_GC_TIME_MS = 10 * 60 * 1000;
+
 export function useProjects(organizationId: string | null) {
   const supabase = useSupabase();
 
@@ -39,6 +42,8 @@ export function useProjects(organizationId: string | null) {
       return data;
     },
     enabled: !!organizationId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 
@@ -82,6 +87,8 @@ export function useProject(projectId: string | null) {
       return data;
     },
     enabled: !!projectId,
+    staleTime: QUERY_STALE_TIME_MS,
+    gcTime: QUERY_GC_TIME_MS,
   });
 }
 

@@ -1,0 +1,273 @@
+{
+  "generated_at": "2026-02-15T23:10:53.387Z",
+  "total_component_files": 199,
+  "single_use_count": 66,
+  "zero_reference_count": 0,
+  "single_use_files": [
+    {
+      "file": "src/components/assets/AssetUtilizationDashboard.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/bulk-edit-modal.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/cookie-consent-banner.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/copilot-drawer.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/import-modal.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/inbox-item-detail.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/inbox-item-row.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/org-switcher.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/quick-access-card.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/quick-add-task.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/record-context-menu.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/record-hover-preview.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/common/responsive-menu.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/error/ErrorBoundary.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/forms/FormField.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/forms/FormStep.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/layout/app-shell.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/layout/Container.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/layout/Grid.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/layout/Section.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/layout/sidebar.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/layout/top-bar.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/modules/business/ActivityTimeline.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/modules/business/DuplicateDetectionPanel.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/modules/business/EmailComposer.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/modules/business/EnrichmentPanel.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/modules/business/ForecastDashboard.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/modules/business/LeadScoreCard.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/modules/business/WorkflowBuilder.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/onboarding/AccountTypeSelector.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/onboarding/OnboardingComplete.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/onboarding/OnboardingProvider.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/onboarding/PermissionReview.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/onboarding/ProfileForm.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/onboarding/WelcomeScreen.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/production/curfew-countdown.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/productions/RunOfShow.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/productions/runsheet/ShowCallingView.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/productions/widgets/CurfewCountdownWidget.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/providers/index.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/providers/query-provider.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/providers/theme-provider.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/templates/DashboardTemplate.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/templates/EntityListTemplate.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/templates/FormTemplate.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/templates/WizardTemplate.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/accordion.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/alert.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/aspect-ratio.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/avatar-group.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/bento-grid.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/breadcrumb.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/carousel.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/date-picker.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/drawer.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/glass-card.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/input-otp.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/menubar.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/navigation-menu.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/page-transition.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/pagination.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/rich-text-editor.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/toggle-group.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/ui/tree-view.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/views/inline-edit-cell.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/views/WorkloadView.tsx",
+      "references": 1
+    }
+  ],
+  "zero_reference_files": []
+}

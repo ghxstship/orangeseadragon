@@ -1,7 +1,191 @@
 import { useMemo } from 'react';
 import { EntityRecord, EntitySchema } from '@/lib/schema/types';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { throwApiErrorResponse } from '@/lib/api/error-message';
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
+interface CrudListResponse<T extends EntityRecord> {
+  records: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+function clampPageSize(pageSize: number): number {
+  if (!Number.isFinite(pageSize)) return DEFAULT_PAGE_SIZE;
+  return Math.min(Math.max(pageSize, 1), MAX_PAGE_SIZE);
+}
+
+function normalizeListResponse<T extends EntityRecord>(
+  payload: unknown,
+  fallbackPage: number,
+  fallbackPageSize: number
+): CrudListResponse<T> {
+  if (!payload || typeof payload !== 'object') {
+    return {
+      records: [],
+      total: 0,
+      page: fallbackPage,
+      pageSize: fallbackPageSize,
+      totalPages: 0,
+    };
+  }
+
+  const body = payload as {
+    data?: unknown;
+    meta?: Record<string, unknown>;
+    records?: unknown;
+    total?: unknown;
+    page?: unknown;
+    pageSize?: unknown;
+  };
+
+  const records = Array.isArray(body.data)
+    ? (body.data as T[])
+    : Array.isArray(body.records)
+      ? (body.records as T[])
+      : [];
+
+  const meta = body.meta && typeof body.meta === 'object'
+    ? body.meta
+    : undefined;
+
+  const totalCandidate = meta?.total ?? body.total;
+  const pageCandidate = meta?.page ?? body.page;
+  const pageSizeCandidate = meta?.limit ?? body.pageSize;
+  const totalPagesCandidate = meta?.totalPages;
+
+  const parsedTotal = Number(totalCandidate);
+  const parsedPage = Number(pageCandidate);
+  const parsedPageSize = Number(pageSizeCandidate);
+  const parsedTotalPages = Number(totalPagesCandidate);
+
+  const total = Number.isFinite(parsedTotal) ? parsedTotal : records.length;
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : fallbackPage;
+  const pageSize = clampPageSize(
+    Number.isFinite(parsedPageSize) ? parsedPageSize : fallbackPageSize
+  );
+  const totalPages = Number.isFinite(parsedTotalPages) && parsedTotalPages >= 0
+    ? parsedTotalPages
+    : Math.ceil(total / Math.max(pageSize, 1));
+
+  return {
+    records,
+    total,
+    page,
+    pageSize,
+    totalPages,
+  };
+}
+
+function resolveProjectionFields<T extends EntityRecord>(schema: EntitySchema<T>): string[] | null {
+  const hasDynamicDisplayDependencies = [
+    schema.display.title,
+    schema.display.subtitle,
+    schema.display.description,
+    schema.display.image,
+    schema.display.icon,
+    schema.display.badge,
+  ].some((entry) => typeof entry === 'function');
+
+  if (hasDynamicDisplayDependencies) {
+    return null;
+  }
+
+  const availableFieldSet = new Set(Object.keys(schema.data.fields));
+  const projectionFields = new Set<string>();
+
+  const addField = (field: string | undefined) => {
+    if (field && availableFieldSet.has(field)) {
+      projectionFields.add(field);
+    }
+  };
+
+  schema.views.table?.columns.forEach((column) => {
+    addField(typeof column === 'string' ? column : column.field);
+  });
+
+  if (schema.views.list) {
+    addField(schema.views.list.titleField);
+    addField(schema.views.list.subtitleField);
+    addField(schema.views.list.descriptionField);
+    addField(schema.views.list.avatarField);
+    addField(schema.views.list.badgeField);
+    schema.views.list.metaFields?.forEach(addField);
+  }
+
+  if (schema.views.grid) {
+    addField(schema.views.grid.titleField);
+    addField(schema.views.grid.subtitleField);
+    addField(schema.views.grid.imageField);
+    addField(schema.views.grid.badgeField);
+    schema.views.grid.cardFields.forEach(addField);
+  }
+
+  if (schema.views.kanban) {
+    addField(schema.views.kanban.columnField);
+    if (typeof schema.views.kanban.card.title === 'string') {
+      addField(schema.views.kanban.card.title);
+    }
+    if (typeof schema.views.kanban.card.subtitle === 'string') {
+      addField(schema.views.kanban.card.subtitle);
+    }
+    addField(schema.views.kanban.card.image);
+    schema.views.kanban.card.fields?.forEach(addField);
+  }
+
+  if (schema.views.calendar) {
+    addField(schema.views.calendar.startField);
+    addField(schema.views.calendar.endField);
+    addField(schema.views.calendar.titleField);
+    addField(schema.views.calendar.allDayField);
+    addField(schema.views.calendar.colorField);
+    addField(schema.views.calendar.resourceField);
+  }
+
+  if (schema.views.timeline) {
+    addField(schema.views.timeline.startField);
+    addField(schema.views.timeline.endField);
+    addField(schema.views.timeline.titleField);
+    addField(schema.views.timeline.groupField);
+    addField(schema.views.timeline.progressField);
+    addField(schema.views.timeline.dependencyField);
+    addField(schema.views.timeline.milestoneField);
+  }
+
+  if (schema.views.gallery) {
+    addField(schema.views.gallery.imageField);
+    addField(schema.views.gallery.titleField);
+    addField(schema.views.gallery.subtitleField);
+    addField(schema.views.gallery.badgeField);
+  }
+
+  if (schema.views.map) {
+    addField(schema.views.map.latitudeField);
+    addField(schema.views.map.longitudeField);
+    addField(schema.views.map.titleField);
+    if (typeof schema.views.map.markerIcon === 'string') {
+      addField(schema.views.map.markerIcon);
+    }
+    if (typeof schema.views.map.markerColor === 'string') {
+      addField(schema.views.map.markerColor);
+    }
+  }
+
+  schema.search.fields.forEach(addField);
+  addField(schema.display.defaultSort.field);
+
+  schema.layouts.list.subpages.forEach((subpage) => {
+    Object.keys(subpage.query.where ?? {}).forEach(addField);
+    addField(subpage.query.orderBy?.field);
+  });
+
+  return projectionFields.size > 0 ? Array.from(projectionFields).sort() : null;
+}
 
 /**
  * GENERIC CRUD HOOK
@@ -12,6 +196,17 @@ import { throwApiErrorResponse } from '@/lib/api/error-message';
 export function useCrud<T extends EntityRecord = EntityRecord>(schema: EntitySchema<T>, options?: CrudOptions) {
   const queryClient = useQueryClient();
   const endpoint = schema.data.endpoint;
+  const projectionFields = useMemo(() => resolveProjectionFields(schema), [schema]);
+
+  const pagination = useMemo(() => {
+    const configuredPageSize = schema.layouts.list.pageSize ?? DEFAULT_PAGE_SIZE;
+    const pageSize = clampPageSize(options?.pagination?.pageSize ?? configuredPageSize);
+    const page = Number.isFinite(options?.pagination?.page)
+      ? Math.max(options?.pagination?.page ?? DEFAULT_PAGE, DEFAULT_PAGE)
+      : DEFAULT_PAGE;
+
+    return { page, pageSize };
+  }, [options?.pagination?.page, options?.pagination?.pageSize, schema.layouts.list.pageSize]);
 
   // Build query params from options
   const queryParams = useMemo(() => {
@@ -20,22 +215,36 @@ export function useCrud<T extends EntityRecord = EntityRecord>(schema: EntitySch
     if (options?.query?.where) {
       params.set('where', JSON.stringify(options.query.where));
     }
-    if (options?.query?.orderBy) {
-      params.set('orderBy', JSON.stringify(options.query.orderBy));
+
+    const orderBy = options?.sort ?? options?.query?.orderBy;
+    if (orderBy) {
+      params.set('orderBy', JSON.stringify(orderBy));
     }
-    if (options?.pagination) {
-      params.set('page', String(options.pagination.page));
-      params.set('pageSize', String(options.pagination.pageSize));
+
+    params.set('page', String(pagination.page));
+    params.set('pageSize', String(pagination.pageSize));
+
+    if (projectionFields && projectionFields.length > 0) {
+      params.set('fields', projectionFields.join(','));
     }
+
     if (options?.search) {
       params.set('search', options.search);
     }
 
     return params.toString();
-  }, [options]);
+  }, [
+    options?.query?.where,
+    options?.query?.orderBy,
+    options?.sort,
+    options?.search,
+    pagination.page,
+    pagination.pageSize,
+    projectionFields,
+  ]);
 
   // List query
-  const listQuery = useQuery({
+  const listQuery = useQuery<CrudListResponse<T>>({
     queryKey: [schema.identity.slug, 'list', queryParams],
     queryFn: async () => {
       const url = queryParams ? `${endpoint}?${queryParams}` : endpoint;
@@ -43,8 +252,10 @@ export function useCrud<T extends EntityRecord = EntityRecord>(schema: EntitySch
       if (!res.ok) {
         await throwApiErrorResponse(res, `Failed to load ${schema.identity.namePlural}`);
       }
-      return res.json();
+      const payload = await res.json();
+      return normalizeListResponse<T>(payload, pagination.page, pagination.pageSize);
     },
+    placeholderData: keepPreviousData,
   });
 
   // Single record hook
@@ -159,8 +370,8 @@ export function useCrud<T extends EntityRecord = EntityRecord>(schema: EntitySch
 
   return {
     // List data
-    data: listQuery.data?.records || [],
-    total: listQuery.data?.total || 0,
+    data: listQuery.data?.records ?? [],
+    total: listQuery.data?.total ?? 0,
     loading: listQuery.isLoading,
     error: listQuery.error,
     refetch: listQuery.refetch,
@@ -183,7 +394,12 @@ export function useCrud<T extends EntityRecord = EntityRecord>(schema: EntitySch
     setSelection: options?.onSelectionChange,
 
     // Pagination state
-    pagination: options?.pagination,
+    pagination: {
+      page: listQuery.data?.page ?? pagination.page,
+      pageSize: listQuery.data?.pageSize ?? pagination.pageSize,
+      total: listQuery.data?.total ?? 0,
+      totalPages: listQuery.data?.totalPages ?? 0,
+    },
     setPagination: options?.onPaginationChange,
 
     // Sort state

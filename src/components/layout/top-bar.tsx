@@ -50,6 +50,8 @@ export function TopBar() {
   const { language, setLanguage } = useLanguageStore();
   const { t } = useTranslation();
   const [mounted, setMounted] = React.useState(false);
+  const [notificationsOpen, setNotificationsOpen] = React.useState(false);
+  const [inboxOpen, setInboxOpen] = React.useState(false);
   const { setCommandPaletteOpen, setMobileSidebarOpen } = useUIStore();
   const supabase = useSupabase();
 
@@ -61,12 +63,20 @@ export function TopBar() {
     loading: notificationsLoading,
     markAsRead: markNotificationRead,
     markAllAsRead: markAllNotificationsRead,
-  } = useNotifications({ limit: 5 });
+  } = useNotifications({
+    limit: notificationsOpen ? 5 : 1,
+    enabled: Boolean(user),
+    summaryOnly: !notificationsOpen,
+  });
   const {
     items: inboxItems,
     unreadCount: inboxUnreadCount,
     loading: inboxLoading,
-  } = useInbox({ limit: 5 });
+  } = useInbox({
+    limit: inboxOpen ? 5 : 1,
+    enabled: Boolean(user),
+    summaryOnly: !inboxOpen,
+  });
 
   React.useEffect(() => {
     setMounted(true);
@@ -202,7 +212,7 @@ export function TopBar() {
           <Search className="h-5 w-5" />
         </Button>
 
-        <DropdownMenu>
+        <DropdownMenu open={notificationsOpen} onOpenChange={setNotificationsOpen}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative" aria-label={t("topBar.notifications")}>
               <Bell className="h-5 w-5" />
@@ -276,7 +286,7 @@ export function TopBar() {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <DropdownMenu>
+        <DropdownMenu open={inboxOpen} onOpenChange={setInboxOpen}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative hidden sm:inline-flex" aria-label={t("topBar.inbox")}>
               <Inbox className="h-5 w-5" />

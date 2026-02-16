@@ -33,6 +33,8 @@ interface UseInboxOptions {
   limit?: number;
   read?: boolean;
   type?: InboxItem["type"];
+  summaryOnly?: boolean;
+  enabled?: boolean;
 }
 
 export function useInbox(options: UseInboxOptions = {}) {
@@ -41,7 +43,14 @@ export function useInbox(options: UseInboxOptions = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const enabled = options.enabled ?? true;
+
   const fetchInbox = useCallback(async () => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -51,11 +60,11 @@ export function useInbox(options: UseInboxOptions = {}) {
       if (options.limit) params.set("limit", String(options.limit));
       if (options.read !== undefined) params.set("read", String(options.read));
       if (options.type) params.set("type", options.type);
+      if (options.summaryOnly) params.set("summary", "1");
 
-      const response = await fetch(`/api/v1/inbox?${params}`);
+      const response = await fetch(`/api/inbox?${params.toString()}`);
       
       if (!response.ok) {
-        // API not implemented yet - return empty state gracefully
         setItems([]);
         setMeta({
           page: 1,
@@ -71,7 +80,6 @@ export function useInbox(options: UseInboxOptions = {}) {
       setItems(data.data);
       setMeta(data.meta);
     } catch {
-      // API not available - return empty state gracefully
       setItems([]);
       setMeta({
         page: 1,
@@ -83,7 +91,7 @@ export function useInbox(options: UseInboxOptions = {}) {
     } finally {
       setLoading(false);
     }
-  }, [options.page, options.limit, options.read, options.type]);
+  }, [enabled, options.page, options.limit, options.read, options.type, options.summaryOnly]);
 
   useEffect(() => {
     fetchInbox();
@@ -91,7 +99,7 @@ export function useInbox(options: UseInboxOptions = {}) {
 
   const markAsRead = useCallback(async (id: string) => {
     try {
-      await fetch(`/api/v1/inbox/${id}/read`, { method: "POST" });
+      await fetch(`/api/inbox/${id}/read`, { method: "POST" });
       setItems((prev) =>
         prev.map((item) =>
           item.id === id ? { ...item, read: true } : item
@@ -107,7 +115,7 @@ export function useInbox(options: UseInboxOptions = {}) {
 
   const markAllAsRead = useCallback(async () => {
     try {
-      await fetch("/api/v1/inbox/read-all", { method: "POST" });
+      await fetch("/api/inbox/read-all", { method: "POST" });
       setItems((prev) => prev.map((item) => ({ ...item, read: true })));
       if (meta) {
         setMeta({ ...meta, unreadCount: 0 });

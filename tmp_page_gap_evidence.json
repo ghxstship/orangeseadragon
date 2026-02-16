@@ -1,0 +1,718 @@
+{
+  "flagged": [
+    {
+      "file": "src/app/(app)/account/sandbox/page.tsx",
+      "route": "/account/sandbox",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 66,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          },
+          {
+            "line": 66,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/analytics/scheduled/page.tsx",
+      "route": "/analytics/scheduled",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 55,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          },
+          {
+            "line": 55,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/business/companies/[id]/page.tsx",
+      "route": "/business/companies/[id]",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "matches": {
+        "mock_or_placeholder_marker": [
+          {
+            "line": 114,
+            "text": "{/* Placeholder for timeline */}"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/core/dashboard/page.tsx",
+      "route": "/core/dashboard",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 211,
+            "text": "console.error(\"Failed to fetch dashboard layout:\", err);"
+          },
+          {
+            "line": 271,
+            "text": "console.error(\"Failed to save dashboard layout:\", err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/core/dashboard/customize/page.tsx",
+      "route": "/core/dashboard/customize",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 38,
+            "text": "await new Promise(resolve => setTimeout(resolve, 500));"
+          },
+          {
+            "line": 38,
+            "text": "await new Promise(resolve => setTimeout(resolve, 500));"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/core/inbox/page.tsx",
+      "route": "/core/inbox",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 144,
+            "text": "console.error('Failed to fetch inbox items:', err);"
+          },
+          {
+            "line": 197,
+            "text": "console.error('Failed to mark as read:', err);"
+          },
+          {
+            "line": 219,
+            "text": "console.error('Failed to approve:', err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/core/tasks/my-timesheet/page.tsx",
+      "route": "/core/tasks/my-timesheet",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 206,
+            "text": "console.error(\"Failed to copy previous week:\", err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/core/tasks/timeline/page.tsx",
+      "route": "/core/tasks/timeline",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 56,
+            "text": "console.error(\"Failed to fetch dependencies:\", error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/core/tasks/workload/page.tsx",
+      "route": "/core/tasks/workload",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 63,
+            "text": "console.error(\"Failed to fetch team members:\", error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/finance/expense-approvals/page.tsx",
+      "route": "/finance/expense-approvals",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 59,
+            "text": "console.error('Error fetching approvals:', error);"
+          },
+          {
+            "line": 133,
+            "text": "console.error('Error bulk approving:', error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/finance/rate-cards/page.tsx",
+      "route": "/finance/rate-cards",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 90,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          },
+          {
+            "line": 90,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(auth)/forgot-password/page.tsx",
+      "route": "/forgot-password",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 12,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          },
+          {
+            "line": 12,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(auth)/magic-link/page.tsx",
+      "route": "/magic-link",
+      "issues": [
+        "simulated_async_timer"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 29,
+            "text": "const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/integrations/page.tsx",
+      "route": "/onboarding/integrations",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 74,
+            "text": "console.error(`[Onboarding] Failed to connect ${id}:`, err);"
+          },
+          {
+            "line": 90,
+            "text": "console.error('[Onboarding] Complete step failed:', err);"
+          }
+        ],
+        "window_side_effect": [
+          {
+            "line": 68,
+            "text": "window.open(result.data.redirect_url, \"_self\");"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/organization/page.tsx",
+      "route": "/onboarding/organization",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 97,
+            "text": "console.error('[Onboarding] Organization save failed:', err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/preferences/page.tsx",
+      "route": "/onboarding/preferences",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 78,
+            "text": "console.error('[Onboarding] Preferences save failed:', err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/profile/page.tsx",
+      "route": "/onboarding/profile",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 54,
+            "text": "console.error('[Onboarding] Profile save failed:', err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/team/page.tsx",
+      "route": "/onboarding/team",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 61,
+            "text": "console.error('[Onboarding] Invite send failed:', extractApiErrorMessage(err, 'Failed to send team invites'));"
+          },
+          {
+            "line": 66,
+            "text": "console.error('[Onboarding] Team invite failed:', err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(onboarding)/onboarding/tour/page.tsx",
+      "route": "/onboarding/tour",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "matches": {
+        "mock_or_placeholder_marker": [
+          {
+            "line": 70,
+            "text": "{/* Image placeholder */}"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/payments/success/page.tsx",
+      "route": "/payments/success",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 39,
+            "text": "console.error('Error fetching payment details:', error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/people/compliance/page.tsx",
+      "route": "/people/compliance",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 14,
+            "text": "console.error('Send reminder failed:', err);"
+          }
+        ],
+        "window_side_effect": [
+          {
+            "line": 22,
+            "text": "onExport={() => window.print()}"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/people/documents/page.tsx",
+      "route": "/people/documents",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 57,
+            "text": "console.error('Upload failed:', err);"
+          },
+          {
+            "line": 70,
+            "text": "console.error('Delete failed:', err);"
+          }
+        ],
+        "window_side_effect": [
+          {
+            "line": 62,
+            "text": "window.open(`/api/documents/${docId}/download`, '_blank');"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/people/leave/page.tsx",
+      "route": "/people/leave",
+      "issues": [
+        "console_logging",
+        "window_side_effect"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 185,
+            "text": "console.error('Leave request submission failed:', err);"
+          }
+        ],
+        "window_side_effect": [
+          {
+            "line": 183,
+            "text": "window.location.reload();"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/people/org/page.tsx",
+      "route": "/people/org",
+      "issues": [
+        "window_side_effect"
+      ],
+      "matches": {
+        "window_side_effect": [
+          {
+            "line": 20,
+            "text": "window.print();"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/people/rosters/page.tsx",
+      "route": "/people/rosters",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "matches": {
+        "mock_or_placeholder_marker": [
+          {
+            "line": 25,
+            "text": "// For now, we find from the list or just pass the ID to LifeStreamProfile if it fetches itself"
+          },
+          {
+            "line": 31,
+            "text": "status: p.is_available_for_hire ? 'online' : 'offline', // Simple mapping for now"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/people/timekeeping/page.tsx",
+      "route": "/people/timekeeping",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 30,
+            "text": "console.error('Clock in failed:', err);"
+          },
+          {
+            "line": 48,
+            "text": "console.error('Clock out failed:', err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/people/travel/page.tsx",
+      "route": "/people/travel",
+      "issues": [
+        "mock_or_placeholder_marker",
+        "hardcoded_dataset"
+      ],
+      "matches": {
+        "mock_or_placeholder_marker": [
+          {
+            "line": 6,
+            "text": "// Mock data for Global Mobility"
+          }
+        ],
+        "hardcoded_dataset": [
+          {
+            "line": 7,
+            "text": "const STAFF_LOCATIONS: MapMarker[] = ["
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/page.tsx",
+      "route": "/productions",
+      "issues": [
+        "mock_or_placeholder_marker"
+      ],
+      "matches": {
+        "mock_or_placeholder_marker": [
+          {
+            "line": 78,
+            "text": "const incidents = 0; // Placeholder \u2014 would come from incidents API"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/page.tsx",
+      "route": "/productions/advancing",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 109,
+            "text": "console.error('Failed to fetch dashboard:', error);"
+          },
+          {
+            "line": 124,
+            "text": "console.error('Failed to fetch conflicts:', error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/activity/page.tsx",
+      "route": "/productions/advancing/activity",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 92,
+            "text": "console.error('Failed to fetch activity:', error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/advances/page.tsx",
+      "route": "/productions/advancing/advances",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 57,
+            "text": "console.error('Failed to create advance:', error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/allotments/page.tsx",
+      "route": "/productions/advancing/allotments",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 76,
+            "text": "console.error('Failed to fetch allotments:', error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/approvals/page.tsx",
+      "route": "/productions/advancing/approvals",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 63,
+            "text": "console.error('Failed to fetch approvals:', error);"
+          },
+          {
+            "line": 88,
+            "text": "console.error(`Failed to ${action} advance:`, error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/advancing/assignments/page.tsx",
+      "route": "/productions/advancing/assignments",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 91,
+            "text": "console.error('Failed to fetch assignments:', error);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(app)/productions/projects/[id]/call-sheet/page.tsx",
+      "route": "/productions/projects/[id]/call-sheet",
+      "issues": [
+        "console_logging"
+      ],
+      "matches": {
+        "console_logging": [
+          {
+            "line": 142,
+            "text": "console.error('Failed to save call sheet:', err);"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(auth)/sso/[provider]/page.tsx",
+      "route": "/sso/[provider]",
+      "issues": [
+        "todo_comment",
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "matches": {
+        "todo_comment": [
+          {
+            "line": 17,
+            "text": "// TODO: Implement actual SSO callback handling"
+          }
+        ],
+        "simulated_async_timer": [
+          {
+            "line": 18,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 2000));"
+          },
+          {
+            "line": 18,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 2000));"
+          }
+        ],
+        "empty_handler": [
+          {
+            "line": 50,
+            "text": "onSubmit={async () => {}}"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(auth)/verify-email/page.tsx",
+      "route": "/verify-email",
+      "issues": [
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 15,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          },
+          {
+            "line": 15,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          },
+          {
+            "line": 22,
+            "text": "const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);"
+          }
+        ],
+        "empty_handler": [
+          {
+            "line": 36,
+            "text": "onSubmit={async () => {}}"
+          }
+        ]
+      }
+    },
+    {
+      "file": "src/app/(auth)/verify-mfa/page.tsx",
+      "route": "/verify-mfa",
+      "issues": [
+        "simulated_async_timer",
+        "empty_handler"
+      ],
+      "matches": {
+        "simulated_async_timer": [
+          {
+            "line": 46,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          },
+          {
+            "line": 46,
+            "text": "await new Promise((resolve) => setTimeout(resolve, 1000));"
+          }
+        ],
+        "empty_handler": [
+          {
+            "line": 59,
+            "text": "onSubmit={async () => {}}"
+          }
+        ]
+      }
+    }
+  ],
+  "count": 38
+}

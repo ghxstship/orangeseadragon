@@ -66,7 +66,7 @@ const PALETTE_CLASS_REGEX = new RegExp(
   "g"
 );
 
-const INLINE_STYLE_REGEX = /style=\{\{/g;
+const INLINE_STYLE_REGEX = /\b(?:style|[A-Za-z]+Style)\s*=\s*\{\{/g;
 const HEX_COLOR_REGEX = /#[0-9a-fA-F]{3,8}\b/g;
 const COLOR_FN_REGEX = /\b(?:rgb|rgba|hsl|hsla)\s*\(/g;
 const NATIVE_CONTROL_REGEX = /<\s*(button|input|select|textarea)\b([^>]*)>/g;

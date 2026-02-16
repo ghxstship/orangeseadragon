@@ -6,6 +6,19 @@ import { captureError, extractRequestContext } from '@/lib/observability';
 import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
 import { auditService } from '@/lib/audit/service';
 
+const DEFAULT_PAGE = 1;
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
+function parsePositiveInt(value: string | null, fallback: number): number {
+    const parsed = Number.parseInt(value ?? '', 10);
+    if (!Number.isFinite(parsed) || parsed < 1) {
+        return fallback;
+    }
+
+    return parsed;
+}
+
 /**
  * GENERIC ENTITY LIST API
  *
@@ -30,9 +43,26 @@ export async function GET(
     const requestContext = extractRequestContext(request.headers);
 
     const searchParams = request.nextUrl.searchParams;
+    const page = parsePositiveInt(searchParams.get('page'), DEFAULT_PAGE);
+    const requestedPageSize = parsePositiveInt(searchParams.get('pageSize'), DEFAULT_PAGE_SIZE);
+    const pageSize = Math.min(requestedPageSize, MAX_PAGE_SIZE);
+    const fields = searchParams.get('fields');
 
     const includeDeleted = searchParams.get('include_deleted') === 'true';
-    let query = supabase.from(tableName).select('*', { count: 'exact' });
+
+    const selectableFields = new Set(Object.keys(schema.data.fields));
+    selectableFields.add(schema.data.primaryKey || 'id');
+
+    const requestedFields = fields
+        ?.split(',')
+        .map((field) => field.trim())
+        .filter((field) => field.length > 0 && selectableFields.has(field));
+
+    const selectClause = requestedFields && requestedFields.length > 0
+        ? Array.from(new Set([schema.data.primaryKey || 'id', ...requestedFields])).join(',')
+        : '*';
+
+    let query = supabase.from(tableName).select(selectClause, { count: 'exact' });
 
     // Org-scoping: restrict to the authenticated user's organization
     query = query.eq('organization_id', membership.organization_id);
@@ -43,8 +73,6 @@ export async function GET(
 
     const where = searchParams.get('where');
     const orderBy = searchParams.get('orderBy');
-    const page = searchParams.get('page');
-    const pageSize = searchParams.get('pageSize');
     const search = searchParams.get('search');
 
     // Basic filtering
@@ -87,13 +115,9 @@ export async function GET(
     }
 
     // Pagination
-    if (page && pageSize) {
-        const p = parseInt(page);
-        const ps = parseInt(pageSize);
-        if (!isNaN(p) && !isNaN(ps)) {
-            query = query.range((p - 1) * ps, p * ps - 1);
-        }
-    }
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    query = query.range(from, to);
 
     const { data, error, count } = await query;
 
@@ -101,12 +125,9 @@ export async function GET(
         return supabaseError(error);
     }
 
-    const p = page ? parseInt(page) : 1;
-    const ps = pageSize ? parseInt(pageSize) : (data?.length || 0);
-
     return apiPaginated(data || [], {
-        page: p,
-        limit: ps,
+        page,
+        limit: pageSize,
         total: count || 0,
     });
 }
