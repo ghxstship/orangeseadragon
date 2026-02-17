@@ -86,16 +86,18 @@ const rateCardTabs: SettingsTab[] = [
 ];
 
 export default function RateCardsPage() {
-  const handleSave = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  };
-
   return (
     <SettingsTemplate
       title="Rate Cards"
       description="Manage labor rates, overtime multipliers, and service pricing"
       tabs={rateCardTabs}
-      onSave={handleSave}
+      onSave={async (values) => {
+        await fetch('/api/settings/rate-cards', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values),
+        });
+      }}
     />
   );
 }

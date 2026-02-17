@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 import {
   MapPin,
   Search,
@@ -97,7 +98,14 @@ export function MapView({
   const [selectedTypes, setSelectedTypes] = React.useState<string[]>(
     markerTypes.map((t) => t.type)
   );
+  const { isMobile } = useBreakpoint();
   const [viewMode, setViewMode] = React.useState<"map" | "list" | "split">("split");
+
+  React.useEffect(() => {
+    if (isMobile && viewMode === "split") {
+      setViewMode("map");
+    }
+  }, [isMobile, viewMode]);
   const [selectedMarker, setSelectedMarker] = React.useState<MapMarker | null>(null);
   const [mapZoom, setMapZoom] = React.useState(zoom);
   const [mapCenter, setMapCenter] = React.useState(center);
@@ -223,8 +231,8 @@ export function MapView({
     <Card className={className}>
       {title && (
         <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
               <MapPin className="h-5 w-5" />
               {title}
             </CardTitle>
@@ -258,7 +266,7 @@ export function MapView({
         {/* Toolbar */}
         <div className="border-b p-3 flex flex-wrap items-center gap-3">
           {showSearch && (
-            <div className="relative flex-1 min-w-[200px] max-w-sm">
+            <div className="relative flex-1 min-w-0 sm:min-w-[200px] max-w-sm">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search locations..."
@@ -270,7 +278,7 @@ export function MapView({
           )}
 
           {showFilters && (
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Filter className="h-4 w-4 text-muted-foreground" />
               {markerTypes.map((type) => (
                 <Button
@@ -281,7 +289,7 @@ export function MapView({
                   onClick={() => toggleType(type.type)}
                 >
                   {type.icon}
-                  <span className="ml-1">{type.label}</span>
+                  <span className="ml-1 hidden sm:inline">{type.label}</span>
                 </Button>
               ))}
             </div>
@@ -292,7 +300,7 @@ export function MapView({
           </div>
         </div>
 
-        <div className={cn("flex", viewMode === "list" ? "flex-col" : "")}>
+        <div className={cn("flex", viewMode === "list" ? "flex-col" : "", viewMode === "split" ? "flex-col md:flex-row" : "")}>
           {/* Map */}
           {viewMode !== "list" && (
             <div
@@ -461,7 +469,7 @@ export function MapView({
             <div
               className={cn(
                 "border-l",
-                viewMode === "split" ? "w-80" : "w-full",
+                viewMode === "split" ? "w-full md:w-80" : "w-full",
                 viewMode === "list" && "border-l-0"
               )}
             >

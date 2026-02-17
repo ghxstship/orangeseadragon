@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, forbidden, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -56,14 +57,14 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(message);
   } catch (error) {
-    console.error('Error sending message:', error);
-    return serverError();
+    captureError(error, 'api.messages.error');
+    return serverError('Failed to process messages');
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -89,7 +90,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(messages);
   } catch (error) {
-    console.error('Error fetching messages:', error);
-    return serverError();
+    captureError(error, 'api.messages.error');
+    return serverError('Failed to process messages');
   }
 }

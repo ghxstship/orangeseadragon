@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/purchase-orders/auto-match
@@ -10,7 +11,7 @@ import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/re
  */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -20,8 +21,7 @@ export async function POST(request: NextRequest) {
       return badRequest('organization_id is required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00085
-    const { data, error } = await (supabase as any).rpc('auto_match_po_invoices', {
+    const { data, error } = await supabase.rpc('auto_match_po_invoices', {
       p_organization_id: organization_id,
     });
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       message: `Auto-matched ${data} purchase order(s) to invoices`,
     });
   } catch (error) {
-    console.error('Error auto-matching POs:', error);
-    return serverError();
+    captureError(error, 'api.purchase-orders.auto-match.error');
+    return serverError('Failed to auto-match purchase orders');
   }
 }

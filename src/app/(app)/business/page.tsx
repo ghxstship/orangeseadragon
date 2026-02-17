@@ -6,12 +6,102 @@ import { Button } from '@/components/ui/button';
 import { QuickAccessCard } from '@/components/common/quick-access-card';
 import { PageShell } from '@/components/common/page-shell';
 import { StaggerList } from '@/components/ui/motion';
+import { ActivityFeed, ActivityItem } from '@/components/views/activity-feed';
 import { useCopilotContext } from '@/hooks/use-copilot-context';
 import { Building2, FileCheck, Handshake, Send } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+interface ActivityFeedApiItem {
+  id: string;
+  activityType: string;
+  actorId: string | null;
+  actorName: string | null;
+  entityType: string | null;
+  entityId: string | null;
+  entityName: string | null;
+  content: string | null;
+  metadata: Record<string, unknown> | null;
+  activityAt: string;
+}
+
+const activityTypeMap: Partial<Record<string, ActivityItem['type']>> = {
+  comment: 'commented',
+  note: 'updated',
+  call: 'commented',
+  email: 'commented',
+  meeting: 'commented',
+  task: 'assigned',
+  demo: 'created',
+  proposal: 'created',
+  approval: 'approved',
+  status_change: 'status_changed',
+};
 
 export default function BusinessPage() {
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [activityLoading, setActivityLoading] = useState(true);
+  const [activityError, setActivityError] = useState<string | null>(null);
+
   useCopilotContext({ module: 'business' });
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchActivity = async () => {
+      setActivityLoading(true);
+      setActivityError(null);
+
+      try {
+        const response = await fetch('/api/activity/feed?limit=12&activityCategory=crm');
+        if (!response.ok) {
+          throw new Error(`Failed to load activity (${response.status})`);
+        }
+
+        const payload = await response.json();
+        const items: ActivityFeedApiItem[] = payload?.data?.items ?? [];
+
+        const mapped: ActivityItem[] = items.map((item) => ({
+          id: item.id,
+          type: activityTypeMap[item.activityType] ?? 'updated',
+          timestamp: item.activityAt,
+          user: {
+            id: item.actorId ?? 'system',
+            name: item.actorName ?? 'System',
+          },
+          entity: item.entityType && item.entityId
+            ? {
+                type: item.entityType,
+                id: item.entityId,
+                name: item.entityName ?? item.entityType,
+              }
+            : undefined,
+          metadata: {
+            comment: item.content ?? undefined,
+            oldValue: typeof item.metadata?.old_value === 'string' ? item.metadata.old_value : undefined,
+            newValue: typeof item.metadata?.new_value === 'string' ? item.metadata.new_value : undefined,
+          },
+        }));
+
+        if (!cancelled) {
+          setActivities(mapped);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setActivityError(error instanceof Error ? error.message : 'Failed to load activity');
+        }
+      } finally {
+        if (!cancelled) {
+          setActivityLoading(false);
+        }
+      }
+    };
+
+    void fetchActivity();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <PageShell
@@ -75,11 +165,21 @@ export default function BusinessPage() {
               <Link href="/business/pipeline/activities">View All</Link>
             </Button>
           </div>
-          <Card>
-            <CardContent className="p-6 text-center text-muted-foreground">
-              <p className="text-sm">Activity timeline will appear here once you start logging activities.</p>
-            </CardContent>
-          </Card>
+          {activityError ? (
+            <Card>
+              <CardContent className="p-6 text-center text-muted-foreground">
+                <p className="text-sm">{activityError}</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <ActivityFeed
+              activities={activities}
+              title="Recent Activity"
+              showFilters={false}
+              maxHeight={360}
+              loading={activityLoading}
+            />
+          )}
         </section>
     </PageShell>
   );

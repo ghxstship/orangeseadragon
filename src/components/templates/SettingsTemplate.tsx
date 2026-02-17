@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +44,7 @@ export interface SettingsTemplateProps {
   title: string;
   description?: string;
   tabs: SettingsTab[];
+  initialTabKey?: string;
   initialValues?: Record<string, unknown>;
   onSave?: (values: Record<string, unknown>) => Promise<void>;
   onReset?: () => void;
@@ -53,13 +54,23 @@ export function SettingsTemplate({
   title,
   description,
   tabs,
+  initialTabKey,
   initialValues = {},
   onSave,
   onReset,
 }: SettingsTemplateProps) {
   const [values, setValues] = useState<Record<string, unknown>>(initialValues);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState(tabs[0]?.key || '');
+  const [activeTab, setActiveTab] = useState(() => {
+    const hasRequestedTab = initialTabKey && tabs.some((tab) => tab.key === initialTabKey);
+    return hasRequestedTab ? initialTabKey : tabs[0]?.key || '';
+  });
+
+  useEffect(() => {
+    if (!initialTabKey) return;
+    if (!tabs.some((tab) => tab.key === initialTabKey)) return;
+    setActiveTab(initialTabKey);
+  }, [initialTabKey, tabs]);
 
   const handleChange = (key: string, value: unknown) => {
     setValues(prev => ({ ...prev, [key]: value }));

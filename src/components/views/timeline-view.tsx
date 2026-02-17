@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Tooltip,
@@ -11,6 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 import {
   ChevronLeft,
   ChevronRight,
@@ -115,6 +117,7 @@ export function TimelineView({
   const [viewEnd, setViewEnd] = React.useState(
     initialEndDate || addDays(new Date(), 21)
   );
+  const { isMobile } = useBreakpoint();
 
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -249,6 +252,29 @@ export function TimelineView({
     return grouped;
   }, [items, groups, showGroups]);
 
+  const groupTitleMap = React.useMemo(
+    () => new Map(groups.map((group) => [group.id, group.title])),
+    [groups]
+  );
+
+  const mobileItems = React.useMemo(() => {
+    const interval = { start: startOfDay(viewStart), end: endOfDay(viewEnd) };
+
+    return items
+      .map((item) => {
+        const start = typeof item.start === "string" ? parseISO(item.start) : item.start;
+        const end = typeof item.end === "string" ? parseISO(item.end) : item.end;
+        return { item, start, end };
+      })
+      .filter(
+        ({ start, end }) =>
+          isWithinInterval(start, interval) ||
+          isWithinInterval(end, interval) ||
+          (start < interval.start && end > interval.end)
+      )
+      .sort((a, b) => a.start.getTime() - b.start.getTime());
+  }, [items, viewStart, viewEnd]);
+
   const todayPosition = React.useMemo(() => {
     const today = new Date();
     if (today < viewStart || today > viewEnd) return null;
@@ -267,13 +293,62 @@ export function TimelineView({
     [cellWidth, totalWidth, todayPosition]
   );
 
+  if (isMobile) {
+    return (
+      <Card className={cn("w-full border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+        <CardHeader className="pb-3 border-b border-border bg-background/5">
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-base font-black tracking-tight uppercase opacity-80 truncate">
+              {format(viewStart, "MMM d")} — {format(viewEnd, "MMM d, yyyy")}
+            </CardTitle>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleNavigate("prev")}>
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] font-black uppercase" onClick={() => handleNavigate("today")}>Today</Button>
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleNavigate("next")}>
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-4 space-y-3">
+          {mobileItems.length === 0 ? (
+            <div className="text-sm text-muted-foreground py-4 text-center">No timeline items in this range</div>
+          ) : (
+            mobileItems.map(({ item, start, end }) => (
+              <Button
+                key={item.id}
+                variant="ghost"
+                onClick={() => onItemClick?.(item)}
+                className="w-full text-left rounded-xl border border-border bg-background/40 p-3 transition-colors hover:bg-muted/40 h-auto justify-start flex-col items-start"
+              >
+                <div className="flex items-start justify-between gap-2 w-full">
+                  <p className="text-sm font-bold tracking-tight truncate">{item.title}</p>
+                  {item.group && groupTitleMap.get(item.group) ? (
+                    <Badge variant="outline" className="text-[10px] flex-shrink-0">
+                      {groupTitleMap.get(item.group)}
+                    </Badge>
+                  ) : null}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {format(start, "MMM d, yyyy")} - {format(end, "MMM d, yyyy")}
+                </p>
+              </Button>
+            ))
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className={cn("w-full border-border glass-morphism overflow-hidden shadow-2xl", className)}>
       <CardHeader className="pb-4 border-b border-border bg-background/5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">
-              {format(viewStart, "MMMM d")} — {format(viewEnd, "MMMM d, yyyy")}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 sm:gap-6">
+            <CardTitle className="text-base sm:text-xl font-black tracking-tight uppercase opacity-80 truncate">
+              {format(viewStart, "MMM d")} — {format(viewEnd, "MMM d, yyyy")}
             </CardTitle>
             <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-border">
               <Button variant="ghost" size="sm" onClick={() => handleNavigate("today")} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-accent">
@@ -340,7 +415,7 @@ export function TimelineView({
       <CardContent className="p-0">
         <div className="flex">
           {showGroups && groups.length > 0 && (
-            <div className="flex-shrink-0 w-[var(--timeline-group-width,200px)] border-r border-border bg-background/20">
+            <div className="hidden md:block flex-shrink-0 w-[var(--timeline-group-width,200px)] border-r border-border bg-background/20">
               <div
                 className="h-[var(--timeline-header-height,60px)] border-b border-border bg-muted px-6 flex items-center text-[10px] font-black uppercase tracking-[0.2em] opacity-40"
               >

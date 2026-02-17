@@ -75,9 +75,9 @@ export function ColorPicker({
           <Pipette className="h-4 w-4 text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[240px] p-3" align="start">
+      <PopoverContent className="w-[260px] sm:w-[240px] p-3" align="start">
         <div className="space-y-3">
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
             {presets.map((presetColor) => {
               const presetColorStyle = getColorBackgroundStyle(presetColor);
 

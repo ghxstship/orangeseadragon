@@ -410,7 +410,7 @@ export function ImportModal({
 
                   <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
 
-                  <div className="w-48">
+                  <div className="w-full sm:w-48">
                     <Select
                       value={mapping.entityField || "__skip__"}
                       onValueChange={(v) =>

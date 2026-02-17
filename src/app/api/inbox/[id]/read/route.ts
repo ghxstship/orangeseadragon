@@ -1,9 +1,10 @@
-import { requireAuth } from "@/lib/api/guard";
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from "@/lib/api/response";
+import { captureError } from '@/lib/observability';
 
 export async function POST(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -21,7 +22,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ id
 
     return apiSuccess(null);
   } catch (e) {
-    console.error("[API] Mark read error:", e);
-    return serverError();
+    captureError(e, 'api.inbox.id.read.error');
+    return serverError('Failed to mark notification as read');
   }
 }

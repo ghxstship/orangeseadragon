@@ -2,14 +2,15 @@
 // Call sheet API — save and retrieve call sheet data for a project
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
   const { id: projectId } = await params;
@@ -29,7 +30,7 @@ export async function GET(
 
     return apiSuccess(data);
   } catch (err) {
-    console.error('[Call Sheet] GET error:', err);
+    captureError(err, 'api.projects.id.call-sheet.error');
     return serverError('Failed to fetch call sheet');
   }
 }
@@ -38,7 +39,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
   const { id: projectId } = await params;
@@ -68,7 +69,7 @@ export async function POST(
 
     return apiSuccess({ id: data.id, saved: true });
   } catch (err) {
-    console.error('[Call Sheet] POST error:', err);
+    captureError(err, 'api.projects.id.call-sheet.error');
     return serverError('Failed to save call sheet');
   }
 }

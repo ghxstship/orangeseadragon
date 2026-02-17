@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -127,29 +128,29 @@ export function WorkspaceLayout({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             {config.header?.showBackButton && onBack && (
-              <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 flex-shrink-0">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             )}
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
               {config.icon && <div className="flex-shrink-0">{config.icon}</div>}
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-semibold">{config.title}</h1>
+                  <h1 className="text-lg font-semibold sm:text-xl truncate">{config.title}</h1>
                 </div>
                 {config.subtitle && (
-                  <p className="text-sm text-muted-foreground">{config.subtitle}</p>
+                  <p className="text-sm text-muted-foreground truncate">{config.subtitle}</p>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {/* Collaborator Presence */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Collaborator Presence — hidden on mobile */}
             {config.header?.showPresence && onlineCollaborators.length > 0 && (
               <TooltipProvider>
                 <div className="flex items-center -space-x-2 mr-2">
@@ -187,18 +188,18 @@ export function WorkspaceLayout({
             )}
 
             {config.header?.showShare && onShare && (
-              <Button variant="ghost" size="icon" onClick={onShare} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={onShare} className="h-8 w-8 hidden sm:inline-flex">
                 <Share2 className="h-4 w-4" />
               </Button>
             )}
 
             {config.header?.showSettings && onSettings && (
-              <Button variant="ghost" size="icon" onClick={onSettings} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={onSettings} className="h-8 w-8 hidden sm:inline-flex">
                 <Settings className="h-4 w-4" />
               </Button>
             )}
 
-            {(onArchive || onDelete) && (
+            {(onArchive || onDelete || (config.header?.showShare && onShare) || (config.header?.showSettings && onSettings)) && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -206,6 +207,18 @@ export function WorkspaceLayout({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  {config.header?.showShare && onShare && (
+                    <DropdownMenuItem onClick={onShare} className="sm:hidden">
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share
+                    </DropdownMenuItem>
+                  )}
+                  {config.header?.showSettings && onSettings && (
+                    <DropdownMenuItem onClick={onSettings} className="sm:hidden">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Settings
+                    </DropdownMenuItem>
+                  )}
                   {onArchive && (
                     <DropdownMenuItem onClick={onArchive}>
                       <Archive className="h-4 w-4 mr-2" />
@@ -240,7 +253,7 @@ export function WorkspaceLayout({
 
         {/* Tabs */}
         {config.tabPosition !== "left" && config.tabs.length > 0 && (
-          <div className="px-6 border-t bg-muted/30">
+          <div className="px-4 sm:px-6 border-t bg-muted/30 overflow-x-auto scrollbar-hide">
             <Tabs value={activeTab} onValueChange={onTabChange}>
               <TabsList variant="underline">
                 {config.tabs.map((tab) => (
@@ -264,9 +277,9 @@ export function WorkspaceLayout({
 
       {/* Content Area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar (if tabPosition is left) */}
+        {/* Left Sidebar (if tabPosition is left) — hidden on mobile */}
         {config.tabPosition === "left" && (
-          <aside className="w-56 border-r bg-muted/30 flex-shrink-0">
+          <aside className="w-56 border-r bg-muted/30 flex-shrink-0 hidden md:block">
             <ScrollArea className="h-full">
               <nav className="p-2 space-y-1">
                 {config.tabs.map((tab) => (
@@ -293,19 +306,50 @@ export function WorkspaceLayout({
           </aside>
         )}
 
+        {/* Mobile tab navigation (when tabPosition is left) */}
+        {config.tabPosition === "left" && (
+          <div className="md:hidden border-b px-4 py-2 bg-muted/30 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2">
+              {config.tabs.map((tab) => (
+                <Button
+                  key={tab.key}
+                  variant={activeTab === tab.key ? "secondary" : "ghost"}
+                  size="sm"
+                  onClick={() => onTabChange?.(tab.key)}
+                  className="flex-shrink-0"
+                >
+                  {tab.icon && <span className="mr-1">{tab.icon}</span>}
+                  {tab.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          <div className="p-6">{children}</div>
+          <div className="p-4 sm:p-6">{children}</div>
         </main>
 
-        {/* Right Sidebar */}
+        {/* Right Sidebar — desktop only */}
         {config.sidebar?.enabled && sidebarContent && sidebarOpen && (
           <aside
-            className="border-l bg-muted/30 flex-shrink-0 overflow-auto"
+            className="border-l bg-muted/30 flex-shrink-0 overflow-auto hidden lg:block"
             style={sidebarWidthStyle}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>
+        )}
+
+        {/* Right Sidebar — mobile Sheet */}
+        {config.sidebar?.enabled && sidebarContent && (
+          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <SheetContent side="right" className="w-[300px] p-0 lg:hidden">
+              <ScrollArea className="h-full">
+                <div className="p-4">{sidebarContent}</div>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
         )}
       </div>
     </div>

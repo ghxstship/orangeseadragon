@@ -41,10 +41,37 @@ export default function VerifyMfaPage() {
   };
 
   const handleSubmit = async () => {
-    if (code.join('').length !== 6) return;
+    const fullCode = code.join('');
+    if (fullCode.length !== 6) return;
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    router.push('/core/dashboard');
+    try {
+      const { createClient } = await import('@/lib/supabase/client');
+      const supabase = createClient();
+
+      const { data: factorsData } = await supabase.auth.mfa.listFactors();
+      const totp = factorsData?.totp?.[0];
+      if (!totp) throw new Error('No TOTP factor enrolled');
+
+      const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({
+        factorId: totp.id,
+      });
+      if (challengeError) throw new Error(challengeError.message);
+
+      const { error: verifyError } = await supabase.auth.mfa.verify({
+        factorId: totp.id,
+        challengeId: challenge.id,
+        code: fullCode,
+      });
+      if (verifyError) throw new Error(verifyError.message);
+
+      router.push('/core/dashboard');
+    } catch (err) {
+      console.error('[MFA] Verification failed:', err);
+      setCode(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

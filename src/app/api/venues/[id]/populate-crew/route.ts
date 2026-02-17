@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/venues/:id/populate-crew
@@ -13,7 +14,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -24,8 +25,7 @@ export async function POST(
       return badRequest('project_id and organization_id are required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00087
-    const { data, error } = await (supabase as any).rpc('auto_populate_crew_from_venue', {
+    const { data, error } = await supabase.rpc('auto_populate_crew_from_venue', {
       p_project_id: project_id,
       p_venue_id: venueId,
       p_organization_id: organization_id,
@@ -39,7 +39,7 @@ export async function POST(
       message: `Created ${data} placeholder booking(s) from venue requirements`,
     });
   } catch (error) {
-    console.error('Error populating crew from venue:', error);
-    return serverError();
+    captureError(error, 'api.venues.id.populate-crew.error');
+    return serverError('Failed to populate crew for venue');
   }
 }

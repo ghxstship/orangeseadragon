@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -46,14 +47,14 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess(reaction, { action: 'added' });
   } catch (error) {
-    console.error('Error toggling reaction:', error);
-    return serverError();
+    captureError(error, 'api.reactions.error');
+    return serverError('Failed to process reactions');
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { searchParams } = new URL(request.url);
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(grouped, { total: reactions.length });
   } catch (error) {
-    console.error('Error fetching reactions:', error);
-    return serverError();
+    captureError(error, 'api.reactions.error');
+    return serverError('Failed to process reactions');
   }
 }

@@ -248,9 +248,19 @@
   .glass-card {
     background: hsl(var(--glass-bg));
     backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
     border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--shadow-spatial);
     transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .glass-card,
+    .glass-card--elevated,
+    .glass-card--floating,
+    .glass-panel {
+      background: hsl(var(--card));
+    }
   }
 
   .glass-card:hover {
@@ -262,6 +272,7 @@
   .glass-card--elevated {
     background: hsl(var(--glass-bg-elevated));
     backdrop-filter: blur(var(--glass-blur-elevated));
+    -webkit-backdrop-filter: blur(var(--glass-blur-elevated));
     border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--shadow-spatial);
     transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -276,6 +287,7 @@
   .glass-card--floating {
     background: hsl(var(--glass-bg-floating));
     backdrop-filter: blur(var(--glass-blur-floating));
+    -webkit-backdrop-filter: blur(var(--glass-blur-floating));
     border: 1px solid hsl(var(--glass-border));
     box-shadow: var(--shadow-spatial-hover);
     transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -492,4 +504,16 @@ h2 {
 
 h3 {
   font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+}
+
+h4 {
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.25rem);
+}
+
+h5 {
+  font-size: clamp(0.875rem, 0.85rem + 0.15vw, 1.125rem);
+}
+
+h6 {
+  font-size: clamp(0.8125rem, 0.8rem + 0.1vw, 1rem);
 }

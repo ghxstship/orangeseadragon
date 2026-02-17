@@ -210,14 +210,14 @@ export function FormBuilder({
   };
 
   return (
-    <div className={cn("grid grid-cols-1 lg:grid-cols-4 gap-6", className)}>
+    <div className={cn("grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-6", className)}>
       {/* Field Palette */}
-      <Card className="lg:col-span-1 border-border glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
+      <Card className="lg:col-span-1 border-border glass-morphism overflow-hidden shadow-xl h-fit lg:sticky lg:top-6">
         <CardHeader className="pb-4 border-b border-border bg-background/5">
           <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60">Add Fields</CardTitle>
         </CardHeader>
         <CardContent className="p-3">
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
             {(Object.keys(fieldTypeLabels) as FieldType[]).map((type, idx) => (
               <motion.div
                 key={type}
@@ -341,7 +341,7 @@ export function FormBuilder({
       </Card>
 
       {/* Field Settings */}
-      <Card className="lg:col-span-1 border-border glass-morphism overflow-hidden shadow-xl h-fit sticky top-6">
+      <Card className="lg:col-span-1 border-border glass-morphism overflow-hidden shadow-xl h-fit lg:sticky lg:top-6">
         <CardHeader className="pb-4 border-b border-border bg-background/5">
           <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 flex items-center gap-3">
             <Settings className="h-4 w-4 text-primary" />

@@ -1,8 +1,7 @@
 'use client';
 
-import { CrudList } from '@/lib/crud/components/CrudList';
-import { trainingCourseSchema } from '@/lib/schemas/trainingCourse';
+import { redirect } from 'next/navigation';
 
 export default function CoursesPage() {
-  return <CrudList schema={trainingCourseSchema} />;
+  redirect('/people/training');
 }

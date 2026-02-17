@@ -1,6 +1,6 @@
 
 import { test, expect } from '@playwright/test';
-import { createTestUser } from './utils';
+import { createTestUser, loginUser } from './utils';
 
 let testUser: { email: string, password: string } | null = null;
 
@@ -17,14 +17,7 @@ test.describe('Core Application Flows', () => {
         test.skip(!testUser, 'User creation failed');
         if (!testUser) return;
 
-        // Login
-        await page.goto('/login');
-        await page.fill('input[type="email"]', testUser.email);
-        await page.fill('input[type="password"]', testUser.password);
-        await page.click('button[type="submit"]');
-
-        // Wait for dashboard
-        await expect(page).toHaveURL(/\/core\/dashboard/);
+        await loginUser(page, testUser.email, testUser.password);
     });
 
     test('should display dashboard widgets', async ({ page }) => {

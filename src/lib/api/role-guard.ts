@@ -73,7 +73,7 @@ export function enforceResourceAccess(
 ) {
   const role = auth.membership.role_name;
 
-  if (role === 'client' && CLIENT_FORBIDDEN_RESOURCES.has(resource)) {
+  if ((role === 'client' || role === 'client_viewer') && CLIENT_FORBIDDEN_RESOURCES.has(resource)) {
     return forbidden(`Client role does not have access to ${resource}`);
   }
 

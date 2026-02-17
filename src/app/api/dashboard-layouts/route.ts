@@ -1,69 +1,46 @@
 import { NextRequest } from "next/server";
-import { requireAuth } from "@/lib/api/guard";
+import { z } from 'zod';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from "@/lib/api/response";
-import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { captureError, extractRequestContext } from '@/lib/observability';
 
-async function resolveOrganizationId(supabase: SupabaseClient, user: User) {
-  const metadataOrganizationId = (
-    user.user_metadata as { organization_id?: string } | null | undefined
-  )?.organization_id;
+const createLayoutSchema = z.object({
+  name: z.string().trim().min(1, 'name is required').max(255),
+  description: z.string().max(2000).optional(),
+  widgets: z.array(z.record(z.unknown())).min(1, 'widgets must contain at least one item'),
+  columns: z.coerce.number().int().min(1).max(24).optional(),
+  is_shared: z.boolean().optional(),
+  is_default: z.boolean().optional(),
+});
 
-  if (metadataOrganizationId) {
-    return {
-      organizationId: metadataOrganizationId,
-      profileError: null,
-    };
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("users")
-    .select("organization_id")
-    .eq("id", user.id)
-    .single();
-
-  return {
-    organizationId: profile?.organization_id ?? null,
-    profileError,
-  };
+function isSupabaseError(error: unknown): error is { message: string; code?: string } {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as { message?: unknown }).message === 'string'
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { user, supabase } = auth;
+  const { user, supabase, membership } = auth;
 
-  const { organizationId, profileError } = await resolveOrganizationId(supabase, user);
+  const organizationId = membership.organization_id;
 
-  // Fetch user's layouts and optionally org-shared layouts
-  let layoutsQuery = supabase
+  const { data, error } = await supabase
     .from("dashboard_layouts")
     .select("*")
-    .is("deleted_at", null);
-
-  if (organizationId) {
-    layoutsQuery = layoutsQuery.or(
+    .is("deleted_at", null)
+    .or(
       `user_id.eq.${user.id},and(is_shared.eq.true,organization_id.eq.${organizationId})`
-    );
-  } else {
-    if (profileError) {
-      console.warn(
-        "Dashboard layouts profile lookup failed, falling back to user-only layouts",
-        { code: profileError.code }
-      );
-    }
-    layoutsQuery = layoutsQuery.eq("user_id", user.id);
-  }
-
-  const { data, error } = await layoutsQuery
+    )
     .order("is_default", { ascending: false })
     .order("name", { ascending: true });
 
   if (error) {
-    // Table might not exist yet, return default
-    if (error.code === "42P01") {
-      return apiSuccess([], { useDefault: true });
-    }
     return supabaseError(error);
   }
 
@@ -71,29 +48,32 @@ export async function GET(_request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.write');
   if (auth.error) return auth.error;
-  const { user, supabase } = auth;
+  const { user, supabase, membership } = auth;
+  const requestContext = extractRequestContext(request.headers);
+
+  let rawBody: unknown;
+  try {
+    rawBody = await request.json();
+  } catch {
+    return badRequest('Invalid JSON request body');
+  }
+
+  const parsedBody = createLayoutSchema.safeParse(rawBody);
+  if (!parsedBody.success) {
+    return badRequest('Validation failed', {
+      issues: parsedBody.error.issues.map((issue) => ({
+        path: issue.path.join('.'),
+        message: issue.message,
+      })),
+    });
+  }
+
+  const { name, description, widgets, columns, is_shared, is_default } = parsedBody.data;
+  const organizationId = membership.organization_id;
 
   try {
-    const body = await request.json();
-    const { name, description, widgets, columns, is_shared, is_default } = body;
-
-    if (!name || !widgets) {
-      return badRequest('name and widgets are required');
-    }
-
-    const { organizationId, profileError } = await resolveOrganizationId(supabase, user);
-
-    if (!organizationId) {
-      if (profileError) {
-        console.warn("Dashboard layout create profile lookup failed", {
-          code: profileError.code,
-        });
-      }
-      return badRequest('User organization not found');
-    }
-
     // If setting as default, unset other defaults
     if (is_default) {
       await supabase
@@ -109,9 +89,9 @@ export async function POST(request: NextRequest) {
         name,
         description: description || null,
         widgets,
-        columns: columns || 12,
-        is_shared: is_shared || false,
-        is_default: is_default || false,
+        columns: columns ?? 12,
+        is_shared: is_shared ?? false,
+        is_default: is_default ?? false,
         user_id: user.id,
         organization_id: organizationId,
       })
@@ -124,7 +104,15 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(data);
   } catch (error) {
-    console.error("Failed to create dashboard layout:", error);
+    if (isSupabaseError(error)) {
+      return supabaseError(error);
+    }
+
+    captureError(error, 'api.dashboard-layouts.post.error', {
+      organization_id: organizationId,
+      user_id: user.id,
+      ...requestContext,
+    });
     return serverError('Failed to create dashboard layout');
   }
 }

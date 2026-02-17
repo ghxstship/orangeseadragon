@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requireRole } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/finance/fiscal-periods/[id]/close
@@ -88,7 +89,7 @@ export async function POST(
 
     return apiSuccess(updated, { action });
   } catch (e) {
-    console.error('[API] Fiscal period close error:', e);
+    captureError(e, 'api.finance.fiscal-periods.id.close.error');
     return serverError('Failed to update fiscal period');
   }
 }

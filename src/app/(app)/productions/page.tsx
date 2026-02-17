@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useEvents } from '@/hooks/use-events';
 import { useProjects } from '@/hooks/use-projects';
 import { useBudgets } from '@/hooks/use-budgets';
+import { useIncidents } from '@/hooks/use-incidents';
 import { useUser } from '@/hooks/use-supabase';
 import { PageShell } from '@/components/common/page-shell';
 import { FadeIn, StaggerList, StaggerItem } from '@/components/ui/motion';
@@ -42,8 +43,9 @@ export default function ProductionsPage() {
   const { data: events, isLoading: eventsLoading, error: eventsError, refetch: refetchEvents } = useEvents(orgId);
   const { data: projects, isLoading: projectsLoading } = useProjects(orgId);
   const { data: budgets, isLoading: budgetsLoading } = useBudgets(orgId);
+  const { data: incidents, isLoading: incidentsLoading } = useIncidents(orgId);
 
-  const isLoading = eventsLoading || projectsLoading || budgetsLoading;
+  const isLoading = eventsLoading || projectsLoading || budgetsLoading || incidentsLoading;
 
   const upcomingEvents = useMemo(() => {
     if (!events) return [];
@@ -75,10 +77,14 @@ export default function ProductionsPage() {
     const revenueMTD = budgets
       ? budgets.reduce((sum: number, b: Record<string, unknown>) => sum + (Number(b.total_amount) || 0), 0)
       : 0;
-    const incidents = 0; // Placeholder — would come from incidents API
+    const activeIncidentStatuses = new Set(['open', 'investigating', 'in_progress', 'dispatched', 'on_scene']);
+    const openIncidents = (incidents ?? []).filter((incident: Record<string, unknown>) => {
+      const status = String(incident.status ?? '').toLowerCase();
+      return activeIncidentStatuses.has(status);
+    }).length;
 
-    return { eventsCount, crewCount, revenueMTD, incidents };
-  }, [upcomingEvents, activeProjects, budgets]);
+    return { eventsCount, crewCount, revenueMTD, incidents: openIncidents };
+  }, [upcomingEvents, activeProjects, budgets, incidents]);
 
   if (eventsError) {
     return (

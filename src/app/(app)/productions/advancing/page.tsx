@@ -10,6 +10,7 @@ import { StatCard, StatGrid } from '@/components/common/stat-card';
 import { formatCurrency } from '@/lib/utils';
 import {
   ClipboardList,
+  FileText,
   Layers,
   ShieldCheck,
   Link2,
@@ -22,6 +23,10 @@ import {
   RefreshCw,
   QrCode,
   AlertCircle,
+  UtensilsCrossed,
+  Users,
+  Hotel,
+  SlidersHorizontal,
 } from 'lucide-react';
 import Link from 'next/link';
 import { ScannerModal, ConflictPanel, ConflictBadge } from '@/components/modules/advancing';
@@ -90,6 +95,14 @@ const subPages = [
   },
 ] as const;
 
+const preProductionPages = [
+  { title: 'Tech Riders', href: '/productions/advancing/riders', icon: FileText },
+  { title: 'Catering & Hospitality', href: '/productions/advancing/catering', icon: UtensilsCrossed },
+  { title: 'Guest Lists', href: '/productions/advancing/guest-lists', icon: Users },
+  { title: 'Travel & Hotels', href: '/productions/advancing/hospitality', icon: Hotel },
+  { title: 'Stage Plots', href: '/productions/advancing/tech-specs', icon: SlidersHorizontal },
+] as const;
+
 export default function AdvancingHubPage() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [_loading, setLoading] = useState(true);
@@ -102,8 +115,9 @@ export default function AdvancingHubPage() {
     try {
       const res = await fetch('/api/advancing/dashboard');
       if (res.ok) {
-        const data = await res.json();
-        setMetrics(data.metrics ?? data);
+        const json = await res.json();
+        const payload = json.data ?? json;
+        setMetrics(payload.metrics ?? payload);
       }
     } catch (error) {
       console.error('Failed to fetch dashboard:', error);
@@ -117,8 +131,9 @@ export default function AdvancingHubPage() {
     try {
       const res = await fetch('/api/advancing/conflicts?status=open');
       if (res.ok) {
-        const data = await res.json();
-        setConflicts(data.records || []);
+        const json = await res.json();
+        const payload = json.data ?? json;
+        setConflicts(payload.records || []);
       }
     } catch (error) {
       console.error('Failed to fetch conflicts:', error);
@@ -243,25 +258,25 @@ export default function AdvancingHubPage() {
         <div>
           <h2 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-4">Pre-Production Readiness</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { title: 'Tech Riders', href: '/productions/advancing/riders', icon: '📋' },
-              { title: 'Catering & Hospitality', href: '/productions/advancing/catering', icon: '🍽️' },
-              { title: 'Guest Lists', href: '/productions/advancing/guest-lists', icon: '👥' },
-              { title: 'Travel & Hotels', href: '/productions/advancing/hospitality', icon: '🏨' },
-              { title: 'Stage Plots', href: '/productions/advancing/tech-specs', icon: '🎛️' },
-            ].map((item) => (
+            {preProductionPages.map((item) => {
+              const Icon = item.icon;
+
+              return (
               <Link key={item.href} href={item.href}>
                 <Card className="hover:bg-accent/50 transition-colors cursor-pointer group">
                   <CardContent className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-lg">{item.icon}</span>
+                      <div className="rounded-md border bg-muted p-2 text-muted-foreground transition-colors group-hover:text-primary group-hover:border-primary/30">
+                        <Icon className="h-4 w-4" />
+                      </div>
                       <span className="font-medium text-sm">{item.title}</span>
                     </div>
                     <ArrowRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                   </CardContent>
                 </Card>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       </PageShell>

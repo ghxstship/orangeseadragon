@@ -10,6 +10,11 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
 const useProductionServer = process.env.CI_E2E_PRODUCTION_SERVER === 'true';
+const playwrightPort = process.env.PLAYWRIGHT_PORT || '3000';
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${playwrightPort}`;
+const webServerCommand = useProductionServer
+  ? `npm run start -- -p ${playwrightPort}`
+  : `npm run dev -- -p ${playwrightPort}`;
 
 export default defineConfig({
     testDir: './e2e',
@@ -19,7 +24,7 @@ export default defineConfig({
     workers: process.env.CI ? 1 : undefined,
     reporter: 'html',
     use: {
-        baseURL: 'http://localhost:3000',
+        baseURL,
         trace: 'on-first-retry',
     },
     projects: [
@@ -45,8 +50,8 @@ export default defineConfig({
         },
     ],
     webServer: {
-        command: useProductionServer ? 'npm run start' : 'npm run dev',
-        url: 'http://localhost:3000',
+        command: webServerCommand,
+        url: `${baseURL}/login`,
         reuseExistingServer: !process.env.CI,
         timeout: 120 * 1000,
     },

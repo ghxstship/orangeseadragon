@@ -159,7 +159,7 @@ export function DocumentManager({
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="bg-card/80 border-border">
           <CardContent className="pt-4">
             <p className="text-sm text-muted-foreground">Total Documents</p>

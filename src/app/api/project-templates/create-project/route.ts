@@ -1,15 +1,16 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiCreated, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/project-templates/create-project
  * Create a new project from a template, cloning tasks and dependencies
  */
 export async function POST(request: NextRequest) {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
-    const { user, supabase } = auth;
+    const { user, supabase, membership } = auth;
 
     try {
         const body = await request.json();
@@ -17,18 +18,6 @@ export async function POST(request: NextRequest) {
 
         if (!template_id || !project_name) {
             return badRequest('template_id and project_name are required');
-        }
-
-        // Get user's organization
-        const { data: membership } = await supabase
-            .from('organization_members')
-            .select('organization_id')
-            .eq('user_id', user.id)
-            .limit(1)
-            .single();
-
-        if (!membership) {
-            return badRequest('No organization found');
         }
 
         // Call the DB function to create project from template
@@ -69,7 +58,7 @@ export async function POST(request: NextRequest) {
 
         return apiCreated({ project, template_id });
     } catch (e) {
-        console.error('[API] Create project from template error:', e);
+        captureError(e, 'api.project-templates.create-project.error');
         return serverError('Failed to create project from template');
     }
 }

@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/ui/page-transition";
+import { Button } from "@/components/ui/button";
 import { TopBar } from "./top-bar";
 import { Sidebar, MobileSidebar } from "./sidebar";
 import { useUIStore } from "@/stores/ui-store";
@@ -152,7 +153,7 @@ export function AppShell({ children }: AppShellProps) {
           className={cn(
             "min-h-[calc(100vh-3.5rem)] pt-14 transition-all duration-300 focus:outline-none",
             // Traditional layout with sidebar
-            !useFullWidth && (sidebarCollapsed ? "md:pl-16" : "md:pl-[280px]"),
+            !useFullWidth && (sidebarCollapsed ? "md:pl-[var(--sidebar-collapsed-width,64px)]" : "md:pl-[var(--sidebar-width,280px)]"),
             // Full-width layout for new system
             useFullWidth && "pl-0"
           )}
@@ -175,15 +176,17 @@ export function AppShell({ children }: AppShellProps) {
         {notificationsPanelOpen ? <NotificationCenter /> : null}
         {quickAddTaskOpen ? <QuickAddTask /> : null}
         {copilotOpen ? <CopilotDrawer /> : null}
-        <button
+        <Button
           type="button"
+          size="icon"
+          variant="default"
           onClick={toggleCopilot}
-          className="fixed bottom-6 right-6 z-[80] h-12 w-12 rounded-2xl bg-primary text-primary-foreground shadow-lg transition-shadow hover:shadow-xl hover:shadow-primary/20 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+          className="fixed bottom-6 right-6 z-[80] h-12 w-12 rounded-2xl shadow-lg transition-shadow hover:shadow-xl hover:shadow-primary/20"
           aria-label={copilotOpen ? "Close AI Copilot" : "Open AI Copilot"}
         >
           <span className="sr-only">{copilotOpen ? "Close AI Copilot" : "Open AI Copilot"}</span>
           <Sparkles className="mx-auto h-5 w-5" />
-        </button>
+        </Button>
       </div>
     </LayoutContext.Provider>
   );

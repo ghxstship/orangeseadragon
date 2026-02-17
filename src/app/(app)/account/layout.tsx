@@ -12,6 +12,8 @@ import {
   BookOpen,
   Cpu,
   LifeBuoy,
+  Globe,
+  Timer,
 } from "lucide-react";
 
 const accountNavItems = [
@@ -21,6 +23,8 @@ const accountNavItems = [
   { path: "/account/history", label: "History", icon: History },
   { path: "/account/resources", label: "Resources", icon: BookOpen },
   { path: "/account/platform", label: "Platform", icon: Cpu },
+  { path: "/account/settings/client-portal", label: "Client Portal", icon: Globe },
+  { path: "/account/settings/desktop-timer", label: "Desktop Timer", icon: Timer },
   { path: "/account/support", label: "Support", icon: LifeBuoy },
 ];
 

@@ -25,6 +25,7 @@ import { SwitchField } from './SwitchField';
 import { LocationField } from './LocationField';
 import { ColorField } from './ColorField';
 import { TagsField } from './TagsField';
+import { logWarn } from '@/lib/observability';
 // ... import all field types
 
 export const fieldRenderers: Record<FieldType, React.ComponentType<FieldRenderProps>> = {
@@ -92,7 +93,7 @@ export function FieldRenderer(props: FieldRenderProps) {
   const Renderer = fieldRenderers[field.type];
 
   if (!Renderer) {
-    console.warn(`No renderer for field type: ${field.type}`);
+    logWarn('components.fields.index.warn', { message: 'No renderer for field type: ${field.type}' });
     return null;
   }
 

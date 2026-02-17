@@ -6,6 +6,7 @@
  */
 
 import { notificationService } from '../notifications/notificationService';
+import { captureError } from '@/lib/observability';
 
 export interface Incident {
   id: string;
@@ -149,7 +150,7 @@ class EscalationEngine {
         await this.sendNotification(method, step, incident, message);
         notificationsSent++;
       } catch (error) {
-        console.error(`Failed to send ${method} notification:`, error);
+        captureError(error, 'escalation.notification.sendFailed', { method });
       }
     }
 

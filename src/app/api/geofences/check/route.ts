@@ -2,11 +2,12 @@
 // Check if a location is within any configured geofence
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
       matches: matches.map((m) => ({ id: m.id, name: m.name, type: m.location_type })),
     });
   } catch (err) {
-    console.error('[Geofence Check] error:', err);
+    captureError(err, 'api.geofences.check.error');
     return serverError('Failed to check geofence');
   }
 }

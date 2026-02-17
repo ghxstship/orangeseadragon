@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +14,7 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -26,15 +27,11 @@ export async function GET(request: NextRequest) {
       return badRequest('organization_id is required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00088
-    const rpcParams: Record<string, unknown> = {
+    const { data, error } = await supabase.rpc('report_billable_utilization', {
       p_organization_id: organizationId,
-    };
-    if (startDate) rpcParams.p_start_date = startDate;
-    if (endDate) rpcParams.p_end_date = endDate;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any).rpc('report_billable_utilization', rpcParams);
+      ...(startDate ? { p_start_date: startDate } : {}),
+      ...(endDate ? { p_end_date: endDate } : {}),
+    });
 
     if (error) {
       return supabaseError(error);
@@ -42,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(data);
   } catch (error) {
-    console.error('Error fetching utilization report:', error);
-    return serverError();
+    captureError(error, 'api.reports.utilization.error');
+    return serverError('Failed to load utilization report');
   }
 }

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -68,7 +69,7 @@ export function DetailLayout<T extends object>({
   sidebarContent,
   children,
 }: DetailLayoutProps<T>) {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [sidebarOpen, setSidebarOpen] = React.useState(false);
   
   const detailConfig = schema.layouts.detail;
   const activeTab = currentTab || detailConfig.tabs[0]?.key;
@@ -251,7 +252,7 @@ export function DetailLayout<T extends object>({
           <div className="p-4 sm:p-6">{children}</div>
         </main>
 
-        {/* Sidebar */}
+        {/* Sidebar — desktop only */}
         {detailConfig.sidebar && sidebarContent && sidebarOpen && (
           <aside
             className="border-l bg-muted/30 flex-shrink-0 overflow-auto hidden lg:block"
@@ -261,6 +262,17 @@ export function DetailLayout<T extends object>({
               <div className="p-4">{sidebarContent}</div>
             </ScrollArea>
           </aside>
+        )}
+
+        {/* Sidebar — mobile Sheet */}
+        {detailConfig.sidebar && sidebarContent && (
+          <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+            <SheetContent side="right" className="w-[300px] p-0 lg:hidden">
+              <ScrollArea className="h-full">
+                <div className="p-4">{sidebarContent}</div>
+              </ScrollArea>
+            </SheetContent>
+          </Sheet>
         )}
       </div>
     </div>

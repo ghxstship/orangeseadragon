@@ -358,7 +358,7 @@ export default function InboxPage() {
       <Button
         variant="outline"
         size="icon"
-        onClick={() => router.push('/account/notifications')}
+        onClick={() => router.push('/account/profile?tab=notifications')}
       >
         <Settings className="h-4 w-4" />
       </Button>

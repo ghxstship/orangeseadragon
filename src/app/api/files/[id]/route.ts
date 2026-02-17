@@ -2,14 +2,15 @@
 // File delete API — removes from storage and database
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -46,7 +47,7 @@ export async function DELETE(
 
     return apiSuccess({ deleted: true });
   } catch (err) {
-    console.error('[Files API] DELETE error:', err);
+    captureError(err, 'api.files.id.error');
     return serverError('Failed to delete file');
   }
 }

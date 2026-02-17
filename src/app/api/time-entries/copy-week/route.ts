@@ -2,11 +2,12 @@
 // Copy previous week's time entries to current week
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -22,10 +23,10 @@ export async function POST(request: NextRequest) {
 
     const { data: sourceEntries, error: fetchError } = await supabase
       .from('time_entries')
-      .select('project_id, task_id, description, hours, entry_date')
+      .select('project_id, task_id, description, hours, date, org_id, billable')
       .eq('user_id', user.id)
-      .gte('entry_date', sourceWeekStart)
-      .lt('entry_date', sourceEnd.toISOString().split('T')[0]);
+      .gte('date', sourceWeekStart)
+      .lt('date', sourceEnd.toISOString().split('T')[0]);
 
     if (fetchError) return supabaseError(fetchError);
 
@@ -38,15 +39,18 @@ export async function POST(request: NextRequest) {
     const dayOffset = Math.round((targetDateObj.getTime() - sourceDateObj.getTime()) / (1000 * 60 * 60 * 24));
 
     const newEntries = sourceEntries.map((entry) => {
-      const entryDate = new Date(entry.entry_date);
+      const entryDate = new Date(entry.date);
       entryDate.setDate(entryDate.getDate() + dayOffset);
       return {
         user_id: user.id,
+        org_id: entry.org_id,
         project_id: entry.project_id,
         task_id: entry.task_id,
-        description: entry.description,
+        description: entry.description || '',
         hours: entry.hours,
-        entry_date: entryDate.toISOString().split('T')[0],
+        date: entryDate.toISOString().split('T')[0],
+        status: 'draft',
+        billable: entry.billable ?? true,
       };
     });
 
@@ -58,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ copied: newEntries.length });
   } catch (err) {
-    console.error('[Time Entries Copy] error:', err);
+    captureError(err, 'api.time-entries.copy-week.error');
     return serverError('Failed to copy time entries');
   }
 }

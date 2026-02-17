@@ -38,6 +38,6 @@ export async function POST(request: NextRequest) {
         return apiSuccess(null);
     } catch (error) {
         captureError(error, "api.public.track_click.unhandled_error");
-        return serverError();
+        return serverError('Failed to track click');
     }
 }

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/invoices/check-overdue
@@ -103,7 +104,7 @@ export async function POST(_request: NextRequest) {
             { message: `Marked ${overdueInvoices.length} invoices as overdue`, updated_count: overdueInvoices.length }
         );
     } catch (e) {
-        console.error('[API] Batch overdue check error:', e);
+        captureError(e, 'api.invoices.check-overdue.error');
         return serverError('Batch overdue check failed');
     }
 }

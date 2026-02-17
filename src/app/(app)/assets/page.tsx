@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
@@ -53,14 +54,33 @@ export default function AssetsPage() {
   const router = useRouter();
   useCopilotContext({ module: 'assets' });
 
+  const [stats, setStats] = React.useState({ totalAssets: 0, available: 0, deployed: 0, inMaintenance: 0 });
+  const [statsLoading, setStatsLoading] = React.useState(true);
+
+  const fetchStats = React.useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const res = await fetch('/api/assets/stats');
+      if (res.ok) {
+        const json = await res.json();
+        setStats(json.data);
+      }
+    } catch { /* use defaults */ }
+    setStatsLoading(false);
+  }, []);
+
+  React.useEffect(() => { fetchStats(); }, [fetchStats]);
+
+  const utilization = stats.totalAssets > 0 ? Math.round(((stats.totalAssets - stats.available) / stats.totalAssets) * 100) : 0;
+
   return (
     <PageShell
       title="Assets"
       description="Equipment & logistics management"
       actions={
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon">
-            <RefreshCw className="h-4 w-4" />
+          <Button variant="outline" size="icon" onClick={fetchStats}>
+            <RefreshCw className={`h-4 w-4 ${statsLoading ? 'animate-spin' : ''}`} />
           </Button>
           <Button onClick={() => router.push('/assets/catalog')}>
             <BookOpen className="h-4 w-4 mr-2" />
@@ -71,10 +91,10 @@ export default function AssetsPage() {
       contentClassName="space-y-8"
     >
         <StatGrid columns={4}>
-          <StatCard title="Total Assets" value="1,247" icon={Package} />
-          <StatCard title="Available" value="892" icon={CheckCircle} description="71% utilization" />
-          <StatCard title="Deployed" value="355" icon={Truck} />
-          <StatCard title="In Maintenance" value="23" icon={Wrench} trend={{ value: 3, isPositive: false }} description="from last week" />
+          <StatCard title="Total Assets" value={statsLoading ? '…' : String(stats.totalAssets)} icon={Package} />
+          <StatCard title="Available" value={statsLoading ? '…' : String(stats.available)} icon={CheckCircle} description={`${utilization}% utilization`} />
+          <StatCard title="Deployed" value={statsLoading ? '…' : String(stats.deployed)} icon={Truck} />
+          <StatCard title="In Maintenance" value={statsLoading ? '…' : String(stats.inMaintenance)} icon={Wrench} trend={stats.inMaintenance > 0 ? { value: stats.inMaintenance, isPositive: false } : undefined} />
         </StatGrid>
 
         <div>

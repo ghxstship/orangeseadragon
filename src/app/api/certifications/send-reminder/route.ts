@@ -2,11 +2,12 @@
 // Send certification renewal reminders
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -42,13 +43,13 @@ export async function POST(request: NextRequest) {
         .insert(notifications);
 
       if (insertError) {
-        console.error('[Cert Reminder] Insert error:', insertError);
+        captureError(insertError, 'api.certifications.send-reminder.error');
       }
     }
 
     return apiSuccess({ sent: notifications.length });
   } catch (err) {
-    console.error('[Cert Reminder] error:', err);
+    captureError(err, 'api.certifications.send-reminder.error');
     return serverError('Failed to send reminders');
   }
 }

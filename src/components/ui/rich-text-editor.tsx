@@ -179,7 +179,7 @@ export function RichTextEditor({
             toolbarClassName
           )}
         >
-          {/* Text formatting */}
+          {/* Core formatting — always visible */}
           <ToolbarButton
             icon={Bold}
             label="Bold"
@@ -211,29 +211,7 @@ export function RichTextEditor({
 
           <Separator orientation="vertical" className="h-6 mx-1" />
 
-          {/* Headings */}
-          <ToolbarButton
-            icon={Heading1}
-            label="Heading 1"
-            disabled={disabled}
-            onClick={() => formatBlock("h1")}
-          />
-          <ToolbarButton
-            icon={Heading2}
-            label="Heading 2"
-            disabled={disabled}
-            onClick={() => formatBlock("h2")}
-          />
-          <ToolbarButton
-            icon={Heading3}
-            label="Heading 3"
-            disabled={disabled}
-            onClick={() => formatBlock("h3")}
-          />
-
-          <Separator orientation="vertical" className="h-6 mx-1" />
-
-          {/* Lists */}
+          {/* Lists — always visible */}
           <ToolbarButton
             icon={List}
             label="Bullet List"
@@ -249,45 +227,69 @@ export function RichTextEditor({
             onClick={() => execCommand("insertOrderedList")}
           />
 
-          <Separator orientation="vertical" className="h-6 mx-1" />
+          <Separator orientation="vertical" className="h-6 mx-1 hidden sm:block" />
 
-          {/* Block formatting */}
-          <ToolbarButton
-            icon={Quote}
-            label="Quote"
-            disabled={disabled}
-            onClick={() => formatBlock("blockquote")}
-          />
-          <ToolbarButton
-            icon={Code}
-            label="Code"
-            disabled={disabled}
-            onClick={() => formatBlock("pre")}
-          />
+          {/* Headings — hidden on mobile */}
+          <span className="hidden sm:contents">
+            <ToolbarButton
+              icon={Heading1}
+              label="Heading 1"
+              disabled={disabled}
+              onClick={() => formatBlock("h1")}
+            />
+            <ToolbarButton
+              icon={Heading2}
+              label="Heading 2"
+              disabled={disabled}
+              onClick={() => formatBlock("h2")}
+            />
+            <ToolbarButton
+              icon={Heading3}
+              label="Heading 3"
+              disabled={disabled}
+              onClick={() => formatBlock("h3")}
+            />
 
-          <Separator orientation="vertical" className="h-6 mx-1" />
+            <Separator orientation="vertical" className="h-6 mx-1" />
 
-          {/* Alignment */}
-          <ToolbarButton
-            icon={AlignLeft}
-            label="Align Left"
-            disabled={disabled}
-            onClick={() => execCommand("justifyLeft")}
-          />
-          <ToolbarButton
-            icon={AlignCenter}
-            label="Align Center"
-            disabled={disabled}
-            onClick={() => execCommand("justifyCenter")}
-          />
-          <ToolbarButton
-            icon={AlignRight}
-            label="Align Right"
-            disabled={disabled}
-            onClick={() => execCommand("justifyRight")}
-          />
+            {/* Block formatting */}
+            <ToolbarButton
+              icon={Quote}
+              label="Quote"
+              disabled={disabled}
+              onClick={() => formatBlock("blockquote")}
+            />
+            <ToolbarButton
+              icon={Code}
+              label="Code"
+              disabled={disabled}
+              onClick={() => formatBlock("pre")}
+            />
 
-          <Separator orientation="vertical" className="h-6 mx-1" />
+            <Separator orientation="vertical" className="h-6 mx-1" />
+
+            {/* Alignment */}
+            <ToolbarButton
+              icon={AlignLeft}
+              label="Align Left"
+              disabled={disabled}
+              onClick={() => execCommand("justifyLeft")}
+            />
+            <ToolbarButton
+              icon={AlignCenter}
+              label="Align Center"
+              disabled={disabled}
+              onClick={() => execCommand("justifyCenter")}
+            />
+            <ToolbarButton
+              icon={AlignRight}
+              label="Align Right"
+              disabled={disabled}
+              onClick={() => execCommand("justifyRight")}
+            />
+
+            <Separator orientation="vertical" className="h-6 mx-1" />
+          </span>
 
           {/* Link */}
           <Popover open={linkPopoverOpen} onOpenChange={setLinkPopoverOpen}>
@@ -340,12 +342,14 @@ export function RichTextEditor({
             disabled={disabled}
             onClick={() => execCommand("redo")}
           />
-          <ToolbarButton
-            icon={RemoveFormatting}
-            label="Clear Formatting"
-            disabled={disabled}
-            onClick={() => execCommand("removeFormat")}
-          />
+          <span className="hidden sm:inline-flex">
+            <ToolbarButton
+              icon={RemoveFormatting}
+              label="Clear Formatting"
+              disabled={disabled}
+              onClick={() => execCommand("removeFormat")}
+            />
+          </span>
         </div>
       )}
 

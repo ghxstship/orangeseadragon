@@ -1,11 +1,12 @@
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -64,7 +65,7 @@ export async function GET() {
       isOnBreak: !!activeBreak,
     });
   } catch (error) {
-    console.error('Error fetching active entry:', error);
+    captureError(error, 'api.time-entries.active.error');
     return serverError('Failed to fetch active time entry');
   }
 }

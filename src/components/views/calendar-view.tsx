@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 import {
   ChevronLeft,
   ChevronRight,
@@ -91,7 +92,16 @@ export function CalendarView({
   showNavigation = true,
 }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = React.useState(selectedDate);
+  const { isMobile } = useBreakpoint();
   const [currentView, setCurrentView] = React.useState<CalendarViewMode>(view);
+
+  // Auto-switch to agenda on mobile
+  React.useEffect(() => {
+    if (isMobile && currentView === 'month') {
+      setCurrentView('agenda');
+      onViewChange?.('agenda');
+    }
+  }, [isMobile]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleViewChange = (newView: CalendarViewMode) => {
     setCurrentView(newView);
@@ -162,11 +172,11 @@ export function CalendarView({
   return (
     <Card className={cn("w-full", className)}>
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2 sm:gap-4">
             {showNavigation && (
               <>
-                <Button variant="outline" size="sm" onClick={() => handleNavigate("today")}>
+                <Button variant="outline" size="sm" onClick={() => handleNavigate("today")} className="hidden sm:inline-flex">
                   Today
                 </Button>
                 <div className="flex items-center gap-1">
@@ -189,13 +199,16 @@ export function CalendarView({
                 </div>
               </>
             )}
-            <CardTitle className="text-lg font-semibold">{getHeaderText()}</CardTitle>
+            <CardTitle className="text-base font-semibold sm:text-lg truncate">{getHeaderText()}</CardTitle>
           </div>
           
           {showViewSwitcher && (
             <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => handleNavigate("today")} className="sm:hidden">
+                Today
+              </Button>
               <Select value={currentView} onValueChange={(v) => handleViewChange(v as CalendarViewMode)}>
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="w-[110px] sm:w-[120px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -302,7 +315,7 @@ function MonthView({ currentDate, getEventsForDate, onEventClick, onDateClick }:
             <div
               key={day.toISOString()}
               className={cn(
-                "bg-background min-h-[100px] p-2 cursor-pointer hover:bg-muted/50 transition-colors",
+                "bg-background min-h-[60px] sm:min-h-[100px] p-1 sm:p-2 cursor-pointer hover:bg-muted/50 transition-colors",
                 !isCurrentMonth && "text-muted-foreground bg-muted/30"
               )}
               onClick={() => onDateClick?.(day)}

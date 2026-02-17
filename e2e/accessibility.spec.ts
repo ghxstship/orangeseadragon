@@ -21,7 +21,7 @@ async function checkAccessibility(
   url: string,
   description: string
 ) {
-  await page.goto(url, { waitUntil: "networkidle" });
+  await page.goto(url, { waitUntil: "domcontentloaded" });
 
   let AxeBuilder: typeof import("@axe-core/playwright").default;
   try {
@@ -76,7 +76,7 @@ test.describe("Accessibility — Public Pages", () => {
 
 test.describe("Accessibility — Landmarks & Structure", () => {
   test("login page has proper landmark structure", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Must have a main landmark
     const main = page.locator("main, [role='main']");
@@ -84,7 +84,7 @@ test.describe("Accessibility — Landmarks & Structure", () => {
   });
 
   test("skip-nav link exists and targets main content", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Skip-nav link should exist (may be sr-only)
     const skipLink = page.locator("a[href='#main-content']");
@@ -106,7 +106,7 @@ test.describe("Accessibility — Landmarks & Structure", () => {
 
 test.describe("Accessibility — Keyboard Navigation", () => {
   test("login form is keyboard navigable", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Tab through form elements
     await page.keyboard.press("Tab");
@@ -126,7 +126,7 @@ test.describe("Accessibility — Keyboard Navigation", () => {
 
 test.describe("Accessibility — Color Contrast", () => {
   test("login page has sufficient color contrast", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     let AxeBuilder: typeof import("@axe-core/playwright").default;
     try {
@@ -158,7 +158,7 @@ test.describe("Accessibility — Color Contrast", () => {
 
 test.describe("Accessibility — ARIA", () => {
   test("all images have alt text", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     const images = page.locator("img:not([alt])");
     const missingAlt = await images.count();
@@ -167,7 +167,7 @@ test.describe("Accessibility — ARIA", () => {
   });
 
   test("all form inputs have labels", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     let AxeBuilder: typeof import("@axe-core/playwright").default;
     try {
@@ -196,7 +196,7 @@ test.describe("Accessibility — Motion", () => {
   test("respects prefers-reduced-motion", async ({ page }) => {
     // Emulate reduced motion preference
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Verify CSS media query is respected
     const hasReducedMotion = await page.evaluate(() => {
@@ -220,7 +220,7 @@ test.describe("Accessibility — Authenticated Pages", () => {
   });
 
   test.skip("app shell has proper landmarks", async ({ page }) => {
-    await page.goto("/core/dashboard", { waitUntil: "networkidle" });
+    await page.goto("/core/dashboard", { waitUntil: "domcontentloaded" });
 
     // Header landmark
     const header = page.locator("header[role='banner'], header");
@@ -236,7 +236,7 @@ test.describe("Accessibility — Authenticated Pages", () => {
   });
 
   test.skip("skip-nav link works in app shell", async ({ page }) => {
-    await page.goto("/core/dashboard", { waitUntil: "networkidle" });
+    await page.goto("/core/dashboard", { waitUntil: "domcontentloaded" });
 
     // Focus the skip link
     const skipLink = page.locator("a[href='#main-content']");

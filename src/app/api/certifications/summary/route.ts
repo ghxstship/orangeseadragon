@@ -1,11 +1,12 @@
 // /app/api/certifications/summary/route.ts
 // Certification compliance summary stats
 
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET() {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -34,7 +35,7 @@ export async function GET() {
       complianceRate: total > 0 ? Math.round((compliant / total) * 100) : 100,
     });
   } catch (err) {
-    console.error('[Certifications Summary] error:', err);
+    captureError(err, 'api.certifications.summary.error');
     return serverError('Failed to fetch certification summary');
   }
 }

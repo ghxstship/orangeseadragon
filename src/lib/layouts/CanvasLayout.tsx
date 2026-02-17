@@ -3,8 +3,16 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   ZoomIn,
   ZoomOut,
@@ -16,6 +24,8 @@ import {
   Undo,
   Redo,
   Save,
+  MoreHorizontal,
+  PanelRight,
 } from "lucide-react";
 import type { CanvasLayoutConfig } from "./types";
 
@@ -84,6 +94,9 @@ export function CanvasLayout({
   children,
 }: CanvasLayoutProps) {
   const canvasRef = React.useRef<HTMLDivElement>(null);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = React.useState(false);
+
+  const mobileSidebarSide = config.sidebar?.position === 'left' ? 'left' : 'right';
 
   const handleZoomIn = React.useCallback(() => {
     const newZoom = Math.min(zoom + 10, config.canvas?.maxZoom || 200);
@@ -168,12 +181,12 @@ export function CanvasLayout({
     <div className="flex flex-col h-full bg-background">
       {/* Toolbar */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-4 py-2">
-          <div className="flex items-center gap-4">
-            <h1 className="text-lg font-semibold">{config.title}</h1>
+        <div className="flex items-center justify-between px-3 py-2 sm:px-4 gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <h1 className="text-base font-semibold sm:text-lg truncate">{config.title}</h1>
             
             {/* Tool Selection */}
-            <div className="flex items-center border rounded-md">
+            <div className="flex items-center border rounded-md flex-shrink-0">
               <Button
                 variant={tool === 'select' ? 'secondary' : 'ghost'}
                 size="sm"
@@ -203,8 +216,8 @@ export function CanvasLayout({
               </Button>
             </div>
 
-            {/* Undo/Redo */}
-            <div className="flex items-center gap-1">
+            {/* Undo/Redo — hidden on mobile */}
+            <div className="hidden sm:flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="icon"
@@ -228,20 +241,20 @@ export function CanvasLayout({
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Grid Toggle */}
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+            {/* Grid Toggle — hidden on mobile */}
             <Button
               variant={showGrid ? 'secondary' : 'ghost'}
               size="icon"
-              className="h-8 w-8"
+              className="h-8 w-8 hidden sm:inline-flex"
               onClick={onToggleGrid}
               title="Toggle Grid (G)"
             >
               <Grid3X3 className="h-4 w-4" />
             </Button>
 
-            {/* Zoom Controls */}
-            <div className="flex items-center gap-2">
+            {/* Zoom Controls — compact on mobile */}
+            <div className="flex items-center gap-1 sm:gap-2">
               <Button
                 variant="ghost"
                 size="icon"
@@ -251,7 +264,7 @@ export function CanvasLayout({
               >
                 <ZoomOut className="h-4 w-4" />
               </Button>
-              <div className="w-24">
+              <div className="w-24 hidden md:block">
                 <Slider
                   value={[zoom]}
                   min={config.canvas?.minZoom || 25}
@@ -260,7 +273,7 @@ export function CanvasLayout({
                   onValueChange={([v]) => onZoomChange?.(v)}
                 />
               </div>
-              <span className="text-sm w-12 text-center">{zoom}%</span>
+              <span className="text-xs sm:text-sm w-10 sm:w-12 text-center font-mono">{zoom}%</span>
               <Button
                 variant="ghost"
                 size="icon"
@@ -273,7 +286,7 @@ export function CanvasLayout({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="h-8 w-8 hidden sm:inline-flex"
                 onClick={handleFitToScreen}
                 title="Fit to Screen (⌘0)"
               >
@@ -281,11 +294,48 @@ export function CanvasLayout({
               </Button>
             </div>
 
+            {/* Mobile overflow menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 sm:hidden">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={onUndo} disabled={!canUndo}>
+                  <Undo className="h-4 w-4 mr-2" />
+                  Undo
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onRedo} disabled={!canRedo}>
+                  <Redo className="h-4 w-4 mr-2" />
+                  Redo
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onToggleGrid}>
+                  <Grid3X3 className="h-4 w-4 mr-2" />
+                  {showGrid ? 'Hide Grid' : 'Show Grid'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleFitToScreen}>
+                  <Maximize2 className="h-4 w-4 mr-2" />
+                  Fit to Screen
+                </DropdownMenuItem>
+                {config.sidebar?.enabled && sidebarContent && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setMobileSidebarOpen(true)}>
+                      <PanelRight className="h-4 w-4 mr-2" />
+                      Sidebar
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             {/* Save */}
             {onSave && (
               <Button size="sm" onClick={onSave} disabled={!isDirty}>
-                <Save className="h-4 w-4 mr-2" />
-                Save
+                <Save className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Save</span>
               </Button>
             )}
           </div>
@@ -297,7 +347,7 @@ export function CanvasLayout({
         {/* Left Sidebar */}
         {config.sidebar?.position === 'left' && config.sidebar.enabled && sidebarContent && (
           <aside
-            className="border-r bg-muted/30 flex-shrink-0 overflow-auto"
+            className="border-r bg-muted/30 flex-shrink-0 overflow-auto hidden md:block"
             style={getCanvasSidebarWidthStyle(config.sidebar.width)}
           >
             <div className="p-4">{sidebarContent}</div>
@@ -325,11 +375,20 @@ export function CanvasLayout({
         {/* Right Sidebar */}
         {config.sidebar?.position === 'right' && config.sidebar.enabled && sidebarContent && (
           <aside
-            className="border-l bg-muted/30 flex-shrink-0 overflow-auto"
+            className="border-l bg-muted/30 flex-shrink-0 overflow-auto hidden md:block"
             style={getCanvasSidebarWidthStyle(config.sidebar.width)}
           >
             <div className="p-4">{sidebarContent}</div>
           </aside>
+        )}
+
+        {/* Mobile Sidebar Sheet */}
+        {config.sidebar?.enabled && sidebarContent && (
+          <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+            <SheetContent side={mobileSidebarSide} className="p-0 md:hidden">
+              <div className="h-full overflow-auto p-4">{sidebarContent}</div>
+            </SheetContent>
+          </Sheet>
         )}
       </div>
     </div>

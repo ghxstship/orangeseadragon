@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { invoiceSchema } from '@/lib/schemas/invoice';
+import { invoiceLineItemSchema } from '@/lib/schemas/invoiceLineItem';
 
 export default function InvoiceLineItemsPage() {
-  return <CrudList schema={invoiceSchema} />;
+  return <CrudList schema={invoiceLineItemSchema} />;
 }

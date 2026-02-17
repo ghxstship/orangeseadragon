@@ -232,6 +232,14 @@ export { emailTemplateSchema } from './emailTemplate';
 export { brandAssetSchema } from './brandAsset';
 export { creditNoteSchema } from './creditNote';
 
+// Gap analysis remediation schema exports
+export { productSchema } from './product';
+export { budgetLineItemSchema } from './budgetLineItem';
+export { payrollDeductionSchema } from './payrollDeduction';
+export { payrollRateSchema } from './payrollRate';
+export { payStubSchema } from './payStub';
+export { weatherAlertSchema } from './weatherAlert';
+
 // Re-export the canonical EntitySchema type from schema/types
 export type { EntitySchema } from '@/lib/schema/types';
 
@@ -374,6 +382,14 @@ import { activitySchema } from './activity';
 import { emailTemplateSchema } from './emailTemplate';
 import { brandAssetSchema } from './brandAsset';
 import { creditNoteSchema } from './creditNote';
+
+// Gap analysis remediation schema imports
+import { productSchema } from './product';
+import { budgetLineItemSchema } from './budgetLineItem';
+import { payrollDeductionSchema } from './payrollDeduction';
+import { payrollRateSchema } from './payrollRate';
+import { payStubSchema } from './payStub';
+import { weatherAlertSchema } from './weatherAlert';
 
 // Network module enhancement schemas
 import { messageSchema } from './message';
@@ -844,6 +860,28 @@ export function getSchema(entityName: string) {
     fiscalYear: fiscalYearSchema,
     'fiscal-years': fiscalYearSchema,
     fiscal_years: fiscalYearSchema,
+    // Gap analysis remediation schemas
+    product: productSchema,
+    products: productSchema,
+    budgetLineItem: budgetLineItemSchema,
+    'budget-line-items': budgetLineItemSchema,
+    budget_line_items: budgetLineItemSchema,
+    payrollDeduction: payrollDeductionSchema,
+    'payroll-deductions': payrollDeductionSchema,
+    payroll_deductions: payrollDeductionSchema,
+    deductions: payrollDeductionSchema,
+    payrollRate: payrollRateSchema,
+    'payroll-rates': payrollRateSchema,
+    payroll_rates: payrollRateSchema,
+    'pay-rates': payrollRateSchema,
+    payStub: payStubSchema,
+    'pay-stubs': payStubSchema,
+    pay_stubs: payStubSchema,
+    stubs: payStubSchema,
+    weatherAlert: weatherAlertSchema,
+    'weather-alerts': weatherAlertSchema,
+    weather_alerts: weatherAlertSchema,
+    weather: weatherAlertSchema,
   };
 
   return schemas[entityName] || null;

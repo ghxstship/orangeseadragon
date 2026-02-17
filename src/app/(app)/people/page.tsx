@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
@@ -58,14 +59,31 @@ export default function PeoplePage() {
   const router = useRouter();
   useCopilotContext({ module: 'people' });
 
+  const [stats, setStats] = React.useState({ totalStaff: 0, availableNow: 0, onAssignment: 0, pendingOnboard: 0 });
+  const [statsLoading, setStatsLoading] = React.useState(true);
+
+  const fetchStats = React.useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const res = await fetch('/api/people/stats');
+      if (res.ok) {
+        const json = await res.json();
+        setStats(json.data);
+      }
+    } catch { /* use defaults */ }
+    setStatsLoading(false);
+  }, []);
+
+  React.useEffect(() => { fetchStats(); }, [fetchStats]);
+
   return (
     <PageShell
       title="People"
       description="Human resources management"
       actions={
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon">
-            <RefreshCw className="h-4 w-4" />
+          <Button variant="outline" size="icon" onClick={fetchStats}>
+            <RefreshCw className={`h-4 w-4 ${statsLoading ? 'animate-spin' : ''}`} />
           </Button>
           <Button onClick={() => router.push('/people/rosters')}>
             <Users className="h-4 w-4 mr-2" />
@@ -77,10 +95,10 @@ export default function PeoplePage() {
     >
         {/* KPI Stats */}
         <StatGrid columns={4}>
-          <StatCard title="Total Staff" value="245" icon={Users} />
-          <StatCard title="Available Now" value="89" icon={UserCheck} />
-          <StatCard title="On Assignment" value="156" icon={Briefcase} />
-          <StatCard title="Pending Onboard" value="12" icon={UserPlus} trend={{ value: 12, isPositive: true }} />
+          <StatCard title="Total Staff" value={statsLoading ? '…' : String(stats.totalStaff)} icon={Users} />
+          <StatCard title="Available Now" value={statsLoading ? '…' : String(stats.availableNow)} icon={UserCheck} />
+          <StatCard title="On Assignment" value={statsLoading ? '…' : String(stats.onAssignment)} icon={Briefcase} />
+          <StatCard title="Pending Onboard" value={statsLoading ? '…' : String(stats.pendingOnboard)} icon={UserPlus} trend={stats.pendingOnboard > 0 ? { value: stats.pendingOnboard, isPositive: true } : undefined} />
         </StatGrid>
 
         {/* Navigation Cards */}

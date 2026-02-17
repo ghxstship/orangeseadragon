@@ -1,12 +1,13 @@
 import { NextRequest } from "next/server";
-import { requireAuth } from "@/lib/api/guard";
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, notFound, supabaseError, serverError } from "@/lib/api/response";
+import { captureError } from '@/lib/observability';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { user, supabase } = auth;
   const { id } = await params;
@@ -69,7 +70,7 @@ export async function POST(
       sourceId,
     });
   } catch (error) {
-    console.error("Failed to approve:", error);
+    captureError(error, 'api.inbox.id.approve.error');
     return serverError('Failed to process approval');
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/venues/:id/check-availability
@@ -13,7 +14,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -24,8 +25,7 @@ export async function POST(
       return badRequest('start_date, end_date, and organization_id are required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00087
-    const { data, error } = await (supabase as any).rpc('check_venue_availability', {
+    const { data, error } = await supabase.rpc('check_venue_availability', {
       p_venue_id: venueId,
       p_start_date: start_date,
       p_end_date: end_date,
@@ -38,7 +38,7 @@ export async function POST(
 
     return apiSuccess(data?.[0] || data);
   } catch (error) {
-    console.error('Error checking venue availability:', error);
-    return serverError();
+    captureError(error, 'api.venues.id.check-availability.error');
+    return serverError('Failed to check venue availability');
   }
 }

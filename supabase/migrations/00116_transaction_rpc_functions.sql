@@ -164,7 +164,7 @@ END;
 $$;
 
 -- Grant execute to authenticated users (RLS on underlying tables still applies via SECURITY DEFINER)
-GRANT EXECUTE ON FUNCTION public.convert_deal_to_project TO authenticated;
+GRANT EXECUTE ON FUNCTION public.convert_deal_to_project(UUID, UUID, TEXT, BOOLEAN, UUID) TO authenticated;
 
 
 -- ============================================================================
@@ -255,4 +255,4 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.submit_expense_for_approval TO authenticated;
+GRANT EXECUTE ON FUNCTION public.submit_expense_for_approval(UUID, UUID) TO authenticated;

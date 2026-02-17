@@ -47,8 +47,7 @@ export async function POST(
     }
 
     // Create delivery record
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; table exists in migration 00086
-    const { data: delivery, error: deliveryError } = await (supabase as any)
+    const { data: delivery, error: deliveryError } = await supabase
       .from('invoice_deliveries')
       .insert({
         organization_id: invoice.organization_id,
@@ -79,13 +78,13 @@ export async function POST(
         .eq('id', invoiceId);
     }
 
-    // Log activity — cast to any because 'activities' in generated types maps to CRM activities, not the general activity feed
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase as any).from('activity_feed').insert({
+    await supabase.from('activity_feed').insert({
+      organization_id: invoice.organization_id,
       actor_id: user.id,
-      action: 'invoice_sent',
-      target_type: 'invoice',
-      target_id: invoiceId,
+      activity_type: 'invoice_sent',
+      title: `Invoice ${invoice.invoice_number} sent`,
+      entity_type: 'invoice',
+      entity_id: invoiceId,
       metadata: { recipient_email, invoice_number: invoice.invoice_number },
     });
 
@@ -96,6 +95,6 @@ export async function POST(
   } catch (error) {
     const invoiceIdForLog = (await params).id;
     captureError(error, 'api.invoice_send.unhandled', { invoice_id: invoiceIdForLog });
-    return serverError();
+    return serverError('Failed to send invoice');
   }
 }

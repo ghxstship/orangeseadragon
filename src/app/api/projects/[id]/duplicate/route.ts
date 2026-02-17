@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/projects/[id]/duplicate
@@ -13,7 +14,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -207,7 +208,7 @@ export async function POST(
       message: 'Project duplicated successfully',
     });
   } catch (e) {
-    console.error('[API] Project duplication error:', e);
+    captureError(e, 'api.projects.id.duplicate.error');
     return serverError('Duplication failed');
   }
 }

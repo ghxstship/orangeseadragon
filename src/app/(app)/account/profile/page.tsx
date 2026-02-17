@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SettingsTemplate, SettingsTab } from '@/components/templates/SettingsTemplate';
 import { createClient } from '@/lib/supabase/client';
 
@@ -119,6 +121,17 @@ const profileTabs: SettingsTab[] = [
 ];
 
 export default function ProfileSettingsPage() {
+  const searchParams = useSearchParams();
+
+  const initialTabKey = useMemo(() => {
+    const requestedTab = searchParams.get('tab');
+    if (!requestedTab) return undefined;
+
+    return profileTabs.some((tab) => tab.key === requestedTab)
+      ? requestedTab
+      : undefined;
+  }, [searchParams]);
+
   const handleSave = async (data: Record<string, unknown>) => {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -151,6 +164,7 @@ export default function ProfileSettingsPage() {
       title="Profile"
       description="Manage your personal information and preferences"
       tabs={profileTabs}
+      initialTabKey={initialTabKey}
       onSave={handleSave}
     />
   );

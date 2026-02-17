@@ -176,8 +176,8 @@ export function WorkloadView({
   return (
     <Card className={className}>
       <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
             <Users className="h-5 w-5" />
             {title}
           </CardTitle>
@@ -193,7 +193,7 @@ export function WorkloadView({
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs hidden sm:inline-flex">
               {format(startDate, "MMM d")} - {format(endDate, "MMM d, yyyy")}
             </Badge>
           </div>
@@ -204,10 +204,10 @@ export function WorkloadView({
           <table className="w-full border-collapse">
             <thead>
               <tr className="border-b bg-muted/50">
-                <th className="sticky left-0 z-10 bg-muted/50 w-64 p-3 text-left text-sm font-medium">
+                <th className="sticky left-0 z-10 bg-muted/50 min-w-[160px] sm:min-w-[256px] p-3 text-left text-sm font-medium">
                   Resource
                 </th>
-                <th className="w-24 p-3 text-center text-sm font-medium border-l">
+                <th className="min-w-[80px] sm:min-w-[96px] p-3 text-center text-sm font-medium border-l">
                   Utilization
                 </th>
                 {days.map((day) => (
@@ -232,7 +232,7 @@ export function WorkloadView({
                 return (
                   <tr key={resource.id} className="border-b hover:bg-muted/30">
                     <td
-                      className="sticky left-0 z-10 bg-background w-64 p-3 cursor-pointer hover:bg-muted/50"
+                      className="sticky left-0 z-10 bg-background min-w-[160px] sm:min-w-[256px] p-3 cursor-pointer hover:bg-muted/50"
                       onClick={() => onResourceClick?.(resource)}
                     >
                       <div className="flex items-center gap-3">
@@ -256,7 +256,7 @@ export function WorkloadView({
                         </div>
                       </div>
                     </td>
-                    <td className="w-24 p-3 border-l">
+                    <td className="min-w-[80px] sm:min-w-[96px] p-3 border-l">
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -375,7 +375,7 @@ export function WorkloadView({
         </div>
 
         {/* Legend */}
-        <div className="border-t p-3 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="border-t p-3 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <div className="w-3 h-3 rounded bg-semantic-success" />

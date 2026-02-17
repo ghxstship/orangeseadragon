@@ -1,13 +1,14 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -46,7 +47,7 @@ export async function POST(
 
     return apiSuccess(data);
   } catch (error) {
-    console.error('Error completing performance review:', error);
-    return serverError();
+    captureError(error, 'api.performance-reviews.id.complete.error');
+    return serverError('Failed to complete performance review');
   }
 }

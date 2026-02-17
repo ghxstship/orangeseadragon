@@ -1,11 +1,12 @@
 // /app/api/currencies/route.ts
 // Currencies API — list available currencies
 
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET() {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -20,7 +21,7 @@ export async function GET() {
 
     return apiSuccess(data || []);
   } catch (err) {
-    console.error('[Currencies API] error:', err);
+    captureError(err, 'api.currencies.error');
     return serverError('Failed to fetch currencies');
   }
 }

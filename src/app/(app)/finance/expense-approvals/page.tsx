@@ -35,6 +35,75 @@ interface ExpenseApproval {
   notes?: string;
 }
 
+interface ExpenseApprovalApiExpense {
+  id?: string | null;
+  description?: string | null;
+  amount?: number | null;
+  currency?: string | null;
+  category?: string | null;
+  expense_date?: string | null;
+  receipt_url?: string | null;
+}
+
+interface ExpenseApprovalApiRow {
+  id: string;
+  status?: string | null;
+  current_level?: number | null;
+  submitted_at?: string | null;
+  submitted_by?: string | null;
+  notes?: string | null;
+  policy?: {
+    approval_levels?: number | null;
+  } | null;
+  expense?: ExpenseApprovalApiExpense | null;
+}
+
+interface ExpenseApprovalApiResponse {
+  data?: ExpenseApprovalApiRow[];
+}
+
+function normalizeApprovalStatus(status: string | null | undefined): ExpenseApproval['status'] {
+  switch (status) {
+    case 'approved':
+    case 'rejected':
+    case 'cancelled':
+    case 'pending':
+      return status;
+    case 'returned':
+      return 'cancelled';
+    default:
+      return 'pending';
+  }
+}
+
+function mapApprovalToViewModel(row: ExpenseApprovalApiRow): ExpenseApproval {
+  const submittedAt = row.submitted_at || new Date().toISOString();
+  const expenseDate = row.expense?.expense_date || submittedAt;
+
+  return {
+    id: row.id,
+    expense: {
+      id: row.expense?.id || row.id,
+      description: row.expense?.description || 'Untitled expense',
+      amount: row.expense?.amount ?? 0,
+      currency: row.expense?.currency || 'USD',
+      category: row.expense?.category || 'Uncategorized',
+      date: expenseDate,
+      receiptUrl: row.expense?.receipt_url || undefined,
+    },
+    submittedBy: {
+      id: row.submitted_by || 'unknown',
+      name: 'Unknown submitter',
+      email: '',
+    },
+    submittedAt,
+    currentLevel: row.current_level ?? 1,
+    totalLevels: row.policy?.approval_levels ?? 1,
+    status: normalizeApprovalStatus(row.status),
+    notes: row.notes || undefined,
+  };
+}
+
 export default function ExpenseApprovalsPage() {
   const [approvals, setApprovals] = useState<ExpenseApproval[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,8 +121,11 @@ export default function ExpenseApprovalsPage() {
     try {
       const response = await fetch('/api/expense-approval-requests');
       if (response.ok) {
-        const data = await response.json();
-        setApprovals(data);
+        const payload: ExpenseApprovalApiResponse = await response.json();
+        const nextApprovals = (Array.isArray(payload.data) ? payload.data : []).map(
+          mapApprovalToViewModel
+        );
+        setApprovals(nextApprovals);
       }
     } catch (error) {
       console.error('Error fetching approvals:', error);
@@ -66,7 +138,7 @@ export default function ExpenseApprovalsPage() {
     const response = await fetch('/api/expense-approval-requests/approve', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requestId: id, comments }),
+      body: JSON.stringify({ id, comments }),
     });
 
     if (!response.ok) {
@@ -82,7 +154,7 @@ export default function ExpenseApprovalsPage() {
     const response = await fetch('/api/expense-approval-requests/reject', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requestId: id, reason }),
+      body: JSON.stringify({ id, reason }),
     });
 
     if (!response.ok) {
@@ -98,7 +170,7 @@ export default function ExpenseApprovalsPage() {
     const response = await fetch('/api/expense-approval-requests/return', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requestId: id, comments }),
+      body: JSON.stringify({ id, reason: comments }),
     });
 
     if (!response.ok) {
@@ -118,7 +190,7 @@ export default function ExpenseApprovalsPage() {
       const response = await fetch('/api/expense-approval-requests/bulk-approve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requestIds: selectedIds }),
+        body: JSON.stringify({ ids: selectedIds }),
       });
 
       if (response.ok) {

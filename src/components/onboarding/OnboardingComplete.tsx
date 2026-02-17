@@ -19,7 +19,7 @@ export function OnboardingComplete({ user, accountType, onComplete }: Onboarding
     if (onComplete) {
       onComplete();
     } else {
-      router.push('/dashboard');
+      router.push('/core/dashboard');
     }
   };
 

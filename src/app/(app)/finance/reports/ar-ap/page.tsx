@@ -1,10 +1,16 @@
 'use client';
 
+import { PageShell } from '@/components/common/page-shell';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+
 export default function ArApReportPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">AR/AP Report</h1>
-      <p className="text-muted-foreground">Accounts Receivable/Payable reporting coming soon.</p>
-    </div>
+    <PageShell title="AR/AP Report" description="Accounts receivable and payable aging">
+      <ContextualEmptyState
+        type="first-time"
+        title="AR/AP Report coming soon"
+        description="Accounts receivable and payable reporting is under development."
+      />
+    </PageShell>
   );
 }

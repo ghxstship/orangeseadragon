@@ -2,11 +2,12 @@
 // Comments API for entity detail tabs
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -42,13 +43,13 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess({ items });
   } catch (err) {
-    console.error('[Comments API] GET error:', err);
+    captureError(err, 'api.comments.error');
     return serverError('Failed to fetch comments');
   }
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ id: data.id });
   } catch (err) {
-    console.error('[Comments API] POST error:', err);
+    captureError(err, 'api.comments.error');
     return serverError('Failed to create comment');
   }
 }

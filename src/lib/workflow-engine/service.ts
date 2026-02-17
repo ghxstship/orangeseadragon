@@ -512,7 +512,7 @@ export class WorkflowService {
       try {
         await handler(event);
       } catch (error) {
-        console.error(`Error in event handler for ${type}:`, error);
+        captureError(error, 'workflow.eventHandler.error', { eventType: type });
       }
     }
   }

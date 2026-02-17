@@ -2,33 +2,34 @@
 // Return an expense approval request for revision
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { resolveApprovalComments, resolveApprovalRequestId } from '@/lib/expense-approvals/action-payload';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { supabase, user } = auth;
+  const { supabase } = auth;
 
   try {
-    const { id, reason } = await request.json();
-    if (!id) return badRequest('id is required');
+    const payload = await request.json();
+    const approvalRequestId = resolveApprovalRequestId(payload);
+    if (!approvalRequestId) return badRequest('id is required');
+    const returnReason = resolveApprovalComments(payload);
 
-    const { error } = await supabase
-      .from('expense_approval_requests')
-      .update({
-        status: 'returned',
-        returned_by: user.id,
-        returned_at: new Date().toISOString(),
-        return_reason: reason || null,
-      })
-      .eq('id', id);
+    // Use canonical workflow function to keep expense/request/action state consistent.
+    const { error } = await supabase.rpc('process_expense_approval', {
+      p_request_id: approvalRequestId,
+      p_action: 'returned',
+      p_comments: returnReason,
+    });
 
     if (error) return supabaseError(error);
 
-    return apiSuccess({ returned: true });
+    return apiSuccess({ returned: true, status: 'cancelled' });
   } catch (err) {
-    console.error('[Expense Return] error:', err);
+    captureError(err, 'api.expense-approval-requests.return.error');
     return serverError('Failed to return expense');
   }
 }

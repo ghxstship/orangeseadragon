@@ -1,10 +1,16 @@
 'use client';
 
+import { PageShell } from '@/components/common/page-shell';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+
 export default function CashFlowReportPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Cash Flow Report</h1>
-      <p className="text-muted-foreground">Cash flow reporting coming soon.</p>
-    </div>
+    <PageShell title="Cash Flow Report" description="Track cash inflows and outflows">
+      <ContextualEmptyState
+        type="first-time"
+        title="Cash Flow Report coming soon"
+        description="Cash flow analysis and reporting is under development."
+      />
+    </PageShell>
   );
 }

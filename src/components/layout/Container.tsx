@@ -11,7 +11,7 @@ interface ContainerProps {
 export function Container({
   children,
   className,
-  maxWidth = 'max-w-7xl',
+  maxWidth = 'max-w-full sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-7xl',
   padding = 'px-4 sm:px-6 lg:px-8'
 }: ContainerProps) {
   return (

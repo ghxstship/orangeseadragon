@@ -1,10 +1,16 @@
 'use client';
 
+import { PageShell } from '@/components/common/page-shell';
+import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+
 export default function PnLReportPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Profit & Loss Report</h1>
-      <p className="text-muted-foreground">Financial P&L reporting coming soon.</p>
-    </div>
+    <PageShell title="Profit & Loss Report" description="Revenue, expenses, and net income summary">
+      <ContextualEmptyState
+        type="first-time"
+        title="P&L Report coming soon"
+        description="Financial profit and loss reporting is under development."
+      />
+    </PageShell>
   );
 }

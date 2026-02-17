@@ -2,11 +2,12 @@
 // Advancing approvals — list and manage advance approval requests
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -37,13 +38,13 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(data || []);
   } catch (err) {
-    console.error('[Advancing Approvals] GET error:', err);
+    captureError(err, 'api.advancing.approvals.error');
     return serverError('Failed to fetch advance approvals');
   }
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ action, advanceId });
   } catch (err) {
-    console.error('[Advancing Approvals] POST error:', err);
+    captureError(err, 'api.advancing.approvals.error');
     return serverError('Failed to process approval');
   }
 }

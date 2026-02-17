@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiCreated, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (messageError) {
-      console.error('Error creating email message:', messageError);
+      captureError(messageError, 'api.emails.send.error');
       return supabaseError(messageError);
     }
 
@@ -90,7 +91,7 @@ export async function POST(request: NextRequest) {
       .eq('id', message.id);
 
     if (updateError) {
-      console.error('Error updating email status:', updateError);
+      captureError(updateError, 'api.emails.send.error');
     }
 
     // Create tracking event
@@ -106,8 +107,8 @@ export async function POST(request: NextRequest) {
     }, { message: 'Email sent successfully' });
 
   } catch (error) {
-    console.error('Error in email send API:', error);
-    return serverError();
+    captureError(error, 'api.emails.send.error');
+    return serverError('Failed to send email');
   }
 }
 

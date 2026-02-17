@@ -11,109 +11,193 @@ import {
   Archive,
   MoreHorizontal,
   Circle,
-  ChevronRight,
+  RefreshCw,
+  Loader2,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 
-interface Thread {
+interface Conversation {
   id: string;
-  subject: string;
-  participants: string[];
-  lastMessage: string;
-  timestamp: string;
-  unread: boolean;
-  starred: boolean;
-  linkedRecord?: { type: string; name: string };
+  name: string | null;
+  type: string;
+  participant_ids: string[];
+  last_message_at: string | null;
+  last_message_preview: string | null;
+  is_archived: boolean;
+  is_starred: boolean;
+  is_read: boolean;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
 }
 
-const threads: Thread[] = [
-  {
-    id: '1',
-    subject: 'Budget approval needed for Acme Festival',
-    participants: ['Sarah Chen', 'Mike Torres'],
-    lastMessage: 'Can you review the updated line items? I\'ve adjusted the staging costs per our call.',
-    timestamp: '10 min ago',
-    unread: true,
-    starred: true,
-    linkedRecord: { type: 'budget', name: 'Acme Festival 2026' },
-  },
-  {
-    id: '2',
-    subject: 'Crew availability for March dates',
-    participants: ['Alex Rivera', 'Jordan Lee', 'Pat Kim'],
-    lastMessage: 'I\'ve confirmed 8 of the 12 crew members. Still waiting on lighting and rigging leads.',
-    timestamp: '1 hr ago',
-    unread: true,
-    starred: false,
-    linkedRecord: { type: 'project', name: 'TechStart Launch' },
-  },
-  {
-    id: '3',
-    subject: 'Invoice #INV-2026-0042 revision',
-    participants: ['Finance Team'],
-    lastMessage: 'Updated invoice attached with the corrected tax rate. Please review before sending to client.',
-    timestamp: '3 hrs ago',
-    unread: false,
-    starred: false,
-    linkedRecord: { type: 'invoice', name: 'INV-2026-0042' },
-  },
-  {
-    id: '4',
-    subject: 'Venue walkthrough photos',
-    participants: ['Dana Park'],
-    lastMessage: 'Here are the photos from yesterday\'s walkthrough. Loading dock access looks tight for the 53\' trailer.',
-    timestamp: 'Yesterday',
-    unread: false,
-    starred: true,
-    linkedRecord: { type: 'venue', name: 'Convention Center Hall B' },
-  },
-  {
-    id: '5',
-    subject: 'Equipment return checklist',
-    participants: ['Warehouse Team'],
-    lastMessage: 'All items from the GlobalFest show have been checked in. Two LED panels flagged for maintenance.',
-    timestamp: 'Yesterday',
-    unread: false,
-    starred: false,
-    linkedRecord: { type: 'asset', name: 'GlobalFest Equipment' },
-  },
-  {
-    id: '6',
-    subject: 'Weekly production sync notes',
-    participants: ['Production Team'],
-    lastMessage: 'Attached are the notes from today\'s sync. Action items assigned in the linked tasks.',
-    timestamp: '2 days ago',
-    unread: false,
-    starred: false,
-  },
-];
+interface Message {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  message_type: string;
+  attachments: unknown[] | null;
+  created_at: string;
+}
+
+function formatRelativeTime(dateStr: string | null): string {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'Just now';
+  if (diffMin < 60) return `${diffMin} min ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `${diffHr} hr${diffHr > 1 ? 's' : ''} ago`;
+  const diffDays = Math.floor(diffHr / 24);
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return `${diffDays} days ago`;
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function getInitials(name: string | null): string {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
 
 export default function MessagesPage() {
+  const { toast } = useToast();
   const [tab, setTab] = React.useState('inbox');
   const [search, setSearch] = React.useState('');
-  const [selectedThread, setSelectedThread] = React.useState<string | null>(null);
+  const [selectedConversationId, setSelectedConversationId] = React.useState<string | null>(null);
+  const [conversations, setConversations] = React.useState<Conversation[]>([]);
+  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [messagesLoading, setMessagesLoading] = React.useState(false);
+  const [sending, setSending] = React.useState(false);
+  const [composeText, setComposeText] = React.useState('');
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  const fetchConversations = React.useCallback(async () => {
+    try {
+      const archived = tab === 'archived';
+      const res = await fetch(`/api/conversations?archived=${archived}`);
+      if (!res.ok) {
+        setConversations([]);
+        return;
+      }
+      const json = await res.json();
+      setConversations(json.data ?? []);
+    } catch {
+      setConversations([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [tab]);
+
+  React.useEffect(() => {
+    setLoading(true);
+    fetchConversations();
+  }, [fetchConversations]);
+
+  const fetchMessages = React.useCallback(async (conversationId: string) => {
+    setMessagesLoading(true);
+    try {
+      const res = await fetch(`/api/messages?conversation_id=${conversationId}`);
+      if (!res.ok) {
+        setMessages([]);
+        return;
+      }
+      const json = await res.json();
+      setMessages(json.data ?? []);
+    } catch {
+      setMessages([]);
+    } finally {
+      setMessagesLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (selectedConversationId) {
+      fetchMessages(selectedConversationId);
+    } else {
+      setMessages([]);
+    }
+  }, [selectedConversationId, fetchMessages]);
+
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!composeText.trim() || !selectedConversationId) return;
+    setSending(true);
+    try {
+      const res = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: selectedConversationId,
+          content: composeText.trim(),
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        toast({ variant: 'destructive', title: 'Failed to send', description: err?.error?.message || 'Please try again' });
+        return;
+      }
+      setComposeText('');
+      fetchMessages(selectedConversationId);
+      fetchConversations();
+    } catch {
+      toast({ variant: 'destructive', title: 'Network error', description: 'Could not send message' });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleStar = async (conv: Conversation) => {
+    try {
+      await fetch(`/api/[entity]/${conv.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entity: 'conversations', is_starred: !conv.is_starred }),
+      });
+      fetchConversations();
+    } catch { /* silent */ }
+  };
+
+  const handleArchive = async (conv: Conversation) => {
+    try {
+      await fetch(`/api/[entity]/${conv.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entity: 'conversations', is_archived: !conv.is_archived }),
+      });
+      fetchConversations();
+      if (selectedConversationId === conv.id) setSelectedConversationId(null);
+    } catch { /* silent */ }
+  };
 
   const filtered = React.useMemo(() => {
-    let result = threads;
-    if (tab === 'starred') result = result.filter(t => t.starred);
-    if (tab === 'unread') result = result.filter(t => t.unread);
+    let result = conversations;
+    if (tab === 'starred') result = result.filter(c => c.is_starred);
+    if (tab === 'unread') result = result.filter(c => !c.is_read);
     if (search) {
       const q = search.toLowerCase();
-      result = result.filter(t =>
-        t.subject.toLowerCase().includes(q) ||
-        t.lastMessage.toLowerCase().includes(q) ||
-        t.participants.some(p => p.toLowerCase().includes(q))
+      result = result.filter(c =>
+        (c.name ?? '').toLowerCase().includes(q) ||
+        (c.last_message_preview ?? '').toLowerCase().includes(q)
       );
     }
     return result;
-  }, [tab, search]);
+  }, [conversations, tab, search]);
 
-  const selected = threads.find(t => t.id === selectedThread);
+  const unreadCount = conversations.filter(c => !c.is_read).length;
+  const selected = conversations.find(c => c.id === selectedConversationId);
 
   return (
     <div className="flex flex-col h-full">
@@ -123,10 +207,15 @@ export default function MessagesPage() {
             <h1 className="text-2xl font-bold tracking-tight">Messages</h1>
             <p className="text-sm text-muted-foreground mt-1">Internal messaging with threading and record linking</p>
           </div>
-          <Button>
-            <Send className="h-4 w-4 mr-2" />
-            Compose
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" onClick={() => { setLoading(true); fetchConversations(); }}>
+              <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
+            </Button>
+            <Button>
+              <Send className="h-4 w-4 mr-2" />
+              Compose
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -147,9 +236,11 @@ export default function MessagesPage() {
               <TabsList className="w-full">
                 <TabsTrigger value="inbox" className="flex-1">
                   Inbox
-                  <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px]">
-                    {threads.filter(t => t.unread).length}
-                  </Badge>
+                  {unreadCount > 0 && (
+                    <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-[10px]">
+                      {unreadCount}
+                    </Badge>
+                  )}
                 </TabsTrigger>
                 <TabsTrigger value="starred" className="flex-1">Starred</TabsTrigger>
                 <TabsTrigger value="unread" className="flex-1">Unread</TabsTrigger>
@@ -159,46 +250,52 @@ export default function MessagesPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="p-4 space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                 <MessageSquare className="h-8 w-8 mb-2 opacity-30" />
                 <p className="text-sm">No messages</p>
               </div>
             ) : (
-              filtered.map((thread) => (
+              filtered.map((conv) => (
                 <Button
-                  key={thread.id}
+                  key={conv.id}
                   type="button"
                   variant="ghost"
-                  onClick={() => setSelectedThread(thread.id)}
+                  onClick={() => setSelectedConversationId(conv.id)}
                   className={cn(
                     "h-auto w-full justify-start rounded-none text-left px-4 py-3 border-b hover:bg-muted/50 transition-colors",
-                    selectedThread === thread.id && "bg-muted/50",
-                    thread.unread && "bg-primary/5"
+                    selectedConversationId === conv.id && "bg-muted/50",
+                    !conv.is_read && "bg-primary/5"
                   )}
                 >
                   <div className="flex items-start gap-2">
-                    {thread.unread && (
+                    {!conv.is_read && (
                       <Circle className="h-2 w-2 mt-2 fill-primary text-primary flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-0.5">
-                        <span className={cn("text-sm truncate", thread.unread && "font-bold")}>
-                          {thread.participants.join(', ')}
+                        <span className={cn("text-sm truncate", !conv.is_read && "font-bold")}>
+                          {conv.name || 'Direct Message'}
                         </span>
-                        <span className="text-[10px] text-muted-foreground flex-shrink-0 ml-2">{thread.timestamp}</span>
+                        <span className="text-[10px] text-muted-foreground flex-shrink-0 ml-2">
+                          {formatRelativeTime(conv.last_message_at)}
+                        </span>
                       </div>
-                      <p className={cn("text-sm truncate", thread.unread ? "font-semibold" : "text-muted-foreground")}>
-                        {thread.subject}
+                      <p className="text-xs text-muted-foreground truncate mt-0.5">
+                        {conv.last_message_preview || 'No messages yet'}
                       </p>
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">{thread.lastMessage}</p>
-                      {thread.linkedRecord && (
-                        <Badge variant="outline" className="mt-1 text-[9px] h-4">
-                          {thread.linkedRecord.type}: {thread.linkedRecord.name}
-                        </Badge>
-                      )}
                     </div>
-                    {thread.starred && <Star className="h-3 w-3 text-semantic-warning fill-current flex-shrink-0 mt-1" />}
+                    {conv.is_starred && <Star className="h-3 w-3 text-semantic-warning fill-current flex-shrink-0 mt-1" />}
                   </div>
                 </Button>
               ))
@@ -212,21 +309,16 @@ export default function MessagesPage() {
             <>
               <div className="border-b px-6 py-3 flex items-center justify-between">
                 <div>
-                  <h2 className="font-semibold">{selected.subject}</h2>
+                  <h2 className="font-semibold">{selected.name || 'Direct Message'}</h2>
                   <p className="text-xs text-muted-foreground">
-                    {selected.participants.join(', ')}
-                    {selected.linkedRecord && (
-                      <span className="ml-2">
-                        · Linked to <span className="text-primary">{selected.linkedRecord.name}</span>
-                      </span>
-                    )}
+                    {selected.participant_ids.length} participant{selected.participant_ids.length !== 1 ? 's' : ''}
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Star className={cn("h-4 w-4", selected.starred && "text-semantic-warning fill-current")} />
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleStar(selected)}>
+                    <Star className={cn("h-4 w-4", selected.is_starred && "text-semantic-warning fill-current")} />
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleArchive(selected)}>
                     <Archive className="h-4 w-4" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -236,48 +328,65 @@ export default function MessagesPage() {
               </div>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                <Card>
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">
-                          {selected.participants[0]?.split(' ').map(w => w[0]).join('')}
+                {messagesLoading ? (
+                  <div className="space-y-4">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <Card key={i}><CardContent className="p-4"><Skeleton className="h-16 w-full" /></CardContent></Card>
+                    ))}
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+                    <MessageSquare className="h-8 w-8 mb-2 opacity-30" />
+                    <p className="text-sm">No messages yet</p>
+                    <p className="text-xs mt-1">Send the first message below</p>
+                  </div>
+                ) : (
+                  messages.map((msg) => (
+                    <Card key={msg.id}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">
+                              {getInitials(msg.sender_id.slice(0, 4))}
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium">{msg.sender_id.slice(0, 8)}…</p>
+                              <p className="text-[10px] text-muted-foreground">{formatRelativeTime(msg.created_at)}</p>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-medium">{selected.participants[0]}</p>
-                          <p className="text-[10px] text-muted-foreground">{selected.timestamp}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{selected.lastMessage}</p>
-                    {selected.linkedRecord && (
-                      <div className="mt-3 flex items-center gap-2 text-xs text-primary cursor-pointer hover:underline">
-                        <ChevronRight className="h-3 w-3" />
-                        View linked {selected.linkedRecord.type}: {selected.linkedRecord.name}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                        <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+                <div ref={messagesEndRef} />
               </div>
 
               <div className="border-t p-4">
-                <div className="flex items-end gap-2">
+                <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-end gap-2">
                   <div className="flex-1 relative">
-                    <Input placeholder="Type a message..." className="pr-20" />
+                    <Input
+                      placeholder="Type a message..."
+                      className="pr-20"
+                      value={composeText}
+                      onChange={(e) => setComposeText(e.target.value)}
+                      disabled={sending}
+                    />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7">
                         <AtSign className="h-3.5 w-3.5" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
+                      <Button type="button" variant="ghost" size="icon" className="h-7 w-7">
                         <Paperclip className="h-3.5 w-3.5" />
                       </Button>
                     </div>
                   </div>
-                  <Button size="sm">
-                    <Send className="h-3.5 w-3.5 mr-1.5" />
+                  <Button size="sm" type="submit" disabled={sending || !composeText.trim()}>
+                    {sending ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Send className="h-3.5 w-3.5 mr-1.5" />}
                     Send
                   </Button>
-                </div>
+                </form>
               </div>
             </>
           ) : (

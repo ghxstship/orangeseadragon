@@ -35,8 +35,15 @@ export default function DashboardCustomizePage() {
 
   const handleSave = async () => {
     setSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setSaving(false);
+    try {
+      await fetch('/api/settings/dashboard', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ widgets }),
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleReset = () => {
@@ -94,7 +101,7 @@ export default function DashboardCustomizePage() {
             <CardDescription>Preview of your dashboard layout</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-2 grid-cols-4 min-h-[400px] rounded-lg border border-dashed p-4 bg-muted/20">
+            <div className="grid gap-2 grid-cols-2 sm:grid-cols-4 min-h-[400px] rounded-lg border border-dashed p-4 bg-muted/20">
               {widgets.filter(w => w.enabled).map((widget) => (
                 <div
                   key={widget.id}

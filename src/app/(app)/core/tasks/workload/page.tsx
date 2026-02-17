@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 
 interface User {
   id: string;
@@ -36,28 +35,19 @@ export default function WorkloadPage() {
       }
 
       try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from("organization_members")
-          .select(`
-            user_id,
-            user:users!organization_members_user_id_fkey (
-              id, full_name, email, avatar_url
-            )
-          `)
-          .eq("organization_id", organizationId)
-          .eq("status", "active");
+        const response = await fetch(`/api/workload/team-members?organization_id=${organizationId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch team members (${response.status})`);
+        }
 
-        if (error) throw error;
-        const members: User[] = (data ?? []).map((m) => {
-          const u = m.user as unknown as { id: string; full_name: string; email: string; avatar_url: string | null } | null;
-          return {
-            id: u?.id ?? m.user_id,
-            full_name: u?.full_name,
-            email: u?.email,
-            avatar_url: u?.avatar_url ?? undefined,
-          };
-        });
+        const payload = await response.json();
+        const members: User[] = (payload?.data ?? []).map((member: User) => ({
+          id: member.id,
+          full_name: member.full_name,
+          email: member.email,
+          avatar_url: member.avatar_url,
+        }));
+
         setTeamMembers(members);
       } catch (error) {
         console.error("Failed to fetch team members:", error);
@@ -99,7 +89,7 @@ export default function WorkloadPage() {
   }, [teamMembers, tasks]);
 
   const handleMemberClick = (member: TeamMember) => {
-    router.push(`/core/people/${member.id}`);
+    router.push(`/people/rosters/${member.id}`);
   };
 
   const isLoading = tasksLoading || isLoadingMembers;

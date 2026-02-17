@@ -1,8 +1,9 @@
 // /app/api/activity/feed/route.ts
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * ACTIVITY FEED API (SSOT)
@@ -67,7 +68,7 @@ const TYPE_CONFIG: Record<ActivityType, { label: string; icon: string }> = {
 };
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -159,7 +160,7 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error('[Activity Feed API] Query error:', error);
+      captureError(error, 'api.activity.feed.error');
       return supabaseError(error);
     }
 
@@ -208,7 +209,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('[Activity Feed API] Error:', error);
+    captureError(error, 'api.activity.feed.error');
     return serverError('Failed to fetch activity feed');
   }
 }

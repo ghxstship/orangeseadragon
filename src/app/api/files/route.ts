@@ -2,11 +2,12 @@
 // Files API for entity detail tabs — list attached files
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess({ items });
   } catch (err) {
-    console.error('[Files API] GET error:', err);
+    captureError(err, 'api.files.error');
     return serverError('Failed to fetch files');
   }
 }

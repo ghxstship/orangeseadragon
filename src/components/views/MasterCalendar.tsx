@@ -223,9 +223,9 @@ export function MasterCalendar({
   return (
     <div className={cn("space-y-4", className)}>
       {/* Toolbar */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold">Master Calendar</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold">Master Calendar</h1>
           <Badge variant="secondary" className="text-xs">
             {calendarEvents.length} items
           </Badge>
@@ -326,7 +326,7 @@ export function MasterCalendar({
       </div>
 
       {/* Source Legend */}
-      <div className="flex items-center gap-4 flex-wrap text-sm">
+      <div className="flex items-center gap-3 sm:gap-4 flex-wrap text-xs sm:text-sm">
         {data?.sources
           .filter((s) => enabledSources.has(s.type))
           .map((source) => (

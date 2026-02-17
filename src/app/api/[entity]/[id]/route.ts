@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiNoContent, notFound, badRequest, supabaseError, unprocessable } from '@/lib/api/response';
 import { resolveEntityContext } from '@/lib/api/entity-access';
+import { enforceResourceAccess } from '@/lib/api/role-guard';
 import { captureError, extractRequestContext } from '@/lib/observability';
 import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
 import { auditService } from '@/lib/audit/service';
@@ -26,6 +27,10 @@ export async function GET(
 
     const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
+
+    const resourceAccessError = enforceResourceAccess(auth, tableName);
+    if (resourceAccessError) return resourceAccessError;
+
     const { supabase, membership } = auth;
 
     const { data, error } = await supabase
@@ -56,6 +61,10 @@ export async function PATCH(
 
     const auth = await requirePolicy('entity.write');
     if (auth.error) return auth.error;
+
+    const resourceAccessError = enforceResourceAccess(auth, tableName);
+    if (resourceAccessError) return resourceAccessError;
+
     const { supabase, user, membership } = auth;
     const requestContext = extractRequestContext(request.headers);
 
@@ -197,6 +206,10 @@ export async function DELETE(
 
     const auth = await requirePolicy('entity.delete');
     if (auth.error) return auth.error;
+
+    const resourceAccessError = enforceResourceAccess(auth, tableName);
+    if (resourceAccessError) return resourceAccessError;
+
     const { supabase, user, membership } = auth;
     const requestContext = extractRequestContext(request.headers);
 

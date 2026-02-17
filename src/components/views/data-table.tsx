@@ -115,6 +115,10 @@ const getColumnWidthStyle = (width: number): React.CSSProperties => ({
   width,
 });
 
+const getVirtualSpacerHeightStyle = (height: number): React.CSSProperties => ({
+  height,
+});
+
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -399,9 +403,9 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {showSearch && (
-          <div className="relative flex-1 max-w-sm">
+          <div className="relative flex-1 min-w-0 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder={searchPlaceholder}
@@ -445,7 +449,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="rounded-md border overflow-hidden">
-        <div ref={scrollContainerRef} className="relative overflow-auto max-h-[50vh] sm:max-h-[70vh]">
+        <div ref={scrollContainerRef} className="relative overflow-auto max-h-[60vh] sm:max-h-[70vh]">
           <Table className="relative w-full border-collapse" style={getTableWidthStyle(resizable, table.getCenterTotalSize())}>
             <TableHeader className="sticky top-0 z-10 bg-card shadow-sm">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -516,7 +520,7 @@ export function DataTable<TData, TValue>({
                       <TableCell
                         colSpan={tableColumns.length}
                         className="p-0 border-0"
-                        style={{ height: virtualWindow.topPadding }}
+                        style={getVirtualSpacerHeightStyle(virtualWindow.topPadding)}
                       />
                     </TableRow>
                   ) : null}
@@ -595,7 +599,7 @@ export function DataTable<TData, TValue>({
                       <TableCell
                         colSpan={tableColumns.length}
                         className="p-0 border-0"
-                        style={{ height: virtualWindow.bottomPadding }}
+                        style={getVirtualSpacerHeightStyle(virtualWindow.bottomPadding)}
                       />
                     </TableRow>
                   ) : null}
@@ -624,14 +628,14 @@ export function DataTable<TData, TValue>({
           </div>
           <div className="flex items-center space-x-6 lg:space-x-8">
             <div className="flex items-center space-x-2">
-              <p className="text-sm font-medium">Rows per page</p>
+              <p className="text-sm font-medium hidden sm:block">Rows per page</p>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
                   table.setPageSize(Number(value));
                 }}
               >
-                <SelectTrigger className="h-8 w-[70px]">
+                <SelectTrigger className="h-8 w-[70px]" aria-label="Rows per page">
                   <SelectValue placeholder={table.getState().pagination.pageSize} />
                 </SelectTrigger>
                 <SelectContent side="top">
@@ -650,7 +654,7 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
+                className="hidden h-8 w-8 p-0 md:flex"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -677,7 +681,7 @@ export function DataTable<TData, TValue>({
               </Button>
               <Button
                 variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
+                className="hidden h-8 w-8 p-0 md:flex"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >

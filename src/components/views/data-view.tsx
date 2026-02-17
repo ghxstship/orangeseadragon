@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { ColumnDef } from "@tanstack/react-table";
+import Image from "next/image";
 import { DataTable, RowAction } from "./data-table";
 import { ListView, ListItem } from "./list-view";
 import { KanbanBoard, KanbanColumn } from "./kanban-board";
@@ -14,9 +15,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RecordHoverPreview } from "@/components/common/record-hover-preview";
 import { InlineEditCell } from "@/components/views/inline-edit-cell";
-/* eslint-disable @next/next/no-img-element */
 import { cn } from "@/lib/utils";
 import { DEFAULT_LOCALE } from "@/lib/config";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 import type { ViewType, DataViewState } from "@/lib/data-view-engine/hooks";
 import type {
   TableViewConfig,
@@ -103,11 +104,66 @@ export function DataView<T extends object>({
   onCellEdit,
   editableFields,
 }: DataViewProps<T>) {
+  const { isMobile } = useBreakpoint();
+
   // Cast to internal type for renderer compatibility
   type R = Record<string, unknown>;
   const typedData = data as unknown as R[];
   const typedGetRowId = getRowId as (item: R) => string;
   const typedOnRowClick = onRowClick as ((item: R) => void) | undefined;
+
+  const mobileListFallbackConfig = React.useMemo<ListViewConfig | undefined>(() => {
+    if (!isMobile || viewType !== "table" || config.list || !config.table?.columns?.length) {
+      return undefined;
+    }
+
+    const visibleColumns = config.table.columns
+      .map((col) => normalizeColumn(col))
+      .filter((col) => col.visible !== false)
+      .filter(
+        (col) =>
+          state.visibleColumns.length === 0 || state.visibleColumns.includes(col.field)
+      );
+
+    const orderedColumns =
+      state.visibleColumns.length > 0
+        ? [...visibleColumns].sort((a, b) => {
+            const aIndex = state.visibleColumns.indexOf(a.field);
+            const bIndex = state.visibleColumns.indexOf(b.field);
+            return aIndex - bIndex;
+          })
+        : visibleColumns;
+
+    const fields = orderedColumns.map((col) => col.field).filter(Boolean);
+
+    if (fields.length === 0) {
+      return undefined;
+    }
+
+    return {
+      titleField: fields[0],
+      subtitleField: fields[1],
+      descriptionField: fields[2],
+      metaFields: fields.slice(3, 6),
+    };
+  }, [
+    isMobile,
+    viewType,
+    config.list,
+    config.table?.columns,
+    state.visibleColumns,
+  ]);
+
+  const resolvedViewType: ViewType = React.useMemo(() => {
+    if (!isMobile) return viewType;
+
+    // Mobile fallback: table UX is poor on narrow screens, so prefer list when available.
+    if (viewType === "table" && (config.list || mobileListFallbackConfig)) {
+      return "list";
+    }
+
+    return viewType;
+  }, [isMobile, viewType, config.list, mobileListFallbackConfig]);
 
   const handleSelectionChange = React.useCallback(
     (selectedRows: R[]) => {
@@ -122,7 +178,7 @@ export function DataView<T extends object>({
     [onStateChange, typedGetRowId, state.selectedIds]
   );
 
-  switch (viewType) {
+  switch (resolvedViewType) {
     case "table":
       return (
         <TableRenderer
@@ -145,7 +201,7 @@ export function DataView<T extends object>({
       return (
         <ListRenderer
           data={typedData}
-          config={config.list}
+          config={config.list ?? mobileListFallbackConfig}
           state={state}
           onSelectionChange={handleSelectionChange}
           onRowClick={typedOnRowClick}
@@ -231,7 +287,7 @@ export function DataView<T extends object>({
     default:
       return (
         <div className="p-8 text-center text-muted-foreground">
-          View type &quot;{viewType}&quot; is not supported.
+          View type &quot;{resolvedViewType}&quot; is not supported.
         </div>
       );
   }
@@ -647,10 +703,17 @@ function GridRenderer<T extends Record<string, unknown>>({
         >
           {config?.imageField && (item as Record<string, unknown>)[config.imageField] ? (
             <div className="aspect-video bg-muted relative">
-              <img
+              <Image
                 src={String(item[config.imageField])}
-                alt=""
-                className="w-full h-full object-cover"
+                alt={
+                  config?.titleField
+                    ? String(item[config.titleField] ?? "Record image")
+                    : "Record image"
+                }
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                unoptimized
+                className="object-cover"
               />
             </div>
           ) : null}

@@ -70,6 +70,6 @@ export async function POST(request: NextRequest) {
         return apiSuccess(null);
     } catch (error) {
         captureError(error, "api.public.submit_lead.unhandled_error");
-        return serverError();
+        return serverError('Failed to submit lead');
     }
 }

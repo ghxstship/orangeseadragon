@@ -44,35 +44,34 @@ function useInvoiceOverview() {
     queryFn: async () => {
       if (!organizationId) return null;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: invoices, error } = await (supabase as any)
+      const { data: invoices, error } = await supabase
         .from("invoices")
         .select(`
-          id, invoice_number, status, amount, due_date, issue_date,
+          id, invoice_number, status, total_amount, due_date, issue_date,
           company:companies(name)
         `)
         .eq("organization_id", organizationId)
-        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
 
       const now = new Date();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const mapped: InvoiceSummary[] = ((invoices ?? []) as any[]).map((inv) => {
+      const mapped: InvoiceSummary[] = (invoices ?? []).map((inv) => {
         const dueDate = inv.due_date ? new Date(inv.due_date) : null;
-        const daysOverdue = dueDate && dueDate < now && inv.status !== "paid"
+        const statusVal = inv.status ?? "draft";
+        const daysOverdue = dueDate && dueDate < now && statusVal !== "paid"
           ? Math.floor((now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24))
           : 0;
+        const company = inv.company as { name: string } | null;
 
         return {
           id: inv.id,
           invoice_number: inv.invoice_number ?? "",
-          status: inv.status ?? "draft",
-          amount: inv.amount ?? 0,
+          status: statusVal,
+          amount: inv.total_amount ?? 0,
           due_date: inv.due_date,
           issue_date: inv.issue_date,
-          company_name: inv.company?.name ?? null,
+          company_name: company?.name ?? null,
           days_overdue: daysOverdue,
         };
       });

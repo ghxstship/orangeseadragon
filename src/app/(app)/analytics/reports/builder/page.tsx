@@ -90,7 +90,7 @@ export default function ReportBuilderPage() {
     <div className="p-4 space-y-4">
       <div>
         <h3 className="text-xs font-black uppercase tracking-[0.2em] opacity-50 mb-3">Visualization</h3>
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1">
           {([
             { type: 'table' as ChartType, icon: Table2, label: 'Table' },
             { type: 'bar' as ChartType, icon: BarChart3, label: 'Bar' },
@@ -166,7 +166,7 @@ export default function ReportBuilderPage() {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Rows */}
             <Card>
               <CardContent className="p-4">

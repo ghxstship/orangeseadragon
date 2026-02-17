@@ -1,16 +1,17 @@
 // /app/api/billing/subscription/route.ts
 // Billing subscription API — get current subscription status
 
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET() {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { supabase, user } = auth;
+  const { supabase, membership } = auth;
 
   try {
-    const orgId = user.user_metadata?.organization_id;
+    const orgId = membership.organization_id;
     if (!orgId) {
       return apiSuccess({ subscription: null, plan: 'free' });
     }
@@ -29,7 +30,7 @@ export async function GET() {
       plan: data?.plan || 'free',
     });
   } catch (err) {
-    console.error('[Billing Subscription] error:', err);
+    captureError(err, 'api.billing.subscription.error');
     return serverError('Failed to fetch subscription');
   }
 }

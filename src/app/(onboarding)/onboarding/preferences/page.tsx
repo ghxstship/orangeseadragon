@@ -63,8 +63,7 @@ export default function OnboardingPreferencesPage() {
         },
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+      await supabase
         .from('notification_preferences')
         .upsert({
           user_id: user.id,
@@ -96,7 +95,7 @@ export default function OnboardingPreferencesPage() {
         {/* Theme */}
         <div className="space-y-3">
           <Label>Theme</Label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {themes.map((theme) => (
               <Button
                 key={theme.value}

@@ -584,7 +584,7 @@ export function CrewCheckinKiosk() {
 
           {/* Stats Footer */}
           <div className="px-4 py-3 border-t border-border bg-muted">
-            <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center min-w-0">
               <div>
                 <p className="text-2xl font-bold text-semantic-success">
                   {recentCheckins.filter((c) => c.status === 'checked_in').length}

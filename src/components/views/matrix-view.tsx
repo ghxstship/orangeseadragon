@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 import type { MatrixViewConfig } from "@/lib/schema/types";
 
 interface MatrixItem<TData extends Record<string, unknown> = Record<string, unknown>> {
@@ -24,6 +26,8 @@ interface MatrixViewProps<TData extends Record<string, unknown> = Record<string,
 import { motion, AnimatePresence } from "framer-motion";
 
 export function MatrixView<TData extends Record<string, unknown>>({ items, config, onItemClick }: MatrixViewProps<TData>) {
+    const { isMobile } = useBreakpoint();
+
     const getQuadrantItems = (quadrantId: number) => {
         return items.filter((item) => {
             const x = item.xValue;
@@ -37,8 +41,57 @@ export function MatrixView<TData extends Record<string, unknown>>({ items, confi
         });
     };
 
+    if (isMobile) {
+        return (
+            <div className="space-y-3 p-2">
+                {config.quadrants.map((quadrant) => {
+                    const quadrantItems = getQuadrantItems(quadrant.id);
+
+                    return (
+                        <Card key={quadrant.id} className="border-border glass-morphism overflow-hidden">
+                            <CardHeader className="py-3 px-4 border-b border-border bg-background/10">
+                                <div className="flex items-center justify-between gap-2">
+                                    <CardTitle className="text-sm font-black tracking-tight uppercase opacity-80 truncate">
+                                        {quadrant.label}
+                                    </CardTitle>
+                                    <Badge variant="secondary" className="text-[10px]">
+                                        {quadrantItems.length}
+                                    </Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground line-clamp-2">{quadrant.description}</p>
+                            </CardHeader>
+                            <CardContent className="p-3 space-y-2">
+                                {quadrantItems.length === 0 ? (
+                                    <div className="text-xs text-muted-foreground py-2">No items</div>
+                                ) : (
+                                    quadrantItems.map((item) => (
+                                        <Button
+                                            key={item.id}
+                                            variant="ghost"
+                                            onClick={() => onItemClick?.(item.data)}
+                                            className="w-full text-left rounded-lg border border-border bg-background/40 p-3 transition-colors hover:bg-muted/40 h-auto justify-start flex-col items-start"
+                                        >
+                                            <p className="text-sm font-bold truncate">{item.title}</p>
+                                            {item.subtitle ? (
+                                                <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.subtitle}</p>
+                                            ) : null}
+                                            <div className="flex gap-2 mt-2">
+                                                <Badge variant="outline" className="text-[10px]">U {item.xValue}</Badge>
+                                                <Badge variant="outline" className="text-[10px]">I {item.yValue}</Badge>
+                                            </div>
+                                        </Button>
+                                    ))
+                                )}
+                            </CardContent>
+                        </Card>
+                    );
+                })}
+            </div>
+        );
+    }
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full min-h-[600px] p-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 h-full min-h-[300px] md:min-h-[600px] p-2">
             {config.quadrants.map((quadrant, _idx) => {
                 const quadrantItems = getQuadrantItems(quadrant.id);
                 const colorClass = getQuadrantColor(quadrant.color);
@@ -48,7 +101,7 @@ export function MatrixView<TData extends Record<string, unknown>>({ items, confi
                         key={quadrant.id}
                         className={cn("flex flex-col border-border glass-morphism overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-primary/5", colorClass.bg)}
                     >
-                        <CardHeader className={cn("py-6 px-8 flex flex-row items-center justify-between space-y-0 border-b border-border bg-background/10")}>
+                        <CardHeader className={cn("py-4 px-4 md:py-6 md:px-8 flex flex-row items-center justify-between space-y-0 border-b border-border bg-background/10")}>
                             <div>
                                 <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 mb-1">
                                     {quadrant.label}

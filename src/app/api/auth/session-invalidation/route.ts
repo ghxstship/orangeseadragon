@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requireRole } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/auth/session-invalidation
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess(invalidation, { message: 'Session invalidated' });
   } catch (e) {
-    console.error('[API] Session invalidation error:', e);
+    captureError(e, 'api.auth.session-invalidation.error');
     return serverError('Failed to invalidate session');
   }
 }
@@ -99,7 +100,7 @@ export async function GET() {
       invalidation: isInvalidated ? data : null,
     });
   } catch (e) {
-    console.error('[API] Session check error:', e);
+    captureError(e, 'api.auth.session-invalidation.error');
     return serverError('Failed to check session');
   }
 }

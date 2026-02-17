@@ -2,14 +2,15 @@
 // Complete or skip an onboarding step
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, serverError } from '@/lib/api/response';
 import { onboardingService } from '@/lib/services/onboarding.service';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { user } = auth;
+  const { user, membership } = auth;
 
   try {
     const { stepSlug, action, data } = await request.json();
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
       return badRequest('action must be one of: start, complete, skip');
     }
 
-    const orgId = user.user_metadata?.organization_id;
+    const orgId = membership.organization_id;
     let result;
 
     switch (action) {
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ success: true });
   } catch (err) {
-    console.error('[Onboarding Step] error:', err);
+    captureError(err, 'api.onboarding.step.error');
     return serverError('Failed to update onboarding step');
   }
 }

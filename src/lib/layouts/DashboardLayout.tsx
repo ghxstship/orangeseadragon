@@ -14,8 +14,12 @@ import {
 } from "@/components/ui/select";
 import type { DashboardLayoutConfig } from "./types";
 
-function getDashboardGridGapStyle(gap: number | undefined): React.CSSProperties {
-  return { gap: gap || 16 };
+function getDashboardGridGapClass(gap: number | undefined): string {
+  if (!gap || gap <= 8) return 'gap-2';
+  if (gap <= 12) return 'gap-3';
+  if (gap <= 16) return 'gap-4';
+  if (gap <= 24) return 'gap-6';
+  return 'gap-8';
 }
 
 /**
@@ -98,18 +102,18 @@ export function DashboardLayout({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{config.title}</h1>
+        <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold tracking-tight sm:text-2xl truncate">{config.title}</h1>
             {config.description && (
-              <p className="text-muted-foreground">{config.description}</p>
+              <p className="text-muted-foreground text-sm hidden sm:block">{config.description}</p>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {config.dateRange?.enabled && (
               <Select value={dateRange} onValueChange={onDateRangeChange}>
-                <SelectTrigger className="w-[180px]">
+                <SelectTrigger className="w-[140px] sm:w-[180px]">
                   <Calendar className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Select period" />
                 </SelectTrigger>
@@ -147,15 +151,15 @@ export function DashboardLayout({
       </header>
 
       {/* Widget Grid */}
-      <main className="flex-1 overflow-auto p-6">
+      <main className="flex-1 overflow-auto p-4 sm:p-6">
         <div 
           className={cn(
-            "grid gap-4",
+            "grid",
+            getDashboardGridGapClass(config.layout?.gap),
             config.layout?.columns === 2 && "grid-cols-1 md:grid-cols-2",
             config.layout?.columns === 3 && "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
             (!config.layout?.columns || config.layout.columns >= 4) && "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
           )}
-          style={getDashboardGridGapStyle(config.layout?.gap)}
         >
           {children}
         </div>

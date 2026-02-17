@@ -1,11 +1,12 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 const DEFAULT_ROTTING_DAYS = 7;
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
     const { data: deals, error } = await dealsQuery;
 
     if (error) {
-      console.error('Error fetching deals:', error);
+      captureError(error, 'api.deals.stats.error');
       return supabaseError(error);
     }
 
@@ -113,7 +114,7 @@ export async function GET(request: NextRequest) {
       byStage,
     });
   } catch (error) {
-    console.error('Error in deals stats API:', error);
-    return serverError();
+    captureError(error, 'api.deals.stats.error');
+    return serverError('Failed to load deal statistics');
   }
 }

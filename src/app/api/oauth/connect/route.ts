@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, forbidden, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/oauth/connect
@@ -9,9 +10,9 @@ import { apiSuccess, apiCreated, badRequest, forbidden, supabaseError, serverErr
  * Stores encrypted tokens and initializes sync status.
  */
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { user, supabase } = auth;
+  const { user, supabase, membership } = auth;
 
   try {
 
@@ -31,15 +32,7 @@ export async function POST(request: NextRequest) {
       return badRequest('organization_id and provider are required');
     }
 
-    // Verify user belongs to the organization
-    const { data: membership } = await supabase
-      .from('organization_members')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('organization_id', organization_id)
-      .single();
-
-    if (!membership) {
+    if (organization_id !== membership.organization_id) {
       return forbidden('Not a member of this organization');
     }
 
@@ -82,8 +75,8 @@ export async function POST(request: NextRequest) {
       sync_status: connection.sync_status,
     });
   } catch (error) {
-    console.error('Error connecting OAuth provider:', error);
-    return serverError();
+    captureError(error, 'api.oauth.connect.error');
+    return serverError('Failed to process OAuth connection');
   }
 }
 
@@ -93,7 +86,7 @@ export async function POST(request: NextRequest) {
  * Disconnect an OAuth provider by deactivating the connection.
  */
 export async function DELETE(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { user, supabase } = auth;
 
@@ -125,7 +118,7 @@ export async function DELETE(request: NextRequest) {
 
     return apiSuccess(connection);
   } catch (error) {
-    console.error('Error disconnecting OAuth provider:', error);
-    return serverError();
+    captureError(error, 'api.oauth.connect.error');
+    return serverError('Failed to process OAuth connection');
   }
 }

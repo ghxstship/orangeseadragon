@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { budgetSchema } from '@/lib/schemas/budget';
+import { budgetLineItemSchema } from '@/lib/schemas/budgetLineItem';
 
 export default function BudgetLineItemsPage() {
-  return <CrudList schema={budgetSchema} />;
+  return <CrudList schema={budgetLineItemSchema} />;
 }

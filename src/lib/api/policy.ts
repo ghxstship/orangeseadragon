@@ -31,7 +31,7 @@ type PolicyRule = {
 const POLICY_RULES: Record<PolicyAction, PolicyRule[]> = {
   "entity.read": [
     {
-      roles: ["owner", "admin", "manager", "member", "staff", "viewer", "contractor", "client", "vendor"],
+      roles: ["owner", "admin", "manager", "member", "staff", "viewer", "contractor", "client", "client_viewer", "vendor"],
       reason: "Role is permitted to view entities",
     },
     {

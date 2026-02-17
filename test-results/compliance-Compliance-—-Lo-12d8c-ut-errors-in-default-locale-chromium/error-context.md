@@ -1,0 +1,88 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - link "A ATLVS" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]: A
+        - generic [ref=e11]: ATLVS
+      - generic [ref=e12]:
+        - blockquote [ref=e13]: “The platform that transformed how we manage productions. Everything in one place, finally.”
+        - generic [ref=e14]:
+          - paragraph [ref=e15]: Sarah Chen
+          - paragraph [ref=e16]: Production Director, LiveNation
+      - generic [ref=e17]: © 2026 ATLVS. All rights reserved.
+    - main [ref=e21]:
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - heading "Welcome back" [level=1] [ref=e25]
+          - paragraph [ref=e26]: Sign in to your account to continue
+        - generic [ref=e27]:
+          - button "Google" [ref=e28] [cursor=pointer]:
+            - img
+            - text: Google
+          - button "GitHub" [ref=e29] [cursor=pointer]:
+            - img
+            - text: GitHub
+        - generic [ref=e33]: Or continue with email
+        - link "Email me a login link" [ref=e34] [cursor=pointer]:
+          - /url: /magic-link
+          - button "Email me a login link" [ref=e35]:
+            - img
+            - text: Email me a login link
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - generic [ref=e39]: Email
+            - generic [ref=e40]:
+              - img [ref=e41]
+              - textbox "Email" [ref=e44]:
+                - /placeholder: name@company.com
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]: Password
+              - link "Forgot password?" [ref=e48] [cursor=pointer]:
+                - /url: /forgot-password
+            - generic [ref=e49]:
+              - img [ref=e50]
+              - textbox "Password" [ref=e53]:
+                - /placeholder: ••••••••
+              - button "Show password" [ref=e54] [cursor=pointer]:
+                - img
+          - generic [ref=e55]:
+            - checkbox "Remember me for 30 days" [ref=e56] [cursor=pointer]
+            - checkbox
+            - generic [ref=e57]: Remember me for 30 days
+          - button "Sign in" [ref=e58] [cursor=pointer]:
+            - img
+            - text: Sign in
+        - paragraph [ref=e59]:
+          - text: Don't have an account?
+          - link "Create one" [ref=e60] [cursor=pointer]:
+            - /url: /register
+  - region "Notifications (F8)":
+    - list
+  - alert [ref=e61]
+  - dialog "Cookie consent" [ref=e62]:
+    - generic [ref=e64]:
+      - generic [ref=e65]:
+        - img [ref=e67]
+        - generic [ref=e69]:
+          - heading "Privacy Preferences" [level=2] [ref=e70]
+          - paragraph [ref=e71]: We use cookies and similar technologies to provide essential functionality and improve your experience. You can customize your preferences below.
+      - generic [ref=e72]:
+        - button "Customize" [ref=e73] [cursor=pointer]:
+          - img
+          - text: Customize
+        - button "Essential Only" [ref=e74] [cursor=pointer]
+        - button "Accept All" [ref=e75] [cursor=pointer]
+      - paragraph [ref=e76]:
+        - text: By continuing, you agree to our
+        - link "Privacy Policy" [ref=e77] [cursor=pointer]:
+          - /url: /privacy
+        - text: and
+        - link "Terms of Service" [ref=e78] [cursor=pointer]:
+          - /url: /terms
+        - text: .
+```

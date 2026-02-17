@@ -1,7 +1,7 @@
-"use client";
-
 import * as React from "react";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -46,11 +46,11 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       
       {/* Right Panel - Auth Content */}
       <div className="flex-1 flex flex-col">
-        <div className="flex-1 flex items-center justify-center p-8">
+        <main id="main-content" role="main" className="flex-1 flex items-center justify-center p-8">
           <div className="w-full max-w-md">
             {children}
           </div>
-        </div>
+        </main>
         
         {/* Mobile footer */}
         <div className="lg:hidden p-4 text-center text-sm text-muted-foreground">

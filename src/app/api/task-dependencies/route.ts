@@ -1,20 +1,26 @@
 import { NextRequest } from "next/server";
-import { requireAuth } from "@/lib/api/guard";
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, conflict, supabaseError, serverError } from "@/lib/api/response";
+import { captureError } from '@/lib/observability';
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
   const searchParams = request.nextUrl.searchParams;
   const taskId = searchParams.get("task_id");
+  const taskIdsParam = searchParams.get("task_ids");
+  const taskIds = taskIdsParam
+    ?.split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
 
-  if (!taskId) {
-    return badRequest('task_id is required');
+  if (!taskId && (!taskIds || taskIds.length === 0)) {
+    return badRequest('task_id or task_ids is required');
   }
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("task_dependencies")
     .select(`
       *,
@@ -23,8 +29,15 @@ export async function GET(request: NextRequest) {
         title,
         status
       )
-    `)
-    .eq("task_id", taskId);
+    `);
+
+  if (taskId) {
+    query = query.eq("task_id", taskId);
+  } else if (taskIds && taskIds.length > 0) {
+    query = query.in("task_id", taskIds.slice(0, 100));
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     return supabaseError(error);
@@ -34,7 +47,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -101,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(data);
   } catch (error) {
-    console.error("Failed to create task dependency:", error);
+    captureError(error, 'api.task-dependencies.error');
     return serverError('Failed to create task dependency');
   }
 }

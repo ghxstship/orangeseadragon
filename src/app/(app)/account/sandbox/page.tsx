@@ -62,16 +62,18 @@ const sandboxTabs: SettingsTab[] = [
 ];
 
 export default function SandboxPage() {
-  const handleSave = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  };
-
   return (
     <SettingsTemplate
       title="Sandbox"
       description="Test configuration changes in an isolated environment"
       tabs={sandboxTabs}
-      onSave={handleSave}
+      onSave={async (values) => {
+        await fetch('/api/settings/sandbox', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values),
+        });
+      }}
     />
   );
 }

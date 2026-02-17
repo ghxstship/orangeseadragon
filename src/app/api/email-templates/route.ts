@@ -2,11 +2,12 @@
 // Email templates API — list and manage email templates
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -25,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(data || []);
   } catch (err) {
-    console.error('[Email Templates] GET error:', err);
+    captureError(err, 'api.email-templates.error');
     return serverError('Failed to fetch email templates');
   }
 }

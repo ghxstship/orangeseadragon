@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, serverError } from '@/lib/api/response';
 import { Resend } from 'resend';
+import { captureError } from '@/lib/observability';
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -10,7 +11,7 @@ function getResend() {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { user, supabase } = auth;
   const resend = getResend();
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (emailError) {
-      console.error('Error sending email:', emailError);
+      captureError(emailError, 'api.payments.send-payment-link.error');
       return serverError('Failed to send email');
     }
 
@@ -133,7 +134,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ sent: true });
   } catch (error) {
-    console.error('Error sending payment link:', error);
+    captureError(error, 'api.payments.send-payment-link.error');
     return serverError('Failed to send payment link');
   }
 }

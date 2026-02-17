@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/registrations/[id]/cancel
@@ -10,7 +11,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
   const { id } = await params;
@@ -61,7 +62,7 @@ export async function POST(
 
     return apiSuccess(data, { message: 'Registration cancelled' });
   } catch (e) {
-    console.error('[API] Cancel error:', e);
+    captureError(e, 'api.registrations.id.cancel.error');
     return serverError('Cancellation failed');
   }
 }

@@ -16,6 +16,7 @@ import type {
   SendNotificationResponse,
 } from "./types";
 import { extractApiErrorMessage, getErrorMessage } from "@/lib/api/error-message";
+import { captureError } from '@/lib/observability';
 
 type NotificationEventType =
   | "notification.created"
@@ -83,7 +84,7 @@ export class NotificationService {
       try {
         await handler(event, data);
       } catch (error) {
-        console.error(`Notification event handler error:`, error);
+        captureError(error, 'notifications.service.error');
       }
     }
   }
@@ -290,7 +291,7 @@ export class NotificationService {
       try {
         await this.sendNotification(notification);
       } catch (error) {
-        console.error(`Failed to send notification ${notification.id}:`, error);
+        captureError(error, 'notifications.service.error');
         await this.handleSendFailure(notification, error);
       }
     }

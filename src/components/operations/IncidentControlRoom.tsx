@@ -207,7 +207,7 @@ export function IncidentControlRoom() {
       </div>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-4 gap-4 px-6 py-4 border-b border-border">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 sm:px-6 py-4 border-b border-border">
         <Card className="bg-muted border-border p-4">
           <div className="flex items-center justify-between">
             <div>

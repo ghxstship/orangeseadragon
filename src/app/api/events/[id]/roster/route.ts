@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/events/[id]/roster
@@ -13,7 +14,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -128,7 +129,7 @@ export async function POST(
       message: 'Day-of roster generated successfully',
     });
   } catch (e) {
-    console.error('[API] Roster generation error:', e);
+    captureError(e, 'api.events.id.roster.error');
     return serverError('Failed to generate roster');
   }
 }
@@ -144,7 +145,7 @@ export async function GET(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -164,7 +165,7 @@ export async function GET(
 
     return apiSuccess(data || []);
   } catch (e) {
-    console.error('[API] Roster list error:', e);
+    captureError(e, 'api.events.id.roster.error');
     return serverError('Failed to list rosters');
   }
 }

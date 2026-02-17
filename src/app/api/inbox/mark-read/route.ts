@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
-import { requireAuth } from "@/lib/api/guard";
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from "@/lib/api/response";
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { user, supabase } = auth;
 
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ count: ids.length });
   } catch (error) {
-    console.error("Failed to mark notifications as read:", error);
+    captureError(error, 'api.inbox.mark-read.error');
     return serverError('Failed to mark notifications as read');
   }
 }

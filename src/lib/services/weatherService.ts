@@ -6,6 +6,7 @@
  */
 
 import { notificationService } from '../notifications/notificationService';
+import { captureError } from '@/lib/observability';
 
 export interface WeatherData {
   timestamp: string;
@@ -295,7 +296,7 @@ class WeatherService {
         }
       }
     } catch (error) {
-      console.error('Weather check failed:', error);
+      captureError(error, 'services.weatherService.error');
     }
   }
 

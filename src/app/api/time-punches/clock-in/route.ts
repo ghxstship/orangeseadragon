@@ -1,10 +1,11 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiCreated, badRequest, notFound, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (punchError) {
-      console.error('Error creating punch:', punchError);
+      captureError(punchError, 'api.time-punches.clock-in.error');
       return serverError('Failed to clock in');
     }
 
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (entryError) {
-      console.error('Error creating entry:', entryError);
+      captureError(entryError, 'api.time-punches.clock-in.error');
       return serverError('Failed to create time entry');
     }
 
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
       punchId: punch.id,
     });
   } catch (error) {
-    console.error('Clock in error:', error);
+    captureError(error, 'api.time-punches.clock-in.error');
     return serverError('Failed to clock in');
   }
 }

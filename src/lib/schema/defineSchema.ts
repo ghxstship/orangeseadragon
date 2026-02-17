@@ -1,4 +1,5 @@
 import type { EntitySchema, EntityRecord } from './types';
+import { captureError } from '@/lib/observability';
 
 /**
  * Schema definition helper with defaults and validation.
@@ -95,7 +96,7 @@ function validateSchema<T = EntityRecord>(schema: EntitySchema<T>): void {
   });
 
   if (errors.length > 0) {
-    console.error('Schema validation errors:', errors);
+    captureError(errors, 'schema.defineSchema.error');
     throw new Error(`Schema "${schema.identity.name}" has ${errors.length} validation errors`);
   }
 }

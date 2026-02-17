@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
 import { randomBytes } from 'crypto';
-import { requireOrgMember } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/client-portal/invite
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
       return badRequest('contact_id, company_id, and organization_id are required');
     }
 
-    const auth = await requireOrgMember(organization_id);
+    const auth = await requirePolicy('entity.read', { orgId: organization_id });
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
       expires_at: expiresAt,
     });
   } catch (error) {
-    console.error('Error inviting client to portal:', error);
-    return serverError();
+    captureError(error, 'api.client-portal.invite.error');
+    return serverError('Failed to send client portal invitation');
   }
 }

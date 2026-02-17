@@ -25,6 +25,9 @@ function buildContentSecurityPolicy(cspNonce: string): string {
   return [
     "default-src 'self'",
     `script-src 'self' 'nonce-${cspNonce}' https://js.stripe.com`,
+    // App Router injects inline bootstrap scripts; allow inline script elements explicitly.
+    "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com",
+    "script-src-attr 'unsafe-inline'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data: https://fonts.gstatic.com",
@@ -43,6 +46,7 @@ function buildContentSecurityPolicy(cspNonce: string): string {
 function applySecurityHeaders(response: NextResponse, security: SecurityContext): NextResponse {
   response.headers.set("x-request-id", security.requestId);
   response.headers.set("x-correlation-id", security.correlationId);
+  response.headers.set("x-nonce", security.cspNonce);
   response.headers.set("x-content-type-options", "nosniff");
   response.headers.set("x-frame-options", "DENY");
   response.headers.set("referrer-policy", "strict-origin-when-cross-origin");
@@ -148,6 +152,7 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-request-id", security.requestId);
   requestHeaders.set("x-correlation-id", security.correlationId);
+  requestHeaders.set("x-nonce", security.cspNonce);
   requestHeaders.set("x-csp-nonce", security.cspNonce);
 
   let supabaseResponse = applySecurityHeaders(
@@ -318,6 +323,7 @@ export async function middleware(request: NextRequest) {
     "/terms",
     "/privacy",
     "/auth/callback",
+    "/client-portal",
     "/",
     "/p",
   ];

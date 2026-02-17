@@ -13,7 +13,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Compliance — Security Headers", () => {
   test("all responses include required security headers", async ({ page }) => {
-    const response = await page.goto("/login", { waitUntil: "networkidle" });
+    const response = await page.goto("/login", { waitUntil: "domcontentloaded" });
     expect(response).toBeTruthy();
 
     const headers = response!.headers();
@@ -46,7 +46,7 @@ test.describe("Compliance — Security Headers", () => {
   });
 
   test("CSP blocks inline scripts from external sources", async ({ page }) => {
-    const response = await page.goto("/login", { waitUntil: "networkidle" });
+    const response = await page.goto("/login", { waitUntil: "domcontentloaded" });
     const csp = response!.headers()["content-security-policy"];
 
     expect(csp).toContain("default-src 'self'");
@@ -135,7 +135,7 @@ test.describe("Compliance — Privacy Endpoints", () => {
 test.describe("Compliance — Cookie Consent", () => {
   test("cookie consent banner appears on first visit", async ({ page }) => {
     // Clear any existing consent
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Clear localStorage to simulate first visit
     await page.evaluate(() => {
@@ -143,7 +143,7 @@ test.describe("Compliance — Cookie Consent", () => {
     });
 
     // Reload to trigger banner
-    await page.reload({ waitUntil: "networkidle" });
+    await page.reload({ waitUntil: "domcontentloaded" });
 
     // Banner should appear
     const banner = page.locator("[role='dialog'][aria-label='Cookie consent']");
@@ -152,11 +152,11 @@ test.describe("Compliance — Cookie Consent", () => {
   });
 
   test("cookie consent banner has required controls", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
     await page.evaluate(() => {
       localStorage.removeItem("atlvs-consent");
     });
-    await page.reload({ waitUntil: "networkidle" });
+    await page.reload({ waitUntil: "domcontentloaded" });
 
     const banner = page.locator("[role='dialog'][aria-label='Cookie consent']");
     await expect(banner).toBeVisible({ timeout: 5000 });
@@ -181,11 +181,11 @@ test.describe("Compliance — Cookie Consent", () => {
   });
 
   test("accepting cookies dismisses the banner", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
     await page.evaluate(() => {
       localStorage.removeItem("atlvs-consent");
     });
-    await page.reload({ waitUntil: "networkidle" });
+    await page.reload({ waitUntil: "domcontentloaded" });
 
     const banner = page.locator("[role='dialog'][aria-label='Cookie consent']");
     await expect(banner).toBeVisible({ timeout: 5000 });
@@ -212,7 +212,7 @@ test.describe("Compliance — Cookie Consent", () => {
 
 test.describe("Compliance — Accessibility Structure", () => {
   test("login page has proper heading hierarchy", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Should have at least one h1
     const h1 = page.locator("h1");
@@ -221,7 +221,7 @@ test.describe("Compliance — Accessibility Structure", () => {
   });
 
   test("all interactive elements are keyboard focusable", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Tab through the page and verify focus moves
     const focusedElements: string[] = [];
@@ -241,7 +241,7 @@ test.describe("Compliance — Accessibility Structure", () => {
   });
 
   test("images have alt attributes", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     const imagesWithoutAlt = page.locator(
       "img:not([alt]):not([role='presentation'])"
@@ -257,7 +257,7 @@ test.describe("Compliance — Accessibility Structure", () => {
 
 test.describe("Compliance — Localization", () => {
   test("html element has lang attribute", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     const lang = await page.locator("html").getAttribute("lang");
     expect(lang).toBeTruthy();
@@ -265,7 +265,7 @@ test.describe("Compliance — Localization", () => {
   });
 
   test("page renders without errors in default locale", async ({ page }) => {
-    await page.goto("/login", { waitUntil: "networkidle" });
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     // Check for console errors
     const errors: string[] = [];

@@ -37,10 +37,10 @@ const sections = [
   {
     title: 'Insights',
     items: [
-      { icon: TrendingUp, label: 'Financial Analytics', description: 'Revenue, margins, budget health, and forecasting', href: '/analytics/financial' },
-      { icon: Users, label: 'Workforce Analytics', description: 'Utilization, capacity, and labor cost analysis', href: '/analytics/workforce' },
-      { icon: DollarSign, label: 'Profitability Analysis', description: 'Client, project, and department profitability', href: '/analytics/profitability' },
-      { icon: Briefcase, label: 'Pipeline Analytics', description: 'Win rates, deal velocity, and revenue forecast', href: '/analytics/pipeline' },
+      { icon: TrendingUp, label: 'Financial Analytics', description: 'Revenue, margins, budget health, and forecasting', href: '/analytics/reports' },
+      { icon: Users, label: 'Workforce Analytics', description: 'Utilization, capacity, and labor cost analysis', href: '/analytics/utilization' },
+      { icon: DollarSign, label: 'Profitability Analysis', description: 'Client, project, and department profitability', href: '/analytics/scenarios' },
+      { icon: Briefcase, label: 'Pipeline Analytics', description: 'Win rates, deal velocity, and revenue forecast', href: '/analytics/sales-performance' },
     ],
   },
 ];

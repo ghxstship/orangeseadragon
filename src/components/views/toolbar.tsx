@@ -331,7 +331,7 @@ export function Toolbar({
   return (
     <div className={cn("flex flex-wrap items-center gap-2", className)}>
       {search && (
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
+        <div className="relative flex-1 min-w-[150px] sm:min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder={search.placeholder || "Search..."}
@@ -497,8 +497,9 @@ export function Toolbar({
           </>
         )}
 
+        {/* Desktop-only: scan, import, export, refresh */}
         {scan && (
-          <Button variant="outline" size="sm" onClick={scan.onScan}>
+          <Button variant="outline" size="sm" onClick={scan.onScan} className="hidden md:inline-flex">
             <QrCode className="mr-2 h-4 w-4" />
             Scan
           </Button>
@@ -513,7 +514,7 @@ export function Toolbar({
               onChange={handleFileSelect}
               className="hidden"
             />
-            <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+            <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} className="hidden md:inline-flex">
               <Upload className="mr-2 h-4 w-4" />
               Import
             </Button>
@@ -523,7 +524,7 @@ export function Toolbar({
         {exportConfig && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="hidden md:inline-flex">
                 <Download className="mr-2 h-4 w-4" />
                 Export
               </Button>
@@ -542,7 +543,7 @@ export function Toolbar({
           <Button
             variant="outline"
             size="icon"
-            className="h-9 w-9"
+            className="h-9 w-9 hidden md:inline-flex"
             onClick={refresh.onRefresh}
             disabled={refresh.loading}
           >
@@ -550,27 +551,57 @@ export function Toolbar({
           </Button>
         )}
 
-        {actions?.secondary && actions.secondary.length > 0 && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="h-9 w-9">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {actions.secondary.map((action) => (
-                <DropdownMenuItem
-                  key={action.id}
-                  onClick={action.onClick}
-                  disabled={action.disabled}
-                >
-                  {action.icon}
-                  <span className="ml-2">{action.label}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        {/* Overflow menu — always visible, includes mobile-only items */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon" className="h-9 w-9">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {/* Mobile-only items */}
+            {scan && (
+              <DropdownMenuItem className="md:hidden" onClick={scan.onScan}>
+                <QrCode className="h-4 w-4 mr-2" />
+                Scan
+              </DropdownMenuItem>
+            )}
+            {importConfig && (
+              <DropdownMenuItem className="md:hidden" onClick={() => fileInputRef.current?.click()}>
+                <Upload className="h-4 w-4 mr-2" />
+                Import
+              </DropdownMenuItem>
+            )}
+            {exportConfig && exportConfig.formats.map((fmt) => (
+              <DropdownMenuItem key={fmt} className="md:hidden" onClick={() => exportConfig.onExport(fmt)}>
+                <Download className="h-4 w-4 mr-2" />
+                Export {fmt.toUpperCase()}
+              </DropdownMenuItem>
+            ))}
+            {refresh && (
+              <DropdownMenuItem className="md:hidden" onClick={refresh.onRefresh} disabled={refresh.loading}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </DropdownMenuItem>
+            )}
+            {/* Secondary actions — always visible */}
+            {actions?.secondary && actions.secondary.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                {actions.secondary.map((action) => (
+                  <DropdownMenuItem
+                    key={action.id}
+                    onClick={action.onClick}
+                    disabled={action.disabled}
+                  >
+                    {action.icon}
+                    <span className="ml-2">{action.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {actions?.primary && (
           <Button

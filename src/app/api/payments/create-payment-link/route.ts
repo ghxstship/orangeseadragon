@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
 import Stripe from 'stripe';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -19,7 +20,7 @@ interface InvoiceWithStripe {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
   const stripe = getStripe();
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
       url: paymentLink.url,
     });
   } catch (error) {
-    console.error('Error creating payment link:', error);
+    captureError(error, 'api.payments.create-payment-link.error');
     return serverError('Failed to create payment link');
   }
 }

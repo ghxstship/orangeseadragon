@@ -1,17 +1,18 @@
 // /app/api/onboarding/state/route.ts
 // Get current user's onboarding state and progress summary
 
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, serverError } from '@/lib/api/response';
 import { onboardingService } from '@/lib/services/onboarding.service';
+import { captureError } from '@/lib/observability';
 
 export async function GET() {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { user } = auth;
+  const { user, membership } = auth;
 
   try {
-    const orgId = user.user_metadata?.organization_id;
+    const orgId = membership.organization_id;
     const summary = await onboardingService.getOnboardingSummary(user.id, orgId);
 
     if (!summary) {
@@ -20,7 +21,7 @@ export async function GET() {
 
     return apiSuccess({ initialized: true, ...summary });
   } catch (err) {
-    console.error('[Onboarding State] error:', err);
+    captureError(err, 'api.onboarding.state.error');
     return serverError('Failed to fetch onboarding state');
   }
 }

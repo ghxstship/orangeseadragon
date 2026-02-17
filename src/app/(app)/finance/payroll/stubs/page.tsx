@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { payrollRunSchema } from '@/lib/schemas/payrollRun';
+import { payStubSchema } from '@/lib/schemas/payStub';
 
 export default function PayStubsPage() {
-  return <CrudList schema={payrollRunSchema} />;
+  return <CrudList schema={payStubSchema} />;
 }

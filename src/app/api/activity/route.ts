@@ -2,11 +2,12 @@
 // Proxy to activity feed — transforms to TabRenderer's ActivityEntry format
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess({ items });
   } catch (err) {
-    console.error('[Activity API] Error:', err);
+    captureError(err, 'api.activity.error');
     return serverError('Failed to fetch activity');
   }
 }

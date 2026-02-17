@@ -7,6 +7,7 @@ import { EntityRecord, EntitySchema, FormSectionDefinition } from '@/lib/schema/
 import { FieldRenderer } from '../../components/fields';
 import { Button } from '@/components/ui/button';
 import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
+import { captureError } from '@/lib/observability';
 
 type FormData = Record<string, unknown>;
 
@@ -94,7 +95,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
     try {
       await onSubmit(data);
     } catch (error) {
-      console.error('Form submission error:', error);
+      captureError(error, 'crud.components.DynamicForm.error');
     }
   };
 

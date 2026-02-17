@@ -2,17 +2,50 @@
 // Public API v1 — notifications endpoint (API parity with internal)
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
-import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { z } from 'zod';
+import { requirePolicy } from '@/lib/api/guard';
+import { apiSuccess, badRequest, serverError, supabaseError } from '@/lib/api/response';
+import { captureError, extractRequestContext } from '@/lib/observability';
+
+const notificationsQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  offset: z.coerce.number().int().min(0).optional(),
+  status: z.enum(['read', 'unread']).optional(),
+});
+
+function isSupabaseError(error: unknown): error is { message: string; code?: string } {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as { message?: unknown }).message === 'string'
+  );
+}
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
+  const requestContext = extractRequestContext(request.headers);
 
-  const limit = Math.min(parseInt(request.nextUrl.searchParams.get('limit') || '50'), 100);
-  const offset = parseInt(request.nextUrl.searchParams.get('offset') || '0');
-  const status = request.nextUrl.searchParams.get('status');
+  const parsedQuery = notificationsQuerySchema.safeParse({
+    limit: request.nextUrl.searchParams.get('limit') ?? undefined,
+    offset: request.nextUrl.searchParams.get('offset') ?? undefined,
+    status: request.nextUrl.searchParams.get('status') ?? undefined,
+  });
+
+  if (!parsedQuery.success) {
+    return badRequest('Validation failed', {
+      issues: parsedQuery.error.issues.map((issue) => ({
+        path: issue.path.join('.'),
+        message: issue.message,
+      })),
+    });
+  }
+
+  const limit = parsedQuery.data.limit ?? 50;
+  const offset = parsedQuery.data.offset ?? 0;
+  const status = parsedQuery.data.status;
 
   try {
     const pageEnd = offset + limit - 1;
@@ -32,9 +65,6 @@ export async function GET(request: NextRequest) {
 
     const { data, error, count } = await query;
     if (error) {
-      if (error.code === '42P01') {
-        return apiSuccess([], { total: 0, limit, offset, hasMore: false });
-      }
       return supabaseError(error);
     }
 
@@ -60,7 +90,14 @@ export async function GET(request: NextRequest) {
       { total: count || 0, limit, offset, hasMore: (count || 0) > offset + limit }
     );
   } catch (err) {
-    console.error('[v1 Notifications] GET error:', err);
+    if (isSupabaseError(err)) {
+      return supabaseError(err);
+    }
+
+    captureError(err, 'api.v1.notifications.error', {
+      user_id: user.id,
+      ...requestContext,
+    });
     return serverError('Failed to fetch notifications');
   }
 }

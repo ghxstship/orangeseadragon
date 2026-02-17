@@ -47,7 +47,7 @@ export function MetricsWidget({ title = "Key Metrics", metrics }: MetricsWidgetP
           <Skeleton className="h-6 w-32" />
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="text-center">
                 <Skeleton className="h-8 w-16 mx-auto mb-2" />
@@ -66,7 +66,7 @@ export function MetricsWidget({ title = "Key Metrics", metrics }: MetricsWidgetP
         <CardTitle className="text-xs font-black uppercase tracking-[0.2em] opacity-50">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8">
           {defaultMetrics.map((metric, index) => (
             <div key={index} className="relative group">
               <div className="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/50 transition-all group-hover:to-primary">

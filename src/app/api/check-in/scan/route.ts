@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/check-in/scan
@@ -8,7 +9,7 @@ import { apiSuccess, apiCreated, badRequest, notFound, supabaseError, serverErro
  * Accepts either a registration confirmation number or credential number
  */
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { user, supabase } = auth;
 
@@ -143,7 +144,7 @@ export async function POST(request: NextRequest) {
     return notFound('Invalid code - no matching registration or credential found');
 
   } catch (e) {
-    console.error('[API] Scan error:', e);
+    captureError(e, 'api.check-in.scan.error');
     return serverError('Scan processing failed');
   }
 }

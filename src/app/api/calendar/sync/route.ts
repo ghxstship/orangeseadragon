@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/calendar/sync
@@ -8,7 +9,7 @@ import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from '
  */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(connection);
   } catch (e) {
-    console.error('[API] Calendar sync error:', e);
+    captureError(e, 'api.calendar.sync.error');
     return serverError('Failed to create calendar sync');
   }
 }
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -81,7 +82,7 @@ export async function GET() {
 
     return apiSuccess(data || []);
   } catch (e) {
-    console.error('[API] Calendar sync list error:', e);
+    captureError(e, 'api.calendar.sync.error');
     return serverError('Failed to list calendar syncs');
   }
 }
@@ -92,7 +93,7 @@ export async function GET() {
  */
 export async function DELETE(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -125,7 +126,7 @@ export async function DELETE(request: NextRequest) {
 
     return apiSuccess({ disconnected: true });
   } catch (e) {
-    console.error('[API] Calendar sync disconnect error:', e);
+    captureError(e, 'api.calendar.sync.error');
     return serverError('Failed to disconnect calendar sync');
   }
 }

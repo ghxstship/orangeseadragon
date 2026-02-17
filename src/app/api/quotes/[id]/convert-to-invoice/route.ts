@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/quotes/:id/convert-to-invoice
@@ -13,14 +14,13 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
     const { id: quoteId } = await params;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00086
-    const { data, error } = await (supabase as any).rpc('convert_quote_to_invoice', {
+    const { data, error } = await supabase.rpc('convert_quote_to_invoice', {
       p_quote_id: quoteId,
       p_user_id: user.id,
     });
@@ -31,7 +31,7 @@ export async function POST(
 
     return apiSuccess({ invoice_id: data });
   } catch (error) {
-    console.error('Error converting quote to invoice:', error);
-    return serverError();
+    captureError(error, 'api.quotes.id.convert-to-invoice.error');
+    return serverError('Failed to convert quote to invoice');
   }
 }

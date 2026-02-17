@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     return apiSuccess(pipelinesWithCounts, { total: pipelinesWithCounts.length });
   } catch (error) {
     captureError(error, 'api.pipelines.get_unhandled');
-    return serverError();
+    return serverError('Failed to process pipelines');
   }
 }
 
@@ -119,6 +119,6 @@ export async function POST(request: NextRequest) {
     return apiCreated(pipeline);
   } catch (error) {
     captureError(error, 'api.pipelines.post_unhandled');
-    return serverError();
+    return serverError('Failed to process pipelines');
   }
 }

@@ -1,8 +1,7 @@
 'use client';
 
-import { CrudList } from '@/lib/crud/components/CrudList';
-import { purchaseOrderSchema } from '@/lib/schemas/purchaseOrder';
+import { redirect } from 'next/navigation';
 
 export default function ProcurementPage() {
-  return <CrudList schema={purchaseOrderSchema} />;
+  redirect('/finance/procurement');
 }

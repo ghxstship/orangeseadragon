@@ -27,7 +27,7 @@ export function QuickStatsWidget({ title = "Quick Stats", stats }: QuickStatsWid
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {displayStats.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-2xl font-bold">{stat.value}</div>

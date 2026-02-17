@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireOrgMember } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/emergency-alerts
@@ -33,12 +34,11 @@ export async function POST(request: NextRequest) {
       return badRequest('organization_id, alert_type, severity, title, and message are required');
     }
 
-    const auth = await requireOrgMember(organization_id);
+    const auth = await requirePolicy('entity.read', { orgId: organization_id });
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; table exists in migration 00087
-    const { data: alert, error: insertError } = await (supabase as any)
+    const { data: alert, error: insertError } = await supabase
       .from('emergency_alerts')
       .insert({
         organization_id,
@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(alert, { message: `Emergency alert "${title}" broadcast initiated` });
   } catch (error) {
-    console.error('Error broadcasting emergency alert:', error);
-    return serverError();
+    captureError(error, 'api.emergency-alerts.error');
+    return serverError('Failed to process emergency alerts');
   }
 }
 
@@ -80,12 +80,11 @@ export async function GET(request: NextRequest) {
       return badRequest('organization_id is required');
     }
 
-    const auth = await requireOrgMember(organizationId);
+    const auth = await requirePolicy('entity.read', { orgId: organizationId });
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types
-    let query = (supabase as any)
+    let query = supabase
       .from('emergency_alerts')
       .select('*')
       .eq('organization_id', organizationId)
@@ -103,7 +102,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(data);
   } catch (error) {
-    console.error('Error fetching emergency alerts:', error);
-    return serverError();
+    captureError(error, 'api.emergency-alerts.error');
+    return serverError('Failed to process emergency alerts');
   }
 }

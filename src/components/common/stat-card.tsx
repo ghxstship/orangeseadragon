@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface StatCardProps {
   title: string;
@@ -26,11 +27,13 @@ export function StatCard({
   className,
   valueClassName,
 }: StatCardProps) {
+  const canHover = useMediaQuery("(hover: hover)");
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5, scale: 1.02 }}
+      whileHover={canHover ? { y: -5, scale: 1.02 } : undefined}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="h-full"
     >
@@ -87,9 +90,9 @@ interface StatGridProps {
 
 export function StatGrid({ children, columns = 4, className }: StatGridProps) {
   const gridCols = {
-    2: "md:grid-cols-2",
-    3: "md:grid-cols-3",
-    4: "md:grid-cols-2 lg:grid-cols-4",
+    2: "grid-cols-2",
+    3: "grid-cols-2 md:grid-cols-3",
+    4: "grid-cols-2 lg:grid-cols-4",
   };
 
   return (

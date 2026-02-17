@@ -1,8 +1,9 @@
 // /app/api/calendar/aggregated/route.ts
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * CALENDAR EVENTS API (SSOT)
@@ -40,7 +41,7 @@ const SOURCE_CONFIG: Record<CalendarSourceType, { label: string; color: string; 
 };
 
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query;
 
     if (error) {
-      console.error('[Calendar API] Query error:', error);
+      captureError(error, 'api.calendar.aggregated.error');
       return supabaseError(error);
     }
 
@@ -135,7 +136,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess({ items, sources: sourcesResult });
   } catch (error) {
-    console.error('[Calendar API] Error:', error);
+    captureError(error, 'api.calendar.aggregated.error');
     return serverError('Failed to fetch calendar data');
   }
 }

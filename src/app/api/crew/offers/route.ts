@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/crew/offers
@@ -8,7 +9,7 @@ import { apiSuccess, apiCreated, badRequest, notFound, supabaseError, serverErro
  */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(offer);
   } catch (e) {
-    console.error('[API] Crew offer creation error:', e);
+    captureError(e, 'api.crew.offers.error');
     return serverError('Failed to create crew offer');
   }
 }
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -131,7 +132,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(data || []);
   } catch (e) {
-    console.error('[API] Crew offers list error:', e);
+    captureError(e, 'api.crew.offers.error');
     return serverError('Failed to list crew offers');
   }
 }

@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
-import { apiSuccess, notFound, serverError } from '@/lib/api/response';
+import { z } from 'zod';
+import { requirePolicy } from '@/lib/api/guard';
+import { apiSuccess, badRequest, notFound, serverError } from '@/lib/api/response';
+import { captureError, extractRequestContext } from '@/lib/observability';
 
 /**
  * GET /api/proposals/[id]/export
@@ -11,11 +13,16 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const requestContext = extractRequestContext(request.headers);
+
+  if (!z.string().uuid().safeParse(id).success) {
+    return badRequest('Invalid proposal id');
+  }
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
-    const { user, supabase } = auth;
+    const { user, supabase, membership } = auth;
 
     // Fetch proposal with related data
     const { data: proposal, error: fetchError } = await supabase
@@ -27,9 +34,10 @@ export async function GET(
           company:companies(id, name, email, phone, address),
           contact:contacts(id, first_name, last_name, email, phone, title)
         ),
-        line_items:proposal_line_items(*)
+        line_items:proposal_items(*)
       `)
       .eq('id', id)
+      .eq('organization_id', membership.organization_id)
       .single();
 
     if (fetchError || !proposal) {
@@ -48,13 +56,17 @@ export async function GET(
       description: string;
       quantity: number;
       unit_price: number;
-      total: number;
+      line_total?: number;
+      total?: number;
     }>;
 
-    const subtotal = lineItems.reduce((sum, item) => sum + (item.total || item.quantity * item.unit_price || 0), 0);
-    const taxRate = (proposal.tax_rate as number) || 0;
-    const taxAmount = subtotal * (taxRate / 100);
-    const total = subtotal + taxAmount;
+    const computedSubtotal = lineItems.reduce(
+      (sum, item) => sum + (item.line_total || item.total || item.quantity * item.unit_price || 0),
+      0
+    );
+    const subtotal = Number(proposal.subtotal ?? computedSubtotal);
+    const taxAmount = Number(proposal.tax_amount ?? 0);
+    const total = Number(proposal.total_amount ?? subtotal + taxAmount);
     const currency = (proposal.deal as { currency?: string })?.currency || 'USD';
 
     const deal = proposal.deal as {
@@ -151,13 +163,13 @@ export async function GET(
           <td>${item.description || ''}</td>
           <td class="text-right">${item.quantity}</td>
           <td class="text-right">${currency} ${(item.unit_price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-          <td class="text-right">${currency} ${(item.total || item.quantity * item.unit_price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+          <td class="text-right">${currency} ${(item.line_total || item.total || item.quantity * item.unit_price || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
         </tr>`).join('')}
       </tbody>
     </table>
     <div class="totals">
       <div class="total-row"><span>Subtotal</span><span>${currency} ${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div>
-      ${taxRate > 0 ? `<div class="total-row"><span>Tax (${taxRate}%)</span><span>${currency} ${taxAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div>` : ''}
+      ${taxAmount > 0 ? `<div class="total-row"><span>Tax</span><span>${currency} ${taxAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div>` : ''}
       <div class="total-row grand"><span>Total</span><span>${currency} ${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span></div>
     </div>
   </div>
@@ -199,7 +211,10 @@ export async function GET(
       currency,
     });
   } catch (e) {
-    console.error('[API] Proposal export error:', e);
+    captureError(e, 'api.proposals.export.unhandled_error', {
+      proposal_id: id,
+      ...requestContext,
+    });
     return serverError('Failed to export proposal');
   }
 }

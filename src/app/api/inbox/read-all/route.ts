@@ -1,9 +1,10 @@
-import { requireAuth } from "@/lib/api/guard";
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from "@/lib/api/response";
+import { captureError } from '@/lib/observability';
 
 export async function POST() {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -19,7 +20,7 @@ export async function POST() {
 
     return apiSuccess(null);
   } catch (e) {
-    console.error("[API] Mark all read error:", e);
-    return serverError();
+    captureError(e, 'api.inbox.read-all.error');
+    return serverError('Failed to mark all as read');
   }
 }

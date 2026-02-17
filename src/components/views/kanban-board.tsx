@@ -8,6 +8,7 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   closestCorners,
@@ -133,6 +134,12 @@ export function KanbanBoard<T extends { id: string }>({
       activationConstraint: {
         distance: 8,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
     })
   );
 
@@ -242,11 +249,11 @@ export function KanbanBoard<T extends { id: string }>({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className={cn("flex gap-6 overflow-x-auto pb-6 p-2", className)}>
+      <div className={cn("flex gap-4 sm:gap-6 overflow-x-auto pb-6 p-2 snap-x snap-mandatory sm:snap-none scrollbar-hide", className)}>
         {localColumns.map((column) => (
           <div
             key={column.id}
-            className="flex-shrink-0 w-[340px]"
+            className="flex-shrink-0 w-[280px] sm:w-[340px] snap-center sm:snap-align-none"
           >
             <div className="flex flex-col h-full bg-muted/30 dark:bg-muted/10 rounded-2xl border border-border shadow-inner p-4 space-y-4">
               <div className="flex items-center justify-between px-2">

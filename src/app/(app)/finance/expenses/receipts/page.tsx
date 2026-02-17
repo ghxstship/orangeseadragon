@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { expenseSchema } from '@/lib/schemas/expense';
+import { receiptScanSchema } from '@/lib/schemas/receiptScan';
 
 export default function ReceiptsPage() {
-  return <CrudList schema={expenseSchema} />;
+  return <CrudList schema={receiptScanSchema} />;
 }

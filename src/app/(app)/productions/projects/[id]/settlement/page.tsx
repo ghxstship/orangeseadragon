@@ -18,8 +18,12 @@ import {
   Trash2,
   FileText,
   DollarSign,
+  Save,
+  Loader2,
 } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 import { CurrencyDisplay, MarginIndicator, VarianceIndicator } from '@/components/common/financial-display';
+import { formatCurrency } from '@/lib/utils';
 
 // ─────────────────────────────────────────────────────────────
 // TYPES
@@ -44,34 +48,77 @@ export default function SettlementPage() {
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
+  const { toast } = useToast();
 
   const [currentTab, setCurrentTab] = React.useState('summary');
   const [approvalStatus, setApprovalStatus] = React.useState<ApprovalStatus>('draft');
+  const [saving, setSaving] = React.useState(false);
+  const [_loaded, setLoaded] = React.useState(false);
 
   // ── Line Items by Category ──
-  const [laborItems, setLaborItems] = React.useState<SettlementLineItem[]>([
-    { id: '1', category: 'labor', description: 'Audio Engineer', estimated: 2500, actual: 2500, notes: '' },
-    { id: '2', category: 'labor', description: 'Lighting Designer', estimated: 2000, actual: 2200, notes: 'OT 2hrs' },
-    { id: '3', category: 'labor', description: 'Stage Hands (4)', estimated: 3200, actual: 3600, notes: 'Added 1 extra' },
-  ]);
-
-  const [vendorItems, setVendorItems] = React.useState<SettlementLineItem[]>([
-    { id: '1', category: 'vendor', description: 'Sound System Rental', estimated: 8000, actual: 8000, notes: '' },
-    { id: '2', category: 'vendor', description: 'Lighting Package', estimated: 5500, actual: 5500, notes: '' },
-    { id: '3', category: 'vendor', description: 'Backline', estimated: 1200, actual: 1400, notes: 'Added monitors' },
-  ]);
-
-  const [expenseItems, setExpenseItems] = React.useState<SettlementLineItem[]>([
-    { id: '1', category: 'expense', description: 'Catering', estimated: 1500, actual: 1650, notes: '' },
-    { id: '2', category: 'expense', description: 'Transportation', estimated: 800, actual: 750, notes: '' },
-    { id: '3', category: 'expense', description: 'Miscellaneous', estimated: 500, actual: 420, notes: '' },
-  ]);
-
+  const [laborItems, setLaborItems] = React.useState<SettlementLineItem[]>([]);
+  const [vendorItems, setVendorItems] = React.useState<SettlementLineItem[]>([]);
+  const [expenseItems, setExpenseItems] = React.useState<SettlementLineItem[]>([]);
   const [adjustmentItems, setAdjustmentItems] = React.useState<SettlementLineItem[]>([]);
 
-  const [revenue, setRevenue] = React.useState(35000);
+  const [revenue, setRevenue] = React.useState(0);
   const [agencyFeePercent, setAgencyFeePercent] = React.useState(15);
   const [settlementNotes, setSettlementNotes] = React.useState('');
+
+  // ── Load from API ──
+  React.useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch(`/api/settlements?project_id=${projectId}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        const d = json.data;
+        if (d) {
+          setRevenue(d.revenue ?? 0);
+          setAgencyFeePercent(d.agency_fee_percent ?? 15);
+          setLaborItems(d.labor_items ?? []);
+          setVendorItems(d.vendor_items ?? []);
+          setExpenseItems(d.expense_items ?? []);
+          setAdjustmentItems(d.adjustment_items ?? []);
+          setApprovalStatus(d.approval_status ?? 'draft');
+          setSettlementNotes(d.notes ?? '');
+        }
+      } catch { /* use defaults */ }
+      setLoaded(true);
+    }
+    load();
+  }, [projectId]);
+
+  // ── Save to API ──
+  const handleSave = React.useCallback(async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/settlements', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: projectId,
+          revenue,
+          agency_fee_percent: agencyFeePercent,
+          labor_items: laborItems,
+          vendor_items: vendorItems,
+          expense_items: expenseItems,
+          adjustment_items: adjustmentItems,
+          approval_status: approvalStatus,
+          notes: settlementNotes,
+        }),
+      });
+      if (!res.ok) {
+        toast({ variant: 'destructive', title: 'Save failed', description: 'Could not save settlement' });
+      } else {
+        toast({ title: 'Saved', description: 'Settlement worksheet saved' });
+      }
+    } catch {
+      toast({ variant: 'destructive', title: 'Network error' });
+    } finally {
+      setSaving(false);
+    }
+  }, [projectId, revenue, agencyFeePercent, laborItems, vendorItems, expenseItems, adjustmentItems, approvalStatus, settlementNotes, toast]);
 
   // ── Computed Totals ──
   const sumEstimated = (items: SettlementLineItem[]) => items.reduce((s, i) => s + i.estimated, 0);
@@ -81,6 +128,7 @@ export default function SettlementPage() {
   const totalActual = sumActual(laborItems) + sumActual(vendorItems) + sumActual(expenseItems) + sumActual(adjustmentItems);
   const agencyFee = revenue * (agencyFeePercent / 100);
   const margin = revenue - totalActual - agencyFee;
+  const formatVariance = (value: number) => (value === 0 ? '—' : `${value > 0 ? '+' : ''}${formatCurrency(value)}`);
 
   // ── Helpers ──
   const addItem = (setter: React.Dispatch<React.SetStateAction<SettlementLineItem[]>>, category: string) => {
@@ -146,7 +194,7 @@ export default function SettlementPage() {
               <Input type="number" value={item.estimated || ''} onChange={e => updateItem(setter, item.id, 'estimated', Number(e.target.value))} className="h-8 text-right" />
               <Input type="number" value={item.actual || ''} onChange={e => updateItem(setter, item.id, 'actual', Number(e.target.value))} className="h-8 text-right" />
               <div className={`text-right text-sm font-medium ${variance > 0 ? 'text-destructive' : variance < 0 ? 'text-semantic-success' : 'text-muted-foreground'}`}>
-                {variance !== 0 ? `${variance > 0 ? '+' : ''}$${variance.toLocaleString()}` : '—'}
+                {formatVariance(variance)}
               </div>
               <Input value={item.notes} onChange={e => updateItem(setter, item.id, 'notes', e.target.value)} placeholder="Notes" className="h-8" />
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItem(setter, item.id)}>
@@ -157,10 +205,10 @@ export default function SettlementPage() {
         })}
         <div className="grid grid-cols-[1fr_110px_110px_110px_1fr_40px] gap-3 p-3 border-t bg-muted/30 font-medium text-sm">
           <span>Total</span>
-          <span className="text-right">${sumEstimated(items).toLocaleString()}</span>
-          <span className="text-right">${sumActual(items).toLocaleString()}</span>
+          <span className="text-right">{formatCurrency(sumEstimated(items))}</span>
+          <span className="text-right">{formatCurrency(sumActual(items))}</span>
           <span className={`text-right ${sumActual(items) - sumEstimated(items) > 0 ? 'text-destructive' : 'text-semantic-success'}`}>
-            {sumActual(items) - sumEstimated(items) !== 0 ? `${sumActual(items) - sumEstimated(items) > 0 ? '+' : ''}$${(sumActual(items) - sumEstimated(items)).toLocaleString()}` : '—'}
+            {formatVariance(sumActual(items) - sumEstimated(items))}
           </span>
           <span /><span />
         </div>
@@ -211,7 +259,11 @@ export default function SettlementPage() {
       </div>
 
       <div className="space-y-2">
-        <Button className="w-full" size="sm">
+        <Button className="w-full" size="sm" onClick={handleSave} disabled={saving}>
+          {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+          {saving ? 'Saving…' : 'Save'}
+        </Button>
+        <Button variant="outline" className="w-full" size="sm">
           <Download className="h-4 w-4 mr-2" /> Export PDF
         </Button>
         <Button variant="outline" className="w-full" size="sm">
@@ -227,7 +279,7 @@ export default function SettlementPage() {
       case 'summary':
         return (
           <div className="space-y-6 max-w-4xl">
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { label: 'Revenue', value: revenue, icon: DollarSign, color: 'text-semantic-success' },
                 { label: 'Total Costs', value: totalActual, icon: totalActual > totalEstimated ? TrendingUp : TrendingDown, color: totalActual > totalEstimated ? 'text-destructive' : 'text-semantic-success' },
@@ -240,7 +292,7 @@ export default function SettlementPage() {
                       <stat.icon className={`h-4 w-4 ${stat.color}`} />
                       <span className="text-xs font-medium text-muted-foreground uppercase">{stat.label}</span>
                     </div>
-                    <p className={`text-xl font-bold ${stat.color}`}>${stat.value.toLocaleString()}</p>
+                    <p className={`text-xl font-bold ${stat.color}`}>{formatCurrency(stat.value)}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -272,17 +324,17 @@ export default function SettlementPage() {
                     { label: 'Expenses', estimated: sumEstimated(expenseItems), actual: sumActual(expenseItems) },
                     { label: 'Adjustments', estimated: sumEstimated(adjustmentItems), actual: sumActual(adjustmentItems) },
                   ].map(row => (
-                    <div key={row.label} className="grid grid-cols-4 gap-4 text-sm items-center">
+                    <div key={row.label} className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm items-center">
                       <span className="font-medium">{row.label}</span>
-                      <span className="text-right text-muted-foreground">${row.estimated.toLocaleString()}</span>
-                      <span className="text-right">${row.actual.toLocaleString()}</span>
+                      <span className="text-right text-muted-foreground">{formatCurrency(row.estimated)}</span>
+                      <span className="text-right">{formatCurrency(row.actual)}</span>
                       <VarianceIndicator estimated={row.estimated} actual={row.actual} />
                     </div>
                   ))}
-                  <div className="border-t pt-2 grid grid-cols-4 gap-4 text-sm font-semibold items-center">
+                  <div className="border-t pt-2 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm font-semibold items-center">
                     <span>Total</span>
-                    <span className="text-right">${totalEstimated.toLocaleString()}</span>
-                    <span className="text-right">${totalActual.toLocaleString()}</span>
+                    <span className="text-right">{formatCurrency(totalEstimated)}</span>
+                    <span className="text-right">{formatCurrency(totalActual)}</span>
                     <VarianceIndicator estimated={totalEstimated} actual={totalActual} />
                   </div>
                 </div>
@@ -329,13 +381,19 @@ export default function SettlementPage() {
                   <div className="flex items-center gap-3">
                     <Button onClick={() => {
                       const nextIdx = currentStepIndex + 1;
-                      if (nextIdx < approvalSteps.length) setApprovalStatus(approvalSteps[nextIdx].key);
+                      if (nextIdx < approvalSteps.length) {
+                        setApprovalStatus(approvalSteps[nextIdx].key);
+                        setTimeout(() => handleSave(), 100);
+                      }
                     }}>
                       <Send className="h-4 w-4 mr-2" />
                       {currentStepIndex < approvalSteps.length - 1 ? `Submit for ${approvalSteps[currentStepIndex + 1].label}` : 'Finalize'}
                     </Button>
                     {currentStepIndex > 0 && (
-                      <Button variant="outline" onClick={() => setApprovalStatus(approvalSteps[currentStepIndex - 1].key)}>
+                      <Button variant="outline" onClick={() => {
+                        setApprovalStatus(approvalSteps[currentStepIndex - 1].key);
+                        setTimeout(() => handleSave(), 100);
+                      }}>
                         Return to {approvalSteps[currentStepIndex - 1].label}
                       </Button>
                     )}

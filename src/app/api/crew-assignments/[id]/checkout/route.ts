@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/crew-assignments/[id]/checkout
@@ -13,7 +14,7 @@ export async function POST(
     const { id } = await params;
 
     try {
-        const auth = await requireAuth();
+        const auth = await requirePolicy('entity.read');
         if (auth.error) return auth.error;
         const { user, supabase } = auth;
 
@@ -97,7 +98,7 @@ export async function POST(
                 .single();
 
             if (timesheetError) {
-                console.error('Failed to create timesheet:', timesheetError);
+                captureError(timesheetError, 'api.crew-assignments.id.checkout.error');
             } else {
                 timesheet = newTimesheet;
             }
@@ -182,7 +183,7 @@ export async function POST(
             },
         }, { message: 'Checked out and timesheet entry created' });
     } catch (e) {
-        console.error('[API] Crew checkout error:', e);
+        captureError(e, 'api.crew-assignments.id.checkout.error');
         return serverError('Checkout failed');
     }
 }

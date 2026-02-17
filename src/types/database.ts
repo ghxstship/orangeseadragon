@@ -3629,6 +3629,70 @@ export type Database = {
           },
         ]
       }
+      budget_alert_rules: {
+        Row: {
+          id: string
+          organization_id: string
+          budget_id: string | null
+          threshold_percent: number
+          channel: string
+          recipients: Json | null
+          enabled: boolean
+          last_triggered_at: string | null
+          created_by: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          budget_id?: string | null
+          threshold_percent: number
+          channel?: string
+          recipients?: Json | null
+          enabled?: boolean
+          last_triggered_at?: string | null
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          budget_id?: string | null
+          threshold_percent?: number
+          channel?: string
+          recipients?: Json | null
+          enabled?: boolean
+          last_triggered_at?: string | null
+          created_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budget_alert_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_alert_rules_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "budget_alert_rules_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       calendar: {
         Row: {
           all_day: boolean | null
@@ -9490,6 +9554,114 @@ export type Database = {
           },
         ]
       }
+      emergency_alerts: {
+        Row: {
+          id: string
+          organization_id: string
+          project_id: string | null
+          venue_id: string | null
+          alert_type: string
+          severity: string
+          title: string
+          message: string
+          target_scope: string | null
+          target_departments: string[] | null
+          target_roles: string[] | null
+          delivery_channels: string[] | null
+          status: string | null
+          sent_at: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          total_recipients: number | null
+          acknowledged_count: number | null
+          created_at: string | null
+          updated_at: string | null
+          created_by: string
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          project_id?: string | null
+          venue_id?: string | null
+          alert_type: string
+          severity: string
+          title: string
+          message: string
+          target_scope?: string | null
+          target_departments?: string[] | null
+          target_roles?: string[] | null
+          delivery_channels?: string[] | null
+          status?: string | null
+          sent_at?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          total_recipients?: number | null
+          acknowledged_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by: string
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          project_id?: string | null
+          venue_id?: string | null
+          alert_type?: string
+          severity?: string
+          title?: string
+          message?: string
+          target_scope?: string | null
+          target_departments?: string[] | null
+          target_roles?: string[] | null
+          delivery_channels?: string[] | null
+          status?: string | null
+          sent_at?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          total_recipients?: number | null
+          acknowledged_count?: number | null
+          created_at?: string | null
+          updated_at?: string | null
+          created_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_alerts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_alerts_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_alerts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emergency_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       employee_profiles: {
         Row: {
           created_at: string | null
@@ -13312,6 +13484,103 @@ export type Database = {
           },
         ]
       }
+      invoice_deliveries: {
+        Row: {
+          id: string
+          organization_id: string
+          invoice_id: string
+          recipient_email: string
+          recipient_name: string | null
+          subject: string | null
+          body: string | null
+          cc_emails: string[] | null
+          bcc_emails: string[] | null
+          include_pdf: boolean | null
+          include_timesheet: boolean | null
+          custom_attachments: string[] | null
+          status: string | null
+          sent_at: string | null
+          delivered_at: string | null
+          opened_at: string | null
+          error_message: string | null
+          email_provider: string | null
+          provider_message_id: string | null
+          sent_by: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          invoice_id: string
+          recipient_email: string
+          recipient_name?: string | null
+          subject?: string | null
+          body?: string | null
+          cc_emails?: string[] | null
+          bcc_emails?: string[] | null
+          include_pdf?: boolean | null
+          include_timesheet?: boolean | null
+          custom_attachments?: string[] | null
+          status?: string | null
+          sent_at?: string | null
+          delivered_at?: string | null
+          opened_at?: string | null
+          error_message?: string | null
+          email_provider?: string | null
+          provider_message_id?: string | null
+          sent_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          invoice_id?: string
+          recipient_email?: string
+          recipient_name?: string | null
+          subject?: string | null
+          body?: string | null
+          cc_emails?: string[] | null
+          bcc_emails?: string[] | null
+          include_pdf?: boolean | null
+          include_timesheet?: boolean | null
+          custom_attachments?: string[] | null
+          status?: string | null
+          sent_at?: string | null
+          delivered_at?: string | null
+          opened_at?: string | null
+          error_message?: string | null
+          email_provider?: string | null
+          provider_message_id?: string | null
+          sent_by?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_deliveries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_deliveries_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_deliveries_sent_by_fkey"
+            columns: ["sent_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount_due: number | null
@@ -16078,6 +16347,141 @@ export type Database = {
           },
           {
             foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          id: string
+          user_id: string
+          organization_id: string | null
+          email_enabled: boolean
+          push_enabled: boolean
+          sms_enabled: boolean
+          in_app_enabled: boolean
+          weekly_digest: boolean
+          daily_digest: boolean
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          organization_id?: string | null
+          email_enabled?: boolean
+          push_enabled?: boolean
+          sms_enabled?: boolean
+          in_app_enabled?: boolean
+          weekly_digest?: boolean
+          daily_digest?: boolean
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          organization_id?: string | null
+          email_enabled?: boolean
+          push_enabled?: boolean
+          sms_enabled?: boolean
+          in_app_enabled?: boolean
+          weekly_digest?: boolean
+          daily_digest?: boolean
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_preferences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      oauth_connections: {
+        Row: {
+          id: string
+          organization_id: string
+          user_id: string
+          provider: string
+          provider_user_id: string | null
+          access_token_encrypted: string | null
+          refresh_token_encrypted: string | null
+          token_expires_at: string | null
+          scopes: string[] | null
+          is_active: boolean | null
+          last_synced_at: string | null
+          sync_status: string | null
+          sync_error: string | null
+          metadata: Json | null
+          config: string | null
+          status: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          organization_id: string
+          user_id: string
+          provider: string
+          provider_user_id?: string | null
+          access_token_encrypted?: string | null
+          refresh_token_encrypted?: string | null
+          token_expires_at?: string | null
+          scopes?: string[] | null
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          sync_status?: string | null
+          sync_error?: string | null
+          metadata?: Json | null
+          config?: string | null
+          status?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          organization_id?: string
+          user_id?: string
+          provider?: string
+          provider_user_id?: string | null
+          access_token_encrypted?: string | null
+          refresh_token_encrypted?: string | null
+          token_expires_at?: string | null
+          scopes?: string[] | null
+          is_active?: boolean | null
+          last_synced_at?: string | null
+          sync_status?: string | null
+          sync_error?: string | null
+          metadata?: Json | null
+          config?: string | null
+          status?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "oauth_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "oauth_connections_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -22144,6 +22548,229 @@ export type Database = {
           },
           {
             foreignKeyName: "report_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resource_bookings: {
+        Row: {
+          allocation_percent: number | null
+          booking_type: string
+          budget_id: string | null
+          confirmed_at: string | null
+          confirmed_by: string | null
+          contact_id: string | null
+          created_at: string | null
+          created_by: string | null
+          daily_rate: number | null
+          deal_id: string | null
+          department: string | null
+          end_date: string
+          estimated_cost: number | null
+          event_id: string | null
+          hourly_rate: number | null
+          hours_per_day: number | null
+          id: string
+          internal_notes: string | null
+          is_recurring: boolean
+          is_split: boolean
+          labor_rule_set_id: string | null
+          min_experience_years: number | null
+          notes: string | null
+          offer_accepted_at: string | null
+          offer_sent_at: string | null
+          organization_id: string
+          parent_booking_id: string | null
+          placeholder_name: string | null
+          project_id: string | null
+          recurrence_days_of_week: number[] | null
+          recurrence_end_date: string | null
+          recurrence_interval: number | null
+          recurrence_pattern: string | null
+          required_certifications: string[] | null
+          required_skills: string[] | null
+          role: string
+          split_from_id: string | null
+          split_percentage: number | null
+          start_date: string
+          status: string | null
+          total_hours: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          allocation_percent?: number | null
+          booking_type?: string
+          budget_id?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          daily_rate?: number | null
+          deal_id?: string | null
+          department?: string | null
+          end_date: string
+          estimated_cost?: number | null
+          event_id?: string | null
+          hourly_rate?: number | null
+          hours_per_day?: number | null
+          id?: string
+          internal_notes?: string | null
+          is_recurring?: boolean
+          is_split?: boolean
+          labor_rule_set_id?: string | null
+          min_experience_years?: number | null
+          notes?: string | null
+          offer_accepted_at?: string | null
+          offer_sent_at?: string | null
+          organization_id: string
+          parent_booking_id?: string | null
+          placeholder_name?: string | null
+          project_id?: string | null
+          recurrence_days_of_week?: number[] | null
+          recurrence_end_date?: string | null
+          recurrence_interval?: number | null
+          recurrence_pattern?: string | null
+          required_certifications?: string[] | null
+          required_skills?: string[] | null
+          role: string
+          split_from_id?: string | null
+          split_percentage?: number | null
+          start_date: string
+          status?: string | null
+          total_hours?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          allocation_percent?: number | null
+          booking_type?: string
+          budget_id?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          daily_rate?: number | null
+          deal_id?: string | null
+          department?: string | null
+          end_date?: string
+          estimated_cost?: number | null
+          event_id?: string | null
+          hourly_rate?: number | null
+          hours_per_day?: number | null
+          id?: string
+          internal_notes?: string | null
+          is_recurring?: boolean
+          is_split?: boolean
+          labor_rule_set_id?: string | null
+          min_experience_years?: number | null
+          notes?: string | null
+          offer_accepted_at?: string | null
+          offer_sent_at?: string | null
+          organization_id?: string
+          parent_booking_id?: string | null
+          placeholder_name?: string | null
+          project_id?: string | null
+          recurrence_days_of_week?: number[] | null
+          recurrence_end_date?: string | null
+          recurrence_interval?: number | null
+          recurrence_pattern?: string | null
+          required_certifications?: string[] | null
+          required_skills?: string[] | null
+          role?: string
+          split_from_id?: string | null
+          split_percentage?: number | null
+          start_date?: string
+          status?: string | null
+          total_hours?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_bookings_budget_id_fkey"
+            columns: ["budget_id"]
+            isOneToOne: false
+            referencedRelation: "budgets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_confirmed_by_fkey"
+            columns: ["confirmed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_labor_rule_set_id_fkey"
+            columns: ["labor_rule_set_id"]
+            isOneToOne: false
+            referencedRelation: "labor_rule_sets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_parent_booking_id_fkey"
+            columns: ["parent_booking_id"]
+            isOneToOne: false
+            referencedRelation: "resource_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_split_from_id_fkey"
+            columns: ["split_from_id"]
+            isOneToOne: false
+            referencedRelation: "resource_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_bookings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -32149,6 +32776,156 @@ export type Database = {
       }
     }
     Functions: {
+      auto_match_po_invoices: {
+        Args: { p_organization_id: string }
+        Returns: number
+      }
+      auto_populate_crew_from_venue: {
+        Args: {
+          p_project_id: string
+          p_venue_id: string
+          p_organization_id: string
+        }
+        Returns: number
+      }
+      calculate_per_diem: {
+        Args: {
+          p_employee_id: string
+          p_organization_id: string
+          p_start_date: string
+          p_end_date: string
+          p_include_travel_days?: boolean
+        }
+        Returns: {
+          total_days: number
+          travel_days: number
+          work_days: number
+          per_diem_total: number
+          hotel_total: number
+          travel_day_total: number
+          grand_total: number
+        }[]
+      }
+      check_venue_availability: {
+        Args: {
+          p_venue_id: string
+          p_start_date: string
+          p_end_date: string
+          p_organization_id: string
+        }
+        Returns: {
+          is_available: boolean
+          conflicting_events: number
+          conflicts: Json
+        }[]
+      }
+      compare_budget_scenarios: {
+        Args: {
+          p_project_id: string
+          p_organization_id: string
+          p_scenarios?: Json
+        }
+        Returns: {
+          scenario_name: string
+          projected_revenue: number
+          projected_cost: number
+          projected_profit: number
+          profit_margin_pct: number
+          break_even_date: string
+        }[]
+      }
+      convert_quote_to_invoice: {
+        Args: { p_quote_id: string; p_user_id: string }
+        Returns: string
+      }
+      estimate_travel_schedule: {
+        Args: {
+          p_employee_id: string
+          p_organization_id: string
+          p_origin_venue_id: string
+          p_destination_venue_id: string
+          p_event_date: string
+        }
+        Returns: {
+          recommended_departure: string
+          travel_mode: string
+          estimated_hours: number
+          travel_day_rate: number
+          per_diem: number
+          hotel_nights: number
+          total_travel_cost: number
+        }[]
+      }
+      forecast_project_financials: {
+        Args: {
+          p_project_id: string
+          p_organization_id: string
+          p_forecast_months?: number
+        }
+        Returns: {
+          forecast_month: string
+          projected_revenue: number
+          projected_expenses: number
+          projected_profit: number
+          confidence_level: string
+          revenue_trend: number
+          expense_trend: number
+        }[]
+      }
+      generate_invoice_from_settlement: {
+        Args: { p_settlement_id: string; p_user_id: string }
+        Returns: string
+      }
+      report_billable_utilization: {
+        Args: {
+          p_organization_id: string
+          p_start_date?: string
+          p_end_date?: string
+        }
+        Returns: {
+          user_id: string
+          user_name: string
+          department: string
+          total_hours: number
+          billable_hours: number
+          non_billable_hours: number
+          utilization_rate: number
+          billable_amount: number
+          cost_amount: number
+          margin: number
+          margin_pct: number
+          available_hours: number
+          capacity_utilization: number
+        }[]
+      }
+      report_show_cost_realtime: {
+        Args: {
+          p_project_id: string
+          p_organization_id: string
+        }
+        Returns: {
+          total_budget: number
+          total_committed: number
+          total_spent: number
+          remaining: number
+          burn_pct: number
+          labor_hours_today: number
+          labor_cost_today: number
+          labor_hours_total: number
+          labor_cost_total: number
+          crew_checked_in: number
+          crew_total_assigned: number
+          expenses_by_category: Json
+          overtime_hours_today: number
+          meal_penalties_today: number
+          ticket_revenue: number
+          sponsorship_revenue: number
+          other_revenue: number
+          total_revenue: number
+          current_profit: number
+          projected_profit: number
+        }[]
+      }
       delete_activity_feed_for_entity: {
         Args: { p_entity_id: string; p_entity_type: string }
         Returns: undefined

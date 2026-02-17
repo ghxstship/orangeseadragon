@@ -1,13 +1,14 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
-import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { requirePolicy } from '@/lib/api/guard';
+import { apiSuccess, apiCreated, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * GET /api/timer-sessions
  * List timer sessions for the current user
  */
 export async function GET(request: NextRequest) {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -40,25 +41,13 @@ export async function GET(request: NextRequest) {
  * Start a new timer session (stops any existing running timer first)
  */
 export async function POST(request: NextRequest) {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
-    const { user, supabase } = auth;
+    const { user, supabase, membership } = auth;
 
     try {
         const body = await request.json();
         const { project_id, task_id, event_id, description, is_billable = true } = body;
-
-        // Get user's organization
-        const { data: membership } = await supabase
-            .from('organization_members')
-            .select('organization_id')
-            .eq('user_id', user.id)
-            .limit(1)
-            .single();
-
-        if (!membership) {
-            return badRequest('No organization found');
-        }
 
         // Stop any currently running timer
         const { data: runningTimer } = await supabase
@@ -109,7 +98,7 @@ export async function POST(request: NextRequest) {
 
         return apiCreated(timer, { stopped_previous: runningTimer?.id || null });
     } catch (e) {
-        console.error('[API] Timer start error:', e);
+        captureError(e, 'api.timer-sessions.error');
         return serverError('Failed to start timer');
     }
 }

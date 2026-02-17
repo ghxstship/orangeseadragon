@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
+import { PageShell } from '@/components/common/page-shell';
 import { DocumentManager } from '@/components/people/DocumentManager';
 import { useUser } from '@/hooks/use-supabase';
 import { useDocuments } from '@/hooks/use-documents';
@@ -95,7 +96,7 @@ export default function DocumentsPage() {
   }, [rawDocs]);
 
   return (
-    <div className="container mx-auto py-6 px-4">
+    <PageShell title="Documents" description="Manage employee documents and files">
       <DocumentManager
         documents={documents.length > 0 ? documents : undefined}
         onUpload={handleUpload}
@@ -103,6 +104,6 @@ export default function DocumentsPage() {
         onDelete={handleDelete}
         onView={handleView}
       />
-    </div>
+    </PageShell>
   );
 }

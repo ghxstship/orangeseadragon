@@ -41,7 +41,6 @@ import {
   WidgetDefinition,
   WidgetSize,
   getWidgetDefinition,
-  sizeToSpan,
   widgetRegistry,
 } from "@/lib/dashboard/widget-registry";
 
@@ -83,14 +82,12 @@ interface DashboardGridProps {
   className?: string;
 }
 
-const getGridSpanStyle = (cols: number, rows: number): React.CSSProperties => ({
-  gridColumn: `span ${cols}`,
-  gridRow: `span ${rows}`,
-});
-
-const getGridTemplateColumnsStyle = (columns: number): React.CSSProperties => ({
-  gridTemplateColumns: `repeat(${columns}, 1fr)`,
-});
+const widgetSizeClasses: Record<WidgetSize, string> = {
+  small: "col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-3 row-span-1",
+  medium: "col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-6 xl:col-span-6 row-span-1",
+  large: "col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-6 xl:col-span-6 row-span-2",
+  full: "col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-6 xl:col-span-12 row-span-1",
+};
 
 export function DashboardGrid({
   layout,
@@ -192,17 +189,15 @@ export function DashboardGrid({
       );
     }
 
-    const span = sizeToSpan[widget.size];
-
     return (
       <div
         key={widget.id}
         className={cn(
           "relative group",
+          widgetSizeClasses[widget.size],
           isEditing && "ring-2 ring-dashed ring-primary/30 rounded-lg",
           draggedWidget === widget.id && "opacity-50"
         )}
-        style={getGridSpanStyle(span.cols, span.rows)}
         draggable={isEditing}
         onDragStart={() => handleDragStart(widget.id)}
         onDragEnd={handleDragEnd}
@@ -314,8 +309,7 @@ export function DashboardGrid({
 
       {/* Grid */}
       <div
-        className="grid gap-4"
-        style={getGridTemplateColumnsStyle(layout.columns)}
+        className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12"
         onDragOver={(e) => e.preventDefault()}
         onDrop={() => handleDrop({ x: 0, y: 0 })}
       >
@@ -331,7 +325,7 @@ export function DashboardGrid({
               Choose a widget to add to your dashboard
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4 max-h-[400px] overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 max-h-[400px] overflow-y-auto">
             {widgetRegistry.map((definition) => {
               const isAdded = layout.widgets.some(
                 (w) => w.widgetId === definition.id
@@ -471,12 +465,12 @@ function WidgetConfigDialog({ widget, onClose, onSave }: WidgetConfigDialogProps
 // Loading skeleton for dashboard
 export function DashboardGridSkeleton() {
   return (
-    <div className="grid grid-cols-12 gap-4">
-      <Skeleton className="col-span-12 h-24" />
-      <Skeleton className="col-span-6 h-48" />
-      <Skeleton className="col-span-6 h-48" />
-      <Skeleton className="col-span-4 h-32" />
-      <Skeleton className="col-span-8 h-32" />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
+      <Skeleton className="h-24 sm:col-span-2 lg:col-span-12" />
+      <Skeleton className="h-48 lg:col-span-6" />
+      <Skeleton className="h-48 lg:col-span-6" />
+      <Skeleton className="h-32 lg:col-span-4" />
+      <Skeleton className="h-32 lg:col-span-8" />
     </div>
   );
 }

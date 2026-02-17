@@ -2,11 +2,12 @@
 // Platform settings API — read and update user/org platform preferences
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function GET() {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -21,13 +22,13 @@ export async function GET() {
 
     return apiSuccess(data?.settings || {});
   } catch (err) {
-    console.error('[Settings API] GET error:', err);
+    captureError(err, 'api.settings.platform.error');
     return serverError('Failed to fetch settings');
   }
 }
 
 export async function PUT(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -46,7 +47,7 @@ export async function PUT(request: NextRequest) {
 
     return apiSuccess({ saved: true });
   } catch (err) {
-    console.error('[Settings API] PUT error:', err);
+    captureError(err, 'api.settings.platform.error');
     return serverError('Failed to save settings');
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/venues/[id]/holds
@@ -14,7 +15,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -96,7 +97,7 @@ export async function POST(
 
     return apiCreated(hold, { message: `${hold_type} hold placed on ${venue.name}` });
   } catch (e) {
-    console.error('[API] Venue hold creation error:', e);
+    captureError(e, 'api.venues.id.holds.error');
     return serverError('Failed to create venue hold');
   }
 }
@@ -112,7 +113,7 @@ export async function GET(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -146,7 +147,7 @@ export async function GET(
 
     return apiSuccess(data || []);
   } catch (e) {
-    console.error('[API] Venue holds list error:', e);
+    captureError(e, 'api.venues.id.holds.error');
     return serverError('Failed to list venue holds');
   }
 }
@@ -163,7 +164,7 @@ export async function PATCH(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -225,7 +226,7 @@ export async function PATCH(
 
     return apiSuccess(updated, { message: `Hold ${action}ed successfully` });
   } catch (e) {
-    console.error('[API] Venue hold update error:', e);
+    captureError(e, 'api.venues.id.holds.error');
     return serverError('Failed to update venue hold');
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/crew/:id/travel-estimate
@@ -14,7 +15,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -25,8 +26,7 @@ export async function POST(
       return badRequest('organization_id, origin_venue_id, destination_venue_id, and event_date are required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00088
-    const { data, error } = await (supabase as any).rpc('estimate_travel_schedule', {
+    const { data, error } = await supabase.rpc('estimate_travel_schedule', {
       p_employee_id: employeeId,
       p_organization_id: organization_id,
       p_origin_venue_id: origin_venue_id,
@@ -40,7 +40,7 @@ export async function POST(
 
     return apiSuccess(data?.[0] || data);
   } catch (error) {
-    console.error('Error estimating travel schedule:', error);
-    return serverError();
+    captureError(error, 'api.crew.id.travel-estimate.error');
+    return serverError('Failed to estimate travel');
   }
 }

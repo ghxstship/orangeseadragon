@@ -280,7 +280,7 @@ export default function CallSheetPage() {
             <Card>
               <CardHeader><CardTitle className="text-base flex items-center gap-2"><Clock className="h-4 w-4" /> Key Times</CardTitle></CardHeader>
               <CardContent>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {[
                     { label: 'Load In', field: 'loadInTime' as const },
                     { label: 'Doors', field: 'doorsTime' as const },
@@ -311,7 +311,7 @@ export default function CallSheetPage() {
                   <CardContent className="pt-4">
                     <div className="flex items-start gap-3">
                       <GripVertical className="h-5 w-5 text-muted-foreground mt-2 cursor-grab" />
-                      <div className="grid grid-cols-4 gap-3 flex-1">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
                         <div className="space-y-1">
                           <label className="text-xs font-medium text-muted-foreground">Role</label>
                           <Input value={contact.role} onChange={e => updateContact(contact.id, 'role', e.target.value)} placeholder="Role" />
@@ -424,7 +424,7 @@ export default function CallSheetPage() {
             </div>
 
             {(productionInfo.loadInTime || productionInfo.doorsTime || productionInfo.showTime || productionInfo.curfew) && (
-              <div className="grid grid-cols-4 gap-4 text-center">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 {[
                   { label: 'Load In', value: productionInfo.loadInTime },
                   { label: 'Doors', value: productionInfo.doorsTime },

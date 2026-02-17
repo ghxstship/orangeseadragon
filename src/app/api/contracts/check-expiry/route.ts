@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/contracts/check-expiry
@@ -8,7 +9,7 @@ import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
  * This should be called by a scheduled job (e.g., daily cron)
  */
 export async function POST(request: NextRequest) {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -137,7 +138,7 @@ export async function POST(request: NextRequest) {
             notifications_sent: notificationsCreated.length,
         });
     } catch (e) {
-        console.error('[API] Contract expiry check error:', e);
+        captureError(e, 'api.contracts.check-expiry.error');
         return serverError('Expiry check failed');
     }
 }

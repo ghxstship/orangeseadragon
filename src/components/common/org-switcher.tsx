@@ -34,25 +34,28 @@ function useMyOrganizations() {
     queryFn: async () => {
       if (!user?.id) return [];
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("organization_members")
         .select(`
-          role,
-          organization:organizations(id, name, logo_url)
+          role_id,
+          organization:organizations(id, name, logo_url),
+          role:roles(name)
         `)
         .eq("user_id", user.id)
         .eq("status", "active");
 
       if (error) throw error;
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return ((data ?? []) as any[]).map((m) => ({
-        id: m.organization?.id,
-        name: m.organization?.name ?? "Unknown",
-        logo_url: m.organization?.logo_url ?? null,
-        role: m.role ?? "member",
-      })) as Organization[];
+      return (data ?? []).map((m) => {
+        const org = m.organization as { id: string; name: string; logo_url: string | null } | null;
+        const role = m.role as { name: string } | null;
+        return {
+          id: org?.id ?? "",
+          name: org?.name ?? "Unknown",
+          logo_url: org?.logo_url ?? null,
+          role: role?.name ?? "member",
+        };
+      }) as Organization[];
     },
     enabled: !!user?.id,
   });

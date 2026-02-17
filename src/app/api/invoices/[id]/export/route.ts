@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, notFound, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * GET /api/invoices/[id]/export
@@ -13,7 +14,7 @@ export async function GET(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -192,7 +193,7 @@ export async function GET(
       include_timesheet: includeTimesheet,
     });
   } catch (e) {
-    console.error('[API] Invoice export error:', e);
+    captureError(e, 'api.invoices.id.export.error');
     return serverError('Failed to export invoice');
   }
 }

@@ -51,16 +51,18 @@ const scheduledTabs: SettingsTab[] = [
 ];
 
 export default function ScheduledReportsPage() {
-  const handleSave = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  };
-
   return (
     <SettingsTemplate
       title="Scheduled Reports"
       description="Automate report delivery on a recurring schedule"
       tabs={scheduledTabs}
-      onSave={handleSave}
+      onSave={async (values) => {
+        await fetch('/api/settings/scheduled-reports', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(values),
+        });
+      }}
     />
   );
 }

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { unauthorized, forbidden } from "@/lib/api/response";
 import { evaluatePolicy, type DataSensitivity, type PolicyAction } from "@/lib/api/policy";
+import { logWarn } from "@/lib/observability";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 
@@ -61,6 +62,7 @@ const ROLE_PRIORITY: Record<string, number> = {
   member: 50,
   contractor: 40,
   client: 20,
+  client_viewer: 15,
   vendor: 10,
 };
 
@@ -195,14 +197,14 @@ export async function requireOrgMember(
   }
 
   if (memberError) {
-    console.warn("[requireOrgMember] organization_members lookup failed", {
+    logWarn('guard.requireOrgMember.memberLookupFailed', {
       code: memberError.code,
       orgId: resolvedOrgId,
     });
   }
 
   if (userRoleError) {
-    console.warn("[requireOrgMember] user_roles fallback lookup failed", {
+    logWarn('guard.requireOrgMember.roleFallbackFailed', {
       code: userRoleError.code,
       orgId: resolvedOrgId,
     });

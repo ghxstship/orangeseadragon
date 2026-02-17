@@ -2,32 +2,34 @@
 // Approve an expense approval request
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { resolveApprovalComments, resolveApprovalRequestId } from '@/lib/expense-approvals/action-payload';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { supabase, user } = auth;
+  const { supabase } = auth;
 
   try {
-    const { id } = await request.json();
-    if (!id) return badRequest('id is required');
+    const payload = await request.json();
+    const approvalRequestId = resolveApprovalRequestId(payload);
+    if (!approvalRequestId) return badRequest('id is required');
+    const comments = resolveApprovalComments(payload);
 
-    const { error } = await supabase
-      .from('expense_approval_requests')
-      .update({
-        status: 'approved',
-        approved_by: user.id,
-        approved_at: new Date().toISOString(),
-      })
-      .eq('id', id);
+    // Use canonical workflow function to keep expense/request/action state consistent.
+    const { error } = await supabase.rpc('process_expense_approval', {
+      p_request_id: approvalRequestId,
+      p_action: 'approved',
+      p_comments: comments || null,
+    });
 
     if (error) return supabaseError(error);
 
     return apiSuccess({ approved: true });
   } catch (err) {
-    console.error('[Expense Approve] error:', err);
+    captureError(err, 'api.expense-approval-requests.approve.error');
     return serverError('Failed to approve expense');
   }
 }

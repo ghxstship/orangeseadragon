@@ -74,37 +74,37 @@ export function SettingsLayout({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="flex items-center gap-4 min-w-0">
             {onBack && (
-              <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={onBack} className="h-8 w-8 flex-shrink-0">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             )}
-            <div>
-              <h1 className="text-xl font-semibold">{config.title}</h1>
+            <div className="min-w-0">
+              <h1 className="text-lg font-semibold sm:text-xl truncate">{config.title}</h1>
               {config.description && (
-                <p className="text-sm text-muted-foreground">{config.description}</p>
+                <p className="text-sm text-muted-foreground hidden sm:block">{config.description}</p>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             {isDirty && (
-              <span className="text-sm text-muted-foreground mr-2">Unsaved changes</span>
+              <span className="text-sm text-muted-foreground mr-2 hidden sm:inline">Unsaved changes</span>
             )}
             
             {onReset && (
-              <Button variant="outline" onClick={onReset} disabled={saving || !isDirty}>
-                <RotateCcw className="h-4 w-4 mr-2" />
-                {config.actions?.reset?.label || 'Reset'}
+              <Button variant="outline" size="sm" onClick={onReset} disabled={saving || !isDirty}>
+                <RotateCcw className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{config.actions?.reset?.label || 'Reset'}</span>
               </Button>
             )}
             
             {onSave && (
-              <Button onClick={onSave} disabled={saving || !isDirty}>
-                <Save className="h-4 w-4 mr-2" />
-                {config.actions?.save?.label || 'Save Changes'}
+              <Button size="sm" onClick={onSave} disabled={saving || !isDirty}>
+                <Save className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">{config.actions?.save?.label || 'Save Changes'}</span>
               </Button>
             )}
           </div>
@@ -113,10 +113,30 @@ export function SettingsLayout({
 
       {/* Content Area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Navigation Sidebar */}
+        {/* Mobile Navigation — horizontal scrollable tabs */}
+        {config.navigation?.position !== "top" && (
+          <div className="md:hidden border-b px-4 py-2 bg-muted/30 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2">
+              {config.sections.map((section) => (
+                <Button
+                  key={section.key}
+                  variant={activeSection === section.key ? "secondary" : "ghost"}
+                  size="sm"
+                  onClick={() => onSectionChange?.(section.key)}
+                  className="flex-shrink-0"
+                >
+                  {section.icon && <span className="mr-1">{section.icon}</span>}
+                  {section.title}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Sidebar — desktop only */}
         {config.navigation?.position !== "top" && (
           <aside className={cn(
-            "w-56 border-r bg-muted/30 flex-shrink-0",
+            "w-56 border-r bg-muted/30 flex-shrink-0 hidden md:block",
             config.navigation?.sticky && "sticky top-0"
           )}>
             <ScrollArea className="h-full">
@@ -148,7 +168,7 @@ export function SettingsLayout({
 
         {/* Top Navigation */}
         {config.navigation?.position === "top" && (
-          <div className="border-b px-6 py-2 bg-muted/30">
+          <div className="border-b px-4 sm:px-6 py-2 bg-muted/30 overflow-x-auto scrollbar-hide">
             <div className="flex gap-2">
               {config.sections.map((section) => (
                 <Button
@@ -156,6 +176,7 @@ export function SettingsLayout({
                   variant={activeSection === section.key ? "secondary" : "ghost"}
                   size="sm"
                   onClick={() => onSectionChange?.(section.key)}
+                  className="flex-shrink-0"
                 >
                   {section.icon && <span className="mr-2">{section.icon}</span>}
                   {section.title}
@@ -167,7 +188,7 @@ export function SettingsLayout({
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          <div className="max-w-3xl mx-auto p-6">{children}</div>
+          <div className="max-w-3xl mx-auto p-4 sm:p-6">{children}</div>
         </main>
       </div>
     </div>

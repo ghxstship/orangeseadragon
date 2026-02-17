@@ -40,6 +40,6 @@ export async function POST(request: NextRequest) {
         return apiSuccess(null);
     } catch (error) {
         captureError(error, "api.public.track_view.unhandled_error");
-        return serverError();
+        return serverError('Failed to track view');
     }
 }

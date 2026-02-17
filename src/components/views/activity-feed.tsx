@@ -275,14 +275,14 @@ export function ActivityFeed({
   return (
     <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
       <CardHeader className="pb-4 border-b border-border bg-background/5">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80 flex items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="text-base sm:text-xl font-black tracking-tight uppercase opacity-80 flex items-center gap-3">
             <Clock className="h-5 w-5 text-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
             {title}
           </CardTitle>
           {showFilters && (
             <Select value={filter} onValueChange={(v) => setFilter(v as ActivityType | "all")}>
-              <SelectTrigger className="w-[160px] h-8 glass-morphism border-border text-[10px] font-black uppercase tracking-widest">
+              <SelectTrigger className="w-full sm:w-[160px] h-8 glass-morphism border-border text-[10px] font-black uppercase tracking-widest">
                 <SelectValue placeholder="Filter" />
               </SelectTrigger>
               <SelectContent className="glass-morphism border-border">

@@ -40,18 +40,23 @@ export default function TaskTimelinePage() {
       }
 
       try {
-        // Fetch dependencies for all tasks
-        const allDeps: TaskDependency[] = [];
-        for (const task of tasks.slice(0, 50)) { // Limit to first 50 tasks
-          const response = await fetch(`/api/task-dependencies?task_id=${task.id}`);
-          if (response.ok) {
-            const result = await response.json();
-            if (result.data) {
-              allDeps.push(...result.data);
-            }
-          }
+        const taskIds = tasks
+          .slice(0, 50)
+          .map((task) => task.id)
+          .filter(Boolean);
+
+        if (taskIds.length === 0) {
+          setDependencies([]);
+          return;
         }
-        setDependencies(allDeps);
+
+        const response = await fetch(`/api/task-dependencies?task_ids=${taskIds.join(',')}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch dependencies: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setDependencies(result.data ?? []);
       } catch (error) {
         console.error("Failed to fetch dependencies:", error);
       } finally {

@@ -2,30 +2,48 @@
 // Batch invite users to the organization
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, badRequest, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { supabase, user } = auth;
+  const { supabase, user, membership } = auth;
 
   try {
-    const { emails, roleId, message } = await request.json();
+    const body = await request.json();
 
-    if (!Array.isArray(emails) || emails.length === 0) {
-      return badRequest('emails array is required');
+    // Support both payload shapes:
+    //   Legacy:  { emails: string[], roleId: string, message?: string }
+    //   Current: { invites: [{ email: string, role?: string }] }
+    let emailRolePairs: Array<{ email: string; role_id: string | null }>;
+
+    if (Array.isArray(body.invites) && body.invites.length > 0) {
+      emailRolePairs = body.invites.map((inv: { email: string; role?: string }) => ({
+        email: inv.email,
+        role_id: inv.role || null,
+      }));
+    } else if (Array.isArray(body.emails) && body.emails.length > 0) {
+      emailRolePairs = body.emails.map((email: string) => ({
+        email,
+        role_id: body.roleId || null,
+      }));
+    } else {
+      return badRequest('Either "invites" array or "emails" array is required');
     }
 
-    const orgId = user.user_metadata?.organization_id;
+    const orgId = membership.organization_id;
     if (!orgId) return badRequest('User has no organization');
 
-    const invitations = emails.map((email: string) => ({
+    const message = body.message || null;
+
+    const invitations = emailRolePairs.map(({ email, role_id }) => ({
       organization_id: orgId,
       email: email.trim().toLowerCase(),
-      role_id: roleId || null,
+      role_id,
       invited_by: user.id,
-      message: message || null,
+      message,
       status: 'pending',
       token: crypto.randomUUID(),
       expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -40,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ invited: data?.length || 0, invitations: data || [] });
   } catch (err) {
-    console.error('[Invitations Batch] error:', err);
+    captureError(err, 'api.invitations.batch.error');
     return serverError('Failed to send invitations');
   }
 }

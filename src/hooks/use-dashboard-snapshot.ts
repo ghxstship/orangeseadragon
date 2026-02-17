@@ -17,7 +17,7 @@ type EventSnapshot = Pick<
 type BudgetSnapshot = Pick<
   Database["public"]["Tables"]["budgets"]["Row"],
   "id" | "name" | "status" | "total_amount" | "created_at"
->;
+> & { spent_amount?: number };
 
 interface DashboardSnapshot {
   kpi: {
@@ -29,6 +29,7 @@ interface DashboardSnapshot {
     eventsThisWeek: number;
     totalBudget: number;
     activeBudgetTotal: number;
+    budgetSpent: number;
     revenueMTD: number;
     teamUtilization: number;
   };
@@ -52,6 +53,7 @@ const EMPTY_SNAPSHOT: DashboardSnapshot = {
     eventsThisWeek: 0,
     totalBudget: 0,
     activeBudgetTotal: 0,
+    budgetSpent: 0,
     revenueMTD: 0,
     teamUtilization: 0,
   },
@@ -96,6 +98,7 @@ export function useDashboardSnapshot(organizationId: string | null) {
         upcomingEventsFallbackRes,
         budgetsSummaryRes,
         budgetsListRes,
+        budgetLineItemsRes,
       ] = await Promise.all([
         supabase
           .from("projects")
@@ -180,6 +183,9 @@ export function useDashboardSnapshot(organizationId: string | null) {
           .eq("organization_id", organizationId)
           .order("created_at", { ascending: false })
           .limit(5),
+        supabase
+          .from("budget_line_items")
+          .select("budget_id, actual_amount"),
       ]);
 
       if (projectsRes.error) throw projectsRes.error;
@@ -194,6 +200,8 @@ export function useDashboardSnapshot(organizationId: string | null) {
       if (upcomingEventsFallbackRes.error) throw upcomingEventsFallbackRes.error;
       if (budgetsSummaryRes.error) throw budgetsSummaryRes.error;
       if (budgetsListRes.error) throw budgetsListRes.error;
+      // budget_line_items may not exist yet — non-fatal
+      const budgetLineItems = budgetLineItemsRes.error ? [] : (budgetLineItemsRes.data ?? []);
 
       const projectStatuses = projectsRes.data ?? [];
       const totalProjects = projectStatuses.length;
@@ -223,6 +231,14 @@ export function useDashboardSnapshot(organizationId: string | null) {
       const activeBudgetTotal = budgetsSummary
         .filter((budget) => budget.status === "active")
         .reduce((sum, budget) => sum + (Number(budget.total_amount) || 0), 0);
+
+      // Aggregate actual spend from budget_line_items per budget
+      const spentByBudget = new Map<string, number>();
+      budgetLineItems.forEach((item: { budget_id: string; actual_amount: number | null }) => {
+        const prev = spentByBudget.get(item.budget_id) ?? 0;
+        spentByBudget.set(item.budget_id, prev + (Number(item.actual_amount) || 0));
+      });
+      const budgetSpent = Array.from(spentByBudget.values()).reduce((s, v) => s + v, 0);
       const revenueMTD = budgetsSummary
         .filter((budget) => {
           if (!budget.created_at) return false;
@@ -255,6 +271,7 @@ export function useDashboardSnapshot(organizationId: string | null) {
           eventsThisWeek,
           totalBudget,
           activeBudgetTotal,
+          budgetSpent,
           revenueMTD,
           teamUtilization,
         },
@@ -262,7 +279,10 @@ export function useDashboardSnapshot(organizationId: string | null) {
         myTasksDueToday: tasksDueTodayRes.data ?? [],
         overdueTasks: overdueTasksRes.data ?? [],
         upcomingEvents,
-        budgets: budgetsListRes.data ?? [],
+        budgets: (budgetsListRes.data ?? []).map((b) => ({
+          ...b,
+          spent_amount: spentByBudget.get(b.id) ?? 0,
+        })),
       };
     },
   });

@@ -193,9 +193,8 @@ export default function DashboardPage() {
     const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
     const totalBudget = kpi?.totalBudget ?? 0;
-    const activeBudgetTotal = kpi?.activeBudgetTotal ?? 0;
-    const burnedBudget = activeBudgetTotal * 0.6;
-    const budgetHealthPct = totalBudget > 0 ? Math.round(((totalBudget - burnedBudget) / totalBudget) * 100) : 100;
+    const budgetSpent = kpi?.budgetSpent ?? 0;
+    const budgetHealthPct = totalBudget > 0 ? Math.round(((totalBudget - budgetSpent) / totalBudget) * 100) : 100;
 
     return {
       activeProjects,
@@ -617,7 +616,7 @@ export default function DashboardPage() {
                   <StaggerList className="space-y-3">
                     {(budgets as Record<string, unknown>[]).slice(0, 5).map((budget) => {
                       const total = Number(budget.total_amount) || 0;
-                      const burned = total * 0.6;
+                      const burned = Number((budget as Record<string, unknown>).spent_amount) || 0;
                       const burnPct = total > 0 ? Math.round((burned / total) * 100) : 0;
                       const isAtRisk = burnPct > 80;
                       const isOverBudget = burnPct > 100;

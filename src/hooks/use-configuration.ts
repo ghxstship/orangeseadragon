@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from './use-supabase';
-import type { Json } from '@/lib/supabase/database.types';
+import type { Json } from '@/types/database';
 import type {
   LookupTable,
   PageLayout,

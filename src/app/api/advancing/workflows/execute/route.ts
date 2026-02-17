@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, notFound, supabaseError } from '@/lib/api/response';
 import { getErrorMessage } from '@/lib/api/error-message';
 
@@ -20,7 +20,7 @@ interface StepResult {
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { user, supabase } = auth;
   
@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
         // Handle wait steps
         if (step.type === 'wait') {
           // Update execution to waiting status
-          await supabase
+          const { error: waitingStatusError } = await supabase
             .from('workflow_executions')
             .update({
               status: 'waiting',
@@ -149,6 +149,10 @@ export async function POST(request: NextRequest) {
               step_results: stepResults,
             })
             .eq('id', execution.id);
+
+          if (waitingStatusError) {
+            return supabaseError(waitingStatusError);
+          }
           
           return apiSuccess({
             executionId: execution.id,
@@ -175,7 +179,7 @@ export async function POST(request: NextRequest) {
     // Update execution with final status
     const finalStatus = stepResults.every(r => r.status !== 'failed') ? 'completed' : 'failed';
     
-    await supabase
+    const { error: finalStatusError } = await supabase
       .from('workflow_executions')
       .update({
         status: finalStatus,
@@ -184,6 +188,10 @@ export async function POST(request: NextRequest) {
         completed_at: new Date().toISOString(),
       })
       .eq('id', execution.id);
+
+    if (finalStatusError) {
+      return supabaseError(finalStatusError);
+    }
     
     return apiCreated({
       executionId: execution.id,

@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useBreakpoint } from "@/hooks/use-breakpoint";
 import {
   ChevronLeft,
   ChevronRight,
@@ -78,8 +79,8 @@ export interface GanttViewProps<T extends GanttTask> {
 
 type ZoomLevel = "day" | "week" | "month";
 
-const getTaskRowStyle = (depth: number): React.CSSProperties => ({
-  paddingLeft: `${24 + depth * 16}px`,
+const getTaskRowStyle = (depth: number, mobile = false): React.CSSProperties => ({
+  paddingLeft: `${(mobile ? 12 : 24) + Math.min(depth, mobile ? 2 : depth) * (mobile ? 12 : 16)}px`,
 });
 
 const getTimelineHeaderCellStyle = (
@@ -215,6 +216,7 @@ export function GanttView<T extends GanttTask>({
   const [viewStart, setViewStart] = React.useState(() => startOfWeek(new Date()));
   const containerRef = React.useRef<HTMLDivElement>(null);
   const timelineRef = React.useRef<HTMLDivElement>(null);
+  const { isMobile } = useBreakpoint();
 
   // Drag state
   const [dragState, setDragState] = React.useState<{
@@ -231,10 +233,11 @@ export function GanttView<T extends GanttTask>({
   } | null>(null);
 
   const handleDragStart = React.useCallback(
-    (e: React.MouseEvent, task: GanttTask, mode: "move" | "resize-end") => {
+    (e: React.PointerEvent, task: GanttTask, mode: "move" | "resize-end") => {
       if (!onTaskUpdate) return;
       e.stopPropagation();
       e.preventDefault();
+      (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
       const start = typeof task.startDate === "string" ? parseISO(task.startDate) : new Date(task.startDate);
       const end = typeof task.endDate === "string" ? parseISO(task.endDate) : new Date(task.endDate);
       setDragState({ taskId: task.id, mode, startX: e.clientX, originalStart: start, originalEnd: end });
@@ -248,7 +251,7 @@ export function GanttView<T extends GanttTask>({
     const timelineEl = timelineRef.current;
     const timelineWidth = timelineEl.scrollWidth;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e: PointerEvent) => {
       const deltaX = e.clientX - dragState.startX;
       const daysDelta = Math.round((deltaX / timelineWidth) * differenceInDays(getViewEnd(), viewStart));
 
@@ -290,11 +293,11 @@ export function GanttView<T extends GanttTask>({
       setDragPreview(null);
     };
 
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("pointermove", handleMouseMove);
+    document.addEventListener("pointerup", handleMouseUp);
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("pointermove", handleMouseMove);
+      document.removeEventListener("pointerup", handleMouseUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dragState, dragPreview, tasks, onTaskUpdate, onDependencyShift, _skipWeekends, viewStart]);
@@ -391,13 +394,77 @@ export function GanttView<T extends GanttTask>({
 
   const flatTasks = flattenTasks(tasks);
 
+  const mobileTasks = React.useMemo(
+    () =>
+      flatTasks
+        .map((task) => ({
+          task,
+          start:
+            typeof task.startDate === "string"
+              ? parseISO(task.startDate)
+              : new Date(task.startDate),
+          end:
+            typeof task.endDate === "string"
+              ? parseISO(task.endDate)
+              : new Date(task.endDate),
+        }))
+        .sort((a, b) => a.start.getTime() - b.start.getTime()),
+    [flatTasks]
+  );
+
+  if (isMobile) {
+    return (
+      <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
+        {title && (
+          <CardHeader className="pb-3 border-b border-border bg-background/5">
+            <CardTitle className="text-base font-black tracking-tight uppercase opacity-80 truncate">
+              {title}
+            </CardTitle>
+          </CardHeader>
+        )}
+        <CardContent className="p-4 space-y-3">
+          {mobileTasks.length === 0 ? (
+            <div className="text-sm text-muted-foreground py-6 text-center">No tasks available</div>
+          ) : (
+            mobileTasks.map(({ task, start, end }) => (
+              <Button
+                key={task.id}
+                variant="ghost"
+                onClick={() => onTaskClick?.(task as unknown as T)}
+                className="w-full text-left rounded-xl border border-border bg-background/40 p-3 transition-colors hover:bg-muted/40 h-auto justify-start flex-col items-start"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-sm font-bold tracking-tight truncate">{task.name}</p>
+                  {task.isMilestone ? (
+                    <Milestone className="h-4 w-4 text-status-milestone flex-shrink-0" />
+                  ) : null}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {format(start, "MMM d")} - {format(end, "MMM d, yyyy")}
+                </p>
+                {task.progress !== undefined ? (
+                  <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                    <div
+                      className={cn("h-full", getStatusColor(task.status))}
+                      style={getProgressFillStyle(task.progress)}
+                    />
+                  </div>
+                ) : null}
+              </Button>
+            ))
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className={cn("border-border glass-morphism overflow-hidden shadow-2xl", className)}>
       {title && (
         <CardHeader className="pb-4 border-b border-border bg-background/5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <CardTitle className="text-xl font-black tracking-tight uppercase opacity-80">{title}</CardTitle>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3 sm:gap-6">
+              <CardTitle className="text-base sm:text-xl font-black tracking-tight uppercase opacity-80 truncate">{title}</CardTitle>
               <div className="flex items-center gap-2 bg-muted/30 p-1 rounded-lg border border-border">
                 <Button variant="ghost" size="sm" onClick={goToToday} className="h-7 text-[10px] font-black uppercase tracking-widest px-3 hover:bg-accent">
                   Today
@@ -425,7 +492,7 @@ export function GanttView<T extends GanttTask>({
 
             <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-xl border border-border">
               <Select value={zoomLevel} onValueChange={(v) => setZoomLevel(v as ZoomLevel)}>
-                <SelectTrigger className="w-[110px] h-8 glass-morphism border-border text-[10px] font-black uppercase tracking-widest">
+                <SelectTrigger className="w-[90px] sm:w-[110px] h-8 glass-morphism border-border text-[10px] font-black uppercase tracking-widest">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="glass-morphism border-border">
@@ -460,7 +527,7 @@ export function GanttView<T extends GanttTask>({
         <div className="flex border-t">
           {/* Task list */}
           {/* Task list */}
-          <div className="w-80 flex-shrink-0 border-r border-border bg-background/20">
+          <div className="hidden md:block w-80 flex-shrink-0 border-r border-border bg-background/20">
             <div className="h-12 border-b border-border bg-muted px-6 flex items-center">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Task Breakdown</span>
             </div>
@@ -472,7 +539,7 @@ export function GanttView<T extends GanttTask>({
                     "h-12 px-6 flex items-center gap-3 hover:bg-muted cursor-pointer transition-colors group/task",
                     task.isCriticalPath && showCriticalPath && "bg-status-critical-path/5"
                   )}
-                  style={getTaskRowStyle(task.depth)}
+                  style={getTaskRowStyle(task.depth, isMobile)}
                   onClick={() => onTaskClick?.(task as unknown as T)}
                 >
                   <div className="flex items-center gap-3 min-w-0">
@@ -573,7 +640,7 @@ export function GanttView<T extends GanttTask>({
                                     : getStatusColor(task.status)
                               )}
                               style={task.isMilestone ? { left: position.left } : position}
-                              onMouseDown={(e) => {
+                              onPointerDown={(e) => {
                                 if (!task.isMilestone && onTaskUpdate) handleDragStart(e, task, "move");
                               }}
                               onClick={() => {
@@ -597,8 +664,8 @@ export function GanttView<T extends GanttTask>({
                               )}
                               {!task.isMilestone && onTaskUpdate && (
                                 <div
-                                  className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-white/30 rounded-r-full z-10"
-                                  onMouseDown={(e) => handleDragStart(e, task, "resize-end")}
+                                  className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-white/30 rounded-r-full z-10 touch:w-6 touch:-right-2"
+                                  onPointerDown={(e) => handleDragStart(e, task, "resize-end")}
                                 />
                               )}
                             </motion.div>
@@ -639,7 +706,7 @@ export function GanttView<T extends GanttTask>({
         </div>
 
         {/* Legend */}
-        <div className="border-t border-border p-4 bg-muted flex items-center gap-6 text-[10px] font-black uppercase tracking-widest opacity-60">
+        <div className="border-t border-border p-3 sm:p-4 bg-muted flex flex-wrap items-center gap-3 sm:gap-6 text-[10px] font-black uppercase tracking-widest opacity-60">
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 bg-status-on-track rounded-full shadow-lg" />
             <span>On Track</span>

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * Valid phase transitions for events
@@ -134,7 +135,7 @@ export async function POST(
             message: `Event transitioned to ${targetPhase} phase`,
         });
     } catch (e) {
-        console.error('[API] Event phase transition error:', e);
+        captureError(e, 'api.events.id.phase.error');
         return serverError('Phase transition failed');
     }
 }
@@ -172,7 +173,7 @@ export async function GET(
             phase_history: event.metadata?.phase_history || [],
         });
     } catch (e) {
-        console.error('[API] Get event phase error:', e);
+        captureError(e, 'api.events.id.phase.error');
         return serverError('Failed to get phase info');
     }
 }

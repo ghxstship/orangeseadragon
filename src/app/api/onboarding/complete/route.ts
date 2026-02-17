@@ -1,11 +1,12 @@
 // /app/api/onboarding/complete/route.ts
 // Mark onboarding as complete for the current user
 
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST() {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -33,7 +34,7 @@ export async function POST() {
 
     return apiSuccess({ completed: true });
   } catch (err) {
-    console.error('[Onboarding Complete] error:', err);
+    captureError(err, 'api.onboarding.complete.error');
     return serverError('Failed to complete onboarding');
   }
 }

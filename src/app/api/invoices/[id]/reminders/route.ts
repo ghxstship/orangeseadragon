@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/invoices/[id]/reminders
@@ -171,7 +172,7 @@ export async function POST(
       contact_name: contactName,
     });
   } catch (e) {
-    console.error('[API] Invoice reminder error:', e);
+    captureError(e, 'api.invoices.id.reminders.error');
     return serverError('Failed to send reminder');
   }
 }
@@ -206,7 +207,7 @@ export async function GET(
 
     return apiSuccess(data || []);
   } catch (e) {
-    console.error('[API] Invoice reminder list error:', e);
+    captureError(e, 'api.invoices.id.reminders.error');
     return serverError('Failed to list reminders');
   }
 }

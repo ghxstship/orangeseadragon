@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * GET /api/dashboards/:id/widgets
@@ -11,7 +12,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -31,8 +32,8 @@ export async function GET(
 
     return apiSuccess(widgets);
   } catch (error) {
-    console.error('Error fetching dashboard widgets:', error);
-    return serverError();
+    captureError(error, 'api.dashboards.id.widgets.error');
+    return serverError('Failed to process dashboard widgets');
   }
 }
 
@@ -45,7 +46,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -90,8 +91,8 @@ export async function POST(
 
     return apiCreated(widget);
   } catch (error) {
-    console.error('Error adding dashboard widget:', error);
-    return serverError();
+    captureError(error, 'api.dashboards.id.widgets.error');
+    return serverError('Failed to process dashboard widgets');
   }
 }
 
@@ -104,7 +105,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -133,7 +134,7 @@ export async function PATCH(
 
     return apiSuccess({ updated: widgets.length });
   } catch (error) {
-    console.error('Error updating widget positions:', error);
-    return serverError();
+    captureError(error, 'api.dashboards.id.widgets.error');
+    return serverError('Failed to process dashboard widgets');
   }
 }

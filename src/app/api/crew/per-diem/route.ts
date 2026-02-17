@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/crew/per-diem
@@ -10,7 +11,7 @@ import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/re
  */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -20,8 +21,7 @@ export async function POST(request: NextRequest) {
       return badRequest('employee_id, organization_id, start_date, and end_date are required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00084
-    const { data, error } = await (supabase as any).rpc('calculate_per_diem', {
+    const { data, error } = await supabase.rpc('calculate_per_diem', {
       p_employee_id: employee_id,
       p_organization_id: organization_id,
       p_start_date: start_date,
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess(Array.isArray(data) ? data[0] : data);
   } catch (error) {
-    console.error('Error calculating per diem:', error);
-    return serverError();
+    captureError(error, 'api.crew.per-diem.error');
+    return serverError('Failed to calculate per diem');
   }
 }

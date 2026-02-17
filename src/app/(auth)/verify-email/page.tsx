@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Mail, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AuthTemplate } from '@/components/templates/AuthTemplate';
+import { createClient } from '@/lib/supabase/client';
 
 export default function VerifyEmailPage() {
   const [isResending, setIsResending] = React.useState(false);
@@ -12,9 +13,19 @@ export default function VerifyEmailPage() {
 
   const handleResend = async () => {
     setIsResending(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsResending(false);
-    setResendCooldown(60);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      const email = user?.email;
+      if (email) {
+        await supabase.auth.resend({ type: 'signup', email });
+      }
+    } catch (err) {
+      console.error('[VerifyEmail] Resend failed:', err);
+    } finally {
+      setIsResending(false);
+      setResendCooldown(60);
+    }
   };
 
   React.useEffect(() => {

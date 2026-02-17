@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/leave-requests/[id]/reject
@@ -13,7 +14,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -65,7 +66,7 @@ export async function POST(
 
     return apiSuccess(data, { message: 'Leave request rejected' });
   } catch (e) {
-    console.error('[API] Leave rejection error:', e);
+    captureError(e, 'api.leave-requests.id.reject.error');
     return serverError('Rejection failed');
   }
 }

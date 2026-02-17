@@ -36,7 +36,7 @@ export default function AppError({
           )}
 
           <Button variant="outline" size="sm" asChild>
-            <Link href="/dashboard">
+            <Link href="/core/dashboard">
               <Home className="w-4 h-4 mr-2" />
               Dashboard
             </Link>

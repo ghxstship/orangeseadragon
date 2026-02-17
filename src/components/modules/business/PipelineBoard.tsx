@@ -7,6 +7,7 @@ import {
     closestCorners,
     KeyboardSensor,
     PointerSensor,
+    TouchSensor,
     useSensor,
     useSensors,
     DragStartEvent,
@@ -228,7 +229,13 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 5, // Prevent accidental drags
+                distance: 5,
+            },
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 200,
+                tolerance: 5,
             },
         }),
         useSensor(KeyboardSensor, {
@@ -328,7 +335,7 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
         >
-            <div className="flex h-[calc(100vh-140px)] gap-4 overflow-x-auto pb-4 px-1">
+            <div className="flex min-h-[400px] max-h-[calc(100vh-140px)] gap-4 overflow-x-auto pb-4 px-1">
                 {columns.map((col) => (
                     <PipelineColumn
                         key={col.value}

@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * GET /api/projects/:id/forecast
@@ -16,7 +17,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -30,8 +31,7 @@ export async function GET(
       return badRequest('organization_id is required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00088
-    const { data, error } = await (supabase as any).rpc('forecast_project_financials', {
+    const { data, error } = await supabase.rpc('forecast_project_financials', {
       p_project_id: projectId,
       p_organization_id: organizationId,
       p_forecast_months: months,
@@ -43,8 +43,8 @@ export async function GET(
 
     return apiSuccess(data);
   } catch (error) {
-    console.error('Error fetching forecast:', error);
-    return serverError();
+    captureError(error, 'api.projects.id.forecast.error');
+    return serverError('Failed to process project forecast');
   }
 }
 
@@ -52,7 +52,7 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -64,15 +64,11 @@ export async function POST(
       return badRequest('organization_id is required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00088
-    const rpcParams: Record<string, unknown> = {
+    const { data, error } = await supabase.rpc('compare_budget_scenarios', {
       p_project_id: projectId,
       p_organization_id: organization_id,
-    };
-    if (scenarios) rpcParams.p_scenarios = JSON.stringify(scenarios);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any).rpc('compare_budget_scenarios', rpcParams);
+      ...(scenarios ? { p_scenarios: JSON.stringify(scenarios) } : {}),
+    });
 
     if (error) {
       return supabaseError(error);
@@ -80,7 +76,7 @@ export async function POST(
 
     return apiSuccess(data);
   } catch (error) {
-    console.error('Error comparing scenarios:', error);
-    return serverError();
+    captureError(error, 'api.projects.id.forecast.error');
+    return serverError('Failed to process project forecast');
   }
 }

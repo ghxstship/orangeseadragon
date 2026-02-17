@@ -1,11 +1,12 @@
 import { NextRequest } from 'next/server';
 import { stripeService } from '@/lib/integrations/stripe';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, serverError } from '@/lib/api/response';
 import { getErrorMessage } from '@/lib/api/error-message';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
 
   try {
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
       paymentIntentId: paymentIntent.id,
     });
   } catch (error) {
-    console.error('Create payment intent error:', error);
+    captureError(error, 'api.payments.create-intent.error');
     return serverError(getErrorMessage(error, 'Failed to create payment intent'));
   }
 }

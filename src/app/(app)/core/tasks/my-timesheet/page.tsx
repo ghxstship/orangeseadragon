@@ -11,6 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -27,6 +34,7 @@ import {
   Square,
   Loader2,
   Copy,
+  Plus,
   AlertTriangle,
   CheckCircle2,
   FileText,
@@ -37,8 +45,11 @@ import {
   useUpsertTimeEntry,
   useSubmitWeekTimeEntries,
 } from "@/hooks/use-my-time-entries";
+import { useUser } from "@/hooks/use-supabase";
+import { useProjects } from "@/hooks/use-projects";
 
 interface GridRow {
+  rowId: string;
   projectId: string;
   projectName: string;
   taskId: string | null;
@@ -82,9 +93,14 @@ const weekStatusConfig: Record<WeekStatus, { label: string; color: string; icon:
 };
 
 export default function MyTimesheetPage() {
+  const { user } = useUser();
+  const organizationId = user?.user_metadata?.organization_id || null;
+
   const [weekOffset, setWeekOffset] = useState(0);
   const [activeTimer, setActiveTimer] = useState<string | null>(null);
+  const [activeTimerMeta, setActiveTimerMeta] = useState<{ projectId: string; taskId: string | null } | null>(null);
   const [timerSeconds, setTimerSeconds] = useState(0);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
   const [weekStatus] = useState<WeekStatus>("draft");
   const gridRef = useRef<HTMLTableElement>(null);
 
@@ -94,6 +110,7 @@ export default function MyTimesheetPage() {
   const weekEnd = dateKey(weekDates[6]);
 
   const { data: rawEntries, isLoading, error, refetch } = useMyTimeEntries(weekStart, weekEnd);
+  const { data: projects, isLoading: projectsLoading } = useProjects(organizationId);
   const upsertEntry = useUpsertTimeEntry();
   const submitWeek = useSubmitWeekTimeEntries();
 
@@ -124,6 +141,7 @@ export default function MyTimesheetPage() {
       const rowKey = `${entry.project_id}::${entry.task_id ?? "none"}`;
       if (!rowMap.has(rowKey)) {
         rowMap.set(rowKey, {
+          rowId: rowKey,
           projectId: entry.project_id,
           projectName: entry.project_name,
           taskId: entry.task_id,
@@ -137,6 +155,11 @@ export default function MyTimesheetPage() {
 
     return Array.from(rowMap.values());
   }, [rawEntries]);
+
+  useEffect(() => {
+    if (selectedProjectId || !projects || projects.length === 0) return;
+    setSelectedProjectId(String((projects[0] as Record<string, unknown>).id));
+  }, [projects, selectedProjectId]);
 
   const weekTotals = useMemo(() => {
     const totals: Record<string, number> = {};
@@ -184,10 +207,64 @@ export default function MyTimesheetPage() {
   );
 
   const handleToggleTimer = useCallback(
-    (key: string) => {
-      setActiveTimer((prev) => (prev === key ? null : key));
+    (row: GridRow) => {
+      const isStopping = activeTimer === row.rowId;
+
+      if (isStopping) {
+        const roundedHours = Math.round((timerSeconds / 3600) * 4) / 4;
+        if (roundedHours > 0 && activeTimerMeta) {
+          const todayKey = dateKey(new Date());
+          const targetDay = weekDates.some((day) => dateKey(day) === todayKey)
+            ? todayKey
+            : weekStart;
+
+          const existing = row.hours[targetDay];
+
+          upsertEntry.mutate({
+            id: existing?.id ?? undefined,
+            project_id: activeTimerMeta.projectId,
+            task_id: activeTimerMeta.taskId,
+            date: targetDay,
+            hours: (existing?.value ?? 0) + roundedHours,
+          });
+        }
+
+        setActiveTimer(null);
+        setActiveTimerMeta(null);
+        return;
+      }
+
+      setActiveTimer(row.rowId);
+      setActiveTimerMeta({ projectId: row.projectId, taskId: row.taskId });
+      setTimerSeconds(0);
     },
-    []
+    [activeTimer, activeTimerMeta, timerSeconds, upsertEntry, weekDates, weekStart]
+  );
+
+  const handleAddRow = useCallback(() => {
+    if (!selectedProjectId) return;
+
+    const hasExistingProjectRow = gridRows.some(
+      (row) => row.projectId === selectedProjectId && row.taskId === null
+    );
+
+    if (hasExistingProjectRow) {
+      return;
+    }
+
+    const todayKey = dateKey(new Date());
+    const targetDay = weekDates.some((day) => dateKey(day) === todayKey)
+      ? todayKey
+      : weekStart;
+
+    upsertEntry.mutate({
+      project_id: selectedProjectId,
+      task_id: null,
+      date: targetDay,
+      hours: 0,
+    });
+    },
+    [gridRows, selectedProjectId, upsertEntry, weekDates, weekStart]
   );
 
   const handleSubmitWeek = useCallback(() => {
@@ -268,6 +345,29 @@ export default function MyTimesheetPage() {
           <TooltipContent>Copy time entries from the previous week</TooltipContent>
         </Tooltip>
       </TooltipProvider>
+      <div className="flex items-center gap-2">
+        <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+          <SelectTrigger className="h-9 w-[190px]">
+            <SelectValue placeholder="Select project" />
+          </SelectTrigger>
+          <SelectContent>
+            {(projects ?? []).map((project) => (
+              <SelectItem key={String((project as Record<string, unknown>).id)} value={String((project as Record<string, unknown>).id)}>
+                {String((project as Record<string, unknown>).name ?? "Untitled Project")}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleAddRow}
+          disabled={!selectedProjectId || projectsLoading || upsertEntry.isPending}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Row
+        </Button>
+      </div>
       <Button size="sm" onClick={handleSubmitWeek} disabled={submitWeek.isPending || grandTotal === 0 || weekStatus === "submitted"}>
         {submitWeek.isPending ? (
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -430,7 +530,7 @@ export default function MyTimesheetPage() {
                     </tr>
                   ) : (
                     gridRows.map((row, rowIdx) => {
-                      const rowKey = `${row.projectId}::${row.taskId ?? "none"}`;
+                      const rowKey = row.rowId;
                       const total = rowTotal(row);
                       const isTimerActive = activeTimer === rowKey;
                       return (
@@ -504,7 +604,7 @@ export default function MyTimesheetPage() {
                                     variant={isTimerActive ? "destructive" : "ghost"}
                                     size="icon"
                                     className="h-7 w-7"
-                                    onClick={() => handleToggleTimer(rowKey)}
+                                    onClick={() => handleToggleTimer(row)}
                                   >
                                     {isTimerActive ? (
                                       <Square className="h-3 w-3" />

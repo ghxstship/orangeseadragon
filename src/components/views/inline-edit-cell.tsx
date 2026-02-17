@@ -188,7 +188,7 @@ export function InlineEditCell({
   return (
     <div
       className={cn(
-        "group/cell relative cursor-text rounded px-1 -mx-1 min-h-[28px] flex items-center",
+        "group/cell relative cursor-text rounded px-1 -mx-1 min-h-[44px] sm:min-h-[28px] flex items-center",
         "hover:bg-muted/60 transition-colors",
         error && "ring-1 ring-destructive/50 bg-destructive/5",
         className

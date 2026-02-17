@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { captureError } from '@/lib/observability';
 
 const ENTITY_TABLE_MAP: Record<string, string> = {
   project: 'projects',
@@ -76,7 +77,7 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
           );
         }
       } catch (err) {
-        console.error('Failed to load relation options:', err);
+        captureError(err, 'components.fields.RelationField.error');
       } finally {
         setLoading(false);
       }
@@ -99,15 +100,19 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
     setLoading(true);
     try {
       const supabase = createClient();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: fetchError } = await (supabase as any)
-        .from(table)
+      // Dynamic table + dynamic select prevents Supabase from inferring result types.
+      // We assert the result shape explicitly since all relation lookups return {id, [displayField]}.
+      const result = await supabase
+        .from(table as 'organizations')
         .select(`id, ${displayField}`)
         .order(displayField, { ascending: true })
         .limit(200);
 
+      const fetchError = result.error;
+      const data = result.data as Record<string, unknown>[] | null;
+
       if (fetchError) {
-        console.error(`[RelationField] Failed to fetch from ${table}:`, fetchError);
+        captureError(fetchError, 'components.fields.RelationField.error');
         setOptions([]);
         return;
       }
@@ -119,7 +124,7 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
         }))
       );
     } catch (err) {
-      console.error('Failed to load relation options:', err);
+      captureError(err, 'components.fields.RelationField.error');
     } finally {
       setLoading(false);
     }

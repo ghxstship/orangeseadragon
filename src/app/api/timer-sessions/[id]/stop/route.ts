@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/timer-sessions/[id]/stop
@@ -12,7 +13,7 @@ export async function POST(
 ) {
     const { id } = await params;
 
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -54,7 +55,7 @@ export async function POST(
 
         return apiSuccess(updated);
     } catch (e) {
-        console.error('[API] Timer stop error:', e);
+        captureError(e, 'api.timer-sessions.id.stop.error');
         return serverError('Failed to stop timer');
     }
 }

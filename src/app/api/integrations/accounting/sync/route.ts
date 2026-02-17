@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requireRole } from '@/lib/api/guard';
 import { apiSuccess, apiCreated, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/integrations/accounting/sync
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     return apiCreated(mapping);
   } catch (e) {
-    console.error('[API] Accounting sync error:', e);
+    captureError(e, 'api.integrations.accounting.sync.error');
     return serverError('Failed to create accounting sync mapping');
   }
 }
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(data || []);
   } catch (e) {
-    console.error('[API] Accounting sync list error:', e);
+    captureError(e, 'api.integrations.accounting.sync.error');
     return serverError('Failed to list accounting sync mappings');
   }
 }

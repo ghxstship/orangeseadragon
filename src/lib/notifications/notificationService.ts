@@ -5,6 +5,8 @@
  * for operations alerts including incidents, schedule changes, and cue reminders.
  */
 
+import { captureError, logWarn } from '@/lib/observability';
+
 export type NotificationType = 
   | 'incident_critical'
   | 'incident_assigned'
@@ -101,7 +103,7 @@ class NotificationService {
 
   async initialize(): Promise<boolean> {
     if (typeof window === 'undefined' || !('Notification' in window)) {
-      console.warn('Notifications not supported');
+      logWarn('notifications.notificationService.warn', { message: 'Notifications not supported' });
       return false;
     }
 
@@ -119,7 +121,7 @@ class NotificationService {
         this.swRegistration = await navigator.serviceWorker.register('/sw.js');
         console.log('Service Worker registered');
       } catch (error) {
-        console.error('Service Worker registration failed:', error);
+        captureError(error, 'notifications.notificationService.error');
       }
     }
 
@@ -347,7 +349,7 @@ class NotificationService {
 
       return subscription;
     } catch (error) {
-      console.error('Push subscription failed:', error);
+      captureError(error, 'notifications.notificationService.error');
       return null;
     }
   }
@@ -362,7 +364,7 @@ class NotificationService {
       }
       return true;
     } catch (error) {
-      console.error('Push unsubscribe failed:', error);
+      captureError(error, 'notifications.notificationService.error');
       return false;
     }
   }

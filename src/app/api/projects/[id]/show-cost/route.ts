@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * GET /api/projects/:id/show-cost
@@ -14,7 +15,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
 
@@ -26,8 +27,7 @@ export async function GET(
       return badRequest('organization_id is required');
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Stale Supabase types; function exists in migration 00088
-    const { data, error } = await (supabase as any).rpc('report_show_cost_realtime', {
+    const { data, error } = await supabase.rpc('report_show_cost_realtime', {
       p_project_id: projectId,
       p_organization_id: organizationId,
     });
@@ -38,7 +38,7 @@ export async function GET(
 
     return apiSuccess(data?.[0] || data);
   } catch (error) {
-    console.error('Error fetching show cost data:', error);
-    return serverError();
+    captureError(error, 'api.projects.id.show-cost.error');
+    return serverError('Failed to load show cost data');
   }
 }

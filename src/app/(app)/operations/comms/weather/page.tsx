@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { radioChannelSchema } from '@/lib/schemas/radioChannel';
+import { weatherAlertSchema } from '@/lib/schemas/weatherAlert';
 
 export default function WeatherPage() {
-  return <CrudList schema={radioChannelSchema} />;
+  return <CrudList schema={weatherAlertSchema} />;
 }

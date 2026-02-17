@@ -1,12 +1,13 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { supabase } = auth;
     const { searchParams } = new URL(request.url);
@@ -40,7 +41,7 @@ export async function GET(request: NextRequest) {
     const { data: emails, error, count } = await query;
 
     if (error) {
-      console.error('Error fetching emails:', error);
+      captureError(error, 'api.emails.error');
       return supabaseError(error);
     }
 
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
       total: count || emails?.length || 0,
     });
   } catch (error) {
-    console.error('Error in emails API:', error);
-    return serverError();
+    captureError(error, 'api.emails.error');
+    return serverError('Failed to process emails');
   }
 }

@@ -160,9 +160,41 @@ export function TopBar() {
           <span className="hidden font-semibold md:inline-block">ATLVS</span>
         </Link>
         <OrgSwitcher className="ml-2 hidden sm:flex" />
+        {breadcrumbs.length > 0 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="md:hidden ml-1 max-w-[140px] px-2 h-8"
+                aria-label="Open breadcrumb path"
+              >
+                <span className="truncate text-xs font-medium">
+                  {breadcrumbs[breadcrumbs.length - 1]?.label}
+                </span>
+                <ChevronDown className="ml-1 h-3 w-3 opacity-60" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="md:hidden max-w-[280px]">
+              {breadcrumbs.map((crumb) => (
+                <DropdownMenuItem
+                  key={`mobile-crumb-${crumb.href}`}
+                  disabled={crumb.isLast}
+                  onClick={() => {
+                    if (!crumb.isLast) {
+                      router.push(crumb.href);
+                    }
+                  }}
+                >
+                  <span className="truncate">{crumb.label}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
-      <nav aria-label="Breadcrumb" className="ml-6 hidden items-center gap-1 text-sm md:flex">
+      <nav aria-label="Breadcrumb" className="ml-6 hidden items-center gap-1 text-sm md:flex min-w-0 overflow-hidden">
         {breadcrumbs.map((crumb, index) => (
           <React.Fragment key={crumb.href}>
             {index > 0 && (
@@ -175,11 +207,11 @@ export function TopBar() {
                 label={crumb.label}
               />
             ) : crumb.isLast ? (
-              <span className="font-medium text-foreground">{crumb.label}</span>
+              <span className="font-medium text-foreground truncate max-w-[200px]">{crumb.label}</span>
             ) : (
               <Link
                 href={crumb.href}
-                className="text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground truncate max-w-[150px]"
               >
                 {crumb.label}
               </Link>

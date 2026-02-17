@@ -162,7 +162,7 @@ export function LeaveRequestForm({
         {/* Leave Type Selection */}
         <div className="space-y-2">
           <Label>Leave Type</Label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {LEAVE_TYPES.map((type) => {
               const Icon = type.icon;
               const balance = balances.find(b => b.type === type.value);

@@ -143,7 +143,7 @@ export default function FinancialDashboardPage() {
                 <div key={bucket.label} className={`${bucket.color} flex-1`} title={`${bucket.label}: ${bucket.amount}`} />
               ))}
             </div>
-            <div className="grid grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
               {arAging.map((bucket) => (
                 <div key={bucket.label} className="text-center">
                   <div className={`h-2 w-2 rounded-full ${bucket.color} mx-auto mb-1`} />

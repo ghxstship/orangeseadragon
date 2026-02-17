@@ -10,6 +10,7 @@ import { SidebarRenderer } from './SidebarRenderer';
 import { LoadingState, ErrorState, EmptyState } from '@/components/states/AsyncStates';
 import { useConfirmation } from '@/components/common/confirmation-dialog';
 import { getErrorMessage } from '@/lib/api/error-message';
+import { captureError } from '@/lib/observability';
 
 interface CrudDetailProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
@@ -63,7 +64,7 @@ export function CrudDetail<T extends EntityRecord>({
         await crud.delete(id);
         router.push(`/${schema.identity.slug}`);
       } catch (err) {
-        console.error('Delete failed:', err);
+        captureError(err, 'crud.components.CrudDetail.error');
       }
     }
   };

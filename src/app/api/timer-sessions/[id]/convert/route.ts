@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/timer-sessions/[id]/convert
@@ -12,7 +13,7 @@ export async function POST(
 ) {
     const { id } = await params;
 
-    const auth = await requireAuth();
+    const auth = await requirePolicy('entity.read');
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 
@@ -83,7 +84,7 @@ export async function POST(
             duration_hours: hours,
         });
     } catch (e) {
-        console.error('[API] Timer convert error:', e);
+        captureError(e, 'api.timer-sessions.id.convert.error');
         return serverError('Failed to convert timer');
     }
 }

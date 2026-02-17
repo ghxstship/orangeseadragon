@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { requireRole } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, supabaseError, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * GET /api/automations/retry-queue
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
 
     return apiSuccess(data || []);
   } catch (e) {
-    console.error('[API] Retry queue list error:', e);
+    captureError(e, 'api.automations.retry-queue.error');
     return serverError('Failed to list retry queue');
   }
 }
@@ -143,7 +144,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess(updated, { action });
   } catch (e) {
-    console.error('[API] Retry queue action error:', e);
+    captureError(e, 'api.automations.retry-queue.error');
     return serverError('Failed to process retry action');
   }
 }

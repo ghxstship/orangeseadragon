@@ -103,16 +103,16 @@ export function WizardLayout({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-xl font-semibold">{config.title}</h1>
+        <div className="px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex items-start justify-between gap-3 mb-4 sm:items-center">
+            <div className="min-w-0">
+              <h1 className="text-lg font-semibold sm:text-xl truncate">{config.title}</h1>
               {config.description && (
-                <p className="text-sm text-muted-foreground">{config.description}</p>
+                <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-none">{config.description}</p>
               )}
             </div>
             {onCancel && (
-              <Button variant="ghost" size="icon" onClick={onCancel} className="h-8 w-8">
+              <Button variant="ghost" size="icon" onClick={onCancel} className="h-8 w-8 flex-shrink-0">
                 <X className="h-4 w-4" />
               </Button>
             )}
@@ -132,8 +132,8 @@ export function WizardLayout({
 
         {/* Step Indicators */}
         {config.navigation?.showStepNumbers !== false && (
-          <div className="px-6 pb-4">
-            <div className="flex items-center justify-center gap-2">
+          <div className="hidden sm:block px-4 sm:px-6 pb-4">
+            <div className="flex items-center justify-center gap-2 overflow-x-auto scrollbar-hide">
               {config.steps.map((step, index) => (
                 <React.Fragment key={step.key}>
                   <Button
@@ -152,7 +152,7 @@ export function WizardLayout({
                   </Button>
                   {index < totalSteps - 1 && (
                     <div className={cn(
-                      "w-12 h-0.5",
+                      "w-6 sm:w-12 h-0.5 flex-shrink-0",
                       index < currentStep ? "bg-primary" : "bg-muted"
                     )} />
                   )}
@@ -181,25 +181,25 @@ export function WizardLayout({
 
       {/* Footer */}
       <footer className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky bottom-0">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div>
+        <div className="flex flex-col-reverse gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <div className="w-full sm:w-auto">
             {!isFirstStep && config.navigation?.allowBack !== false && (
-              <Button variant="outline" onClick={handleBack} disabled={isSubmitting}>
+              <Button variant="outline" onClick={handleBack} disabled={isSubmitting} className="w-full sm:w-auto">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {config.actions?.back || 'Back'}
               </Button>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             {currentStepConfig?.optional && config.navigation?.allowSkip && (
-              <Button variant="ghost" onClick={handleSkip} disabled={isSubmitting}>
+              <Button variant="ghost" onClick={handleSkip} disabled={isSubmitting} className="flex-1 sm:flex-none">
                 <SkipForward className="h-4 w-4 mr-2" />
                 {config.actions?.skip || 'Skip'}
               </Button>
             )}
             
-            <Button onClick={handleNext} disabled={!isStepValid || isSubmitting}>
+            <Button onClick={handleNext} disabled={!isStepValid || isSubmitting} className="flex-1 sm:flex-none">
               {isLastStep ? (
                 <>
                   <Check className="h-4 w-4 mr-2" />

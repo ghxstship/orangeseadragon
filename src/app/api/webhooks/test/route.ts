@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, serverError } from '@/lib/api/response';
 import { getErrorMessage } from '@/lib/api/error-message';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/webhooks/test
@@ -10,7 +11,7 @@ import { getErrorMessage } from '@/lib/api/error-message';
  * Creates a delivery log entry with the result.
  */
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -114,7 +115,7 @@ export async function POST(request: NextRequest) {
       error: errorMessage,
     });
   } catch (error) {
-    console.error('Error testing webhook:', error);
-    return serverError();
+    captureError(error, 'api.webhooks.test.error');
+    return serverError('Failed to send test webhook');
   }
 }

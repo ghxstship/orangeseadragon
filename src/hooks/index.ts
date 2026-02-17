@@ -27,6 +27,7 @@ export { useTimesheets, useCreateTimesheet, useApproveTimesheet } from "./use-ti
 export { useShifts, useCreateShift, useUpdateShift } from "./use-shifts";
 export { useProposals, useProposal, useCreateProposal, useUpdateProposal } from "./use-proposals";
 export { useRunsheets, useCreateRunsheet, useUpdateRunsheet } from "./use-runsheets";
+export { useWorkOrders, useCreateWorkOrder, useUpdateWorkOrder } from "./use-work-orders";
 export { useAssetCategories, useCreateAssetCategory } from "./use-asset-categories";
 export { useAssetReservations, useCreateAssetReservation } from "./use-asset-reservations";
 export { useAssetKits, useCreateAssetKit } from "./use-asset-kits";

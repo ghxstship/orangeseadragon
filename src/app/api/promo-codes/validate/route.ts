@@ -1,13 +1,14 @@
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, badRequest, notFound, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 /**
  * POST /api/promo-codes/validate
  * Validate a promo code for an event
  */
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
 
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     }, { message: promoCode.description || 'Promo code applied!' });
 
   } catch (e) {
-    console.error('[API] Promo code validation error:', e);
+    captureError(e, 'api.promo-codes.validate.error');
     return serverError('Validation failed');
   }
 }

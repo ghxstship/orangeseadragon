@@ -2,11 +2,12 @@
 // File upload API — stores in Supabase Storage, records in file_attachments table
 
 import { NextRequest } from 'next/server';
-import { requireAuth } from '@/lib/api/guard';
+import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, serverError } from '@/lib/api/response';
+import { captureError } from '@/lib/observability';
 
 export async function POST(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
         });
 
       if (uploadError) {
-        console.error('[Files Upload] Storage error:', uploadError);
+        captureError(uploadError, 'api.files.upload.error');
         continue;
       }
 
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (dbError) {
-        console.error('[Files Upload] DB error:', dbError);
+        captureError(dbError, 'api.files.upload.error');
         continue;
       }
 
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     return apiSuccess({ uploaded, count: uploaded.length });
   } catch (err) {
-    console.error('[Files Upload] Error:', err);
+    captureError(err, 'api.files.upload.error');
     return serverError('Failed to upload files');
   }
 }

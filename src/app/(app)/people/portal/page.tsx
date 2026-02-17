@@ -1,11 +1,12 @@
 'use client';
 
+import { PageShell } from '@/components/common/page-shell';
 import { EmployeePortal } from '@/components/people/EmployeePortal';
 
 export default function EmployeePortalPage() {
   return (
-    <div className="container mx-auto py-6 px-4">
+    <PageShell title="Employee Portal" description="Self-service employee hub">
       <EmployeePortal />
-    </div>
+    </PageShell>
   );
 }
