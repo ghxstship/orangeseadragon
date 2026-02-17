@@ -84,10 +84,12 @@
     --sidebar-width-sm: 240px;
     --sidebar-width-md: 300px;
     --sidebar-width-lg: 320px;
+    --shadow-color: 0 0% 0%;
+    --highlight-color: 0 0% 100%;
 
     /* Spatial Shadows */
-    --shadow-spatial: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-    --shadow-ambient: 0 0 20px rgba(var(--primary), 0.05);
+    --shadow-spatial: 0 10px 30px -10px hsl(var(--shadow-color) / 0.1);
+    --shadow-ambient: 0 0 20px hsl(var(--primary) / 0.05);
 
     /* Glass Morphism Tokens - Enhanced */
     --glass-bg: 0 0% 100% / 0.7;
@@ -101,13 +103,13 @@
 
     /* Spatial Shadows - Enhanced */
     --shadow-spatial:
-      0 0 0 1px rgba(0, 0, 0, 0.03),
-      0 2px 8px -2px rgba(0, 0, 0, 0.04),
-      0 8px 24px -6px rgba(0, 0, 0, 0.06);
+      0 0 0 1px hsl(var(--shadow-color) / 0.03),
+      0 2px 8px -2px hsl(var(--shadow-color) / 0.04),
+      0 8px 24px -6px hsl(var(--shadow-color) / 0.06);
     --shadow-spatial-hover:
-      0 0 0 1px rgba(0, 0, 0, 0.04),
-      0 4px 12px -3px rgba(0, 0, 0, 0.06),
-      0 12px 32px -8px rgba(0, 0, 0, 0.08);
+      0 0 0 1px hsl(var(--shadow-color) / 0.04),
+      0 4px 12px -3px hsl(var(--shadow-color) / 0.06),
+      0 12px 32px -8px hsl(var(--shadow-color) / 0.08);
 
     /* Aurora Gradients */
     --aurora-1: 180 100% 50%;
@@ -148,6 +150,8 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 48%;
+    --shadow-color: 0 0% 0%;
+    --highlight-color: 0 0% 100%;
 
     /* Semantic Status Colors - Dark */
     --status-on-track: 217 91% 60%;
@@ -190,13 +194,13 @@
 
     /* Spatial Shadows - Dark - Enhanced */
     --shadow-spatial:
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 4px 12px -2px rgba(0, 0, 0, 0.4),
-      0 12px 32px -6px rgba(0, 0, 0, 0.5);
+      0 0 0 1px hsl(var(--highlight-color) / 0.05),
+      0 4px 12px -2px hsl(var(--shadow-color) / 0.4),
+      0 12px 32px -6px hsl(var(--shadow-color) / 0.5);
     --shadow-spatial-hover:
-      0 0 0 1px rgba(255, 255, 255, 0.1),
-      0 8px 24px -4px rgba(0, 0, 0, 0.5),
-      0 16px 48px -8px rgba(0, 0, 0, 0.6);
+      0 0 0 1px hsl(var(--highlight-color) / 0.1),
+      0 8px 24px -4px hsl(var(--shadow-color) / 0.5),
+      0 16px 48px -8px hsl(var(--shadow-color) / 0.6);
 
     /* Glass Morphism Tokens - Dark - Enhanced */
     --glass-bg: 224 71% 4% / 0.6;
@@ -296,8 +300,8 @@
   .glass-card--floating:hover {
     transform: translateY(-3px);
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.1),
-      0 16px 48px -8px rgba(0, 0, 0, 0.15);
+      0 0 0 1px hsl(var(--highlight-color) / 0.1),
+      0 16px 48px -8px hsl(var(--shadow-color) / 0.15);
     border-color: hsl(var(--glass-highlight));
   }
 

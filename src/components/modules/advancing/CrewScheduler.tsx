@@ -469,11 +469,11 @@ function AssignmentDialog({
     try {
       const shiftStart = new Date(date);
       const [startHour, startMin] = startTime.split(':').map(Number);
-      shiftStart.setHours(startHour, startMin, 0, 0);
+      shiftStart.setHours(startHour ?? 0, startMin ?? 0, 0, 0);
       
       const shiftEnd = new Date(date);
       const [endHour, endMin] = endTime.split(':').map(Number);
-      shiftEnd.setHours(endHour, endMin, 0, 0);
+      shiftEnd.setHours(endHour ?? 0, endMin ?? 0, 0, 0);
       
       const res = await fetch('/api/advancing/crew/assignments', {
         method: 'POST',
@@ -599,7 +599,7 @@ function AssignmentDialog({
                   {(() => {
                     const [sh, sm] = startTime.split(':').map(Number);
                     const [eh, em] = endTime.split(':').map(Number);
-                    const hours = (eh + em/60) - (sh + sm/60);
+                    const hours = ((eh ?? 0) + (em ?? 0)/60) - ((sh ?? 0) + (sm ?? 0)/60);
                     return hours > 0 ? hours.toFixed(1) : '0';
                   })()}h
                 </span>

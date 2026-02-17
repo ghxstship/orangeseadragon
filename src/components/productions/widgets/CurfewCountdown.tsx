@@ -68,10 +68,10 @@ const URGENCY_STYLES = {
     pulse: false,
   },
   warning: {
-    bg: "bg-amber-500/5",
-    border: "border-amber-500/30",
-    text: "text-amber-400",
-    badge: "bg-amber-500/20 text-amber-400",
+    bg: "bg-semantic-warning/5",
+    border: "border-semantic-warning/30",
+    text: "text-semantic-warning",
+    badge: "bg-semantic-warning/20 text-semantic-warning",
     pulse: false,
   },
   critical: {
@@ -162,7 +162,7 @@ function SingleTimer({ timer, compact }: { timer: CurfewTimer; compact?: boolean
             </Badge>
           )}
           {urgency === "warning" && (
-            <Badge className="text-[9px] bg-amber-500/20 text-amber-400 border-amber-500/30">
+            <Badge className="text-[9px] bg-semantic-warning/20 text-semantic-warning border-semantic-warning/30">
               Warning
             </Badge>
           )}

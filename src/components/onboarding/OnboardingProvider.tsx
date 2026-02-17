@@ -70,14 +70,14 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     if (nextIndex < ONBOARDING_STEPS.length) {
       progressHook.completeStep(currentStepKey);
       syncStepToServer(currentStepKey, 'complete');
-      router.push(ONBOARDING_STEPS[nextIndex].path);
+      router.push(ONBOARDING_STEPS[nextIndex]!.path);
     }
   };
 
   const prevStep = () => {
     const prevIndex = currentStepIndex - 1;
     if (prevIndex >= 0) {
-      router.push(ONBOARDING_STEPS[prevIndex].path);
+      router.push(ONBOARDING_STEPS[prevIndex]!.path);
     }
   };
 

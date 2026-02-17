@@ -249,15 +249,15 @@ export default function CallSheetPage() {
     <meta charset="utf-8" />
     <title>${title}</title>
     <style>
-      body { font-family: Arial, sans-serif; margin: 32px; color: #111; }
+      body { font-family: Arial, sans-serif; margin: 32px; color: black; }
       h1, h2 { margin: 0 0 12px; }
       h1 { font-size: 28px; }
       h2 { font-size: 16px; margin-top: 24px; text-transform: uppercase; letter-spacing: .08em; }
-      .meta { margin-bottom: 16px; color: #444; }
+      .meta { margin-bottom: 16px; color: dimgray; }
       table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
-      th { background: #f5f5f5; }
-      .notes { white-space: pre-wrap; font-size: 12px; color: #333; }
+      th, td { border: 1px solid lightgray; padding: 8px; text-align: left; font-size: 12px; }
+      th { background: whitesmoke; }
+      .notes { white-space: pre-wrap; font-size: 12px; color: black; }
     </style>
   </head>
   <body>

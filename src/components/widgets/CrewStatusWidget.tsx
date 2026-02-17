@@ -15,7 +15,7 @@ export function CrewStatusWidget({ title = "Crew Status", limit = 5 }: CrewStatu
   const organizationId = user?.user_metadata?.organization_id || null;
   const { data: shifts } = useShifts(organizationId);
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0] ?? '';
   const crewMembers = (shifts ?? [])
     .filter((s) => s.date === today || s.scheduled_start?.startsWith(today))
     .map((s) => ({

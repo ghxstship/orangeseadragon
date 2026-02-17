@@ -1,8 +1,11 @@
 'use client';
 
+import { use } from 'react';
 import { CrudForm } from '@/lib/crud/components/CrudForm';
 import { connectionSchema } from '@/lib/schemas/connection';
 
-export default function EditConnectionPage({ params }: { params: { id: string } }) {
-  return <CrudForm schema={connectionSchema} mode="edit" id={params.id} />;
+export default function EditConnectionPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
+  return <CrudForm schema={connectionSchema} mode="edit" id={id} />;
 }

@@ -1,8 +1,11 @@
 'use client';
 
+import { use } from 'react';
 import { CrudForm } from '@/lib/crud/components/CrudForm';
 import { showcaseSchema } from '@/lib/schemas/showcase';
 
-export default function EditShowcasePage({ params }: { params: { id: string } }) {
-  return <CrudForm schema={showcaseSchema} mode="edit" id={params.id} />;
+export default function EditShowcasePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
+  return <CrudForm schema={showcaseSchema} mode="edit" id={id} />;
 }

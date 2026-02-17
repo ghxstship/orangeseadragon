@@ -234,7 +234,7 @@ export default function RevenueForecastPage() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="month" tick={{ fontSize: 11 }} className="fill-muted-foreground" />
                   <YAxis tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, undefined]} />
+                  <Tooltip formatter={(value: number | undefined) => [`$${(value ?? 0).toLocaleString()}`, undefined]} />
                   <Bar dataKey="weighted" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Weighted" opacity={0.7} />
                   <Bar dataKey="actual" fill="hsl(var(--semantic-success))" radius={[4, 4, 0, 0]} name="Actual" />
                   <Legend />
@@ -252,7 +252,7 @@ export default function RevenueForecastPage() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis type="number" tick={{ fontSize: 11 }} className="fill-muted-foreground" tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
                   <YAxis type="category" dataKey="client" tick={{ fontSize: 11 }} className="fill-muted-foreground" width={100} />
-                  <Tooltip formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']} />
+                  <Tooltip formatter={(value: number | undefined) => [`$${(value ?? 0).toLocaleString()}`, 'Revenue']} />
                   <Bar dataKey="revenue" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>

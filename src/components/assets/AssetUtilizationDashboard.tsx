@@ -89,10 +89,10 @@ export function AssetUtilizationDashboard({
           total_maintenance_cost: 0,
         };
       }
-      acc[asset.category].total_assets += 1;
-      acc[asset.category].total_utilization += asset.utilization_rate;
-      acc[asset.category].total_revenue += asset.revenue_generated;
-      acc[asset.category].total_maintenance_cost += asset.maintenance_cost;
+      acc[asset.category]!.total_assets += 1;
+      acc[asset.category]!.total_utilization += asset.utilization_rate;
+      acc[asset.category]!.total_revenue += asset.revenue_generated;
+      acc[asset.category]!.total_maintenance_cost += asset.maintenance_cost;
       return acc;
     }, {} as Record<string, { category: string; total_assets: number; total_utilization: number; total_revenue: number; total_maintenance_cost: number }>);
 

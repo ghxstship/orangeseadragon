@@ -1,11 +1,19 @@
 {
-  "generated_at": "2026-02-16T04:41:46.248Z",
-  "total_component_files": 199,
-  "single_use_count": 66,
+  "generated_at": "2026-02-17T22:20:03.380Z",
+  "total_component_files": 217,
+  "single_use_count": 76,
   "zero_reference_count": 0,
   "single_use_files": [
     {
       "file": "src/components/assets/AssetUtilizationDashboard.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/business/client-portal-access-view.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/business/rate-card-editor.tsx",
       "references": 1
     },
     {
@@ -161,6 +169,14 @@
       "references": 1
     },
     {
+      "file": "src/components/productions/widgets/EmergencyAlert.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/productions/widgets/LiveShowCost.tsx",
+      "references": 1
+    },
+    {
       "file": "src/components/providers/index.tsx",
       "references": 1
     },
@@ -170,6 +186,18 @@
     },
     {
       "file": "src/components/providers/theme-provider.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/reports/report-subscription-modal.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/reports/report-template-library.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/reports/report-viewer.tsx",
       "references": 1
     },
     {
@@ -266,6 +294,18 @@
     },
     {
       "file": "src/components/views/WorkloadView.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/workflows/visual-builder/NodePalette.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/workflows/visual-builder/NodePropertyPanel.tsx",
+      "references": 1
+    },
+    {
+      "file": "src/components/workflows/visual-builder/WorkflowCanvas.tsx",
       "references": 1
     }
   ],

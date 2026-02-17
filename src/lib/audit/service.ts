@@ -596,7 +596,7 @@ export class AuditService {
       if (!actorCounts[entry.actor.id]) {
         actorCounts[entry.actor.id] = { name: entry.actor.name, count: 0 };
       }
-      actorCounts[entry.actor.id].count++;
+      actorCounts[entry.actor.id]!.count++;
 
       // By target
       if (entry.target?.type) {
@@ -607,8 +607,8 @@ export class AuditService {
       if (entry.success) successCount++;
 
       // Timeline
-      const dateKey = entry.timestamp.toISOString().split("T")[0];
-      dateCounts[dateKey] = (dateCounts[dateKey] || 0) + 1;
+      const dateKey = entry.timestamp.toISOString().split("T")[0] ?? '';
+      dateCounts[dateKey] = (dateCounts[dateKey] ?? 0) + 1;
     }
 
     stats.byActor = Object.entries(actorCounts)

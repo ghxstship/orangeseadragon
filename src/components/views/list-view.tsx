@@ -59,6 +59,7 @@ export interface ListViewProps<T extends ListItem> {
   className?: string;
 }
 
+// @ui-audit: inline required for runtime-provided status colors coming from data.
 const getListStatusIndicatorStyle = (color?: string): React.CSSProperties =>
   ({
     "--status-indicator": color || "hsl(var(--muted-foreground))",
@@ -185,11 +186,11 @@ export function ListView<T extends ListItem>({
                   layout
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.05)", x: 4 }}
+                  whileHover={{ x: 4 }}
                   className={cn(
-                    "flex items-center gap-4 p-5 transition-all duration-300 border-b border-border last:border-b-0",
+                    "flex items-center gap-4 p-5 transition-all duration-300 border-b border-border last:border-b-0 hover:bg-background/40",
                     onItemClick && "cursor-pointer",
-                    isSelected && "bg-primary/10 shadow-[inner_0_0_20px_rgba(var(--primary),0.05)]"
+                    isSelected && "bg-primary/10 shadow-[inner_0_0_20px_hsl(var(--primary)/0.05)]"
                   )}
                   onClick={() => onItemClick?.(item)}
                 >

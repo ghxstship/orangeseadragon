@@ -110,7 +110,7 @@ export function DetailLayout<T extends object>({
       const index = parseInt(e.key) - 1;
       if (index < detailConfig.tabs.length) {
         e.preventDefault();
-        onTabChange?.(detailConfig.tabs[index].key);
+        onTabChange?.(detailConfig.tabs[index]!.key);
       }
     }
   }, [detailConfig.tabs, onTabChange]);

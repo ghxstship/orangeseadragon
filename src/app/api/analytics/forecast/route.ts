@@ -138,7 +138,7 @@ export async function GET(request: NextRequest) {
         const weeklyUtil = aggregateWeekly(
           (assignments || []).map((a: { start_time: string; end_time: string }) => {
             const hours = (new Date(a.end_time).getTime() - new Date(a.start_time).getTime()) / 3600000;
-            return { date: a.start_time.split('T')[0], value: Math.max(0, hours) };
+            return { date: a.start_time.split('T')[0] ?? '', value: Math.max(0, hours) };
           })
         );
 
@@ -162,7 +162,7 @@ export async function GET(request: NextRequest) {
 
         const weekly = aggregateWeekly(
           (expenseData || []).map((e: { amount: number; created_at: string }) => ({
-            date: e.created_at.split('T')[0],
+            date: e.created_at.split('T')[0] ?? '',
             value: e.amount || 0,
           }))
         );
@@ -194,8 +194,8 @@ function aggregateWeekly(points: TimeSeriesPoint[]): TimeSeriesPoint[] {
     const d = new Date(p.date);
     const weekStart = new Date(d);
     weekStart.setDate(d.getDate() - d.getDay());
-    const key = weekStart.toISOString().split('T')[0];
-    weekMap.set(key, (weekMap.get(key) || 0) + p.value);
+    const key = weekStart.toISOString().split('T')[0] ?? '';
+    weekMap.set(key, (weekMap.get(key) ?? 0) + p.value);
   }
 
   return Array.from(weekMap.entries())

@@ -116,7 +116,7 @@ export async function PATCH(
 
                 // Check role-restricted transitions
                 const transition = allowed[0];
-                if (transition.roles?.length && membership.role_name) {
+                if (transition?.roles?.length && membership.role_name) {
                     if (!transition.roles.includes(membership.role_name)) {
                         return badRequest(
                             `Role '${membership.role_name}' cannot perform transition to '${newStatus}'`,
@@ -126,7 +126,7 @@ export async function PATCH(
                 }
 
                 // Run guard function if present
-                if (transition.guard && !transition.guard(existing)) {
+                if (transition?.guard && !transition.guard(existing)) {
                     return badRequest(
                         `Transition guard failed for '${currentStatus}' → '${newStatus}'`
                     );

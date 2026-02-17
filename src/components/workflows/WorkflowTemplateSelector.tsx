@@ -93,7 +93,7 @@ export function WorkflowTemplateSelector({ onSelect, selectedTemplateId }: Workf
       if (!grouped[template.category]) {
         grouped[template.category] = [];
       }
-      grouped[template.category].push(template);
+      grouped[template.category]!.push(template);
     }
     return grouped;
   }, [filteredTemplates]);

@@ -36,7 +36,7 @@ export default function VerifyMfaPage() {
     const pastedData = e.clipboardData.getData('text').slice(0, 6);
     if (!/^\d+$/.test(pastedData)) return;
     const newCode = [...code];
-    for (let i = 0; i < pastedData.length; i++) newCode[i] = pastedData[i];
+    for (let i = 0; i < pastedData.length; i++) newCode[i] = pastedData[i] ?? '';
     setCode(newCode);
     inputRefs.current[Math.min(pastedData.length, 5)]?.focus();
   };

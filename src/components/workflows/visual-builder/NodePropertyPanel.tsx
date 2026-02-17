@@ -56,7 +56,7 @@ export function NodePropertyPanel() {
       {/* Header */}
       <div className="p-3 border-b border-border/50 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${reg?.color || "bg-blue-500"}`} />
+          <div className={`w-3 h-3 rounded-full ${reg?.color || "bg-primary"}`} />
           <p className="text-xs font-semibold">{selectedNode.type.toUpperCase()}</p>
         </div>
         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => selectNode(null)}>

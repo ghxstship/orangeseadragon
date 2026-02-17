@@ -66,7 +66,7 @@ export default function ShowModePage() {
           };
         });
         setCues(mapped);
-        if (mapped.length > 0 && !startTime) {
+        if (mapped.length > 0 && !startTime && mapped[0]) {
           setStartTime(mapped[0].scheduled_time);
         }
       }

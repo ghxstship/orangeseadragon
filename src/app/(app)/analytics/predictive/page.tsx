@@ -91,7 +91,7 @@ function Sparkline({
     ? [
         `M ${scaleX(forecastStartIdx)} ${scaleY(data[data.length - 1]?.value || 0)}`,
         ...forecast.map((p, i) => `L ${scaleX(forecastStartIdx + 1 + i)} ${scaleY(p.upper_bound)}`),
-        ...forecast.map((p, i) => `L ${scaleX(forecastStartIdx + 1 + forecast.length - 1 - i)} ${scaleY(forecast[forecast.length - 1 - i].lower_bound)}`),
+        ...forecast.map((_p, i) => `L ${scaleX(forecastStartIdx + 1 + forecast.length - 1 - i)} ${scaleY(forecast[forecast.length - 1 - i]?.lower_bound ?? 0)}`),
         "Z",
       ].join(" ")
     : "";
@@ -266,7 +266,7 @@ function ForecastCard({
             <span>Historical</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-4 h-0.5 bg-primary rounded" style={{ borderTop: "2px dashed" }} />
+            <div className="h-0 w-4 border-t-2 border-dashed border-primary" />
             <span>Forecast</span>
           </div>
           <div className="flex items-center gap-1.5">
@@ -517,7 +517,7 @@ export default function PredictiveAnalyticsPage() {
       <Card>
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            <AlertTriangle className="h-4 w-4 text-semantic-warning" />
             <CardTitle className="text-sm">Predictive Risk Alerts</CardTitle>
           </div>
           <CardDescription className="text-[10px]">AI-identified risks based on forecast trends</CardDescription>
@@ -525,10 +525,10 @@ export default function PredictiveAnalyticsPage() {
         <CardContent>
           <div className="space-y-2">
             {expData?.trend === "increasing" && (
-              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-semantic-warning/5 border border-semantic-warning/20">
+                <AlertTriangle className="h-3.5 w-3.5 text-semantic-warning flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-semibold text-amber-400">Expense Growth Detected</p>
+                  <p className="text-xs font-semibold text-semantic-warning">Expense Growth Detected</p>
                   <p className="text-[10px] text-muted-foreground">
                     Weekly expenses trending up {expData.trend_pct}%. Review recurring costs and vendor contracts.
                   </p>
@@ -536,10 +536,10 @@ export default function PredictiveAnalyticsPage() {
               </div>
             )}
             {utilData?.trend === "decreasing" && (
-              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-blue-500/5 border border-blue-500/20">
-                <Users className="h-3.5 w-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2 p-2.5 rounded-lg bg-semantic-info/5 border border-semantic-info/20">
+                <Users className="h-3.5 w-3.5 text-semantic-info flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-semibold text-blue-400">Utilization Declining</p>
+                  <p className="text-xs font-semibold text-semantic-info">Utilization Declining</p>
                   <p className="text-[10px] text-muted-foreground">
                     Resource utilization trending down {Math.abs(utilData.trend_pct)}%. Consider adjusting staffing levels.
                   </p>

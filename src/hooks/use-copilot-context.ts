@@ -54,5 +54,5 @@ function inferModuleFromPath(pathname: string): string {
     account: "account",
   };
 
-  return moduleMap[first] || "default";
+  return (first ? moduleMap[first] : undefined) || "default";
 }

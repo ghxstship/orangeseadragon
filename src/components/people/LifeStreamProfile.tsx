@@ -41,7 +41,7 @@ function deriveSkillsFromPerson(person: EntityRecord): SkillDataPoint[] {
     if (!skills || typeof skills !== 'object') return DEFAULT_SKILLS;
     return DEFAULT_SKILLS.map((s) => ({
         ...s,
-        A: typeof skills[s.subject.toLowerCase()] === 'number' ? skills[s.subject.toLowerCase()] : s.A,
+        A: typeof skills[s.subject.toLowerCase()] === 'number' ? skills[s.subject.toLowerCase()] ?? 0 : s.A,
     }));
 }
 

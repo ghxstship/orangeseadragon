@@ -21,14 +21,14 @@ import { ProfileViewTracker } from "./_components/profile-view-tracker";
 import { QRCodeDisplay } from "./_components/qr-code-display";
 
 interface PublicProfilePageProps {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 export async function generateMetadata({ params }: PublicProfilePageProps): Promise<Metadata> {
     const supabase = await createUntypedClient();
-    const { slug } = params;
+    const { slug } = await params;
 
     const { data: profile } = await supabase
         .from("public_profiles")
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: PublicProfilePageProps): Prom
 
 export default async function PublicProfilePage({ params }: PublicProfilePageProps) {
     const supabase = await createUntypedClient();
-    const { slug } = params;
+    const { slug } = await params;
 
     const { data: profile, error } = await supabase
         .from("public_profiles")

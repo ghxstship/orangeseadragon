@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     let trend_percentage: number | null = null;
 
     if (previousEntries && previousEntries.length > 0) {
-      const prevValue = Number(previousEntries[0].value);
+      const prevValue = Number(previousEntries[0]?.value);
       if (prevValue !== 0) {
         trend_percentage = ((numValue - prevValue) / Math.abs(prevValue)) * 100;
         trend_direction = numValue > prevValue ? 'up' : numValue < prevValue ? 'down' : 'flat';

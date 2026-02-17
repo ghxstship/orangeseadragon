@@ -107,14 +107,17 @@ export interface DataTableProps<TData, TValue> {
   renderRowWrapper?: (row: TData, children: React.ReactNode) => React.ReactNode;
 }
 
+// @ui-audit: inline required for runtime-computed table width from user-driven column resizing.
 const getTableWidthStyle = (resizable: boolean, width: number): React.CSSProperties => ({
   width: resizable ? width : "100%",
 });
 
+// @ui-audit: inline required for runtime column width synchronization with TanStack table state.
 const getColumnWidthStyle = (width: number): React.CSSProperties => ({
   width,
 });
 
+// @ui-audit: inline required for virtualization spacer heights computed at runtime.
 const getVirtualSpacerHeightStyle = (height: number): React.CSSProperties => ({
   height,
 });
@@ -541,8 +544,8 @@ export function DataTable<TData, TValue>({
                             )}
                             <span>
                               {flexRender(
-                                row.getVisibleCells()[0].column.columnDef.cell,
-                                row.getVisibleCells()[0].getContext()
+                                row.getVisibleCells()[0]!.column.columnDef.cell,
+                                row.getVisibleCells()[0]!.getContext()
                               )}
                             </span>
                             <Badge variant="outline" className="ml-2 font-normal lowercase tracking-normal">
@@ -574,7 +577,7 @@ export function DataTable<TData, TValue>({
                             className={cn(
                               "px-4 transition-all duration-200",
                               density === "compact" ? "py-1.5" : "py-4",
-                              cell.column.id === "select" && "sticky left-0 z-20 bg-card/90 backdrop-blur-sm shadow-[1px_0_0_0_rgba(0,0,0,0.05)]"
+                              cell.column.id === "select" && "sticky left-0 z-20 bg-card/90 backdrop-blur-sm shadow-[1px_0_0_0_hsl(var(--foreground)/0.05)]"
                             )}
                             style={getColumnWidthStyle(cell.column.getSize())}
                           >

@@ -2,6 +2,7 @@
 
 import { SettingsTemplate, SettingsTab } from '@/components/templates/SettingsTemplate';
 import { createClient } from '@/lib/supabase/client';
+import type { Json } from '@/types/database';
 
 const organizationTabs: SettingsTab[] = [
   {
@@ -44,15 +45,46 @@ export default function OrganizationSettingsPage() {
     const orgId = user.user_metadata?.organization_id;
     if (!orgId) throw new Error('No organization found');
 
+    const name = typeof data.name === 'string' ? data.name.trim() : '';
+    const website = typeof data.website === 'string' ? data.website.trim() : '';
+    const description = typeof data.description === 'string' ? data.description.trim() : '';
+    const industry = typeof data.industry === 'string' ? data.industry.trim() : '';
+    const companySize = typeof data.size === 'string' ? data.size.trim() : '';
+
+    const { data: orgData } = await supabase
+      .from('organizations')
+      .select('metadata')
+      .eq('id', orgId)
+      .single();
+
+    const existingMetadata = orgData?.metadata;
+    const nextMetadata: Record<string, Json | undefined> =
+      existingMetadata && typeof existingMetadata === 'object' && !Array.isArray(existingMetadata)
+        ? { ...(existingMetadata as Record<string, Json | undefined>) }
+        : {};
+
+    if (industry) {
+      nextMetadata.industry = industry;
+    } else {
+      delete nextMetadata.industry;
+    }
+
+    if (companySize) {
+      nextMetadata.company_size = companySize;
+    } else {
+      delete nextMetadata.company_size;
+    }
+
+    const updatePayload = {
+      website: website || null,
+      description: description || null,
+      metadata: Object.keys(nextMetadata).length > 0 ? (nextMetadata as Json) : null,
+      ...(name ? { name } : {}),
+    };
+
     await supabase
       .from('organizations')
-      .update({
-        name: (data.name as string) || undefined,
-        website: (data.website as string) || undefined,
-        industry: (data.industry as string) || undefined,
-        company_size: (data.size as string) || undefined,
-        description: (data.description as string) || undefined,
-      })
+      .update(updatePayload)
       .eq('id', orgId);
   };
 

@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
       name,
       is_default: isDefault ?? false,
       organization_id: membership.organization_id,
-      effective_date: new Date().toISOString().split('T')[0],
+      effective_date: new Date().toISOString().split('T')[0] ?? '',
       rate_card_type: 'workforce',
     };
 

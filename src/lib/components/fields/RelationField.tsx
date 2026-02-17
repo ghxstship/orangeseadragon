@@ -68,10 +68,10 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
           setOptions(
             Array.isArray(items)
               ? items.map((item: Record<string, string>) => ({
-                  value: item.id ?? item.value,
+                  value: item.id ?? item.value ?? '',
                   label: typeof relation.display === 'function'
                     ? relation.display(item)
-                    : (typeof relation.display === 'string' ? item[relation.display] : item['name']) ?? item.label ?? item.id,
+                    : (typeof relation.display === 'string' ? item[relation.display] : item['name']) ?? item.label ?? item.id ?? '',
                 }))
               : []
           );
@@ -87,8 +87,8 @@ export function RelationField({ field, fieldKey, value, onChange, error, disable
     if (Array.isArray(relation.options) && relation.options.length > 0) {
       setOptions(
         relation.options.map((opt: Record<string, string>) => ({
-          value: typeof opt === 'string' ? opt : opt.value,
-          label: typeof opt === 'string' ? opt : opt.label,
+          value: typeof opt === 'string' ? opt : (opt.value ?? ''),
+          label: typeof opt === 'string' ? opt : (opt.label ?? ''),
         }))
       );
       return;

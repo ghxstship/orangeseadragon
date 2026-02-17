@@ -89,15 +89,20 @@ function useMyActivity(userId: string | null, orgId: string | null) {
         const details = row.new_values
           ? (typeof row.new_values === 'object' ? `Changed: ${Object.keys(row.new_values as Record<string, unknown>).join(', ')}` : '')
           : undefined;
-        return {
+        const entry: ActivityEntry = {
           id: row.id,
           action,
           module: moduleLabel,
           entity: entityType,
           entityName: row.entity_id.slice(0, 8),
           timestamp: row.created_at ?? '',
-          details: details || undefined,
         };
+
+        if (details) {
+          entry.details = details;
+        }
+
+        return entry;
       });
 
       setActivities(mapped);
@@ -201,7 +206,8 @@ export default function HistoryPage() {
               </div>
             ) : (
               filtered.map((entry) => {
-                const config = actionConfig[entry.action];
+                const config = actionConfig[entry.action] ?? actionConfig.update;
+                if (!config) return null;
                 const Icon = config.icon;
                 return (
                   <div key={entry.id} className="flex items-start gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">

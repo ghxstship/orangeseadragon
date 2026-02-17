@@ -431,9 +431,9 @@ const fileIconMap: Record<string, React.ElementType> = {
 };
 
 function getFileIcon(mimeType: string): React.ElementType {
-  if (mimeType.startsWith('image/')) return fileIconMap['image'];
-  if (mimeType === 'application/pdf') return fileIconMap['application/pdf'];
-  if (mimeType.startsWith('text/')) return fileIconMap['text'];
+  if (mimeType.startsWith('image/')) return fileIconMap['image'] ?? File;
+  if (mimeType === 'application/pdf') return fileIconMap['application/pdf'] ?? File;
+  if (mimeType.startsWith('text/')) return fileIconMap['text'] ?? File;
   return File;
 }
 

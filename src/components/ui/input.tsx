@@ -9,7 +9,7 @@ const inputVariants = cva(
       variant: {
         default: "border-input bg-background focus-visible:ring-primary/50 shadow-sm hover:border-primary/50",
         glass: "glass text-foreground border-white/10 bg-white/5 focus-visible:ring-primary/50 focus-visible:border-primary/50 placeholder:text-white/40",
-        spatial: "bg-background/50 border-white/20 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] focus-visible:ring-primary/40 focus-visible:shadow-[0_0_20px_rgba(var(--primary),0.1)]",
+        spatial: "bg-background/50 border-white/20 shadow-[inset_0_2px_4px_hsl(var(--foreground)/0.05)] focus-visible:ring-primary/40 focus-visible:shadow-[0_0_20px_hsl(var(--primary)/0.1)]",
         ghost: "border-none bg-transparent shadow-none focus-visible:ring-0 px-0",
       },
       file: {

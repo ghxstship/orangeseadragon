@@ -61,27 +61,44 @@ export default function BusinessPage() {
         const payload = await response.json();
         const items: ActivityFeedApiItem[] = payload?.data?.items ?? [];
 
-        const mapped: ActivityItem[] = items.map((item) => ({
-          id: item.id,
-          type: activityTypeMap[item.activityType] ?? 'updated',
-          timestamp: item.activityAt,
-          user: {
-            id: item.actorId ?? 'system',
-            name: item.actorName ?? 'System',
-          },
-          entity: item.entityType && item.entityId
-            ? {
-                type: item.entityType,
-                id: item.entityId,
-                name: item.entityName ?? item.entityType,
-              }
-            : undefined,
-          metadata: {
-            comment: item.content ?? undefined,
-            oldValue: typeof item.metadata?.old_value === 'string' ? item.metadata.old_value : undefined,
-            newValue: typeof item.metadata?.new_value === 'string' ? item.metadata.new_value : undefined,
-          },
-        }));
+        const mapped: ActivityItem[] = items.map((item) => {
+          const nextItem: ActivityItem = {
+            id: item.id,
+            type: activityTypeMap[item.activityType] ?? 'updated',
+            timestamp: item.activityAt,
+            user: {
+              id: item.actorId ?? 'system',
+              name: item.actorName ?? 'System',
+            },
+          };
+
+          if (item.entityType && item.entityId) {
+            nextItem.entity = {
+              type: item.entityType,
+              id: item.entityId,
+              name: item.entityName ?? item.entityType,
+            };
+          }
+
+          const metadata: NonNullable<ActivityItem['metadata']> = {};
+          if (item.content !== null) {
+            metadata.comment = item.content;
+          }
+
+          if (typeof item.metadata?.old_value === 'string') {
+            metadata.oldValue = item.metadata.old_value;
+          }
+
+          if (typeof item.metadata?.new_value === 'string') {
+            metadata.newValue = item.metadata.new_value;
+          }
+
+          if (Object.keys(metadata).length > 0) {
+            nextItem.metadata = metadata;
+          }
+
+          return nextItem;
+        });
 
         if (!cancelled) {
           setActivities(mapped);

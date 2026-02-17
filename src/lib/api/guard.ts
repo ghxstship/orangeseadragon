@@ -182,6 +182,7 @@ export async function requireOrgMember(
       return bPriority - aPriority;
     });
     const primaryRole = sortedRoles[0];
+    if (!primaryRole) return { error: forbidden('No roles found') };
 
     return {
       user,

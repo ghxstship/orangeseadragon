@@ -115,6 +115,7 @@ export async function POST(request: NextRequest) {
     
     while (currentStep < steps.length && shouldContinue) {
       const step = steps[currentStep];
+      if (!step) break;
       
       try {
         const result = await executeStep(supabase, step, context, workflow.organization_id);
@@ -405,7 +406,7 @@ function resolveValue(value: unknown, context: Record<string, unknown>): unknown
   // Check for template syntax {{variable}}
   const templateMatch = value.match(/^\{\{(.+)\}\}$/);
   if (templateMatch) {
-    const path = templateMatch[1];
+    const path = templateMatch[1] ?? '';
     return getNestedValue(context, path);
   }
   
@@ -430,9 +431,9 @@ function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
     const arrayMatch = part.match(/^(.+)\[(\d+)\]$/);
     if (arrayMatch) {
       const [, key, index] = arrayMatch;
-      current = (current as Record<string, unknown>)[key];
+      current = (current as Record<string, unknown>)[key ?? ''];
       if (Array.isArray(current)) {
-        current = current[parseInt(index)];
+        current = current[parseInt(index ?? '0')];
       }
     } else {
       current = (current as Record<string, unknown>)[part];

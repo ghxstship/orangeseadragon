@@ -322,7 +322,7 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
   const renderCalendarView = () => {
     // For now, render as a list grouped by date
     const dateField = Object.keys(schema.data.fields).find(
-      (key) => schema.data.fields[key].type === 'date' || schema.data.fields[key].type === 'datetime'
+      (key) => schema.data.fields[key]?.type === 'date' || schema.data.fields[key]?.type === 'datetime'
     ) || 'created_at';
 
     // Group by date
@@ -333,7 +333,7 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
       if (!groupedByDate[dateKey]) {
         groupedByDate[dateKey] = [];
       }
-      groupedByDate[dateKey].push(record);
+      groupedByDate[dateKey]!.push(record);
     });
 
     const sortedDates = Object.keys(groupedByDate).sort((a, b) => {
@@ -356,7 +356,7 @@ export function ViewRenderer<T extends EntityRecord = EntityRecord>({
           <div key={dateKey}>
             <h3 className="font-medium text-sm text-muted-foreground mb-2">{dateKey}</h3>
             <div className="space-y-2">
-              {groupedByDate[dateKey].map((record, index) => {
+              {(groupedByDate[dateKey] ?? []).map((record, index) => {
                 const badge = getBadge(record);
                 return (
                   <div

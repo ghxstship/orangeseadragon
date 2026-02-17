@@ -222,7 +222,7 @@ class WeatherService {
 
   private degreesToCardinal(deg: number): string {
     const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-    return dirs[Math.round(deg / 22.5) % 16];
+    return dirs[Math.round(deg / 22.5) % 16] ?? 'N';
   }
 
   /**
@@ -250,10 +250,10 @@ class WeatherService {
       const date = new Date();
       date.setDate(date.getDate() + i);
       daily.push({
-        date: date.toISOString().split('T')[0],
+        date: date.toISOString().split('T')[0] ?? '',
         high: current.temperature + 5 + Math.random() * 10,
         low: current.temperature - 10 + Math.random() * 5,
-        conditions: ['Sunny', 'Partly Cloudy', 'Cloudy', 'Scattered Showers'][Math.floor(Math.random() * 4)],
+        conditions: ['Sunny', 'Partly Cloudy', 'Cloudy', 'Scattered Showers'][Math.floor(Math.random() * 4)] ?? 'Sunny',
         precipitation_probability: Math.floor(Math.random() * 50),
         sunrise: '06:30',
         sunset: '20:15',

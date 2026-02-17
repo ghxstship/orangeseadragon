@@ -19,6 +19,7 @@ export function resolveAllowedEntityTable(entityParam: string): string | null {
   }
 
   const endpointSlug = endpoint.slice(API_PREFIX.length).split("/")[0];
+  if (!endpointSlug) return null;
   return endpointSlug.replace(/-/g, "_");
 }
 
@@ -42,6 +43,7 @@ export function resolveEntityContext(entityParam: string): {
   }
 
   const endpointSlug = endpoint.slice(API_PREFIX.length).split("/")[0];
+  if (!endpointSlug) return null;
   const tableName = endpointSlug.replace(/-/g, "_");
 
   return { tableName, schema };

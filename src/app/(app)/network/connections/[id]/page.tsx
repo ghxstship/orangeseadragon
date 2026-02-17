@@ -1,8 +1,11 @@
 'use client';
 
+import { use } from 'react';
 import { CrudDetail } from '@/lib/crud/components/CrudDetail';
 import { connectionSchema } from '@/lib/schemas/connection';
 
-export default function ConnectionDetailPage({ params }: { params: { id: string } }) {
-  return <CrudDetail schema={connectionSchema} id={params.id} />;
+export default function ConnectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
+  return <CrudDetail schema={connectionSchema} id={id} />;
 }

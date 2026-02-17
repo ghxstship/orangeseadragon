@@ -126,15 +126,15 @@ export default function MyTasksPage() {
 
     filteredTasks.forEach((task) => {
       const group = getTimeGroup(task.due_date);
-      groups[group].push(task);
+      (groups[group] ??= []).push(task);
     });
 
     return groupOrder
-      .filter((key) => groups[key].length > 0)
+      .filter((key) => (groups[key]?.length ?? 0) > 0)
       .map((key) => ({
         key,
-        label: groupLabels[key],
-        tasks: groups[key],
+        label: groupLabels[key] ?? key,
+        tasks: groups[key] ?? [],
       }));
   }, [filteredTasks]);
 
@@ -413,8 +413,8 @@ export default function MyTasksPage() {
                                 </Badge>
                               )}
                               {task.status && statusConfig[task.status] && (
-                                <Badge variant="outline" className={cn("text-[9px] h-4 px-1.5 gap-0.5", statusConfig[task.status].color)}>
-                                  {statusConfig[task.status].label}
+                                <Badge variant="outline" className={cn("text-[9px] h-4 px-1.5 gap-0.5", statusConfig[task.status]?.color)}>
+                                  {statusConfig[task.status]?.label}
                                 </Badge>
                               )}
                               {task.due_date && (
@@ -484,7 +484,7 @@ function TaskRow({
         />
         <div className="flex-1 min-w-0" onClick={onClick}>
           <div className="flex items-center gap-2">
-            <span className={cn("flex-shrink-0", config.color)}>{config.icon}</span>
+            <span className={cn("flex-shrink-0", config?.color)}>{config?.icon}</span>
             <span className="font-medium text-sm truncate">{task.title}</span>
             {task.priority && task.priority !== "medium" && (
               <Badge
@@ -576,7 +576,7 @@ function CalendarTaskView({
 
     for (let d = 1; d <= lastDay.getDate(); d++) {
       const date = new Date(year, month, d);
-      const dateStr = date.toISOString().split("T")[0];
+      const dateStr = date.toISOString().split("T")[0] ?? '';
       const dayTasks = tasks.filter((t) => t.due_date?.startsWith(dateStr));
       days.push({ date, isCurrentMonth: true, tasks: dayTasks });
     }

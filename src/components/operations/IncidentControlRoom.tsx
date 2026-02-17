@@ -456,13 +456,13 @@ export function IncidentControlRoom() {
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-5 w-5 animate-pulse" />
               <span className="font-bold">CRITICAL INCIDENT:</span>
-              <span>{criticalIncidents[0].title}</span>
-              <span className="text-destructive/60">- {criticalIncidents[0].location}</span>
+              <span>{criticalIncidents[0]?.title}</span>
+              <span className="text-destructive/60">- {criticalIncidents[0]?.location}</span>
             </div>
             <Button
               size="sm"
               variant="secondary"
-              onClick={() => setSelectedIncident(criticalIncidents[0])}
+              onClick={() => { const ci = criticalIncidents[0]; if (ci) setSelectedIncident(ci); }}
             >
               View Details
             </Button>

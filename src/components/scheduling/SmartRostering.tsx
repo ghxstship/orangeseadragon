@@ -98,6 +98,7 @@ export function SmartRostering() {
                     for (let j = i + 1; j < resShifts.length; j++) {
                         const a = resShifts[i];
                         const b = resShifts[j];
+                        if (!a || !b) continue;
                         if (a.start < b.start + b.duration && b.start < a.start + a.duration) {
                             a.conflict = true;
                             b.conflict = true;

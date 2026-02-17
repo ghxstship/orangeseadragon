@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (customers.data.length > 0) {
-        stripeCustomerId = customers.data[0].id;
+        stripeCustomerId = customers.data[0]!.id;
       } else {
         const customer = await stripe.customers.create({
           email: customerEmail,

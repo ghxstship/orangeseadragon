@@ -164,12 +164,12 @@ export async function POST(request: NextRequest) {
         if (filteredData.length === 0) {
           content = '';
         } else {
-          const headers = Object.keys(filteredData[0]);
+          const headers = Object.keys(filteredData[0] ?? {});
           const csvRows = [
             headers.join(','),
             ...filteredData.map(row =>
               headers.map(h => {
-                const val = row[h];
+                const val = (row as Record<string, unknown>)[h];
                 const str = val === null || val === undefined ? '' : String(val);
                 return str.includes(',') || str.includes('"') || str.includes('\n')
                   ? `"${str.replace(/"/g, '""')}"`
@@ -186,10 +186,10 @@ export async function POST(request: NextRequest) {
 
       case 'xlsx': {
         // Generate a simple XML-based spreadsheet (Office Open XML compatible)
-        const headers = filteredData.length > 0 ? Object.keys(filteredData[0]) : [];
+        const headers = filteredData.length > 0 ? Object.keys(filteredData[0] ?? {}) : [];
         const xmlRows = filteredData.map(row =>
           `<Row>${headers.map(h => {
-            const val = row[h];
+            const val = (row as Record<string, unknown>)[h];
             const str = val === null || val === undefined ? '' : String(val);
             const isNum = !isNaN(Number(str)) && str !== '';
             return isNum
@@ -216,9 +216,9 @@ export async function POST(request: NextRequest) {
 
       case 'pdf': {
         // Generate a simple HTML-based PDF-ready document
-        const headers = filteredData.length > 0 ? Object.keys(filteredData[0]) : [];
+        const headers = filteredData.length > 0 ? Object.keys(filteredData[0] ?? {}) : [];
         const tableRows = filteredData.map(row =>
-          `<tr>${headers.map(h => `<td style="border:1px solid #ddd;padding:6px">${row[h] ?? ''}</td>`).join('')}</tr>`
+          `<tr>${headers.map(h => `<td style="border:1px solid #ddd;padding:6px">${(row as Record<string, unknown>)[h] ?? ''}</td>`).join('')}</tr>`
         ).join('\n');
 
         content = `<!DOCTYPE html>

@@ -80,11 +80,13 @@ const _ROW_HEIGHT = 48;
 const _HEADER_HEIGHT = 60;
 const _GROUP_WIDTH = 200;
 
+// @ui-audit: inline required for runtime-provided group colors.
 const getGroupDotStyle = (color: string): React.CSSProperties => ({
   backgroundColor: color,
   color,
 });
 
+// @ui-audit: inline required for per-item timeline geometry and optional color overrides computed at runtime.
 const getTimelineItemStyle = (
   position: { left: number; width: number },
   color?: string
@@ -284,6 +286,7 @@ export function TimelineView({
     return (offset / totalDays) * totalWidth;
   }, [viewStart, viewEnd, totalWidth]);
 
+  // @ui-audit: inline required for CSS custom properties derived from current zoom/range calculations.
   const timelineVars = React.useMemo(
     () => ({
       "--timeline-cell-width": `${cellWidth}px`,
@@ -384,7 +387,7 @@ export function TimelineView({
                 const zoomLevels: TimelineZoom[] = ["hours", "days", "weeks", "months"];
                 const currentIndex = zoomLevels.indexOf(currentZoom);
                 if (currentIndex > 0) {
-                  handleZoomChange(zoomLevels[currentIndex - 1]);
+                  handleZoomChange(zoomLevels[currentIndex - 1]!);
                 }
               }}
               disabled={currentZoom === "hours"}
@@ -402,7 +405,7 @@ export function TimelineView({
                 const zoomLevels: TimelineZoom[] = ["hours", "days", "weeks", "months"];
                 const currentIndex = zoomLevels.indexOf(currentZoom);
                 if (currentIndex < zoomLevels.length - 1) {
-                  handleZoomChange(zoomLevels[currentIndex + 1]);
+                  handleZoomChange(zoomLevels[currentIndex + 1]!);
                 }
               }}
               disabled={currentZoom === "months"}
@@ -455,7 +458,7 @@ export function TimelineView({
                     key={index}
                     className={cn(
                       "w-[var(--timeline-cell-width)] flex-shrink-0 border-r border-border flex flex-col items-center justify-center gap-0.5",
-                      showToday && isSameDay(unit, new Date()) && "bg-primary/10 shadow-[inner_0_0_20px_rgba(var(--primary),0.1)]"
+                      showToday && isSameDay(unit, new Date()) && "bg-primary/10 shadow-[inner_0_0_20px_hsl(var(--primary)/0.1)]"
                     )}
                   >
                     <span className="text-[10px] font-black uppercase tracking-[0.1em] opacity-30">{format(unit, "EEE")}</span>
@@ -484,7 +487,7 @@ export function TimelineView({
                 {/* Today line */}
                 {showToday && todayPosition !== null && (
                   <div
-                    className="absolute top-0 bottom-0 left-[var(--timeline-today-position)] w-[2px] bg-primary z-40 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
+                    className="absolute top-0 bottom-0 left-[var(--timeline-today-position)] w-[2px] bg-primary z-40 shadow-[0_0_15px_hsl(var(--primary)/0.8)]"
                   />
                 )}
 

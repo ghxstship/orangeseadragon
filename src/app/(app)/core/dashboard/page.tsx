@@ -178,11 +178,12 @@ export default function DashboardPage() {
     }
 
     const preferredLayout = dashboardLayouts.find((candidate) => candidate.isDefault) ?? dashboardLayouts[0];
+    if (!preferredLayout) return;
     setLayout({
       ...preferredLayout,
       widgets: preferredLayout.widgets || [],
-    });
-    setLayoutId(preferredLayout.id);
+    } as DashboardLayoutType);
+    setLayoutId(preferredLayout.id ?? null);
   }, [dashboardLayouts, isEditing]);
 
   const kpiStats = useMemo(() => {

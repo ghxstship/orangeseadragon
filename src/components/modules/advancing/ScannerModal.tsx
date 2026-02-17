@@ -151,6 +151,7 @@ export function ScannerModal({
   const toggleTorch = async () => {
     if (streamRef.current) {
       const track = streamRef.current.getVideoTracks()[0];
+      if (!track) return;
       const capabilities = track.getCapabilities() as MediaTrackCapabilities & { torch?: boolean };
       
       if (capabilities.torch) {

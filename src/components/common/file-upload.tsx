@@ -108,7 +108,7 @@ export function FileUpload({
   const removeFile = React.useCallback(
     (index: number) => {
       const file = files[index];
-      if (file.preview) {
+      if (file?.preview) {
         URL.revokeObjectURL(file.preview);
       }
       const updatedFiles = files.filter((_, i) => i !== index);

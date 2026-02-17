@@ -53,14 +53,14 @@ interface ScenarioBuilderProps {
 function computeProjection(vars: Record<string, number>): ScenarioResult['monthlyProjection'] {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const hoursPerMonth = 160;
-  let baseRevenue = vars.headcount * hoursPerMonth * (vars.utilization / 100) * vars.hourly_rate;
+  let baseRevenue = (vars.headcount ?? 0) * hoursPerMonth * ((vars.utilization ?? 0) / 100) * (vars.hourly_rate ?? 0);
 
   return months.map((month) => {
     const revenue = Math.round(baseRevenue);
-    const cost = Math.round(revenue * (vars.overhead_pct / 100) + vars.headcount * 5000);
+    const cost = Math.round(revenue * ((vars.overhead_pct ?? 0) / 100) + (vars.headcount ?? 0) * 5000);
     const profit = revenue - cost;
     const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
-    baseRevenue *= 1 + vars.growth_rate / 100;
+    baseRevenue *= 1 + (vars.growth_rate ?? 0) / 100;
     return { month, revenue, cost, profit, margin: Math.round(margin * 10) / 10 };
   });
 }
@@ -75,25 +75,25 @@ export function ScenarioBuilder({
       id: 'baseline',
       name: 'Baseline',
       variables: Object.fromEntries(variables.map((v) => [v.key, v.defaultValue])),
-      color: SCENARIO_COLORS[0],
+      color: SCENARIO_COLORS[0] ?? 'hsl(var(--primary))',
       isBaseline: true,
     },
   ]);
   const [activeScenarioId, setActiveScenarioId] = useState('baseline');
 
-  const activeScenario = scenarios.find((s) => s.id === activeScenarioId) || scenarios[0];
+  const activeScenario = scenarios.find((s) => s.id === activeScenarioId) ?? scenarios[0];
 
   const addScenario = useCallback(() => {
     const idx = scenarios.length;
     const newScenario: ScenarioDefinition = {
       id: `scenario-${Date.now()}`,
       name: `Scenario ${idx + 1}`,
-      variables: { ...activeScenario.variables },
-      color: SCENARIO_COLORS[idx % SCENARIO_COLORS.length],
+      variables: { ...activeScenario?.variables },
+      color: SCENARIO_COLORS[idx % SCENARIO_COLORS.length] ?? 'hsl(var(--primary))',
     };
     setScenarios((prev) => [...prev, newScenario]);
     setActiveScenarioId(newScenario.id);
-  }, [scenarios.length, activeScenario.variables]);
+  }, [scenarios.length, activeScenario?.variables]);
 
   const duplicateScenario = useCallback((id: string) => {
     const source = scenarios.find((s) => s.id === id);
@@ -103,7 +103,7 @@ export function ScenarioBuilder({
       id: `scenario-${Date.now()}`,
       name: `${source.name} (Copy)`,
       variables: { ...source.variables },
-      color: SCENARIO_COLORS[idx % SCENARIO_COLORS.length],
+      color: SCENARIO_COLORS[idx % SCENARIO_COLORS.length] ?? 'hsl(var(--primary))',
     };
     setScenarios((prev) => [...prev, newScenario]);
     setActiveScenarioId(newScenario.id);
@@ -246,7 +246,7 @@ export function ScenarioBuilder({
                   </div>
                   <Slider
                     value={[activeScenario.variables[v.key] ?? v.defaultValue]}
-                    onValueChange={([val]) => updateVariable(v.key, val)}
+                    onValueChange={([val]) => updateVariable(v.key, val ?? 0)}
                     min={v.min}
                     max={v.max}
                     step={v.step}
@@ -288,8 +288,8 @@ export function ScenarioBuilder({
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Avg Margin</span>
-                  <span className={cn('text-sm font-bold', r.metrics.avgMargin >= 20 ? 'text-semantic-success' : r.metrics.avgMargin >= 0 ? 'text-semantic-warning' : 'text-destructive')}>
-                    {r.metrics.avgMargin.toFixed(1)}%
+                  <span className={cn('text-sm font-bold', (r.metrics.avgMargin ?? 0) >= 20 ? 'text-semantic-success' : (r.metrics.avgMargin ?? 0) >= 0 ? 'text-semantic-warning' : 'text-destructive')}>
+                    {(r.metrics.avgMargin ?? 0).toFixed(1)}%
                   </span>
                 </div>
               </CardContent>

@@ -218,7 +218,7 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
 
     // Define columns based on schema options
     const columns = useMemo<PipelineStageOption[]>(() => {
-        const rawOptions = dealSchema.data.fields.stage.options;
+        const rawOptions = dealSchema.data.fields.stage?.options;
         // Handle the case where options might be a function or undefined, though we know it's an array for deals
         if (Array.isArray(rawOptions)) {
             return rawOptions as PipelineStageOption[];
@@ -251,12 +251,12 @@ export function PipelineBoard({ pipelineId }: PipelineBoardProps) {
         if (Array.isArray(deals)) {
             deals.forEach((deal) => {
                 const stage = deal.stage || columns[0]?.value;
-                if (groups[stage]) {
-                    groups[stage].push(deal);
+                if (stage && groups[stage]) {
+                    groups[stage]!.push(deal);
                 } else {
                     // Handle unknown stages by putting in first col or 'prospecting'
                     if (!groups['prospecting']) groups['prospecting'] = [];
-                    groups['prospecting'].push(deal);
+                    groups['prospecting']!.push(deal);
                 }
             });
         }

@@ -78,7 +78,7 @@ function CanvasNodeComponent({
       />
 
       {/* Icon circle */}
-      <circle cx={28} cy={NODE_HEIGHT / 2} r={16} className={cn("transition-colors", reg?.color || "fill-blue-500")} style={{ opacity: 0.9 }} />
+      <circle cx={28} cy={NODE_HEIGHT / 2} r={16} className={cn("transition-colors opacity-90", reg?.color || "fill-primary")} />
       <foreignObject x={16} y={NODE_HEIGHT / 2 - 12} width={24} height={24}>
         <IconComp className="h-5 w-5 text-white" />
       </foreignObject>
@@ -150,15 +150,18 @@ function CanvasNodeComponent({
       {/* Delete button (visible on selection) */}
       {isSelected && (
         <foreignObject x={NODE_WIDTH - 24} y={-8} width={20} height={20}>
-          <button
+          <Button
+            type="button"
+            variant="destructive"
+            size="icon"
             onClick={(e) => {
               e.stopPropagation();
               onDelete();
             }}
-            className="w-5 h-5 rounded-full bg-destructive flex items-center justify-center hover:bg-destructive/80 transition-colors"
+            className="h-5 w-5 rounded-full p-0"
           >
             <Trash2 className="h-3 w-3 text-white" />
-          </button>
+          </Button>
         </foreignObject>
       )}
     </g>
@@ -411,8 +414,7 @@ export function WorkflowCanvas() {
 
       <svg
         ref={svgRef}
-        className="w-full h-full"
-        style={{ minHeight: 600 }}
+        className="w-full h-full min-h-[600px]"
         onWheel={handleWheel}
         onClick={handleBackgroundClick}
         onMouseDown={handleBackgroundMouseDown}

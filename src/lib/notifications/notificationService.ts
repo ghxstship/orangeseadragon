@@ -163,8 +163,8 @@ class NotificationService {
     const [startHour, startMin] = this.preferences.quiet_hours.start.split(':').map(Number);
     const [endHour, endMin] = this.preferences.quiet_hours.end.split(':').map(Number);
     
-    const startMinutes = startHour * 60 + startMin;
-    const endMinutes = endHour * 60 + endMin;
+    const startMinutes = (startHour ?? 0) * 60 + (startMin ?? 0);
+    const endMinutes = (endHour ?? 0) * 60 + (endMin ?? 0);
 
     if (startMinutes < endMinutes) {
       return currentMinutes >= startMinutes && currentMinutes < endMinutes;

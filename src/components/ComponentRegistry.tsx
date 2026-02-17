@@ -109,6 +109,9 @@ export const COMPONENT_REGISTRY: Record<string, React.ComponentType<any>> = {
   'live_clock_widget': React.lazy(() => import('./productions/widgets/LiveClockWidget').then(m => ({ default: m.LiveClockWidget }))),
   'weather_widget': React.lazy(() => import('./productions/widgets/WeatherWidget').then(m => ({ default: m.WeatherWidget }))),
   'curfew_countdown': React.lazy(() => import('./productions/widgets/CurfewCountdownWidget').then(m => ({ default: m.CurfewCountdownWidget }))),
+  'curfew_countdown_timers': React.lazy(() => import('./productions/widgets/CurfewCountdown').then(m => ({ default: m.CurfewCountdown }))),
+  'emergency_alert': React.lazy(() => import('./productions/widgets/EmergencyAlert').then(m => ({ default: m.EmergencyAlert }))),
+  'live_show_cost': React.lazy(() => import('./productions/widgets/LiveShowCost').then(m => ({ default: m.LiveShowCost }))),
 
   // ── Scheduling Components ────────────────────────────────────────────
   'smart_rostering': React.lazy(() => import('./scheduling/SmartRostering').then(m => ({ default: m.SmartRostering }))),

@@ -8,14 +8,14 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 interface StatCardProps {
   title: string;
   value: string | number;
-  description?: string;
-  icon?: LucideIcon;
+  description?: string | undefined;
+  icon?: LucideIcon | undefined;
   trend?: {
     value: number;
     isPositive: boolean;
-  };
-  className?: string;
-  valueClassName?: string;
+  } | undefined;
+  className?: string | undefined;
+  valueClassName?: string | undefined;
 }
 
 export function StatCard({
@@ -33,7 +33,7 @@ export function StatCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={canHover ? { y: -5, scale: 1.02 } : undefined}
+      {...(canHover ? { whileHover: { y: -5, scale: 1.02 } } : {})}
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="h-full"
     >

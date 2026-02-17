@@ -29,15 +29,12 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                     key={person.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    whileHover={{
-                        scale: 1.02,
-                        boxShadow: "0 20px 40px -12px rgba(0,0,0,0.5)"
-                    }}
+                    whileHover={{ scale: 1.02 }}
                     onClick={() => onSelectPerson(person.id)}
                     className={cn(
                         "group relative cursor-pointer overflow-hidden rounded-2xl border border-border",
                         "bg-card/70 backdrop-blur-xl", // Liquid Glass effect
-                        "hover:border-border hover:bg-card/90 transition-all duration-300"
+                        "hover:border-border hover:bg-card/90 hover:shadow-[0_20px_40px_-12px_hsl(var(--foreground)/0.5)] transition-all duration-300"
                     )}
                 >
                     {/* Status Indicator Glow */}

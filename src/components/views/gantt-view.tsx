@@ -79,10 +79,12 @@ export interface GanttViewProps<T extends GanttTask> {
 
 type ZoomLevel = "day" | "week" | "month";
 
+// @ui-audit: inline required for runtime indentation depth values that depend on task hierarchy and responsive mode.
 const getTaskRowStyle = (depth: number, mobile = false): React.CSSProperties => ({
   paddingLeft: `${(mobile ? 12 : 24) + Math.min(depth, mobile ? 2 : depth) * (mobile ? 12 : 16)}px`,
 });
 
+// @ui-audit: inline required for dynamic timeline cell sizing derived from current zoom level and unit count.
 const getTimelineHeaderCellStyle = (
   timeUnitCount: number,
   zoomLevel: ZoomLevel
@@ -91,14 +93,17 @@ const getTimelineHeaderCellStyle = (
   minWidth: zoomLevel === "day" ? 40 : 80,
 });
 
+// @ui-audit: inline required for computed grid cell width based on visible timeline units.
 const getTimelineGridCellStyle = (timeUnitCount: number): React.CSSProperties => ({
   width: `${100 / timeUnitCount}%`,
 });
 
+// @ui-audit: inline required for positioning the live "today" marker at a runtime-calculated offset.
 const getTodayLineStyle = (leftPercent: number): React.CSSProperties => ({
   left: `${leftPercent}%`,
 });
 
+// @ui-audit: inline required for progress bar width derived from task progress percentages at runtime.
 const getProgressFillStyle = (progress: number): React.CSSProperties => ({
   width: `${progress}%`,
 });
@@ -604,7 +609,7 @@ export function GanttView<T extends GanttTask>({
               {/* Today line */}
               {isWithinInterval(new Date(), { start: viewStart, end: viewEnd }) && (
                 <div
-                  className="absolute top-0 bottom-0 w-[2px] bg-primary z-20 shadow-[0_0_15px_rgba(var(--primary),0.8)]"
+                  className="absolute top-0 bottom-0 w-[2px] bg-primary z-20 shadow-[0_0_15px_hsl(var(--primary)/0.8)]"
                   style={getTodayLineStyle((differenceInDays(new Date(), viewStart) / totalDays) * 100)}
                 />
               )}
@@ -650,7 +655,7 @@ export function GanttView<T extends GanttTask>({
                               {!task.isMilestone && (
                                 <div
                                   className={cn(
-                                    "absolute inset-0 rounded-full opacity-40 shadow-[inset_0_1px_1px_rgba(255,255,255,0.3)]",
+                                    "absolute inset-0 rounded-full opacity-40 shadow-[inset_0_1px_1px_hsl(var(--background)/0.3)]",
                                     getStatusColor(task.status)
                                   )}
                                 />
@@ -659,7 +664,7 @@ export function GanttView<T extends GanttTask>({
                                 <motion.div
                                   initial={{ width: 0 }}
                                   animate={{ width: `${task.progress}%` }}
-                                  className="absolute inset-y-0 left-0 bg-white/30 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                                  className="absolute inset-y-0 left-0 bg-white/30 rounded-full shadow-[0_0_10px_hsl(var(--background)/0.2)]"
                                 />
                               )}
                               {!task.isMilestone && onTaskUpdate && (

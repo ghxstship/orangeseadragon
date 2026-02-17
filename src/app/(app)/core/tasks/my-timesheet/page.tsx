@@ -79,7 +79,7 @@ function formatDate(date: Date): string {
 }
 
 function dateKey(date: Date): string {
-  return date.toISOString().split("T")[0];
+  return date.toISOString().split("T")[0] ?? '';
 }
 
 const weekStatusConfig: Record<WeekStatus, { label: string; color: string; icon: React.ReactNode }> = {
@@ -103,8 +103,8 @@ export default function MyTimesheetPage() {
 
   const weekDates = useMemo(() => getWeekDates(weekOffset), [weekOffset]);
   const isCurrentWeek = weekOffset === 0;
-  const weekStart = dateKey(weekDates[0]);
-  const weekEnd = dateKey(weekDates[6]);
+  const weekStart = dateKey(weekDates[0]!);
+  const weekEnd = dateKey(weekDates[6]!);
 
   const { data: rawEntries, isLoading, error, refetch } = useMyTimeEntries(weekStart, weekEnd);
   const { data: projects, isLoading: projectsLoading } = useProjects(organizationId);
@@ -273,7 +273,7 @@ export default function MyTimesheetPage() {
       await fetch("/api/time-entries/copy-week", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sourceWeekStart: dateKey(getWeekDates(weekOffset - 1)[0]), targetWeekStart: weekStart }),
+        body: JSON.stringify({ sourceWeekStart: dateKey(getWeekDates(weekOffset - 1)[0]!), targetWeekStart: weekStart }),
       });
       refetch();
     } catch (err) {
@@ -438,7 +438,7 @@ export default function MyTimesheetPage() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="text-xs font-black uppercase tracking-[0.2em] opacity-50">
-              {formatDate(weekDates[0])} — {formatDate(weekDates[6])}
+              {formatDate(weekDates[0]!)} — {formatDate(weekDates[6]!)}
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground">

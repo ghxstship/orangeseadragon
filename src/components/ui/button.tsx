@@ -8,7 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:-translate-y-[1px] active:translate-y-[0px]",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-[0_4px_14px_0_hsl(var(--primary)/0.39)] hover:shadow-[0_6px_20px_hsl(var(--primary)/0.23)] hover:-translate-y-[1px] active:translate-y-[0px]",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm hover:shadow-md",
         outline:
@@ -16,8 +16,8 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 shadow-sm",
         ghost: "hover:bg-accent hover:text-accent-foreground text-muted-foreground hover:text-foreground",
-        glass: "glass text-foreground hover:bg-white/10 dark:hover:bg-white/5 border border-white/20 hover:border-white/30 shadow-[0_4px_14px_0_rgba(0,0,0,0.1)] backdrop-blur-md",
-        spatial: "bg-gradient-to-b from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 border border-white/20 shadow-[0_2px_10px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_20px_-2px_rgba(0,0,0,0.1)] hover:-translate-y-[1px] text-foreground backdrop-blur-md",
+        glass: "glass text-foreground hover:bg-white/10 dark:hover:bg-white/5 border border-white/20 hover:border-white/30 shadow-[0_4px_14px_0_hsl(var(--foreground)/0.1)] backdrop-blur-md",
+        spatial: "bg-gradient-to-b from-white/80 to-white/40 dark:from-white/10 dark:to-white/5 border border-white/20 shadow-[0_2px_10px_-1px_hsl(var(--foreground)/0.1)] hover:shadow-[0_4px_20px_-2px_hsl(var(--foreground)/0.1)] hover:-translate-y-[1px] text-foreground backdrop-blur-md",
         link: "text-primary underline-offset-4 hover:underline",
         shiny:
           "bg-primary text-primary-foreground animate-shimmer bg-[linear-gradient(110deg,hsl(var(--background)),45%,hsl(var(--muted)),55%,hsl(var(--background)))] bg-[length:200%_100%] border-border",

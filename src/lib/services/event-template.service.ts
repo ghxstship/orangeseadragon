@@ -607,7 +607,7 @@ export class EventTemplateService {
     const sourceDuration = new Date(sourceEvent.end_date).getTime() - 
                           new Date(sourceEvent.start_date).getTime();
     const newEndDate = new Date(new Date(newStartDate).getTime() + sourceDuration);
-    return newEndDate.toISOString().split("T")[0];
+    return newEndDate.toISOString().split("T")[0] ?? '';
   }
 
   /**
@@ -616,7 +616,7 @@ export class EventTemplateService {
   private offsetDate(dateStr: string, offsetMs: number): string {
     const date = new Date(dateStr);
     date.setTime(date.getTime() + offsetMs);
-    return date.toISOString().split("T")[0];
+    return date.toISOString().split("T")[0] ?? '';
   }
 
   /**

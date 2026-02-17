@@ -1,8 +1,11 @@
 'use client';
 
+import { use } from 'react';
 import { CrudDetail } from '@/lib/crud/components/CrudDetail';
 import { discussionSchema } from '@/lib/schemas/discussion';
 
-export default function DiscussionDetailPage({ params }: { params: { id: string } }) {
-  return <CrudDetail schema={discussionSchema} id={params.id} />;
+export default function DiscussionDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
+  return <CrudDetail schema={discussionSchema} id={id} />;
 }

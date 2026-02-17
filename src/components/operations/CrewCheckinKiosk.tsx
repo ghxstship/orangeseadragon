@@ -104,7 +104,7 @@ export function CrewCheckinKiosk() {
 
       if (events && events.length > 0) {
         const evt = events[0];
-        setConfig(prev => ({ ...prev, event_id: evt.id, event_name: evt.name }));
+        if (evt) setConfig(prev => ({ ...prev, event_id: evt.id, event_name: evt.name }));
       }
 
       // Fetch recent crew assignments with check-in data

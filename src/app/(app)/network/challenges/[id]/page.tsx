@@ -1,8 +1,11 @@
 'use client';
 
+import { use } from 'react';
 import { CrudDetail } from '@/lib/crud/components/CrudDetail';
 import { challengeSchema } from '@/lib/schemas/challenge';
 
-export default function ChallengeDetailPage({ params }: { params: { id: string } }) {
-  return <CrudDetail schema={challengeSchema} id={params.id} />;
+export default function ChallengeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
+  return <CrudDetail schema={challengeSchema} id={id} />;
 }

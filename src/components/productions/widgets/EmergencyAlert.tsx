@@ -60,9 +60,9 @@ interface EmergencyAlertProps {
 }
 
 const SEVERITY_CONFIG: Record<AlertSeverity, { label: string; color: string; bgColor: string; borderColor: string }> = {
-  info: { label: "Info", color: "text-blue-400", bgColor: "bg-blue-500/10", borderColor: "border-blue-500/30" },
-  warning: { label: "Warning", color: "text-amber-400", bgColor: "bg-amber-500/10", borderColor: "border-amber-500/30" },
-  critical: { label: "Critical", color: "text-orange-400", bgColor: "bg-orange-500/10", borderColor: "border-orange-500/30" },
+  info: { label: "Info", color: "text-semantic-info", bgColor: "bg-semantic-info/10", borderColor: "border-semantic-info/30" },
+  warning: { label: "Warning", color: "text-semantic-warning", bgColor: "bg-semantic-warning/10", borderColor: "border-semantic-warning/30" },
+  critical: { label: "Critical", color: "text-semantic-orange", bgColor: "bg-semantic-orange/10", borderColor: "border-semantic-orange/30" },
   emergency: { label: "Emergency", color: "text-destructive", bgColor: "bg-destructive/10", borderColor: "border-destructive/30" },
 };
 

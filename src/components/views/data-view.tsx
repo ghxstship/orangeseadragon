@@ -141,9 +141,9 @@ export function DataView<T extends object>({
     }
 
     return {
-      titleField: fields[0],
-      subtitleField: fields[1],
-      descriptionField: fields[2],
+      titleField: fields[0] as string,
+      subtitleField: fields[1] as string | undefined,
+      descriptionField: fields[2] as string | undefined,
       metaFields: fields.slice(3, 6),
     };
   }, [

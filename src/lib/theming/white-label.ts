@@ -156,9 +156,9 @@ export function hexToHSL(hex: string): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   if (!result) return "0 0% 0%";
 
-  const r = parseInt(result[1], 16) / 255;
-  const g = parseInt(result[2], 16) / 255;
-  const b = parseInt(result[3], 16) / 255;
+  const r = parseInt(result[1] ?? '0', 16) / 255;
+  const g = parseInt(result[2] ?? '0', 16) / 255;
+  const b = parseInt(result[3] ?? '0', 16) / 255;
 
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
@@ -188,7 +188,7 @@ export function hexToHSL(hex: string): string {
 export function generateThemeFromPrimaryColor(primaryHex: string): Partial<ColorMode> {
   const primaryHSL = hexToHSL(primaryHex);
   const [h] = primaryHSL.split(" ");
-  const hue = parseInt(h);
+  const hue = parseInt(h ?? '0');
 
   return {
     primary: primaryHSL,
@@ -233,8 +233,8 @@ export function generateCSSVariables(theme: WhiteLabelTheme, mode: "light" | "da
   css += `  --sidebar-width: ${theme.layout.sidebarWidth}px;\n`;
   css += `  --header-height: ${theme.layout.headerHeight}px;\n`;
   css += `  --content-max-width: ${theme.layout.contentMaxWidth || 1440}px;\n`;
-  css += `  --density-spacing: ${density.spacing};\n`;
-  css += `  --density-font-size: ${density.fontSize};\n`;
+  css += `  --density-spacing: ${density?.spacing ?? '0.5rem'};\n`;
+  css += `  --density-font-size: ${density?.fontSize ?? '0.875rem'};\n`;
 
   // Emit semantic color overrides if provided
   const semantic = theme.semanticColors?.[mode];

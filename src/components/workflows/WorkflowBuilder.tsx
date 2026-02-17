@@ -150,7 +150,7 @@ export function WorkflowBuilder({
 
       const newSteps = [...prev];
       const targetIndex = direction === "up" ? index - 1 : index + 1;
-      [newSteps[index], newSteps[targetIndex]] = [newSteps[targetIndex], newSteps[index]];
+      [newSteps[index], newSteps[targetIndex]] = [newSteps[targetIndex]!, newSteps[index]!];
       return newSteps;
     });
   }, []);

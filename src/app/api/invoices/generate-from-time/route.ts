@@ -159,10 +159,10 @@ export async function POST(request: NextRequest) {
 
     const total = lineItems.reduce((sum, li) => sum + li.amount, 0);
 
-    const issueDate = new Date().toISOString().split('T')[0];
+    const issueDate = new Date().toISOString().split('T')[0] ?? '';
     const dueDate = new Date(Date.now() + DEFAULT_NET_TERMS_DAYS * 24 * 60 * 60 * 1000)
       .toISOString()
-      .split('T')[0];
+      .split('T')[0] ?? '';
 
     const invoicePayload: Database['public']['Tables']['invoices']['Insert'] = {
       organization_id: membership.organization_id,

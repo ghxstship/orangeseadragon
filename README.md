@@ -1,6 +1,6 @@
 # ATLVS - Unified Operations Platform
 
-A comprehensive enterprise operations management platform for live events, production companies, and creative agencies. Built with Next.js 14, Supabase, and modern UI components.
+A comprehensive enterprise operations management platform for live events, production companies, and creative agencies. Built with Next.js 15, Supabase, and modern UI components.
 
 ## Features
 
@@ -74,7 +74,7 @@ A comprehensive enterprise operations management platform for live events, produ
 
 ## Tech Stack
 
-- **Frontend**: Next.js 14.2.x, React 18.3.x, TypeScript 5.4.x
+- **Frontend**: Next.js 15.5.x, React 19.2.x, TypeScript 5.9.x
 - **Styling**: Tailwind CSS 3.4.x, shadcn/ui, Radix UI primitives
 - **State Management**: Zustand, React Query (TanStack Query)
 - **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)

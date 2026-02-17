@@ -54,6 +54,18 @@ function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount);
 }
 
+const getProjectedFillStyle = (projectedPct: number): React.CSSProperties => ({
+  width: `${Math.min(projectedPct, 100)}%`,
+});
+
+const getSpentFillStyle = (spentPct: number): React.CSSProperties => ({
+  width: `${spentPct}%`,
+});
+
+const getCostBreakdownFillStyle = (pct: number): React.CSSProperties => ({
+  width: `${pct}%`,
+});
+
 function BudgetGauge({ spent, budget, projected }: { spent: number; budget: number; projected: number }) {
   const spentPct = Math.min((spent / budget) * 100, 100);
   const projectedPct = Math.min((projected / budget) * 100, 150);
@@ -71,17 +83,17 @@ function BudgetGauge({ spent, budget, projected }: { spent: number; budget: numb
         {/* Projected fill */}
         {projectedPct > spentPct && (
           <div
-            className={cn("absolute inset-y-0 left-0 rounded-full opacity-30", isOverBudget ? "bg-destructive" : "bg-amber-500")}
-            style={{ width: `${Math.min(projectedPct, 100)}%` }}
+            className={cn("absolute inset-y-0 left-0 rounded-full opacity-30", isOverBudget ? "bg-destructive" : "bg-semantic-warning")}
+            style={getProjectedFillStyle(projectedPct)}
           />
         )}
         {/* Actual fill */}
         <div
           className={cn(
             "absolute inset-y-0 left-0 rounded-full transition-all duration-500",
-            spentPct >= 90 ? "bg-destructive" : spentPct >= 75 ? "bg-amber-500" : "bg-semantic-success"
+            spentPct >= 90 ? "bg-destructive" : spentPct >= 75 ? "bg-semantic-warning" : "bg-semantic-success"
           )}
-          style={{ width: `${spentPct}%` }}
+          style={getSpentFillStyle(spentPct)}
         />
       </div>
       <div className="flex items-center justify-between text-[9px] text-muted-foreground">
@@ -106,8 +118,8 @@ function CostBreakdownBar({ category, budgeted, actual }: { category: string; bu
       </div>
       <div className="h-1.5 bg-muted rounded-full overflow-hidden">
         <div
-          className={cn("h-full rounded-full transition-all duration-300", isOver ? "bg-destructive" : pct > 75 ? "bg-amber-500" : "bg-primary")}
-          style={{ width: `${pct}%` }}
+          className={cn("h-full rounded-full transition-all duration-300", isOver ? "bg-destructive" : pct > 75 ? "bg-semantic-warning" : "bg-primary")}
+          style={getCostBreakdownFillStyle(pct)}
         />
       </div>
     </div>
@@ -195,7 +207,7 @@ export function LiveShowCost({ eventId, className, pollIntervalMs = 15000 }: Liv
           </div>
           <div className="flex items-center gap-1">
             <Badge variant="outline" className="text-[9px] gap-1">
-              <div className={cn("w-1.5 h-1.5 rounded-full", isPaused ? "bg-amber-500" : "bg-semantic-success animate-pulse")} />
+              <div className={cn("w-1.5 h-1.5 rounded-full", isPaused ? "bg-semantic-warning" : "bg-semantic-success animate-pulse")} />
               {isPaused ? "Paused" : "Live"}
             </Badge>
             <Button

@@ -285,7 +285,8 @@ export default function InvoiceOverviewPage() {
                 </div>
               ) : (
                 recentInvoices.map((inv) => {
-                  const cfg = STATUS_CONFIG[inv.status] ?? STATUS_CONFIG.draft;
+                  const cfg = STATUS_CONFIG[inv.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.draft;
+                  if (!cfg) return null;
                   return (
                     <Link
                       key={inv.id}

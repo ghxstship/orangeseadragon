@@ -198,7 +198,7 @@ function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
           className={cn(
             "h-auto w-full justify-start items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
             isActive
-              ? "bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]"
+              ? "bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
         >
@@ -250,14 +250,14 @@ function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
       className={cn(
         "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
         isActive
-          ? "bg-primary/10 text-primary shadow-[0_0_15px_rgba(var(--primary),0.1)]"
+          ? "bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
     >
       <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive && "text-primary")} />
       <span className="truncate tracking-tight">{item.title}</span>
       {item.badge && (
-        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-lg bg-primary/20 border border-primary/30 px-1.5 text-[9px] font-black text-primary shadow-[0_0_10px_rgba(var(--primary),0.3)]">
+        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-lg bg-primary/20 border border-primary/30 px-1.5 text-[9px] font-black text-primary shadow-[0_0_10px_hsl(var(--primary)/0.3)]">
           {item.badge}
         </span>
       )}

@@ -47,11 +47,11 @@ export function parseCsv(raw: string): CsvParseResult {
     return { headers: [], rows: [], errors: [{ row: 0, message: 'Empty file' }], totalRows: 0 };
   }
 
-  const headers = parseCsvRow(lines[0]).map((h) => h.trim());
+  const headers = parseCsvRow(lines[0] ?? '').map((h) => h.trim());
   const rows: Record<string, string>[] = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const line = lines[i].trim();
+    const line = lines[i]?.trim();
     if (!line) continue;
 
     const values = parseCsvRow(line);
@@ -66,7 +66,7 @@ export function parseCsv(raw: string): CsvParseResult {
 
     const record: Record<string, string> = {};
     headers.forEach((header, idx) => {
-      record[header] = idx < values.length ? values[idx].trim() : '';
+      record[header] = idx < values.length ? (values[idx] ?? '').trim() : '';
     });
     rows.push(record);
   }

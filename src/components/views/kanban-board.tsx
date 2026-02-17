@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 
+// @ui-audit: inline required for runtime column colors configured by data.
 const getKanbanColumnDotStyle = (color: string): React.CSSProperties => ({
   backgroundColor: color,
   color,
@@ -78,6 +79,7 @@ function SortableCard<T extends { id: string }>({
     isDragging,
   } = useSortable({ id: item.id });
 
+  // @ui-audit: inline required by @dnd-kit for per-frame transform/transition values.
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -184,6 +186,7 @@ export function KanbanBoard<T extends { id: string }>({
       const overIndex = overItems.findIndex((item) => item.id === overId);
 
       const [movedItem] = activeItems.splice(activeIndex, 1);
+      if (!movedItem) return prev;
 
       if (overIndex === -1) {
         overItems.push(movedItem);
@@ -359,7 +362,7 @@ export function KanbanCard({
 }: KanbanCardProps) {
   return (
     <Card className={cn(
-      "cursor-pointer overflow-hidden border-border glass-morphism hover:border-primary/30 hover:shadow-[0_8px_32px_-12px_rgba(0,0,0,0.5)] transition-all group",
+      "cursor-pointer overflow-hidden border-border glass-morphism hover:border-primary/30 hover:shadow-[0_8px_32px_-12px_hsl(var(--foreground)/0.5)] transition-all group",
       className
     )}>
       <CardContent className="p-4">

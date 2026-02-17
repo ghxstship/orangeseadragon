@@ -29,6 +29,7 @@ export default function MagicLinkPage() {
       const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [cooldown]);
 
   const handleSubmit = async (e: React.FormEvent) => {

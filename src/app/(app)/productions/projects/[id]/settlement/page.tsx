@@ -381,20 +381,20 @@ export default function SettlementPage() {
                   <div className="flex items-center gap-3">
                     <Button onClick={() => {
                       const nextIdx = currentStepIndex + 1;
-                      if (nextIdx < approvalSteps.length) {
+                      if (nextIdx < approvalSteps.length && approvalSteps[nextIdx]) {
                         setApprovalStatus(approvalSteps[nextIdx].key);
                         setTimeout(() => handleSave(), 100);
                       }
                     }}>
                       <Send className="h-4 w-4 mr-2" />
-                      {currentStepIndex < approvalSteps.length - 1 ? `Submit for ${approvalSteps[currentStepIndex + 1].label}` : 'Finalize'}
+                      {currentStepIndex < approvalSteps.length - 1 ? `Submit for ${approvalSteps[currentStepIndex + 1]?.label}` : 'Finalize'}
                     </Button>
                     {currentStepIndex > 0 && (
                       <Button variant="outline" onClick={() => {
-                        setApprovalStatus(approvalSteps[currentStepIndex - 1].key);
+                        setApprovalStatus(approvalSteps[currentStepIndex - 1]!.key);
                         setTimeout(() => handleSave(), 100);
                       }}>
-                        Return to {approvalSteps[currentStepIndex - 1].label}
+                        Return to {approvalSteps[currentStepIndex - 1]?.label}
                       </Button>
                     )}
                   </div>

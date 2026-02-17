@@ -83,7 +83,7 @@ export function QuickActionsEditor({
 
     const newActions = [...localActions];
     const [removed] = newActions.splice(draggedIndex, 1);
-    newActions.splice(index, 0, removed);
+    if (removed) newActions.splice(index, 0, removed);
     setLocalActions(newActions);
     setDraggedIndex(index);
   };
@@ -126,7 +126,7 @@ export function QuickActionsEditor({
     if (!acc[action.category]) {
       acc[action.category] = [];
     }
-    acc[action.category].push(action);
+    acc[action.category]!.push(action);
     return acc;
   }, {} as Record<string, QuickAction[]>);
 

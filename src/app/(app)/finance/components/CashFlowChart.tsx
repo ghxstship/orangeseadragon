@@ -84,7 +84,7 @@ export function CashFlowChart() {
                             <Tooltip
                                 contentStyle={CHART_TOOLTIP_CONTENT_STYLE}
                                 itemStyle={CHART_TOOLTIP_ITEM_STYLE}
-                                formatter={(value: number) => [formatCurrency(value), '']}
+                                formatter={(value: number | undefined) => [formatCurrency(value ?? 0), '']}
                             />
                             <Area
                                 type="monotone"

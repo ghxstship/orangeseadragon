@@ -210,7 +210,7 @@ export class CommentsService {
     let match;
 
     while ((match = mentionRegex.exec(content)) !== null) {
-      mentions.push(match[2]); // User ID
+      if (match[2]) mentions.push(match[2]); // User ID
     }
 
     return mentions;

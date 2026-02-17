@@ -200,7 +200,7 @@ export function FormBuilder({
       const targetIndex = fields.findIndex((f) => f.id === targetId);
       const newFields = [...fields];
       const [removed] = newFields.splice(draggedIndex, 1);
-      newFields.splice(targetIndex, 0, removed);
+      if (removed) newFields.splice(targetIndex, 0, removed);
       onChange(newFields);
     }
   };
@@ -274,7 +274,7 @@ export function FormBuilder({
                     className={cn(
                       "group relative p-5 border border-border rounded-2xl cursor-pointer transition-all duration-300",
                       selectedFieldId === field.id
-                        ? "bg-primary/[0.03] border-primary/30 ring-1 ring-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.05)]"
+                        ? "bg-primary/[0.03] border-primary/30 ring-1 ring-primary/20 shadow-[0_0_20px_hsl(var(--primary)/0.05)]"
                         : "hover:border-border hover:bg-accent/30",
                       draggedFieldId === field.id && "opacity-50 scale-95",
                       field.width === "half" && "w-[calc(50%-8px)] inline-block mr-4",

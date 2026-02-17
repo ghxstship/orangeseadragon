@@ -79,7 +79,7 @@ export function PipelineSelector({
     if (pipelines.length === 1) {
         return (
             <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">{pipelines[0].name}</span>
+                <span className="text-sm font-medium">{pipelines[0]!.name}</span>
                 {showActions && onManagePipelines && (
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onManagePipelines}>
                         <Settings className="h-3.5 w-3.5" />

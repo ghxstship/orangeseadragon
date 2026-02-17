@@ -100,7 +100,7 @@ export function WorkspaceLayout({
       const index = parseInt(e.key) - 1;
       if (index < config.tabs.length) {
         e.preventDefault();
-        onTabChange?.(config.tabs[index].key);
+        onTabChange?.(config.tabs[index]!.key);
       }
     }
   }, [config.tabs, onTabChange]);

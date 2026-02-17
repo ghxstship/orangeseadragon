@@ -53,6 +53,7 @@ export default function OnboardingTourPage() {
   };
 
   const step = tourSteps[currentStep];
+  if (!step) return null;
   const Icon = step.icon;
 
   return (

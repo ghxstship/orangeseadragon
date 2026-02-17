@@ -65,6 +65,7 @@ export function ResourceBookingPanel({
       for (let j = i + 1; j < bookings.length; j++) {
         const a = bookings[i];
         const b = bookings[j];
+        if (!a || !b) continue;
         if (a.userId !== b.userId) continue;
         if (a.startDate <= b.endDate && b.startDate <= a.endDate) {
           const totalHours = a.hoursPerDay + b.hoursPerDay;
@@ -86,8 +87,8 @@ export function ResourceBookingPanel({
         userName: '',
         projectId: '',
         projectName: '',
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        startDate: new Date().toISOString().split('T')[0] ?? '',
+        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] ?? '',
         hoursPerDay: 8,
         status: 'tentative',
       },

@@ -138,6 +138,7 @@ export default function ProfileSettingsPage() {
     if (!user) throw new Error('Not authenticated');
 
     const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
+    const avatarUrl = typeof data.avatar === 'string' ? data.avatar.trim() : '';
     await supabase.auth.updateUser({
       data: {
         full_name: fullName || undefined,
@@ -153,8 +154,8 @@ export default function ProfileSettingsPage() {
     await supabase
       .from('users')
       .update({
-        full_name: fullName || undefined,
-        avatar_url: (data.avatar as string) || undefined,
+        avatar_url: avatarUrl || null,
+        ...(fullName ? { full_name: fullName } : {}),
       })
       .eq('id', user.id);
   };
@@ -164,7 +165,7 @@ export default function ProfileSettingsPage() {
       title="Profile"
       description="Manage your personal information and preferences"
       tabs={profileTabs}
-      initialTabKey={initialTabKey}
+      {...(initialTabKey ? { initialTabKey } : {})}
       onSave={handleSave}
     />
   );

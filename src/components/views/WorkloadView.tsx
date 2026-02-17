@@ -334,7 +334,7 @@ export function WorkloadView({
                 <div className="flex flex-1">
                   {days.map((day, i) => {
                     const dayKey = format(day, "yyyy-MM-dd");
-                    const dayData = dailyWorkload[dayKey];
+                    const dayData = dailyWorkload[dayKey] ?? { hours: 0, tasks: [] };
                     const isWeekend = day.getDay() === 0 || day.getDay() === 6;
                     const capacity = member.capacity || defaultCapacity;
                     const dayUtilization = isWeekend ? 0 : dayData.hours / capacity;

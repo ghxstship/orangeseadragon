@@ -66,6 +66,7 @@ function validateSchema<T = EntityRecord>(schema: EntitySchema<T>): void {
   schema.layouts.form.sections.forEach(section => {
     section.fields.forEach(field => {
       const fieldName = typeof field === 'string' ? field : field.fields[0];
+      if (!fieldName) return;
       if (!schema.data.fields[fieldName] && !schema.data.computed?.[fieldName]) {
         errors.push(`Form section "${section.key}" references undefined field "${fieldName}"`);
       }

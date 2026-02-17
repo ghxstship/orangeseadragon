@@ -217,14 +217,14 @@ export function useFinanceDashboard(orgId: string | null) {
         const bucketIndex =
           daysOverdue === 0 ? 0 : daysOverdue <= 15 ? 1 : daysOverdue <= 30 ? 2 : daysOverdue <= 60 ? 3 : 4;
 
-        agingAmounts[bucketIndex] += invoice.total_amount ?? 0;
-        agingCounts[bucketIndex] += 1;
+        agingAmounts[bucketIndex] = (agingAmounts[bucketIndex] ?? 0) + (invoice.total_amount ?? 0);
+        agingCounts[bucketIndex] = (agingCounts[bucketIndex] ?? 0) + 1;
       }
 
       const arAging: AgingBucket[] = agingConfig.map((bucket, index) => ({
         label: bucket.label,
-        amount: formatCurrency(agingAmounts[index]),
-        count: agingCounts[index],
+        amount: formatCurrency(agingAmounts[index] ?? 0),
+        count: agingCounts[index] ?? 0,
         color: bucket.color,
       }));
 

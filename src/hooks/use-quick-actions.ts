@@ -207,7 +207,7 @@ export function useQuickActions() {
   const reorderActions = useCallback((fromIndex: number, toIndex: number) => {
     const newActions = [...actions];
     const [removed] = newActions.splice(fromIndex, 1);
-    newActions.splice(toIndex, 0, removed);
+    if (removed) newActions.splice(toIndex, 0, removed);
     saveActions(newActions);
   }, [actions, saveActions]);
 

@@ -75,7 +75,7 @@ function linearRegression(points: TimeSeriesPoint[]): { slope: number; intercept
 
   const sumX = xs.reduce((a, b) => a + b, 0);
   const sumY = ys.reduce((a, b) => a + b, 0);
-  const sumXY = xs.reduce((a, x, i) => a + x * ys[i], 0);
+  const sumXY = xs.reduce((a, x, i) => a + x * (ys[i] ?? 0), 0);
   const sumX2 = xs.reduce((a, x) => a + x * x, 0);
 
   const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
@@ -83,7 +83,7 @@ function linearRegression(points: TimeSeriesPoint[]): { slope: number; intercept
 
   // R² calculation
   const meanY = sumY / n;
-  const ssRes = ys.reduce((a, y, i) => a + Math.pow(y - (slope * xs[i] + intercept), 2), 0);
+  const ssRes = ys.reduce((a, y, i) => a + Math.pow(y - (slope * (xs[i] ?? 0) + intercept), 2), 0);
   const ssTot = ys.reduce((a, y) => a + Math.pow(y - meanY, 2), 0);
   const r2 = ssTot === 0 ? 1 : 1 - ssRes / ssTot;
 
@@ -92,9 +92,9 @@ function linearRegression(points: TimeSeriesPoint[]): { slope: number; intercept
 
 function exponentialSmoothing(values: number[], alpha: number = 0.3): number[] {
   if (values.length === 0) return [];
-  const smoothed = [values[0]];
+  const smoothed: number[] = [values[0] ?? 0];
   for (let i = 1; i < values.length; i++) {
-    smoothed.push(alpha * values[i] + (1 - alpha) * smoothed[i - 1]);
+    smoothed.push(alpha * (values[i] ?? 0) + (1 - alpha) * (smoothed[i - 1] ?? 0));
   }
   return smoothed;
 }
@@ -109,10 +109,10 @@ function detectSeasonality(values: number[], period: number = 7): boolean {
   let denominator = 0;
 
   for (let i = 0; i < n - period; i++) {
-    numerator += (values[i] - mean) * (values[i + period] - mean);
+    numerator += ((values[i] ?? 0) - mean) * ((values[i + period] ?? 0) - mean);
   }
   for (let i = 0; i < n; i++) {
-    denominator += Math.pow(values[i] - mean, 2);
+    denominator += Math.pow((values[i] ?? 0) - mean, 2);
   }
 
   const autocorrelation = denominator === 0 ? 0 : numerator / denominator;
@@ -154,12 +154,12 @@ export function forecastTimeSeries(
   const stdDev = standardDeviation(values);
 
   // Determine trend
-  const trendPct = values[0] !== 0 ? ((slope * values.length) / values[0]) * 100 : 0;
+  const trendPct = (values[0] ?? 0) !== 0 ? ((slope * values.length) / (values[0] ?? 1)) * 100 : 0;
   const trend: ForecastResult['trend'] =
     trendPct > 5 ? 'increasing' : trendPct < -5 ? 'decreasing' : 'stable';
 
   // Generate forecast points
-  const lastDate = new Date(historical[historical.length - 1].date);
+  const lastDate = new Date(historical[historical.length - 1]!.date);
   const forecast: ForecastPoint[] = [];
 
   for (let i = 1; i <= periodsAhead; i++) {
@@ -167,7 +167,7 @@ export function forecastTimeSeries(
     futureDate.setDate(futureDate.getDate() + i * 7); // Weekly periods
 
     const linearValue = slope * (values.length + i - 1) + intercept;
-    const smoothedLast = smoothed[smoothed.length - 1];
+    const smoothedLast = smoothed[smoothed.length - 1] ?? 0;
     const blendedValue = 0.6 * linearValue + 0.4 * smoothedLast;
 
     // Widen confidence interval further into the future
@@ -176,7 +176,7 @@ export function forecastTimeSeries(
     const confidence = Math.max(0.5, Math.min(0.95, r2 - (i * 0.05)));
 
     forecast.push({
-      date: futureDate.toISOString().split('T')[0],
+      date: futureDate.toISOString().split('T')[0] ?? '',
       value: Math.round(blendedValue * 100) / 100,
       lower_bound: Math.round((blendedValue - interval) * 100) / 100,
       upper_bound: Math.round((blendedValue + interval) * 100) / 100,

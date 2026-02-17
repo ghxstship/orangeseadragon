@@ -211,7 +211,7 @@ export default function WorkflowBuilderPage() {
           {/* Validation status */}
           {(hasErrors || hasWarnings) && (
             <div className="flex items-center gap-1.5">
-              <AlertTriangle className={`h-3.5 w-3.5 ${hasErrors ? "text-destructive" : "text-amber-500"}`} />
+              <AlertTriangle className={`h-3.5 w-3.5 ${hasErrors ? "text-destructive" : "text-semantic-warning"}`} />
               <span className="text-[10px] text-muted-foreground">
                 {validationErrors.length} issue{validationErrors.length !== 1 ? "s" : ""}
               </span>

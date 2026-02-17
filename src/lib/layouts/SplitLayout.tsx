@@ -119,7 +119,7 @@ export function SplitLayout({
         case "Enter":
           e.preventDefault();
           if (focusedIndex >= 0 && focusedIndex < filteredItems.length) {
-            onSelect(filteredItems[focusedIndex].id);
+            onSelect(filteredItems[focusedIndex]!.id);
           }
           break;
         case "Escape":

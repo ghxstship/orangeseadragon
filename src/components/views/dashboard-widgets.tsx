@@ -64,7 +64,7 @@ export function MetricWidget({
           <CardTitle className="text-[10px] font-black uppercase tracking-widest opacity-60">
             {title}
           </CardTitle>
-          {icon && <div className="text-primary/60 shadow-[0_0_10px_rgba(var(--primary),0.3)]">{icon}</div>}
+          {icon && <div className="text-primary/60 shadow-[0_0_10px_hsl(var(--primary)/0.3)]">{icon}</div>}
         </CardHeader>
         <CardContent className="pt-4">
           <div className="text-3xl font-black tracking-tight">{value}</div>
@@ -75,7 +75,7 @@ export function MetricWidget({
                   className={cn(
                     "flex items-center text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border",
                     trend.direction === "up" && "text-semantic-success border-semantic-success/20 bg-semantic-success/10 shadow-[0_0_8px_hsl(var(--semantic-success)/0.2)]",
-                    trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_rgba(239,68,68,0.2)]",
+                    trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_hsl(var(--destructive)/0.2)]",
                     trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                   )}
                 >
@@ -155,7 +155,7 @@ export function ProgressWidget({
               initial={{ width: 0 }}
               animate={{ width: `${percentage}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className={cn("absolute top-0 bottom-0 rounded-full shadow-[0_0_10px_rgba(var(--primary),0.3)]", getStatusColor())}
+              className={cn("absolute top-0 bottom-0 rounded-full shadow-[0_0_10px_hsl(var(--primary)/0.3)]", getStatusColor())}
             />
           </div>
           <div className="flex justify-between mt-3 text-[9px] font-black uppercase tracking-widest opacity-40">
@@ -231,9 +231,9 @@ export function ListWidget({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.03)", x: 4 }}
+                whileHover={{ x: 4 }}
                 className={cn(
-                  "flex items-center justify-between px-5 py-4 transition-all duration-300",
+                  "flex items-center justify-between px-5 py-4 transition-all duration-300 hover:bg-background/40",
                   onItemClick && "cursor-pointer"
                 )}
                 onClick={() => onItemClick?.(item)}
@@ -355,7 +355,7 @@ export function DonutWidget({
       <CardContent className="pt-6">
         <div className="flex items-center gap-8">
           <div className="relative w-40 h-40 flex-shrink-0">
-            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90 filter drop-shadow-[0_0_8px_rgba(0,0,0,0.3)]">
+            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90 filter drop-shadow-[0_0_8px_hsl(var(--foreground)/0.3)]">
               {segments.map((segment, i) => (
                 <motion.path
                   key={i}
@@ -392,8 +392,8 @@ export function DonutWidget({
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.2)]"
-                    style={getChartLegendDotStyle(d.color || defaultColors[i % defaultColors.length])}
+                    className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_hsl(var(--foreground)/0.2)]"
+                    style={getChartLegendDotStyle(d.color || (defaultColors[i % defaultColors.length] ?? "hsl(var(--muted-foreground))"))}
                   />
                   <span className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity">{d.label}</span>
                 </div>
@@ -455,7 +455,7 @@ export function SparklineWidget({
                 className={cn(
                   "flex items-center text-[10px] font-black uppercase tracking-wider mt-3 px-2 py-0.5 rounded-full border w-fit",
                   trend.direction === "up" && "text-semantic-success border-semantic-success/20 bg-semantic-success/10 shadow-[0_0_8px_hsl(var(--semantic-success)/0.1)]",
-                  trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_rgba(239,68,68,0.1)]",
+                  trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_hsl(var(--destructive)/0.1)]",
                   trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                 )}
               >
@@ -484,7 +484,7 @@ export function SparklineWidget({
                 strokeWidth="4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="drop-shadow-[0_0_5px_rgba(var(--primary),0.5)]"
+                className="drop-shadow-[0_0_5px_hsl(var(--primary)/0.5)]"
               />
               <motion.path
                 initial={{ opacity: 0 }}

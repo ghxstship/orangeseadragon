@@ -55,6 +55,7 @@ export function formatConflictSummary(conflicts: ConflictingReservation[]): stri
   
   if (conflicts.length === 1) {
     const c = conflicts[0];
+    if (!c) return '';
     const start = new Date(c.start_date).toLocaleDateString();
     const end = new Date(c.end_date).toLocaleDateString();
     return `Conflicts with reservation from ${start} to ${end}${c.event_name ? ` for "${c.event_name}"` : ''}`;

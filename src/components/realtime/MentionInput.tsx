@@ -70,7 +70,7 @@ export function MentionInput({
     const mentions: string[] = [];
     let match;
     while ((match = mentionRegex.exec(content)) !== null) {
-      mentions.push(match[2]);
+      if (match[2]) mentions.push(match[2]);
     }
     return mentions;
   }, []);
@@ -119,7 +119,8 @@ export function MentionInput({
         case "Enter":
           if (!e.shiftKey) {
             e.preventDefault();
-            selectUser(filteredUsers[suggestionIndex]);
+            const user = filteredUsers[suggestionIndex];
+            if (user) selectUser(user);
           }
           break;
         case "Escape":
@@ -128,7 +129,7 @@ export function MentionInput({
           break;
         case "Tab":
           e.preventDefault();
-          selectUser(filteredUsers[suggestionIndex]);
+          { const user = filteredUsers[suggestionIndex]; if (user) selectUser(user); }
           break;
       }
     } else if (e.key === "Enter" && (e.metaKey || e.ctrlKey) && onSubmit) {
@@ -289,7 +290,7 @@ export function parseMentionsFromText(
   let match;
 
   while ((match = atMentionRegex.exec(text)) !== null) {
-    const username = match[1].toLowerCase();
+    const username = (match[1] ?? '').toLowerCase();
     const user = users.find(
       (u) =>
         u.name.toLowerCase().replace(/\s+/g, "") === username ||

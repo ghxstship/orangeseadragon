@@ -28,9 +28,9 @@ interface TimingResult {
 export function parseTimeToSeconds(timeString: string): number {
   const parts = timeString.split(':').map(Number);
   if (parts.length === 3) {
-    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+    return (parts[0] ?? 0) * 3600 + (parts[1] ?? 0) * 60 + (parts[2] ?? 0);
   } else if (parts.length === 2) {
-    return parts[0] * 3600 + parts[1] * 60;
+    return (parts[0] ?? 0) * 3600 + (parts[1] ?? 0) * 60;
   }
   return 0;
 }
@@ -231,6 +231,7 @@ export function getCurrentCue(
   
   for (let i = timings.length - 1; i >= 0; i--) {
     const timing = timings[i];
+    if (!timing) continue;
     const cueStartSeconds = parseTimeToSeconds(timing.scheduled_time);
     
     if (currentSeconds >= cueStartSeconds) {

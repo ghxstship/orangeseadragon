@@ -732,9 +732,9 @@ export async function sendNotification(payload: NotificationPayload): Promise<No
       case "sms":
         return sendSMSNotification(payload.recipients, body);
       case "slack":
-        return sendSlackNotification(payload.recipients[0], body);
+        return sendSlackNotification(payload.recipients[0] ?? '', body);
       case "webhook":
-        return sendWebhookNotification(payload.recipients[0], payload.data || {});
+        return sendWebhookNotification(payload.recipients[0] ?? '', payload.data || {});
       default:
         return { success: false, channel: payload.channel, recipients: 0, error: "Unknown channel" };
     }
@@ -750,9 +750,9 @@ export async function sendNotification(payload: NotificationPayload): Promise<No
     case "sms":
       return sendSMSNotification(payload.recipients, body);
     case "slack":
-      return sendSlackNotification(payload.recipients[0], body);
+      return sendSlackNotification(payload.recipients[0] ?? '', body);
     case "webhook":
-      return sendWebhookNotification(payload.recipients[0], { subject, body, ...payload.data });
+      return sendWebhookNotification(payload.recipients[0] ?? '', { subject, body, ...payload.data });
     default:
       return { success: false, channel: payload.channel, recipients: 0, error: "Unknown channel" };
   }

@@ -1,15 +1,15 @@
 {
   "meta": {
-    "generated_at": "2026-02-17T01:36:27.249Z",
-    "total_page_files": 330,
-    "total_tsx_files": 611,
+    "generated_at": "2026-02-17T22:20:03.020Z",
+    "total_page_files": 334,
+    "total_tsx_files": 621,
     "total_css_files": 1,
     "strict_mode": true
   },
   "layout_normalization": {
-    "total_pages": 330,
+    "total_pages": 334,
     "pages_using_standard_wrapper": 226,
-    "pages_with_route_layout_contract": 104,
+    "pages_with_route_layout_contract": 108,
     "pages_without_layout_contract": 0,
     "wrapper_usage": {
       "CrudList": 169,

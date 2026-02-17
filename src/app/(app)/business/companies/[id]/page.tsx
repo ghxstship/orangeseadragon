@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { EntityProfileLayout } from '@/components/modules/business/EntityProfileLayout';
 import { useCrud } from '@/lib/crud/hooks/useCrud';
 import { companySchema } from '@/lib/schemas/company';
@@ -20,9 +20,11 @@ interface CompanyDeal {
     stage: string;
 }
 
-export default function CompanyDetailPage({ params }: { params: { id: string } }) {
+export default function CompanyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
+
     const { useRecord } = useCrud(companySchema);
-    const { data: company, isLoading, error, refetch } = useRecord(params.id);
+    const { data: company, isLoading, error, refetch } = useRecord(id);
     const [deals, setDeals] = useState<CompanyDeal[]>([]);
     const [dealsLoading, setDealsLoading] = useState(true);
 
@@ -34,7 +36,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
             const { data } = await supabase
                 .from('deals')
                 .select('id, name, value, stage')
-                .eq('company_id', params.id)
+                .eq('company_id', id)
                 .is('deleted_at', null)
                 .order('created_at', { ascending: false })
                 .limit(6);
@@ -44,7 +46,7 @@ export default function CompanyDetailPage({ params }: { params: { id: string } }
         };
 
         fetchDeals();
-    }, [params.id]);
+    }, [id]);
 
     if (isLoading) {
         return (

@@ -39,6 +39,7 @@
               - img [ref=e41]
               - textbox "Email" [ref=e44]:
                 - /placeholder: name@company.com
+                - text: e2e_test_1771357763833_7260@example.com
           - generic [ref=e45]:
             - generic [ref=e46]:
               - generic [ref=e47]: Password
@@ -48,6 +49,7 @@
               - img [ref=e50]
               - textbox "Password" [ref=e53]:
                 - /placeholder: ••••••••
+                - text: password123
               - button "Show password" [ref=e54] [cursor=pointer]:
                 - img
           - generic [ref=e55]:
@@ -64,25 +66,4 @@
   - region "Notifications (F8)":
     - list
   - alert [ref=e61]
-  - dialog "Cookie consent" [ref=e62]:
-    - generic [ref=e64]:
-      - generic [ref=e65]:
-        - img [ref=e67]
-        - generic [ref=e69]:
-          - heading "Privacy Preferences" [level=2] [ref=e70]
-          - paragraph [ref=e71]: We use cookies and similar technologies to provide essential functionality and improve your experience. You can customize your preferences below.
-      - generic [ref=e72]:
-        - button "Customize" [ref=e73] [cursor=pointer]:
-          - img
-          - text: Customize
-        - button "Essential Only" [ref=e74] [cursor=pointer]
-        - button "Accept All" [ref=e75] [cursor=pointer]
-      - paragraph [ref=e76]:
-        - text: By continuing, you agree to our
-        - link "Privacy Policy" [ref=e77] [cursor=pointer]:
-          - /url: /privacy
-        - text: and
-        - link "Terms of Service" [ref=e78] [cursor=pointer]:
-          - /url: /terms
-        - text: .
 ```

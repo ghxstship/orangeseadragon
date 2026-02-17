@@ -1,8 +1,11 @@
 'use client';
 
+import { use } from 'react';
 import { CrudForm } from '@/lib/crud/components/CrudForm';
 import { workflowSchema } from '@/lib/schemas/workflow';
 
-export default function EditWorkflowPage({ params }: { params: { id: string } }) {
-  return <CrudForm schema={workflowSchema} mode="edit" id={params.id} />;
+export default function EditWorkflowPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+
+  return <CrudForm schema={workflowSchema} mode="edit" id={id} />;
 }

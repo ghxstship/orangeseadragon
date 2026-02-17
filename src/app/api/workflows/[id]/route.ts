@@ -4,8 +4,10 @@ import { apiSuccess, badRequest, supabaseError, notFound } from '@/lib/api/respo
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
@@ -13,7 +15,7 @@ export async function GET(
   const { data, error } = await supabase
     .from('workflow_templates')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single();
 
   if (error) return supabaseError(error);
@@ -24,8 +26,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   const auth = await requirePolicy('entity.write');
   if (auth.error) return auth.error;
   const { supabase } = auth;
@@ -51,7 +55,7 @@ export async function PUT(
     const { data, error } = await supabase
       .from('workflow_templates')
       .update(updates)
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -66,8 +70,10 @@ export async function PUT(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   const auth = await requirePolicy('entity.write');
   if (auth.error) return auth.error;
   const { supabase } = auth;
@@ -75,7 +81,7 @@ export async function DELETE(
   const { error } = await supabase
     .from('workflow_templates')
     .delete()
-    .eq('id', params.id);
+    .eq('id', id);
 
   if (error) return supabaseError(error);
 

@@ -113,6 +113,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
 
     const fields = section.fields.map((field) => {
       const fieldKey = typeof field === 'string' ? field : field.fields?.[0];
+      if (!fieldKey) return null;
       const fieldDef = schema.data.fields[fieldKey];
 
       if (!fieldDef) return null;
@@ -126,12 +127,12 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
       }
 
       const isInlineLabel = fieldDef.type === 'checkbox' || fieldDef.type === 'switch';
-      const fieldError = getFieldError(fieldKey);
+      const fieldError = getFieldError(fieldKey as string);
 
       return (
         <div key={fieldKey} className="space-y-1.5">
           {!isInlineLabel && (
-            <label htmlFor={fieldKey} className="block text-sm font-medium text-foreground">
+            <label htmlFor={fieldKey as string} className="block text-sm font-medium text-foreground">
               {fieldDef.label}
               {fieldDef.required && <span className="text-destructive ml-1">*</span>}
             </label>

@@ -346,7 +346,7 @@ export function CopilotDrawer() {
                         Quick Actions
                       </p>
                       <div className="grid grid-cols-2 gap-2">
-                        {quickActions.map((action) => (
+                        {quickActions?.map((action) => (
                           <Button
                             type="button"
                             variant="ghost"
@@ -374,7 +374,7 @@ export function CopilotDrawer() {
                               className={cn(
                                 "flex items-start gap-2 p-2.5 rounded-lg border transition-colors cursor-pointer hover:bg-muted/40",
                                 s.type === "warning"
-                                  ? "border-amber-500/20 bg-amber-500/5"
+                                  ? "border-semantic-warning/20 bg-semantic-warning/5"
                                   : s.type === "action"
                                     ? "border-primary/20 bg-primary/5"
                                     : "border-border/50 bg-muted/20"
@@ -383,7 +383,7 @@ export function CopilotDrawer() {
                             >
                               <Lightbulb className={cn(
                                 "h-3.5 w-3.5 flex-shrink-0 mt-0.5",
-                                s.type === "warning" ? "text-amber-500" : "text-primary"
+                                s.type === "warning" ? "text-semantic-warning" : "text-primary"
                               )} />
                               <div className="flex-1 min-w-0">
                                 <p className="text-[10px] font-semibold truncate">{s.title}</p>

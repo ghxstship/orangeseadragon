@@ -29,7 +29,7 @@ const tabsTriggerStyles: Record<TabsVariant, string> = {
   underline:
     "relative h-12 rounded-none border-b-2 border-transparent px-6 transition-colors hover:text-foreground data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-primary",
   spatial:
-    "rounded-xl px-6 py-2 transition-all duration-500 data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_20px_rgba(var(--primary),0.3)] data-[state=active]:border-primary/20 border border-transparent",
+    "rounded-xl px-6 py-2 transition-all duration-500 data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:shadow-[0_0_20px_hsl(var(--primary)/0.3)] data-[state=active]:border-primary/20 border border-transparent",
 };
 
 const TabsList = React.forwardRef<

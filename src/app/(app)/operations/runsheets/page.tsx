@@ -96,6 +96,7 @@ export default function RunsheetsPage() {
         <div className="grid gap-4">
           {runsheets.map((sheet, index) => {
             const StatusIcon = statusIcon[sheet.status];
+            if (!StatusIcon) return null;
             return (
               <motion.div
                 key={sheet.id}

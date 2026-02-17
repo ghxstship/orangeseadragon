@@ -55,7 +55,7 @@ export async function POST(
     const requestedPriority = holdPriority[hold_type];
 
     const blockingHold = conflicts?.find(
-      (c: Record<string, unknown>) => holdPriority[c.hold_type as string] <= requestedPriority
+      (c: Record<string, unknown>) => (holdPriority[c.hold_type as string] ?? 0) <= (requestedPriority ?? 0)
     );
 
     if (blockingHold) {

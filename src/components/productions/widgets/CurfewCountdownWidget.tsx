@@ -1,19 +1,19 @@
 'use client';
 
+import type { ComponentProps } from 'react';
 import { CurfewCountdown } from '@/components/production/curfew-countdown';
 
-export interface CurfewCountdownWidgetProps {
-  curfewTime: string;
-  warningMinutes?: number;
-  criticalMinutes?: number;
-  label?: string;
-}
+export type CurfewCountdownWidgetProps = ComponentProps<typeof CurfewCountdown>;
 
 export function CurfewCountdownWidget({
   curfewTime,
   warningMinutes = 30,
   criticalMinutes = 10,
   label = 'Venue Curfew',
+  className,
+  onWarning,
+  onCritical,
+  onExpired,
 }: CurfewCountdownWidgetProps) {
   return (
     <CurfewCountdown
@@ -21,7 +21,10 @@ export function CurfewCountdownWidget({
       warningMinutes={warningMinutes}
       criticalMinutes={criticalMinutes}
       label={label}
-      className="h-full"
+      className={className ?? 'h-full'}
+      onWarning={onWarning}
+      onCritical={onCritical}
+      onExpired={onExpired}
     />
   );
 }

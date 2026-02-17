@@ -299,15 +299,15 @@ export default function InboxPage() {
 
     items.forEach((item) => {
       const groupKey = getTimeGroupKey(item.created_at);
-      groups[groupKey].push(item);
+      (groups[groupKey] ??= []).push(item);
     });
 
     return TIME_GROUP_ORDER
-      .filter((key) => groups[key].length > 0)
+      .filter((key) => (groups[key]?.length ?? 0) > 0)
       .map((key) => ({
         key,
-        label: TIME_GROUP_LABELS[key],
-        items: groups[key],
+        label: TIME_GROUP_LABELS[key] ?? key,
+        items: groups[key] ?? [],
       }));
   }, [items]);
 
@@ -421,7 +421,7 @@ export default function InboxPage() {
           <TabsList variant="underline">
             <TabsTrigger value="all" className="gap-2">
               All
-              {tabCounts.all > 0 && (
+              {(tabCounts.all ?? 0) > 0 && (
                 <Badge variant="secondary" className="text-xs">
                   {tabCounts.all}
                 </Badge>
@@ -429,7 +429,7 @@ export default function InboxPage() {
             </TabsTrigger>
             <TabsTrigger value="unread" className="gap-2">
               Unread
-              {tabCounts.unread > 0 && (
+              {(tabCounts.unread ?? 0) > 0 && (
                 <Badge variant="default" className="text-xs">
                   {tabCounts.unread}
                 </Badge>
@@ -437,7 +437,7 @@ export default function InboxPage() {
             </TabsTrigger>
             <TabsTrigger value="approvals" className="gap-2">
               Approvals
-              {tabCounts.approvals > 0 && (
+              {(tabCounts.approvals ?? 0) > 0 && (
                 <Badge variant="warning" className="text-xs">
                   {tabCounts.approvals}
                 </Badge>
@@ -445,7 +445,7 @@ export default function InboxPage() {
             </TabsTrigger>
             <TabsTrigger value="mentions" className="gap-2">
               Mentions
-              {tabCounts.mentions > 0 && (
+              {(tabCounts.mentions ?? 0) > 0 && (
                 <Badge variant="secondary" className="text-xs">
                   {tabCounts.mentions}
                 </Badge>
@@ -453,7 +453,7 @@ export default function InboxPage() {
             </TabsTrigger>
             <TabsTrigger value="alerts" className="gap-2">
               Alerts
-              {tabCounts.alerts > 0 && (
+              {(tabCounts.alerts ?? 0) > 0 && (
                 <Badge variant="secondary" className="text-xs">
                   {tabCounts.alerts}
                 </Badge>

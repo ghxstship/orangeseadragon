@@ -270,7 +270,7 @@ export function CanvasLayout({
                   min={config.canvas?.minZoom || 25}
                   max={config.canvas?.maxZoom || 200}
                   step={5}
-                  onValueChange={([v]) => onZoomChange?.(v)}
+                  onValueChange={([v]) => onZoomChange?.(v ?? zoom)}
                 />
               </div>
               <span className="text-xs sm:text-sm w-10 sm:w-12 text-center font-mono">{zoom}%</span>

@@ -71,7 +71,7 @@ export function ExportModal({
   totalRecords,
 }: ExportModalProps) {
   const [internalOpen, setInternalOpen] = React.useState(false);
-  const [selectedFormat, setSelectedFormat] = React.useState<ExportFormat>(formats[0]);
+  const [selectedFormat, setSelectedFormat] = React.useState<ExportFormat>(formats[0]!);
   const [selectedFields, setSelectedFields] = React.useState<Set<string>>(
     new Set(fields.filter((f) => f.selected).map((f) => f.id))
   );
