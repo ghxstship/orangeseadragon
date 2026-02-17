@@ -7,24 +7,50 @@ type SecurityContext = {
   requestId: string;
   correlationId: string;
   cspNonce: string;
+  includeUpgradeInsecureRequests: boolean;
+  allowUnsafeEvalInScripts: boolean;
 };
 
 function createSecurityContext(request: NextRequest): SecurityContext {
   const requestId = request.headers.get("x-request-id") || crypto.randomUUID();
   const correlationId = request.headers.get("x-correlation-id") || requestId;
   const cspNonce = crypto.randomUUID().replace(/-/g, "");
+  const forwardedProto = request.headers.get("x-forwarded-proto");
+  const isHttpsRequest = request.nextUrl.protocol === "https:" || forwardedProto === "https";
+  const isLocalHost =
+    request.nextUrl.hostname === "localhost" ||
+    request.nextUrl.hostname === "127.0.0.1" ||
+    request.nextUrl.hostname === "::1";
+  const allowUnsafeEvalInScripts = process.env.NODE_ENV !== "production";
 
   return {
     requestId,
     correlationId,
     cspNonce,
+    includeUpgradeInsecureRequests: isHttpsRequest && !isLocalHost,
+    allowUnsafeEvalInScripts,
   };
 }
 
-function buildContentSecurityPolicy(cspNonce: string): string {
-  return [
+function buildContentSecurityPolicy(
+  cspNonce: string,
+  includeUpgradeInsecureRequests: boolean,
+  allowUnsafeEvalInScripts: boolean
+): string {
+  const scriptSrcDirective = [
+    "'self'",
+    `'nonce-${cspNonce}'`,
+    "https://js.stripe.com",
+  ];
+
+  if (allowUnsafeEvalInScripts) {
+    // Required for Next.js dev/test bundles (including Playwright WebKit runs).
+    scriptSrcDirective.push("'unsafe-eval'");
+  }
+
+  const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${cspNonce}' https://js.stripe.com`,
+    `script-src ${scriptSrcDirective.join(" ")}`,
     // App Router injects inline bootstrap scripts; allow inline script elements explicitly.
     "script-src-elem 'self' 'unsafe-inline' https://js.stripe.com",
     "script-src-attr 'unsafe-inline'",
@@ -38,9 +64,14 @@ function buildContentSecurityPolicy(cspNonce: string): string {
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "upgrade-insecure-requests",
     "report-uri /api/security/csp-report",
-  ].join("; ");
+  ];
+
+  if (includeUpgradeInsecureRequests) {
+    directives.splice(directives.length - 1, 0, "upgrade-insecure-requests");
+  }
+
+  return directives.join("; ");
 }
 
 function applySecurityHeaders(response: NextResponse, security: SecurityContext): NextResponse {
@@ -56,7 +87,14 @@ function applySecurityHeaders(response: NextResponse, security: SecurityContext)
   response.headers.set("cross-origin-resource-policy", "same-origin");
   response.headers.set("origin-agent-cluster", "?1");
   response.headers.set("x-permitted-cross-domain-policies", "none");
-  response.headers.set("content-security-policy", buildContentSecurityPolicy(security.cspNonce));
+  response.headers.set(
+    "content-security-policy",
+    buildContentSecurityPolicy(
+      security.cspNonce,
+      security.includeUpgradeInsecureRequests,
+      security.allowUnsafeEvalInScripts
+    )
+  );
   return response;
 }
 

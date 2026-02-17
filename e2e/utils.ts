@@ -16,21 +16,90 @@ export async function dismissCookieConsent(page: Page) {
     }
 }
 
-export async function loginUser(page: Page, email: string, password: string) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-        await page.goto('/login', { waitUntil: 'domcontentloaded' });
-        await dismissCookieConsent(page);
-        await page.locator('input[type="email"]').waitFor({ state: 'visible', timeout: 10000 });
-        await page.fill('input[type="email"]', email);
-        await page.fill('input[type="password"]', password);
-        await dismissCookieConsent(page);
-        await page.press('input[type="password"]', 'Enter');
-        try {
-            await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
-            return;
-        } catch {
-            if (attempt === 1) throw new Error('Login failed after 2 attempts');
+async function waitForLoginFormHydration(page: Page) {
+    const passwordInput = page.locator('#password');
+    const togglePasswordButton = page.getByRole('button', { name: /show password|hide password/i });
+    const submitButton = page.locator('button[type="submit"]');
+
+    await passwordInput.waitFor({ state: 'visible', timeout: 10000 });
+    await togglePasswordButton.waitFor({ state: 'visible', timeout: 10000 });
+    await submitButton.waitFor({ state: 'visible', timeout: 10000 });
+
+    // Ensure React handlers are wired (pre-hydration submit can cause native GET /login?).
+    let hydrationDetected = false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+        await togglePasswordButton.dispatchEvent('click');
+        if ((await passwordInput.getAttribute('type')) === 'text') {
+            hydrationDetected = true;
+            break;
         }
+        await page.waitForTimeout(250);
+    }
+
+    if (hydrationDetected) {
+        await togglePasswordButton.dispatchEvent('click');
+        await expect(passwordInput).toHaveAttribute('type', 'password', { timeout: 2000 });
+    }
+
+    // Safari/WebKit can miss immediate post-hydration submits; keep this delay bounded.
+    await page.waitForTimeout(800);
+}
+
+export async function loginUser(page: Page, email: string, password: string) {
+    const pageErrors: string[] = [];
+    const consoleErrors: string[] = [];
+    const requestFailures: string[] = [];
+
+    const onPageError = (error: Error) => {
+        if (pageErrors.length < 5) {
+            pageErrors.push(error.message);
+        }
+    };
+
+    const onConsole = (message: { type(): string; text(): string }) => {
+        if (message.type() === 'error' && consoleErrors.length < 5) {
+            consoleErrors.push(message.text());
+        }
+    };
+
+    const onRequestFailed = (request: { method(): string; url(): string; failure(): { errorText?: string } | null }) => {
+        if (requestFailures.length < 5) {
+            requestFailures.push(`${request.method()} ${request.url()} :: ${request.failure()?.errorText || 'unknown'}`);
+        }
+    };
+
+    page.on('pageerror', onPageError);
+    page.on('console', onConsole);
+    page.on('requestfailed', onRequestFailed);
+
+    try {
+        for (let attempt = 0; attempt < 2; attempt++) {
+            await page.goto('/login', { waitUntil: 'domcontentloaded' });
+            await page.waitForLoadState('networkidle');
+            await dismissCookieConsent(page);
+            await page.locator('#email').waitFor({ state: 'visible', timeout: 10000 });
+            await waitForLoginFormHydration(page);
+            await page.fill('#email', email);
+            await page.fill('#password', password);
+            await dismissCookieConsent(page);
+            await page.click('button[type="submit"]');
+            try {
+                await expect(page).not.toHaveURL(/\/login/, { timeout: 10000 });
+                return;
+            } catch {
+                if (attempt === 1) {
+                    const cookieSnapshot = await page.evaluate(() => document.cookie);
+                    const toastText = await page.locator('[role="status"], [role="alert"]').first().textContent().catch(() => null);
+                    throw new Error(
+                        `Login failed after 2 attempts (current URL: ${page.url()}, cookies: ${cookieSnapshot || '<none>'}, toast: ${toastText || '<none>'}, pageErrors: ${pageErrors.join(' | ') || '<none>'}, consoleErrors: ${consoleErrors.join(' | ') || '<none>'}, requestFailures: ${requestFailures.join(' | ') || '<none>'})`
+                    );
+                }
+            }
+        }
+    } finally {
+        page.off('pageerror', onPageError);
+        page.off('console', onConsole);
+        page.off('requestfailed', onRequestFailed);
     }
 }
 

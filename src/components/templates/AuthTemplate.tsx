@@ -102,9 +102,17 @@ export function AuthTemplate({
     return initial;
   });
   const [success, setSuccess] = React.useState(false);
+  const [isHydrated, setIsHydrated] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isHydrated) {
+      return;
+    }
     setIsLoading(true);
     try {
       await onSubmit(formData);
@@ -175,7 +183,11 @@ export function AuthTemplate({
       {children}
 
       {fields.length > 0 && (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+          data-hydrated={isHydrated ? 'true' : 'false'}
+        >
           {fields.map((field) => {
             if (field.type === 'checkbox') {
               return (
@@ -231,6 +243,7 @@ export function AuthTemplate({
                       variant="ghost"
                       size="icon"
                       onClick={() => togglePasswordVisibility(field.key)}
+                      disabled={isLoading}
                       className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
