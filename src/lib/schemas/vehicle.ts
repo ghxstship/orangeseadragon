@@ -253,7 +253,7 @@ export const vehicleSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Vehicle', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Vehicle') } },
+      { key: 'create', label: 'New Vehicle', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 

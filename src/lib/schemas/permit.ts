@@ -268,7 +268,7 @@ export const permitSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Permit', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Permit') } },
+      { key: 'create', label: 'New Permit', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

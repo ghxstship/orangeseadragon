@@ -157,12 +157,12 @@ export const kitItemSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'edit', label: 'Edit', handler: { type: 'function', fn: () => console.log('Edit item') } },
-      { key: 'remove', label: 'Remove', handler: { type: 'function', fn: () => console.log('Remove item') } },
+      { key: 'edit', label: 'Edit', handler: { type: 'function', fn: () => {} } },
+      { key: 'remove', label: 'Remove', handler: { type: 'function', fn: () => {} } },
     ],
     bulk: [],
     global: [
-      { key: 'add', label: 'Add Item', variant: 'primary', handler: { type: 'function', fn: () => console.log('Add item') } },
+      { key: 'add', label: 'Add Item', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

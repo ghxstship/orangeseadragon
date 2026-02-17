@@ -71,29 +71,16 @@ export function useAuditLogs(options: UseAuditLogsOptions = {}) {
       const response = await fetch(`/api/v1/audit?${params}`);
       
       if (!response.ok) {
-        // API not implemented yet - return empty state gracefully
-        setLogs([]);
-        setMeta({
-          page: 1,
-          limit: options.limit || 50,
-          total: 0,
-          totalPages: 0,
-        });
-        return;
+        throw new Error(`Audit API returned ${response.status}`);
       }
 
       const data: AuditLogsResponse = await response.json();
       setLogs(data.data);
       setMeta(data.meta);
-    } catch {
-      // API not available - return empty state gracefully
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error(String(err)));
       setLogs([]);
-      setMeta({
-        page: 1,
-        limit: options.limit || 50,
-        total: 0,
-        totalPages: 0,
-      });
+      setMeta(null);
     } finally {
       setLoading(false);
     }

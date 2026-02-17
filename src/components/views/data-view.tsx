@@ -511,8 +511,8 @@ function TableRenderer<T extends Record<string, unknown>>({
     return rowActions.map((action) => ({
       id: action.key,
       label: action.label,
-      onClick: (row: T) => {
-        console.log(`Action ${action.key} on row`, row);
+      onClick: (_row: T) => {
+        // Action handler — wired by parent via schema actions
       },
       variant: action.variant === "destructive" ? "destructive" : "default",
     }));
@@ -587,7 +587,7 @@ function ListRenderer<T extends Record<string, unknown>>({
       })),
       actions: rowActions?.map((action) => ({
         label: action.label,
-        onClick: () => console.log(`Action ${action.key} on item`, item),
+        onClick: () => {},
         destructive: action.variant === "destructive",
       })),
       data: item,

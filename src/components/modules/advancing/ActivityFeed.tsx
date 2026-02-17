@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/components/ui/use-toast';
+import { captureError } from '@/lib/observability';
 
 interface ActivityEvent {
   id: string;
@@ -268,7 +269,7 @@ export function ActivityFeed({ entityType, entityId, className }: ActivityFeedPr
         setComments(commentsData.records || []);
       }
     } catch (error) {
-      console.error('Error fetching activity:', error);
+      captureError(error, 'activityFeed.fetch');
     } finally {
       setLoading(false);
     }
@@ -310,7 +311,7 @@ export function ActivityFeed({ entityType, entityId, className }: ActivityFeedPr
         description: 'Your comment has been added.',
       });
     } catch (error) {
-      console.error('Error posting comment:', error);
+      captureError(error, 'activityFeed.postComment');
       toast({
         title: 'Error',
         description: 'Failed to post comment. Please try again.',
@@ -340,7 +341,7 @@ export function ActivityFeed({ entityType, entityId, className }: ActivityFeedPr
         prev.map(c => c.id === commentId ? { ...c, is_resolved: true } : c)
       );
     } catch (error) {
-      console.error('Error resolving comment:', error);
+      captureError(error, 'activityFeed.resolveComment');
     }
   };
 
@@ -361,7 +362,7 @@ export function ActivityFeed({ entityType, entityId, className }: ActivityFeedPr
       
       setComments(prev => prev.filter(c => c.id !== commentId));
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      captureError(error, 'activityFeed.deleteComment');
     }
   };
 

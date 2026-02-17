@@ -8,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { PageShell } from '@/components/common/page-shell';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import { formatCurrency } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 import {
   ClipboardList,
   FileText,
@@ -120,7 +121,7 @@ export default function AdvancingHubPage() {
         setMetrics(payload.metrics ?? payload);
       }
     } catch (error) {
-      console.error('Failed to fetch dashboard:', error);
+      captureError(error, 'advancing.fetchDashboard');
     } finally {
       setLoading(false);
     }
@@ -136,7 +137,7 @@ export default function AdvancingHubPage() {
         setConflicts(payload.records || []);
       }
     } catch (error) {
-      console.error('Failed to fetch conflicts:', error);
+      captureError(error, 'advancing.fetchConflicts');
     } finally {
       setConflictsLoading(false);
     }

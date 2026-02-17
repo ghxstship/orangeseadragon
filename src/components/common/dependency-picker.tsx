@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 
 export type DependencyType = 'finish_to_start' | 'start_to_start' | 'finish_to_finish' | 'start_to_finish';
 
@@ -97,7 +98,7 @@ export function DependencyPicker({
       setSearchQuery('');
       setIsOpen(false);
     } catch (error) {
-      console.error('Failed to add dependency:', error);
+      captureError(error, 'dependencyPicker.add');
     }
   };
 

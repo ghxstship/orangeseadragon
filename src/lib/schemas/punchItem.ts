@@ -250,7 +250,7 @@ export const punchItemSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Punch Item', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Punch Item') } },
+      { key: 'create', label: 'New Punch Item', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

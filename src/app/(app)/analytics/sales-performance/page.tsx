@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CurrencyDisplay } from '@/components/common/financial-display';
 import { Users, DollarSign, TrendingUp, Target } from 'lucide-react';
+import { captureError } from '@/lib/observability';
 
 interface RepPerformance {
   repId: string;
@@ -30,7 +31,7 @@ export default function SalesPerformancePage() {
     fetch('/api/sales/performance')
       .then((res) => res.json())
       .then((json) => setData(json.data || []))
-      .catch(() => {})
+      .catch((err: unknown) => captureError(err, 'salesPerformance.fetch'))
       .finally(() => setIsLoading(false));
   }, []);
 

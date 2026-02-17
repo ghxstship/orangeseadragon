@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { captureError } from '@/lib/observability';
 
 export interface InboxItem {
   id: string;
@@ -109,7 +110,7 @@ export function useInbox(options: UseInboxOptions = {}) {
         setMeta({ ...meta, unreadCount: Math.max(0, meta.unreadCount - 1) });
       }
     } catch (err) {
-      console.error("Failed to mark as read:", err);
+      captureError(err, 'inbox.markAsRead');
     }
   }, [meta]);
 
@@ -121,7 +122,7 @@ export function useInbox(options: UseInboxOptions = {}) {
         setMeta({ ...meta, unreadCount: 0 });
       }
     } catch (err) {
-      console.error("Failed to mark all as read:", err);
+      captureError(err, 'inbox.markAllRead');
     }
   }, [meta]);
 

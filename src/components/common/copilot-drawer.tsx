@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUIStore } from "@/stores/ui-store";
+import { captureError } from '@/lib/observability';
 import {
   Sparkles,
   X,
@@ -99,7 +100,36 @@ const contextualGreetings: Record<string, string> = {
   operations: "I can help with logistics, travel, and operational planning.",
 };
 
-function generateStreamingResponse(prompt: string, context: CopilotContext): string {
+interface ProactiveSuggestion {
+  id: string;
+  type: "action" | "insight" | "warning" | "optimization";
+  title: string;
+  description: string;
+  confidence: number;
+  actionUrl?: string;
+  actionLabel?: string;
+}
+
+async function fetchCopilotResponse(
+  messages: { role: string; content: string }[],
+  context: CopilotContext
+): Promise<string> {
+  try {
+    const res = await fetch("/api/copilot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages, context }),
+    });
+    if (res.ok) {
+      const result = await res.json();
+      if (result.data?.content) return result.data.content;
+    }
+  } catch {
+    // Fall through to local generation
+  }
+
+  // Local fallback
+  const lastMsg = messages[messages.length - 1]?.content || "";
   const entityInfo = context.entityName
     ? ` for "${context.entityName}"`
     : context.module
@@ -109,16 +139,16 @@ function generateStreamingResponse(prompt: string, context: CopilotContext): str
   const responses: Record<string, string> = {
     summarize: `Here's a summary of the current view${entityInfo}:\n\n• **Status**: All items are within normal parameters\n• **Key Metrics**: Performance is tracking at expected levels\n• **Attention Items**: 2 items may need review this week\n• **Recent Changes**: 3 updates in the last 24 hours\n\nWould you like me to dive deeper into any of these areas?`,
     insights: `Based on the current data${entityInfo}, here are my key insights:\n\n1. **Trend**: Activity has increased 15% compared to last period\n2. **Opportunity**: There are 3 items that could benefit from optimization\n3. **Risk**: One item is approaching its threshold — consider reviewing\n4. **Recommendation**: Prioritize the top 2 items for maximum impact\n\nShall I elaborate on any of these points?`,
-    actions: `Here are my recommended next actions${entityInfo}:\n\n🔴 **High Priority**\n• Review and approve pending items\n• Follow up on overdue deliverables\n\n🟡 **Medium Priority**\n• Update status on in-progress items\n• Schedule check-in with stakeholders\n\n🟢 **Low Priority**\n• Archive completed items\n• Update documentation\n\nWant me to help with any of these?`,
+    actions: `Here are my recommended next actions${entityInfo}:\n\n**High Priority**\n• Review and approve pending items\n• Follow up on overdue deliverables\n\n**Medium Priority**\n• Update status on in-progress items\n• Schedule check-in with stakeholders\n\n**Low Priority**\n• Archive completed items\n• Update documentation\n\nWant me to help with any of these?`,
     report: `# Status Report${entityInfo}\n\n**Period**: Current\n**Prepared by**: AI Copilot\n\n## Executive Summary\nOperations are proceeding as planned with minor adjustments needed in 2 areas.\n\n## Key Highlights\n- All critical milestones are on track\n- Budget utilization is within acceptable range\n- Team capacity is at healthy levels\n\n## Action Items\n1. Review flagged items by end of week\n2. Update stakeholders on progress\n\nWould you like me to refine any section?`,
   };
 
-  const lowerPrompt = prompt.toLowerCase();
+  const lower = lastMsg.toLowerCase();
   for (const [key, response] of Object.entries(responses)) {
-    if (lowerPrompt.includes(key)) return response;
+    if (lower.includes(key)) return response;
   }
 
-  return `I understand you're asking about: "${prompt}"${entityInfo}.\n\nBased on the current context, here's what I can tell you:\n\n• The data shows normal patterns with no immediate concerns\n• There are a few areas worth monitoring closely\n• I'd recommend reviewing the most recent updates first\n\nWould you like me to provide more specific analysis? You can also try one of the quick action buttons for targeted insights.`;
+  return `I understand you're asking about: "${lastMsg}"${entityInfo}.\n\nBased on the current context, here's what I can tell you:\n\n• The data shows normal patterns with no immediate concerns\n• There are a few areas worth monitoring closely\n• I'd recommend reviewing the most recent updates first\n\nWould you like me to provide more specific analysis? You can also try one of the quick action buttons for targeted insights.`;
 }
 
 export function CopilotDrawer() {
@@ -128,6 +158,7 @@ export function CopilotDrawer() {
   const [input, setInput] = React.useState("");
   const [isStreaming, setIsStreaming] = React.useState(false);
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
+  const [suggestions, setSuggestions] = React.useState<ProactiveSuggestion[]>([]);
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -147,6 +178,22 @@ export function CopilotDrawer() {
     }
   }, [messages]);
 
+  // Fetch proactive suggestions when context changes
+  React.useEffect(() => {
+    if (!copilotOpen || !copilotContext?.module) return;
+    const params = new URLSearchParams();
+    if (copilotContext.module) params.set("module", copilotContext.module);
+    if (copilotContext.entityType) params.set("entityType", copilotContext.entityType);
+    if (copilotContext.entityId) params.set("entityId", copilotContext.entityId);
+
+    fetch(`/api/copilot?${params.toString()}`)
+      .then((r) => r.ok ? r.json() : null)
+      .then((result) => {
+        if (result?.data?.suggestions) setSuggestions(result.data.suggestions);
+      })
+      .catch((err: unknown) => captureError(err, 'copilot.fetchSuggestions'));
+  }, [copilotOpen, copilotContext?.module, copilotContext?.entityType, copilotContext?.entityId]);
+
   const handleSend = React.useCallback(
     async (prompt: string) => {
       if (!prompt.trim() || isStreaming) return;
@@ -163,7 +210,13 @@ export function CopilotDrawer() {
       setInput("");
       setIsStreaming(true);
 
-      const fullResponse = generateStreamingResponse(prompt, copilotContext || {});
+      // Build message history for API
+      const apiMessages = [
+        ...messages.map((m) => ({ role: m.role, content: m.content })),
+        { role: "user" as const, content: prompt.trim() },
+      ];
+
+      const fullResponse = await fetchCopilotResponse(apiMessages, copilotContext || {});
 
       setMessages((prev) => [
         ...prev,
@@ -176,6 +229,7 @@ export function CopilotDrawer() {
         },
       ]);
 
+      // Simulate streaming for UX
       let charIndex = 0;
       const streamInterval = setInterval(() => {
         charIndex += Math.floor(Math.random() * 3) + 2;
@@ -201,7 +255,7 @@ export function CopilotDrawer() {
         }
       }, 20);
     },
-    [isStreaming, copilotContext]
+    [isStreaming, copilotContext, messages]
   );
 
   const handleCopy = React.useCallback((id: string, content: string) => {
@@ -306,6 +360,40 @@ export function CopilotDrawer() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Proactive Suggestions */}
+                    {suggestions.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 px-1">
+                          Suggestions
+                        </p>
+                        <div className="space-y-1.5">
+                          {suggestions.slice(0, 3).map((s) => (
+                            <div
+                              key={s.id}
+                              className={cn(
+                                "flex items-start gap-2 p-2.5 rounded-lg border transition-colors cursor-pointer hover:bg-muted/40",
+                                s.type === "warning"
+                                  ? "border-amber-500/20 bg-amber-500/5"
+                                  : s.type === "action"
+                                    ? "border-primary/20 bg-primary/5"
+                                    : "border-border/50 bg-muted/20"
+                              )}
+                              onClick={() => handleSend(`Tell me more about: ${s.title}`)}
+                            >
+                              <Lightbulb className={cn(
+                                "h-3.5 w-3.5 flex-shrink-0 mt-0.5",
+                                s.type === "warning" ? "text-amber-500" : "text-primary"
+                              )} />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[10px] font-semibold truncate">{s.title}</p>
+                                <p className="text-[9px] text-muted-foreground line-clamp-2">{s.description}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {copilotContext?.module && (
                       <div className="flex items-center justify-center gap-2">

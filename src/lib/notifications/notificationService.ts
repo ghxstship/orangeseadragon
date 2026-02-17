@@ -5,7 +5,7 @@
  * for operations alerts including incidents, schedule changes, and cue reminders.
  */
 
-import { captureError, logWarn } from '@/lib/observability';
+import { captureError, logInfo, logWarn } from '@/lib/observability';
 
 export type NotificationType = 
   | 'incident_critical'
@@ -119,7 +119,7 @@ class NotificationService {
     if ('serviceWorker' in navigator) {
       try {
         this.swRegistration = await navigator.serviceWorker.register('/sw.js');
-        console.log('Service Worker registered');
+        logInfo('notifications.serviceWorker.registered', {});
       } catch (error) {
         captureError(error, 'notifications.notificationService.error');
       }

@@ -4,56 +4,79 @@ import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadius
 import { Timeline, TimelineItem, TimelineDot, TimelineContent, TimelineHeader, TimelineTitle, TimelineDescription, TimelineTime } from '@/components/ui/timeline';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Award, Briefcase, Star } from 'lucide-react';
+import { Trophy, Briefcase, Star } from 'lucide-react';
 import type { EntityRecord } from '@/lib/schema/types';
+
+interface SkillDataPoint {
+    subject: string;
+    A: number;
+    fullMark: number;
+}
+
+interface TimelineEvent {
+    title: string;
+    time: string;
+    description: string;
+    icon: typeof Star;
+    color: 'warning' | 'success' | 'default' | 'outline';
+}
 
 interface LifeStreamProfileProps {
     person: EntityRecord;
+    skills?: SkillDataPoint[];
+    events?: TimelineEvent[];
 }
 
-// Mock data for visualizations
-const SKILL_DATA = [
-    { subject: 'Strategy', A: 120, fullMark: 150 },
-    { subject: 'Leadership', A: 98, fullMark: 150 },
-    { subject: 'Technical', A: 86, fullMark: 150 },
-    { subject: 'Culture', A: 99, fullMark: 150 },
-    { subject: 'Communication', A: 85, fullMark: 150 },
-    { subject: 'Execution', A: 65, fullMark: 150 },
+const DEFAULT_SKILLS: SkillDataPoint[] = [
+    { subject: 'Strategy', A: 0, fullMark: 150 },
+    { subject: 'Leadership', A: 0, fullMark: 150 },
+    { subject: 'Technical', A: 0, fullMark: 150 },
+    { subject: 'Culture', A: 0, fullMark: 150 },
+    { subject: 'Communication', A: 0, fullMark: 150 },
+    { subject: 'Execution', A: 0, fullMark: 150 },
 ];
 
-const TIMELINE_EVENTS = [
-    {
-        title: 'Promoted to Senior Manager',
-        time: '2 days ago',
-        description: 'Advanced due to exceptional performance in Q1.',
+function deriveSkillsFromPerson(person: EntityRecord): SkillDataPoint[] {
+    const skills = person.skills as Record<string, number> | undefined;
+    if (!skills || typeof skills !== 'object') return DEFAULT_SKILLS;
+    return DEFAULT_SKILLS.map((s) => ({
+        ...s,
+        A: typeof skills[s.subject.toLowerCase()] === 'number' ? skills[s.subject.toLowerCase()] : s.A,
+    }));
+}
+
+function deriveTimelineFromPerson(person: EntityRecord): TimelineEvent[] {
+    const events: TimelineEvent[] = [];
+    if (person.created_at) {
+        events.push({
+            title: `Joined ${person.organization_name || 'the organization'}`,
+            time: new Date(person.created_at as string).toLocaleDateString(),
+            description: person.department ? `Started in the ${person.department} department.` : 'Started their journey.',
+            icon: Trophy,
+            color: 'outline',
+        });
+    }
+    if (person.job_title) {
+        events.unshift({
+            title: `Current Role: ${person.job_title}`,
+            time: 'Present',
+            description: person.department ? `Working in ${person.department}.` : '',
+            icon: Briefcase,
+            color: 'default',
+        });
+    }
+    return events.length > 0 ? events : [{
+        title: 'No activity recorded yet',
+        time: '',
+        description: 'Activity will appear here as events occur.',
         icon: Star,
-        color: 'warning' as const
-    },
-    {
-        title: 'Completed "Safety First" Certification',
-        time: '1 week ago',
-        description: 'Mandatory annual safety refresher.',
-        icon: Award,
-        color: 'success' as const
-    },
-    {
-        title: 'Joined "Alpha" Project Team',
-        time: '1 month ago',
-        description: 'Assigned as lead technical resource.',
-        icon: Briefcase,
-        color: 'default' as const
-    },
-    {
-        title: 'Hired at ATLVS',
-        time: '6 months ago',
-        description: 'Started journey in the Engineering department.',
-        icon: Trophy,
-        color: 'outline' as const
-    },
-];
+        color: 'default',
+    }];
+}
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function LifeStreamProfile({ person }: LifeStreamProfileProps) {
+export function LifeStreamProfile({ person, skills, events }: LifeStreamProfileProps) {
+    const skillData = skills ?? deriveSkillsFromPerson(person);
+    const timelineEvents = events ?? deriveTimelineFromPerson(person);
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
 
@@ -64,7 +87,7 @@ export function LifeStreamProfile({ person }: LifeStreamProfileProps) {
                 </CardHeader>
                 <CardContent className="h-[300px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={SKILL_DATA}>
+                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={skillData}>
                             <PolarGrid stroke="hsl(var(--chart-tooltip-border))" />
                             <PolarAngleAxis dataKey="subject" tick={{ fill: 'hsl(var(--chart-axis))', fontSize: 12 }} />
                             <PolarRadiusAxis angle={30} domain={[0, 150]} tick={false} axisLine={false} />
@@ -91,7 +114,7 @@ export function LifeStreamProfile({ person }: LifeStreamProfileProps) {
                 </CardHeader>
                 <CardContent>
                     <Timeline>
-                        {TIMELINE_EVENTS.map((item, idx) => (
+                        {timelineEvents.map((item: TimelineEvent, idx: number) => (
                             <TimelineItem key={idx}>
                                 <TimelineDot variant={item.color}>
                                     <item.icon className="h-3 w-3 text-white" />

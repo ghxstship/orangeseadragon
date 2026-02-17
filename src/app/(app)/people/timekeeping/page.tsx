@@ -8,6 +8,7 @@ import { clockEntrySchema } from '@/lib/schemas/clockEntry';
 import { TimeClock } from '@/components/people/TimeClock';
 import { PageShell } from '@/components/common/page-shell';
 import { useUser } from '@/hooks/use-supabase';
+import { captureError } from '@/lib/observability';
 
 export default function TimekeepingPage() {
   const { user } = useUser();
@@ -27,7 +28,7 @@ export default function TimekeepingPage() {
         }),
       });
     } catch (err) {
-      console.error('Clock in failed:', err);
+      captureError(err, 'timekeeping.clockIn');
     }
   };
 
@@ -45,7 +46,7 @@ export default function TimekeepingPage() {
         }),
       });
     } catch (err) {
-      console.error('Clock out failed:', err);
+      captureError(err, 'timekeeping.clockOut');
     }
   };
 

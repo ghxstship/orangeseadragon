@@ -1,18 +1,56 @@
 import { NextRequest } from 'next/server';
+import { timingSafeEqual } from 'crypto';
 import { requirePolicy } from '@/lib/api/guard';
 import { apiSuccess, serverError, supabaseError } from '@/lib/api/response';
 import { captureError } from '@/lib/observability';
+import { createServiceClient } from '@/lib/supabase/server';
+
+function getCronSecret() {
+  return process.env.BUDGET_ALERTS_CRON_SECRET ?? process.env.CRON_SECRET ?? null;
+}
+
+function hasValidCronSecret(request: NextRequest, secret: string) {
+  const headerValue =
+    request.headers.get('x-cron-secret') ??
+    request.headers.get('x-api-key') ??
+    request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ??
+    '';
+
+  const expected = Buffer.from(secret);
+  const provided = Buffer.from(headerValue);
+
+  if (expected.length !== provided.length) {
+    return false;
+  }
+
+  return timingSafeEqual(expected, provided);
+}
 
 /**
  * G8: Budget alert check — cron-triggered endpoint that checks all budgets
  * against their alert rules and dispatches notifications.
  */
-export async function POST(_request: NextRequest) {
-  const auth = await requirePolicy('entity.write');
-  if (auth.error) return auth.error;
-  const { supabase, user, membership } = auth;
+export async function POST(request: NextRequest) {
+  const cronSecret = getCronSecret();
+  const isAuthorizedCron = Boolean(cronSecret && hasValidCronSecret(request, cronSecret));
+  let userId: string | null = null;
+  let organizationId: string | null = null;
 
   try {
+    const supabase = isAuthorizedCron
+      ? await createServiceClient()
+      : await (async () => {
+        const auth = await requirePolicy('entity.write');
+        if (auth.error) return auth;
+        userId = auth.user.id;
+        organizationId = auth.membership.organization_id;
+        return auth.supabase;
+      })();
+
+    if ('error' in supabase) {
+      return supabase.error;
+    }
+
     const { data: rules, error: rulesError } = await supabase
       .from('budget_alert_rules')
       .select('*')
@@ -107,8 +145,9 @@ export async function POST(_request: NextRequest) {
     return apiSuccess({ checked: budgets?.length || 0, triggered });
   } catch (err) {
     captureError(err, 'api.budget_alerts.check.unhandled_error', {
-      organization_id: membership.organization_id,
-      user_id: user.id,
+      organization_id: organizationId,
+      user_id: userId,
+      is_cron_invocation: isAuthorizedCron,
     });
     return serverError('Failed to check budget alerts');
   }

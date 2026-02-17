@@ -6,7 +6,7 @@
  */
 
 import { createClient, RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
-import { captureError } from '@/lib/observability';
+import { captureError, logInfo } from '@/lib/observability';
 import type { Database } from '@/types/database';
 import type { 
   EntityType, 
@@ -121,7 +121,7 @@ export class RealtimeService {
         )
         .subscribe((status) => {
           if (status === 'SUBSCRIBED') {
-            console.log(`[Realtime] Subscribed to ${channelKey}`);
+            logInfo('realtime.channel.subscribed', { channel: channelKey });
           } else if (status === 'CHANNEL_ERROR') {
             captureError(new Error(`Error subscribing to ${channelKey}`), 'realtime.subscribe.error');
           }

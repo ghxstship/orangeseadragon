@@ -6,7 +6,6 @@ import { User, MapPin, Briefcase } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-// Mock data integration interface - in real world would come from Supabase
 interface Person {
     id: string;
     headline: string;

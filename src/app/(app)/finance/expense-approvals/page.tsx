@@ -10,6 +10,7 @@ import { PageShell } from '@/components/common/page-shell';
 import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { ExpenseApprovalCard } from '../components/ExpenseApprovalCard';
 import { Search, Filter, CheckCheck, Loader2 } from 'lucide-react';
+import { captureError } from '@/lib/observability';
 
 interface ExpenseApproval {
   id: string;
@@ -128,7 +129,7 @@ export default function ExpenseApprovalsPage() {
         setApprovals(nextApprovals);
       }
     } catch (error) {
-      console.error('Error fetching approvals:', error);
+      captureError(error, 'expenseApprovals.fetch');
     } finally {
       setIsLoading(false);
     }
@@ -202,7 +203,7 @@ export default function ExpenseApprovalsPage() {
         setSelectedIds([]);
       }
     } catch (error) {
-      console.error('Error bulk approving:', error);
+      captureError(error, 'expenseApprovals.bulkApprove');
     } finally {
       setIsBulkProcessing(false);
     }

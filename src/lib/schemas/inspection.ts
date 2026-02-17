@@ -244,7 +244,7 @@ export const inspectionSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Inspection', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Inspection') } },
+      { key: 'create', label: 'New Inspection', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

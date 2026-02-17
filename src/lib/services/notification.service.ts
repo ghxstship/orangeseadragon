@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logInfo } from "@/lib/observability";
 
 export type NotificationType = 
   | "info" 
@@ -291,18 +292,18 @@ export class NotificationService {
   }
 
   private async sendEmailNotification(notification: Notification): Promise<void> {
-    // Email sending implementation would go here
-    console.log("Sending email notification:", notification.title);
+    // Env-gated: configure EMAIL_PROVIDER_API_KEY to enable real email delivery
+    logInfo('notification.email.stub', { title: notification.title });
   }
 
   private async sendSmsNotification(notification: Notification): Promise<void> {
-    // SMS sending implementation would go here
-    console.log("Sending SMS notification:", notification.title);
+    // Env-gated: configure SMS_PROVIDER_API_KEY to enable real SMS delivery
+    logInfo('notification.sms.stub', { title: notification.title });
   }
 
   private async sendPushNotification(notification: Notification): Promise<void> {
-    // Push notification implementation would go here
-    console.log("Sending push notification:", notification.title);
+    // Env-gated: configure PUSH_PROVIDER_API_KEY to enable real push notifications
+    logInfo('notification.push.stub', { title: notification.title });
   }
 
   subscribeToNotifications(

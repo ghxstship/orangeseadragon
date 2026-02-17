@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useOnboardingProgress, UseOnboardingProgressReturn } from '@/hooks/use-onboarding-progress';
+import { captureError } from '@/lib/observability';
 
 const ONBOARDING_STEPS = [
   { path: '/onboarding', key: 'welcome' },
@@ -61,7 +62,7 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ stepSlug, action }),
-    }).catch(() => {});
+    }).catch((err: unknown) => captureError(err, 'onboardingProvider.syncStep'));
   };
 
   const nextStep = () => {

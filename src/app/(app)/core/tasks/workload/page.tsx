@@ -6,6 +6,7 @@ import { useUser } from "@/hooks/use-supabase";
 import { useTasks } from "@/hooks/use-tasks";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { captureError } from '@/lib/observability';
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -50,7 +51,7 @@ export default function WorkloadPage() {
 
         setTeamMembers(members);
       } catch (error) {
-        console.error("Failed to fetch team members:", error);
+        captureError(error, 'workload.fetchTeamMembers');
       } finally {
         setIsLoadingMembers(false);
       }

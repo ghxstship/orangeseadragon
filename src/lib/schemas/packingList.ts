@@ -196,7 +196,7 @@ export const packingListSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (record) => `/assets/packing-lists/${record.id}` } },
-      { key: 'print', label: 'Print', handler: { type: 'function', fn: () => console.log('Print packing list') } },
+      { key: 'print', label: 'Print', handler: { type: 'function', fn: () => {} } },
     ],
     bulk: [],
     global: [
@@ -372,10 +372,10 @@ export const packingListItemSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'pack', label: 'Mark Packed', handler: { type: 'function', fn: () => console.log('Mark packed') } },
+      { key: 'pack', label: 'Mark Packed', handler: { type: 'function', fn: () => {} } },
     ],
     bulk: [
-      { key: 'bulk-pack', label: 'Mark All Packed', handler: { type: 'function', fn: () => console.log('Bulk pack') } },
+      { key: 'bulk-pack', label: 'Mark All Packed', handler: { type: 'function', fn: () => {} } },
     ],
     global: [],
   },

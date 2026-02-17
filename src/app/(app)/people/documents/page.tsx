@@ -6,6 +6,7 @@ import { PageShell } from '@/components/common/page-shell';
 import { DocumentManager } from '@/components/people/DocumentManager';
 import { useUser } from '@/hooks/use-supabase';
 import { useDocuments } from '@/hooks/use-documents';
+import { captureError } from '@/lib/observability';
 
 type DocumentCategory = 'contract' | 'policy' | 'certification' | 'personal' | 'tax' | 'other';
 type DocumentStatus = 'valid' | 'pending' | 'expired' | 'requires_signature';
@@ -55,7 +56,7 @@ export default function DocumentsPage() {
       await fetch('/api/files/upload', { method: 'POST', body: formData });
       refetch?.();
     } catch (err) {
-      console.error('Upload failed:', err);
+      captureError(err, 'documents.upload');
     }
   };
 
@@ -68,7 +69,7 @@ export default function DocumentsPage() {
       await fetch(`/api/files/${docId}`, { method: 'DELETE' });
       refetch?.();
     } catch (err) {
-      console.error('Delete failed:', err);
+      captureError(err, 'documents.delete');
     }
   };
 

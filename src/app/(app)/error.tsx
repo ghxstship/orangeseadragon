@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import { PageErrorState } from '@/components/common/contextual-empty-state';
+import { captureError } from '@/lib/observability';
 
 export default function AppError({
   error,
@@ -14,7 +15,7 @@ export default function AppError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('[AppError]', error);
+    captureError(error, 'app.errorBoundary');
   }, [error]);
 
   return (

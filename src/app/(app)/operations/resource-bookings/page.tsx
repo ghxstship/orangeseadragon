@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { PageShell } from '@/components/common/page-shell';
 import { ResourceBookingPanel } from '@/components/business/resource-booking-panel';
+import { captureError } from '@/lib/observability';
 
 export default function ResourceBookingsPage() {
   const [people, setPeople] = useState<{ id: string; name: string }[]>([]);
@@ -18,7 +19,7 @@ export default function ResourceBookingsPage() {
           name: String(p.full_name || p.name || 'Unknown'),
         })));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err, 'resourceBookings.fetchPeople'));
 
     fetch('/api/projects?limit=100')
       .then((res) => res.json())
@@ -29,7 +30,7 @@ export default function ResourceBookingsPage() {
           name: String(p.name || p.title || 'Untitled'),
         })));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err, 'resourceBookings.fetchProjects'));
   }, []);
 
   return (

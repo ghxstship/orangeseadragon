@@ -338,7 +338,7 @@ export function CommandPalette() {
           icon: Search,
           label: "Search everything...",
           shortcut: "⌘/",
-          action: () => console.log("Global search"),
+          action: () => {},
         },
         {
           icon: Bell,
@@ -348,7 +348,7 @@ export function CommandPalette() {
         {
           icon: Calculator,
           label: "Quick calculator",
-          action: () => console.log("Calculator"),
+          action: () => {},
         },
         {
           icon: Keyboard,

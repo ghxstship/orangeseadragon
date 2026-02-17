@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { captureError } from '@/lib/observability';
 
 const themes = [
   { value: "light", label: "Light", icon: Sun },
@@ -74,7 +75,7 @@ export default function OnboardingPreferencesPage() {
 
       router.push("/onboarding/integrations");
     } catch (err) {
-      console.error('[Onboarding] Preferences save failed:', err);
+      captureError(err, 'onboarding.preferences.save');
     } finally {
       setIsLoading(false);
     }

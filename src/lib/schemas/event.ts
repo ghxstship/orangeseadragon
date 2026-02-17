@@ -206,7 +206,7 @@ export const eventSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Event', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Event') } }
+      { key: 'create', label: 'New Event', variant: 'primary', handler: { type: 'function', fn: () => {} } }
     ]
   },
 

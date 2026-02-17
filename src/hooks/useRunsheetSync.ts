@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { captureError } from '@/lib/observability';
 
 interface Cue {
   id: string;
@@ -121,7 +122,7 @@ export function useRunsheetSync({
           const message: SyncMessage = JSON.parse(event.data);
           handleMessageRef.current(message);
         } catch (e) {
-          console.error('Failed to parse WebSocket message:', e);
+          captureError(e, 'runsheetSync.parseMessage');
         }
       };
 
@@ -136,11 +137,11 @@ export function useRunsheetSync({
       };
 
       ws.onerror = (e) => {
-        console.error('WebSocket error:', e);
+        captureError(e, 'runsheetSync.wsError');
         setError('Connection error. Retrying...');
       };
     } catch (e) {
-      console.error('Failed to create WebSocket:', e);
+      captureError(e, 'runsheetSync.wsCreate');
       setError('Failed to connect');
     }
   }, [runsheetId, userId, userName]);

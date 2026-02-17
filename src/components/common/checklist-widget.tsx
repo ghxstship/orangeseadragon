@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 
 export interface ChecklistItem {
   id: string;
@@ -60,7 +61,7 @@ export function ChecklistWidget({
       setNewItemLabel('');
       inputRef.current?.focus();
     } catch (error) {
-      console.error('Failed to add checklist item:', error);
+      captureError(error, 'checklistWidget.addItem');
     }
   };
 

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { formatCurrency } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 
 interface ApprovalRequest {
   id: string;
@@ -60,7 +61,7 @@ export default function ApprovalsPage() {
         setRequests(data.data || data.records || []);
       }
     } catch (error) {
-      console.error('Failed to fetch approvals:', error);
+      captureError(error, 'advancing.approvals.fetch');
     } finally {
       setLoading(false);
     }
@@ -85,7 +86,7 @@ export default function ApprovalsPage() {
         fetchApprovals();
       }
     } catch (error) {
-      console.error(`Failed to ${action} advance:`, error);
+      captureError(error, `advancing.approvals.${action}`);
       toast({ title: 'Error', description: `Failed to ${action} advance.`, variant: 'destructive' });
     }
   };

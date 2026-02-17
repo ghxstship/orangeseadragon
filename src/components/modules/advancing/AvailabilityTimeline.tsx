@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { format, addDays, startOfDay, isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -117,7 +118,7 @@ export function AvailabilityTimeline({
         setData(result);
       }
     } catch (error) {
-      console.error('Error fetching availability:', error);
+      captureError(error, 'availability.fetch');
     } finally {
       setLoading(false);
     }

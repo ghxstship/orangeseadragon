@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PageShell } from '@/components/common/page-shell';
 import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+import { captureError } from '@/lib/observability';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
@@ -88,7 +89,7 @@ export default function AssignmentsPage() {
         setAssignments(data.data || data.records || []);
       }
     } catch (error) {
-      console.error('Failed to fetch assignments:', error);
+      captureError(error, 'advancing.assignments.fetch');
     } finally {
       setLoading(false);
     }

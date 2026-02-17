@@ -646,8 +646,7 @@ export class AuditService {
         return this.exportToCsv(entries, options);
 
       case "pdf":
-        // In production, use a PDF library
-        throw new Error("PDF export not implemented");
+        return this.exportToHtmlPdf(entries, options);
 
       default:
         throw new Error(`Unsupported export format: ${options.format}`);
@@ -735,6 +734,61 @@ export class AuditService {
     });
 
     return [headers.join(","), ...rows].join("\n");
+  }
+
+  private exportToHtmlPdf(entries: AuditEntry[], options: AuditExportOptions): string {
+    const escHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const severityColor: Record<string, string> = { critical: '#dc2626', high: '#ea580c', medium: '#ca8a04', low: '#2563eb', info: '#6b7280' };
+
+    const rows = entries.map((e) => {
+      const color = severityColor[e.severity] || '#6b7280';
+      let extra = '';
+      if (options.includeChanges && e.changes) {
+        extra += `<td style="font-size:11px;padding:6px;border:1px solid #e5e7eb;font-family:monospace;white-space:pre-wrap">${escHtml(JSON.stringify(e.changes, null, 2))}</td>`;
+      }
+      if (options.includeMetadata && e.metadata) {
+        extra += `<td style="font-size:11px;padding:6px;border:1px solid #e5e7eb;font-family:monospace;white-space:pre-wrap">${escHtml(JSON.stringify(e.metadata, null, 2))}</td>`;
+      }
+      return `<tr>
+        <td style="padding:6px;border:1px solid #e5e7eb;font-size:12px">${e.timestamp.toISOString()}</td>
+        <td style="padding:6px;border:1px solid #e5e7eb">${escHtml(e.action)}</td>
+        <td style="padding:6px;border:1px solid #e5e7eb">${escHtml(e.category)}</td>
+        <td style="padding:6px;border:1px solid #e5e7eb;color:${color};font-weight:600">${escHtml(e.severity)}</td>
+        <td style="padding:6px;border:1px solid #e5e7eb">${escHtml(e.actor.name || e.actor.email || e.actor.id)}</td>
+        <td style="padding:6px;border:1px solid #e5e7eb">${e.target ? escHtml(`${e.target.type}:${e.target.name || e.target.id}`) : ''}</td>
+        <td style="padding:6px;border:1px solid #e5e7eb">${escHtml(e.description)}</td>
+        <td style="padding:6px;border:1px solid #e5e7eb;text-align:center">${e.success ? '✓' : '✗'}</td>
+        ${extra}
+      </tr>`;
+    }).join('');
+
+    let extraHeaders = '';
+    if (options.includeChanges) extraHeaders += '<th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Changes</th>';
+    if (options.includeMetadata) extraHeaders += '<th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Metadata</th>';
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Audit Log Export</title>
+<style>@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}body{font-family:system-ui,sans-serif;margin:24px;color:#111}table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left}</style>
+</head>
+<body>
+<h1 style="font-size:20px;margin-bottom:4px">Audit Log Export</h1>
+<p style="color:#6b7280;font-size:13px;margin-bottom:16px">Generated ${new Date().toISOString()} — ${entries.length} entries</p>
+<table>
+<thead><tr>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Timestamp</th>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Action</th>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Category</th>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Severity</th>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Actor</th>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Target</th>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">Description</th>
+  <th style="padding:6px;border:1px solid #e5e7eb;background:#f9fafb">OK</th>
+  ${extraHeaders}
+</tr></thead>
+<tbody>${rows}</tbody>
+</table>
+</body></html>`;
   }
 
   // ==================== Retention ====================

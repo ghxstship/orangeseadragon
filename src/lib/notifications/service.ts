@@ -16,7 +16,7 @@ import type {
   SendNotificationResponse,
 } from "./types";
 import { extractApiErrorMessage, getErrorMessage } from "@/lib/api/error-message";
-import { captureError } from '@/lib/observability';
+import { captureError, logInfo } from '@/lib/observability';
 
 type NotificationEventType =
   | "notification.created"
@@ -410,11 +410,11 @@ export class NotificationService {
       throw new Error("Push notifications not configured");
     }
 
-    console.log(`[PUSH] To: ${notification.recipient.pushToken}`);
-    console.log(`[PUSH] Title: ${notification.title}`);
-    console.log(`[PUSH] Body: ${notification.body}`);
-
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    logInfo('notification.push.stub', {
+      to: notification.recipient.pushToken,
+      title: notification.title,
+      channel: 'push',
+    });
   }
 
   private async sendSMS(notification: Notification): Promise<void> {
@@ -422,10 +422,10 @@ export class NotificationService {
       throw new Error("SMS not configured");
     }
 
-    console.log(`[SMS] To: ${notification.recipient.phone}`);
-    console.log(`[SMS] Body: ${notification.body}`);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    logInfo('notification.sms.stub', {
+      to: notification.recipient.phone,
+      channel: 'sms',
+    });
   }
 
   private async sendInApp(notification: Notification): Promise<void> {
@@ -444,10 +444,10 @@ export class NotificationService {
       throw new Error("Slack not configured");
     }
 
-    console.log(`[SLACK] To: ${notification.recipient.slackUserId}`);
-    console.log(`[SLACK] Message: ${notification.body}`);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    logInfo('notification.slack.stub', {
+      to: notification.recipient.slackUserId,
+      channel: 'slack',
+    });
   }
 
   private async sendWebhook(notification: Notification): Promise<void> {
@@ -455,10 +455,11 @@ export class NotificationService {
       throw new Error("Webhook not configured");
     }
 
-    console.log(`[WEBHOOK] URL: ${this.config.webhook.url}`);
-    console.log(`[WEBHOOK] Payload:`, notification);
-
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    logInfo('notification.webhook.stub', {
+      url: this.config.webhook.url,
+      notificationId: notification.id,
+      channel: 'webhook',
+    });
   }
 
   // ==================== Templates ====================

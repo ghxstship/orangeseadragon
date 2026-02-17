@@ -371,7 +371,7 @@ export const projectSchema = defineSchema({
         key: 'create',
         label: 'New Project',
         variant: 'primary',
-        handler: { type: 'function', fn: () => console.log('Create clicked') }
+        handler: { type: 'function', fn: () => {} }
       }
     ]
   },

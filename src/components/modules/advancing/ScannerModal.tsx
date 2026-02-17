@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 import { extractApiErrorMessage } from '@/lib/api/error-message';
 import { Button } from '@/components/ui/button';
 import {
@@ -123,7 +124,7 @@ export function ScannerModal({
         setScanning(true);
       }
     } catch (error) {
-      console.error('Camera error:', error);
+      captureError(error, 'scanner.cameraInit');
       setCameraError('Unable to access camera. Please check permissions or use manual entry.');
       setMode('manual');
     }
@@ -225,7 +226,7 @@ export function ScannerModal({
       });
       
     } catch (error) {
-      console.error('Scan error:', error);
+      captureError(error, 'scanner.processScan');
       setScanResult({
         success: false,
         error: 'Network error. Please try again.'

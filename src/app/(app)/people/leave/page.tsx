@@ -14,6 +14,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-supabase';
 import { useRouter } from 'next/navigation';
+import { captureError } from '@/lib/observability';
 
 type LeaveType = 'annual' | 'sick' | 'parental' | 'bereavement' | 'study' | 'unpaid';
 type LeaveStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
@@ -179,10 +180,9 @@ export default function LeavePage() {
                   body: JSON.stringify(formData),
                 });
                 setShowRequestForm(false);
-                // Refresh data
-                window.location.reload();
+                router.refresh();
               } catch (err) {
-                console.error('Leave request submission failed:', err);
+                captureError(err, 'leave.submitRequest');
               }
             }}
             onCancel={() => setShowRequestForm(false)}

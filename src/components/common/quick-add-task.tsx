@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { captureError } from '@/lib/observability';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -76,7 +77,7 @@ export function QuickAddTask() {
         router.push(`/core/tasks/${result.data.id}`);
       }
     } catch (error) {
-      console.error("Quick-add task failed:", error);
+      captureError(error, 'quickAddTask.submit');
     } finally {
       setIsSubmitting(false);
     }

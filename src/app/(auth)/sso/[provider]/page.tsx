@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { AuthTemplate } from '@/components/templates/AuthTemplate';
 import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
+import { captureError } from '@/lib/observability';
 
 const SUPPORTED_PROVIDERS = new Set<string>(['google', 'github', 'azure', 'okta']);
 
@@ -56,7 +57,7 @@ export default function SSOCallbackPage() {
           setError('Authentication failed. Please try again.');
         }
       } catch (err) {
-        console.error('[SSO] Callback error:', err);
+        captureError(err, 'sso.callback');
         setError('Authentication failed. Please try again.');
       }
     };

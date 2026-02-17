@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { captureError } from '@/lib/observability';
 
 const industries = [
   "Live Events & Entertainment",
@@ -94,7 +95,7 @@ export default function OnboardingOrganizationPage() {
 
       router.push("/onboarding/team");
     } catch (err) {
-      console.error('[Onboarding] Organization save failed:', err);
+      captureError(err, 'onboarding.organization.save');
     } finally {
       setIsLoading(false);
     }

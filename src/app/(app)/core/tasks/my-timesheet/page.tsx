@@ -40,13 +40,10 @@ import {
   FileText,
   RefreshCw,
 } from "lucide-react";
-import {
-  useMyTimeEntries,
-  useUpsertTimeEntry,
-  useSubmitWeekTimeEntries,
-} from "@/hooks/use-my-time-entries";
+import { useMyTimeEntries, useUpsertTimeEntry, useSubmitWeekTimeEntries } from "@/hooks/use-my-time-entries";
 import { useUser } from "@/hooks/use-supabase";
 import { useProjects } from "@/hooks/use-projects";
+import { captureError } from '@/lib/observability';
 
 interface GridRow {
   rowId: string;
@@ -280,7 +277,7 @@ export default function MyTimesheetPage() {
       });
       refetch();
     } catch (err) {
-      console.error("Failed to copy previous week:", err);
+      captureError(err, 'timesheet.copyPreviousWeek');
     }
   }, [weekOffset, weekStart, refetch]);
 

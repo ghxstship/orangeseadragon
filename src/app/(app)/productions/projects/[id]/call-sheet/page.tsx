@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/components/ui/use-toast';
 import {
   FileText,
   Download,
@@ -45,6 +46,28 @@ interface DepartmentCall {
   notes: string;
 }
 
+const DEFAULT_CONTACTS: CallSheetContact[] = [
+  { id: '1', role: 'Production Manager', name: '', phone: '', email: '' },
+  { id: '2', role: 'Stage Manager', name: '', phone: '', email: '' },
+  { id: '3', role: 'Venue Contact', name: '', phone: '', email: '' },
+];
+
+const DEFAULT_DEPARTMENT_CALLS: DepartmentCall[] = [
+  { id: '1', department: 'Audio', callTime: '', location: '', notes: '' },
+  { id: '2', department: 'Lighting', callTime: '', location: '', notes: '' },
+  { id: '3', department: 'Video', callTime: '', location: '', notes: '' },
+  { id: '4', department: 'Backline', callTime: '', location: '', notes: '' },
+  { id: '5', department: 'Catering', callTime: '', location: '', notes: '' },
+];
+
+const DEFAULT_SCHEDULE: ScheduleItem[] = [
+  { id: '1', time: '', item: 'Load In', department: 'All', location: '', notes: '' },
+  { id: '2', time: '', item: 'Sound Check', department: 'Audio', location: 'Stage', notes: '' },
+  { id: '3', time: '', item: 'Doors', department: 'FOH', location: 'Main Entrance', notes: '' },
+  { id: '4', time: '', item: 'Show', department: 'All', location: 'Stage', notes: '' },
+  { id: '5', time: '', item: 'Load Out', department: 'All', location: '', notes: '' },
+];
+
 interface ScheduleItem {
   id: string;
   time: string;
@@ -62,10 +85,13 @@ export default function CallSheetPage() {
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
+  const { toast } = useToast();
 
   const [currentTab, setCurrentTab] = React.useState('production-info');
   const [saving, setSaving] = React.useState(false);
-  const [loading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+  const [isExporting, setIsExporting] = React.useState(false);
+  const [isSending, setIsSending] = React.useState(false);
 
   // ── Call Sheet State ──
   const [productionInfo, setProductionInfo] = React.useState({
@@ -82,27 +108,72 @@ export default function CallSheetPage() {
     generalNotes: '',
   });
 
-  const [contacts, setContacts] = React.useState<CallSheetContact[]>([
-    { id: '1', role: 'Production Manager', name: '', phone: '', email: '' },
-    { id: '2', role: 'Stage Manager', name: '', phone: '', email: '' },
-    { id: '3', role: 'Venue Contact', name: '', phone: '', email: '' },
-  ]);
+  const [contacts, setContacts] = React.useState<CallSheetContact[]>(DEFAULT_CONTACTS);
 
-  const [departmentCalls, setDepartmentCalls] = React.useState<DepartmentCall[]>([
-    { id: '1', department: 'Audio', callTime: '', location: '', notes: '' },
-    { id: '2', department: 'Lighting', callTime: '', location: '', notes: '' },
-    { id: '3', department: 'Video', callTime: '', location: '', notes: '' },
-    { id: '4', department: 'Backline', callTime: '', location: '', notes: '' },
-    { id: '5', department: 'Catering', callTime: '', location: '', notes: '' },
-  ]);
+  const [departmentCalls, setDepartmentCalls] = React.useState<DepartmentCall[]>(DEFAULT_DEPARTMENT_CALLS);
 
-  const [schedule, setSchedule] = React.useState<ScheduleItem[]>([
-    { id: '1', time: '', item: 'Load In', department: 'All', location: '', notes: '' },
-    { id: '2', time: '', item: 'Sound Check', department: 'Audio', location: 'Stage', notes: '' },
-    { id: '3', time: '', item: 'Doors', department: 'FOH', location: 'Main Entrance', notes: '' },
-    { id: '4', time: '', item: 'Show', department: 'All', location: 'Stage', notes: '' },
-    { id: '5', time: '', item: 'Load Out', department: 'All', location: '', notes: '' },
-  ]);
+  const [schedule, setSchedule] = React.useState<ScheduleItem[]>(DEFAULT_SCHEDULE);
+
+  React.useEffect(() => {
+    let isCancelled = false;
+
+    const loadCallSheet = async () => {
+      if (!projectId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/projects/${projectId}/call-sheet`);
+        if (!res.ok) {
+          throw new Error('Failed to load call sheet');
+        }
+
+        const json = await res.json();
+        const data = json?.data as {
+          production_info?: typeof productionInfo;
+          contacts?: CallSheetContact[];
+          department_calls?: DepartmentCall[];
+          schedule?: ScheduleItem[];
+        } | null;
+
+        if (!data || isCancelled) {
+          return;
+        }
+
+        if (data.production_info) {
+          setProductionInfo((prev) => ({ ...prev, ...data.production_info }));
+        }
+        if (Array.isArray(data.contacts) && data.contacts.length > 0) {
+          setContacts(data.contacts);
+        }
+        if (Array.isArray(data.department_calls) && data.department_calls.length > 0) {
+          setDepartmentCalls(data.department_calls);
+        }
+        if (Array.isArray(data.schedule) && data.schedule.length > 0) {
+          setSchedule(data.schedule);
+        }
+      } catch {
+        if (!isCancelled) {
+          toast({
+            title: 'Could not load saved call sheet',
+            description: 'Starting with a new draft.',
+            variant: 'destructive',
+          });
+        }
+      } finally {
+        if (!isCancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadCallSheet();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [projectId, toast]);
 
   // ── Workspace Config ──
   const workspaceConfig: WorkspaceLayoutConfig = {
@@ -133,15 +204,168 @@ export default function CallSheetPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await fetch(`/api/projects/${projectId}/call-sheet`, {
+      const response = await fetch(`/api/projects/${projectId}/call-sheet`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productionInfo, contacts, departmentCalls, schedule }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to save call sheet');
+      }
+
+      toast({ title: 'Call sheet saved' });
+      return true;
     } catch (err) {
-      console.error('Failed to save call sheet:', err);
+      toast({
+        title: 'Failed to save call sheet',
+        description: err instanceof Error ? err.message : 'Please try again.',
+        variant: 'destructive',
+      });
+      return false;
     } finally {
       setSaving(false);
+    }
+  };
+
+  const buildPrintHtml = () => {
+    const title = productionInfo.showName || 'Call Sheet';
+    const contactRows = contacts
+      .filter((c) => c.name)
+      .map((c) => `<tr><td>${c.role || ''}</td><td>${c.name || ''}</td><td>${c.phone || ''}</td><td>${c.email || ''}</td></tr>`)
+      .join('');
+    const departmentRows = departmentCalls
+      .filter((d) => d.callTime)
+      .map((d) => `<tr><td>${d.department || ''}</td><td>${d.callTime || ''}</td><td>${d.location || ''}</td><td>${d.notes || ''}</td></tr>`)
+      .join('');
+    const scheduleRows = schedule
+      .filter((s) => s.time)
+      .map((s) => `<tr><td>${s.time || ''}</td><td>${s.item || ''}</td><td>${s.department || ''}</td><td>${s.location || ''}</td><td>${s.notes || ''}</td></tr>`)
+      .join('');
+
+    return `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${title}</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 32px; color: #111; }
+      h1, h2 { margin: 0 0 12px; }
+      h1 { font-size: 28px; }
+      h2 { font-size: 16px; margin-top: 24px; text-transform: uppercase; letter-spacing: .08em; }
+      .meta { margin-bottom: 16px; color: #444; }
+      table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
+      th { background: #f5f5f5; }
+      .notes { white-space: pre-wrap; font-size: 12px; color: #333; }
+    </style>
+  </head>
+  <body>
+    <h1>${title}</h1>
+    <div class="meta">
+      <div><strong>Date:</strong> ${productionInfo.date || '-'}</div>
+      <div><strong>Venue:</strong> ${productionInfo.venue || '-'}${productionInfo.venueAddress ? ` — ${productionInfo.venueAddress}` : ''}</div>
+      <div><strong>Load In:</strong> ${productionInfo.loadInTime || '-'} | <strong>Doors:</strong> ${productionInfo.doorsTime || '-'} | <strong>Show:</strong> ${productionInfo.showTime || '-'} | <strong>Curfew:</strong> ${productionInfo.curfew || '-'}</div>
+    </div>
+
+    <h2>Key Contacts</h2>
+    <table>
+      <thead><tr><th>Role</th><th>Name</th><th>Phone</th><th>Email</th></tr></thead>
+      <tbody>${contactRows || '<tr><td colspan="4">No contact entries.</td></tr>'}</tbody>
+    </table>
+
+    <h2>Department Calls</h2>
+    <table>
+      <thead><tr><th>Department</th><th>Call Time</th><th>Location</th><th>Notes</th></tr></thead>
+      <tbody>${departmentRows || '<tr><td colspan="4">No department calls.</td></tr>'}</tbody>
+    </table>
+
+    <h2>Schedule</h2>
+    <table>
+      <thead><tr><th>Time</th><th>Item</th><th>Department</th><th>Location</th><th>Notes</th></tr></thead>
+      <tbody>${scheduleRows || '<tr><td colspan="5">No schedule items.</td></tr>'}</tbody>
+    </table>
+
+    <h2>General Notes</h2>
+    <div class="notes">${productionInfo.generalNotes || 'No additional notes.'}</div>
+  </body>
+</html>`;
+  };
+
+  const openPrintWindow = (autoPrint: boolean) => {
+    const printWindow = window.open('', '_blank', 'width=1000,height=900');
+    if (!printWindow) {
+      throw new Error('Popup blocked by browser');
+    }
+
+    printWindow.document.write(buildPrintHtml());
+    printWindow.document.close();
+
+    if (autoPrint) {
+      printWindow.onload = () => {
+        printWindow.focus();
+        printWindow.print();
+      };
+    }
+  };
+
+  const handlePrint = async () => {
+    const saved = await handleSave();
+    if (!saved) return false;
+
+    try {
+      openPrintWindow(true);
+      return true;
+    } catch (err) {
+      toast({
+        title: 'Unable to open print window',
+        description: err instanceof Error ? err.message : 'Please allow popups and try again.',
+        variant: 'destructive',
+      });
+      return false;
+    }
+  };
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+      const printed = await handlePrint();
+      if (printed) {
+        toast({ title: 'Print dialog opened', description: 'Choose "Save as PDF" to export the call sheet.' });
+      }
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleSendToCrew = async () => {
+    setIsSending(true);
+    try {
+      const saved = await handleSave();
+      if (!saved) return;
+
+      const shareUrl = `${window.location.origin}/productions/projects/${projectId}/call-sheet`;
+      const title = productionInfo.showName ? `${productionInfo.showName} Call Sheet` : 'Call Sheet';
+      const text = `Call sheet is ready: ${shareUrl}`;
+
+      if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+        await navigator.share({ title, text, url: shareUrl });
+      } else if (typeof navigator !== 'undefined' && typeof navigator.clipboard?.writeText === 'function') {
+        await navigator.clipboard.writeText(`${title}\n${text}`);
+      }
+
+      toast({
+        title: 'Call sheet ready to share',
+        description: 'Link copied or shared to crew.',
+      });
+    } catch (err) {
+      toast({
+        title: 'Unable to share call sheet',
+        description: err instanceof Error ? err.message : 'Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -191,17 +415,17 @@ export default function CallSheetPage() {
             <FileText className="h-4 w-4 mr-2" />
             {saving ? 'Saving...' : 'Save Draft'}
           </Button>
-          <Button variant="outline" className="w-full justify-start" size="sm">
+          <Button variant="outline" className="w-full justify-start" size="sm" onClick={handleExportPdf} disabled={isExporting || saving}>
             <Download className="h-4 w-4 mr-2" />
-            Export PDF
+            {isExporting ? 'Preparing...' : 'Export PDF'}
           </Button>
-          <Button variant="outline" className="w-full justify-start" size="sm">
+          <Button variant="outline" className="w-full justify-start" size="sm" onClick={handlePrint}>
             <Printer className="h-4 w-4 mr-2" />
             Print
           </Button>
-          <Button variant="outline" className="w-full justify-start" size="sm">
+          <Button variant="outline" className="w-full justify-start" size="sm" onClick={handleSendToCrew} disabled={isSending}>
             <Send className="h-4 w-4 mr-2" />
-            Send to Crew
+            {isSending ? 'Sending...' : 'Send to Crew'}
           </Button>
         </div>
       </div>

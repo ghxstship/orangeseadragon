@@ -1,6 +1,7 @@
 'use client';
 
 import { ComplianceDashboard } from '@/components/people/ComplianceDashboard';
+import { captureError } from '@/lib/observability';
 
 export default function CompliancePage() {
   const handleSendReminder = async (itemIds: string[]) => {
@@ -11,7 +12,7 @@ export default function CompliancePage() {
         body: JSON.stringify({ itemIds, type: 'compliance' }),
       });
     } catch (err) {
-      console.error('Send reminder failed:', err);
+      captureError(err, 'compliance.sendReminder');
     }
   };
 

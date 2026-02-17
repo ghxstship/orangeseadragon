@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Inbox, Bell, CheckCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { captureError } from '@/lib/observability';
 
 interface InboxSummaryData {
   unreadCount: number;
@@ -35,7 +36,7 @@ export function InboxSummaryWidget() {
           });
         }
       } catch (error) {
-        console.error("Failed to fetch inbox summary:", error);
+        captureError(error, 'inboxSummaryWidget.fetch');
         setData({ unreadCount: 0, pendingApprovals: 0, mentions: 0, alerts: 0 });
       } finally {
         setIsLoading(false);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { captureError } from '@/lib/observability';
 
 interface ProfileViewTrackerProps {
     profileId: string;
@@ -19,8 +20,8 @@ export function ProfileViewTracker({ profileId }: ProfileViewTrackerProps) {
                         userAgent: navigator.userAgent,
                     }),
                 });
-            } catch {
-                // Silent fail
+            } catch (err) {
+                captureError(err, 'profileViewTracker.trackView');
             }
         };
 

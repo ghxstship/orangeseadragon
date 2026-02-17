@@ -9,6 +9,7 @@ import {
   QuickStatDefinition,
 } from '@/lib/schema/types';
 import { CrudList } from './CrudList';
+import { captureError } from '@/lib/observability';
 import { getSchema } from '@/lib/schemas';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -192,8 +193,8 @@ function ActivityTab({ record }: { record: EntityRecord }) {
           const data = await res.json();
           if (!cancelled) setActivities(data.items ?? []);
         }
-      } catch {
-        // API may not exist yet — show empty state
+      } catch (err) {
+        captureError(err, 'tabRenderer.activity.fetch');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -298,8 +299,8 @@ function CommentsTab({ record }: { record: EntityRecord }) {
         const data = await res.json();
         setComments(data.items ?? []);
       }
-    } catch {
-      // API may not exist yet
+    } catch (err) {
+      captureError(err, 'tabRenderer.comments.fetch');
     } finally {
       setLoading(false);
     }
@@ -322,8 +323,8 @@ function CommentsTab({ record }: { record: EntityRecord }) {
         setNewComment('');
         fetchComments();
       }
-    } catch {
-      // Silently fail — API may not exist yet
+    } catch (err) {
+      captureError(err, 'tabRenderer.comments.submit');
     } finally {
       setSubmitting(false);
     }
@@ -457,8 +458,8 @@ function FilesTab({ record }: { record: EntityRecord }) {
         const data = await res.json();
         setFiles(data.items ?? []);
       }
-    } catch {
-      // API may not exist yet
+    } catch (err) {
+      captureError(err, 'tabRenderer.files.fetch');
     } finally {
       setLoading(false);
     }
@@ -480,8 +481,8 @@ function FilesTab({ record }: { record: EntityRecord }) {
       if (res.ok) {
         fetchFiles();
       }
-    } catch {
-      // Silently fail
+    } catch (err) {
+      captureError(err, 'tabRenderer.files.upload');
     } finally {
       setUploading(false);
     }
@@ -493,8 +494,8 @@ function FilesTab({ record }: { record: EntityRecord }) {
       if (res.ok) {
         setFiles((prev) => prev.filter((f) => f.id !== fileId));
       }
-    } catch {
-      // Silently fail
+    } catch (err) {
+      captureError(err, 'tabRenderer.files.delete');
     }
   };
 

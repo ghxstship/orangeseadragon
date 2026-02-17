@@ -3,6 +3,7 @@
 import { ExternalLink, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { captureError } from '@/lib/observability';
 
 interface ProfileLink {
     id: string;
@@ -32,8 +33,8 @@ export function ProfileLinks({ links, themeConfig }: ProfileLinksProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ linkId }),
             });
-        } catch {
-            // Silent fail - don't block navigation
+        } catch (err) {
+            captureError(err, 'profileLinks.trackClick');
         }
         window.open(url, "_blank", "noopener,noreferrer");
     };

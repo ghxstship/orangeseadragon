@@ -4,6 +4,7 @@
  */
 
 import { getErrorMessage } from "@/lib/api/error-message";
+import { logInfo } from "@/lib/observability";
 
 export interface EmailProvider {
   send(options: EmailOptions): Promise<EmailResult>;
@@ -95,15 +96,17 @@ export interface CalendarEventResult {
   error?: string;
 }
 
-// ==================== Mock Implementations ====================
-// These are placeholder implementations. In production, replace with actual provider SDKs.
+// ==================== Fallback Implementations ====================
+// Used when provider API keys are not configured (env-gated).
+// To enable real providers, set the corresponding environment variables:
+//   EMAIL_PROVIDER_API_KEY — for SendGrid/Resend/etc.
+//   SMS_PROVIDER_API_KEY   — for Twilio/MessageBird/etc.
+//   PUSH_PROVIDER_API_KEY  — for Firebase/OneSignal/etc.
+//   CALENDAR_PROVIDER_KEY  — for Google Calendar/Outlook/etc.
 
 class MockEmailProvider implements EmailProvider {
   async send(options: EmailOptions): Promise<EmailResult> {
-    console.log("[MockEmail] Sending email:", {
-      to: options.to,
-      subject: options.subject,
-    });
+    logInfo('mock.email.send', { to: options.to, subject: options.subject });
 
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -117,10 +120,7 @@ class MockEmailProvider implements EmailProvider {
 
 class MockSMSProvider implements SMSProvider {
   async send(options: SMSOptions): Promise<SMSResult> {
-    console.log("[MockSMS] Sending SMS:", {
-      to: options.to,
-      body: options.body.substring(0, 50) + "...",
-    });
+    logInfo('mock.sms.send', { to: options.to });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -133,10 +133,7 @@ class MockSMSProvider implements SMSProvider {
 
 class MockPushProvider implements PushProvider {
   async send(options: PushOptions): Promise<PushResult> {
-    console.log("[MockPush] Sending push notification:", {
-      tokens: options.tokens.length,
-      title: options.title,
-    });
+    logInfo('mock.push.send', { tokenCount: options.tokens.length, title: options.title });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -150,10 +147,7 @@ class MockPushProvider implements PushProvider {
 
 class MockCalendarProvider implements CalendarProvider {
   async createEvent(options: CalendarEventOptions): Promise<CalendarEventResult> {
-    console.log("[MockCalendar] Creating event:", {
-      title: options.title,
-      start: options.start,
-    });
+    logInfo('mock.calendar.create', { title: options.title, start: options.start });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -165,8 +159,8 @@ class MockCalendarProvider implements CalendarProvider {
     };
   }
 
-  async updateEvent(eventId: string, options: Partial<CalendarEventOptions>): Promise<CalendarEventResult> {
-    console.log("[MockCalendar] Updating event:", eventId, options);
+  async updateEvent(eventId: string, _options: Partial<CalendarEventOptions>): Promise<CalendarEventResult> {
+    logInfo('mock.calendar.update', { eventId });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
@@ -178,7 +172,7 @@ class MockCalendarProvider implements CalendarProvider {
   }
 
   async deleteEvent(eventId: string): Promise<{ success: boolean }> {
-    console.log("[MockCalendar] Deleting event:", eventId);
+    logInfo('mock.calendar.delete', { eventId });
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 

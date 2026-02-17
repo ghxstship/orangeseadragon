@@ -28,7 +28,7 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
-  const auth = await requirePolicy('entity.read');
+  const auth = await requirePolicy('entity.write');
   if (auth.error) return auth.error;
   const { supabase, user } = auth;
 

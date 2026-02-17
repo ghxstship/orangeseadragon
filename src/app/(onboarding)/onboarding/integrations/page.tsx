@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowLeft, Loader2, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { captureError } from '@/lib/observability';
 
 const integrations = [
   {
@@ -71,7 +72,7 @@ export default function OnboardingIntegrationsPage() {
         setConnected([...connected, id]);
       }
     } catch (err) {
-      console.error(`[Onboarding] Failed to connect ${id}:`, err);
+      captureError(err, 'onboarding.integrations.connect');
     } finally {
       setConnecting(null);
     }
@@ -87,7 +88,7 @@ export default function OnboardingIntegrationsPage() {
       });
       router.push("/onboarding/tour");
     } catch (err) {
-      console.error('[Onboarding] Complete step failed:', err);
+      captureError(err, 'onboarding.integrations.complete');
       router.push("/onboarding/tour");
     } finally {
       setIsLoading(false);

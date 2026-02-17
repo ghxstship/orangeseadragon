@@ -4,11 +4,12 @@ import * as React from "react";
 import Link from "next/link";
 import { CheckCircle, ArrowRight, Rocket, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { captureError } from '@/lib/observability';
 
 export default function OnboardingCompletePage() {
   // Persist onboarding completion to the server
   React.useEffect(() => {
-    fetch('/api/onboarding/complete', { method: 'POST' }).catch(() => {});
+    fetch('/api/onboarding/complete', { method: 'POST' }).catch((err: unknown) => captureError(err, 'onboarding.completePost'));
   }, []);
 
   return (

@@ -36,6 +36,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 import { getErrorMessage, throwApiErrorResponse } from '@/lib/api/error-message';
+import { captureError } from '@/lib/observability';
 
 interface LocationData {
   latitude: number;
@@ -96,7 +97,7 @@ export function ClockInOut() {
         }
       }
     } catch (error) {
-      console.error('Error fetching active shift:', error);
+      captureError(error, 'clockInOut.fetchActiveShift');
     }
   };
 
@@ -108,7 +109,7 @@ export function ClockInOut() {
         setEvents(data);
       }
     } catch (error) {
-      console.error('Error fetching events:', error);
+      captureError(error, 'clockInOut.fetchEvents');
     }
   };
 
@@ -140,7 +141,7 @@ export function ClockInOut() {
             setIsWithinGeofence(data.isWithin);
           }
         } catch (error) {
-          console.error('Error checking geofence:', error);
+          captureError(error, 'clockInOut.geofenceCheck');
         }
       },
       (error) => {
@@ -227,7 +228,7 @@ export function ClockInOut() {
 
       setNotes('');
     } catch (error) {
-      console.error('Error:', error);
+      captureError(error, 'clockInOut.action');
       toast.error(getErrorMessage(error, 'Action failed'));
     } finally {
       setIsLoading(false);

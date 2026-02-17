@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 
 export interface Subtask {
   id: string;
@@ -66,7 +67,7 @@ export function SubtaskList({
       setNewSubtaskTitle('');
       setIsAdding(false);
     } catch (error) {
-      console.error('Failed to add subtask:', error);
+      captureError(error, 'subtaskList.add');
     }
   };
 

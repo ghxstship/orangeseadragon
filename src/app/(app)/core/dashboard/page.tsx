@@ -21,6 +21,7 @@ import { useCopilotContext } from "@/hooks/use-copilot-context";
 import { cn } from "@/lib/utils";
 import { DEFAULT_LOCALE } from "@/lib/config";
 import { getErrorMessage, throwApiErrorResponse } from "@/lib/api/error-message";
+import { captureError } from '@/lib/observability';
 import {
   FolderOpen,
   CheckSquare,
@@ -268,7 +269,7 @@ export default function DashboardPage() {
 
         await refetchLayouts();
       } catch (err) {
-        console.error("Failed to save dashboard layout:", err);
+        captureError(err, 'dashboard.saveLayout');
         setError(new Error(getErrorMessage(err, "Failed to save dashboard layout")));
       }
     }

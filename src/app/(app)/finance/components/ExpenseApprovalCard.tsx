@@ -28,6 +28,7 @@ import {
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { formatCurrency } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 
 interface ExpenseApprovalData {
   id: string;
@@ -79,7 +80,7 @@ export function ExpenseApprovalCard({
       toast.success('Expense approved');
     } catch (error) {
       toast.error('Failed to approve expense');
-      console.error(error);
+      captureError(error, 'expenseApproval.approve');
     } finally {
       setIsProcessing(false);
     }
@@ -97,7 +98,7 @@ export function ExpenseApprovalCard({
       setShowRejectDialog(false);
     } catch (error) {
       toast.error('Failed to reject expense');
-      console.error(error);
+      captureError(error, 'expenseApproval.reject');
     } finally {
       setIsProcessing(false);
     }
@@ -115,7 +116,7 @@ export function ExpenseApprovalCard({
       setShowReturnDialog(false);
     } catch (error) {
       toast.error('Failed to return expense');
-      console.error(error);
+      captureError(error, 'expenseApproval.return');
     } finally {
       setIsProcessing(false);
     }

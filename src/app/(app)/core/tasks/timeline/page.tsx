@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { captureError } from '@/lib/observability';
 
 interface TaskDependency {
   id: string;
@@ -58,7 +59,7 @@ export default function TaskTimelinePage() {
         const result = await response.json();
         setDependencies(result.data ?? []);
       } catch (error) {
-        console.error("Failed to fetch dependencies:", error);
+        captureError(error, 'timeline.fetchDependencies');
       } finally {
         setIsLoadingDeps(false);
       }

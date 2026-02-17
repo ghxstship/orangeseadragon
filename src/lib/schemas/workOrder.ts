@@ -274,7 +274,7 @@ export const workOrderSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Work Order', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Work Order') } },
+      { key: 'create', label: 'New Work Order', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

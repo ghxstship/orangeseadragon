@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PageShell } from '@/components/common/page-shell';
 import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
+import { captureError } from '@/lib/observability';
 import {
   Select,
   SelectContent,
@@ -89,7 +90,7 @@ export default function ActivityPage() {
         setEvents(data.data || data.records || []);
       }
     } catch (error) {
-      console.error('Failed to fetch activity:', error);
+      captureError(error, 'advancing.activity.fetch');
     } finally {
       setLoading(false);
     }

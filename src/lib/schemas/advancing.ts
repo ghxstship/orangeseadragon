@@ -206,7 +206,7 @@ export const productionAdvanceSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Advance', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Advance') } },
+      { key: 'create', label: 'New Advance', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 
@@ -431,7 +431,7 @@ export const advanceItemSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Item', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Item') } },
+      { key: 'create', label: 'New Item', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 
@@ -599,7 +599,7 @@ export const advanceItemFulfillmentSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Stage', variant: 'primary', handler: { type: 'function', fn: () => console.log('Add Stage') } },
+      { key: 'create', label: 'Add Stage', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 
@@ -777,7 +777,7 @@ export const vendorRatingSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'Add Rating', variant: 'primary', handler: { type: 'function', fn: () => console.log('Add Rating') } },
+      { key: 'create', label: 'Add Rating', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 
@@ -931,7 +931,7 @@ export const advanceCategorySchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => console.log('New Category') } },
+      { key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 

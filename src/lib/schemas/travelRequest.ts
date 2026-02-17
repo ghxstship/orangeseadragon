@@ -184,7 +184,7 @@ export const travelRequestSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Travel Request', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Travel Request') } },
+      { key: 'create', label: 'New Travel Request', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

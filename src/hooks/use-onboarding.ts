@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { captureError } from '@/lib/observability';
 
 interface OnboardingStepStatus {
   id: string;
@@ -38,8 +39,8 @@ export function useOnboarding() {
         const json = await res.json();
         setSummary(json.data);
       }
-    } catch {
-      // Silently fail — onboarding is non-critical
+    } catch (err) {
+      captureError(err, 'onboarding.fetchState');
     } finally {
       setLoading(false);
     }
@@ -60,8 +61,8 @@ export function useOnboarding() {
         await fetchState();
         return true;
       }
-    } catch {
-      // Silently fail
+    } catch (err) {
+      captureError(err, 'onboarding.completeStep');
     }
     return false;
   }, [fetchState]);
@@ -77,8 +78,8 @@ export function useOnboarding() {
         await fetchState();
         return true;
       }
-    } catch {
-      // Silently fail
+    } catch (err) {
+      captureError(err, 'onboarding.skipStep');
     }
     return false;
   }, [fetchState]);
@@ -90,8 +91,8 @@ export function useOnboarding() {
         await fetchState();
         return true;
       }
-    } catch {
-      // Silently fail
+    } catch (err) {
+      captureError(err, 'onboarding.complete');
     }
     return false;
   }, [fetchState]);

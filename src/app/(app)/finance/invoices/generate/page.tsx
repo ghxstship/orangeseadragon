@@ -6,6 +6,7 @@ import { PageShell } from '@/components/common/page-shell';
 import { InvoiceGenerator } from '@/components/business/invoice-generator';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { captureError } from '@/lib/observability';
 
 export default function GenerateInvoicePage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function GenerateInvoicePage() {
         const items = json.data || [];
         setProjects(items.map((p: Record<string, unknown>) => ({ id: String(p.id), name: String(p.name || p.title || 'Untitled') })));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err, 'invoiceGenerate.fetchProjects'));
 
     fetch('/api/rate-cards')
       .then((res) => res.json())
@@ -27,7 +28,7 @@ export default function GenerateInvoicePage() {
         const items = json.data || [];
         setRateCards(items.map((rc: Record<string, unknown>) => ({ id: String(rc.id), name: String(rc.name || 'Unnamed') })));
       })
-      .catch(() => {});
+      .catch((err: unknown) => captureError(err, 'invoiceGenerate.fetchRateCards'));
   }, []);
 
   return (

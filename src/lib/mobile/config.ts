@@ -246,8 +246,8 @@ export const mobileAppConfig: MobileAppConfig = {
     timeout: 300000, // 5 minutes
   },
   deepLinking: {
-    scheme: "unifiedops",
-    host: "app.example.com",
+    scheme: "atlvs",
+    host: "app.atlvs.one",
     routes: [
       { path: "/events/:id", screen: "event-detail", params: ["id"] },
       { path: "/tasks/:id", screen: "task-detail", params: ["id"] },

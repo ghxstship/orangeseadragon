@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { PageShell } from '@/components/common/page-shell';
 import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
 import { formatCurrency } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 import {
   Select,
   SelectContent,
@@ -73,7 +74,7 @@ export default function AllotmentsPage() {
         setAllotments(data.data || data.records || []);
       }
     } catch (error) {
-      console.error('Failed to fetch allotments:', error);
+      captureError(error, 'advancing.allotments.fetch');
     } finally {
       setLoading(false);
     }

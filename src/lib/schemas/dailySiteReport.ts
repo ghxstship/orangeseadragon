@@ -212,7 +212,7 @@ export const dailySiteReportSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Report', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Report') } },
+      { key: 'create', label: 'New Report', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 

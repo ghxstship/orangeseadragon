@@ -211,14 +211,14 @@ export const landingPageSections = {
       { name: "message", label: "Message", type: "textarea" as const, required: true },
     ],
     contactInfo: {
-      email: "hello@example.com",
-      phone: "+1 (555) 123-4567",
-      address: "123 Event Street, San Francisco, CA 94102",
+      email: "hello@atlvs.one",
+      phone: "",
+      address: "",
       hours: "Monday - Friday, 9am - 6pm PST",
       social: [
-        { platform: "twitter", url: "https://twitter.com/example", icon: "twitter" },
-        { platform: "linkedin", url: "https://linkedin.com/company/example", icon: "linkedin" },
-        { platform: "facebook", url: "https://facebook.com/example", icon: "facebook" },
+        { platform: "twitter", url: "https://twitter.com/atlvs", icon: "twitter" },
+        { platform: "linkedin", url: "https://linkedin.com/company/atlvs", icon: "linkedin" },
+        { platform: "facebook", url: "https://facebook.com/atlvs", icon: "facebook" },
       ],
     },
     mapLocation: {

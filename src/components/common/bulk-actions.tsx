@@ -124,19 +124,19 @@ export const defaultBulkActions: BulkAction[] = [
     id: "archive",
     label: "Archive",
     icon: Archive,
-    onClick: (ids) => console.log("Archive:", ids),
+    onClick: (_ids) => {},
   },
   {
     id: "tag",
     label: "Add Tag",
     icon: Tag,
-    onClick: (ids) => console.log("Tag:", ids),
+    onClick: (_ids) => {},
   },
   {
     id: "delete",
     label: "Delete",
     icon: Trash2,
     variant: "destructive",
-    onClick: (ids) => console.log("Delete:", ids),
+    onClick: (_ids) => {},
   },
 ];

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { captureError } from '@/lib/observability';
 import { CrudList } from '@/lib/crud/components/CrudList';
 import { productionAdvanceSchema } from '@/lib/schemas/advancing';
 import { Button } from '@/components/ui/button';
@@ -54,7 +55,7 @@ export default function AdvancesPage() {
                   router.refresh();
                 }
               } catch (error) {
-                console.error('Failed to create advance:', error);
+                captureError(error, 'advancing.createAdvance');
               }
             }}
           />

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Download, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { DEFAULT_LOCALE } from '@/lib/config';
+import { captureError } from '@/lib/observability';
 
 interface PaymentDetails {
   invoiceNumber: string;
@@ -36,7 +37,7 @@ function PaymentSuccessContent() {
           setPaymentDetails(data);
         }
       } catch (error) {
-        console.error('Error fetching payment details:', error);
+        captureError(error, 'payments.success.fetch');
       } finally {
         setIsLoading(false);
       }

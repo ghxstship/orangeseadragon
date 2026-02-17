@@ -6,6 +6,7 @@ import { StatCard, StatGrid } from '@/components/common/stat-card';
 import { ReportChart } from '@/components/reports/report-chart';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Users, Clock, TrendingUp, Target } from 'lucide-react';
+import { captureError } from '@/lib/observability';
 
 interface ForecastMonth {
   [key: string]: unknown;
@@ -29,7 +30,7 @@ export default function UtilizationForecastPage() {
         setData(json.data || []);
         setMeta(json.meta || null);
       })
-      .catch(() => {})
+      .catch((err: unknown) => captureError(err, 'utilization.fetchForecast'))
       .finally(() => setIsLoading(false));
   }, []);
 

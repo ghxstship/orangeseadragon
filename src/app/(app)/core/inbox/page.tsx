@@ -34,6 +34,7 @@ import { InboxItemRow } from '@/components/common/inbox-item-row';
 import { InboxItemDetail } from '@/components/common/inbox-item-detail';
 import { cn } from '@/lib/utils';
 import { getErrorMessage, throwApiErrorResponse } from '@/lib/api/error-message';
+import { captureError } from '@/lib/observability';
 
 type InboxItemType = 'approval' | 'mention' | 'alert' | 'assignment' | 'comment' | 'update';
 type InboxItemStatus = 'unread' | 'read' | 'actioned' | 'dismissed';
@@ -141,7 +142,7 @@ export default function InboxPage() {
       const data = await response.json();
       setItems(data.data || []);
     } catch (err) {
-      console.error('Failed to fetch inbox items:', err);
+      captureError(err, 'inbox.fetch');
       setError(getErrorMessage(err, 'Failed to load notifications'));
     } finally {
       setLoading(false);
@@ -194,7 +195,7 @@ export default function InboxPage() {
       );
       setSelectedIds(new Set());
     } catch (err) {
-      console.error('Failed to mark as read:', err);
+      captureError(err, 'inbox.markRead');
     }
   };
 
@@ -216,7 +217,7 @@ export default function InboxPage() {
       );
       setDetailItem(null);
     } catch (err) {
-      console.error('Failed to approve:', err);
+      captureError(err, 'inbox.approve');
     }
   };
 
@@ -231,7 +232,7 @@ export default function InboxPage() {
       );
       setDetailItem(null);
     } catch (err) {
-      console.error('Failed to reject:', err);
+      captureError(err, 'inbox.reject');
     }
   };
 
@@ -248,7 +249,7 @@ export default function InboxPage() {
       setItems((prev) => prev.filter((item) => !ids.includes(item.id)));
       setSelectedIds(new Set());
     } catch (err) {
-      console.error('Failed to dismiss:', err);
+      captureError(err, 'inbox.dismiss');
     }
   };
 

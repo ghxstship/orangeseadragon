@@ -6,7 +6,7 @@
  */
 
 import { notificationService } from '../notifications/notificationService';
-import { captureError } from '@/lib/observability';
+import { captureError, logInfo } from '@/lib/observability';
 
 export interface Incident {
   id: string;
@@ -208,23 +208,19 @@ class EscalationEngine {
         break;
 
       case 'sms':
-        // SMS integration would go here
-        console.log(`SMS to ${step.notify_users.join(', ')}: ${message}`);
+        logInfo('escalation.sms.stub', { recipients: step.notify_users, message, incidentId: incident.id });
         break;
 
       case 'email':
-        // Email integration would go here
-        console.log(`Email to ${step.notify_users.join(', ')}: ${message}`);
+        logInfo('escalation.email.stub', { recipients: step.notify_users, message, incidentId: incident.id });
         break;
 
       case 'radio':
-        // Radio dispatch integration would go here
-        console.log(`Radio dispatch: ${message}`);
+        logInfo('escalation.radio.stub', { message, incidentId: incident.id });
         break;
 
       case 'phone':
-        // Phone call integration would go here
-        console.log(`Phone call to ${step.notify_users.join(', ')}`);
+        logInfo('escalation.phone.stub', { recipients: step.notify_users, incidentId: incident.id });
         break;
     }
   }

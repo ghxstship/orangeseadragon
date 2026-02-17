@@ -8,6 +8,7 @@
 import { createClient, RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/database';
 import type { EntityType, PresenceState, PresenceOptions } from './types';
+import { logInfo } from '@/lib/observability';
 
 export class PresenceService {
   private supabase: SupabaseClient<Database>;
@@ -78,11 +79,11 @@ export class PresenceService {
           // Notify listeners
           this.notifyListeners(channelKey);
         })
-        .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-          console.log(`[Presence] User ${key} joined ${channelKey}`, newPresences);
+        .on('presence', { event: 'join' }, ({ key, newPresences: _newPresences }) => {
+          logInfo('presence.user.joined', { user: key, channel: channelKey });
         })
-        .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-          console.log(`[Presence] User ${key} left ${channelKey}`, leftPresences);
+        .on('presence', { event: 'leave' }, ({ key, leftPresences: _leftPresences }) => {
+          logInfo('presence.user.left', { user: key, channel: channelKey });
         })
         .subscribe(async (status) => {
           if (status === 'SUBSCRIBED') {
@@ -98,7 +99,7 @@ export class PresenceService {
               lastSeen: new Date().toISOString(),
             } as PresenceState);
 
-            console.log(`[Presence] Joined ${channelKey}`);
+            logInfo('presence.channel.subscribed', { channel: channelKey });
           }
         });
 

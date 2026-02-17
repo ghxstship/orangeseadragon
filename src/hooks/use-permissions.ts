@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useSupabase, useUser } from "./use-supabase";
+import { captureError } from '@/lib/observability';
 
 interface UserRole {
   role_slug: string;
@@ -50,7 +51,7 @@ export function usePermissions(organizationId?: string | null): PermissionsConte
         .eq("is_active", true);
 
       if (error) {
-        console.error("[usePermissions] Failed to fetch roles:", error);
+        captureError(error, 'permissions.fetchRoles');
         return [];
       }
 

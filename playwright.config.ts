@@ -9,12 +9,14 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, '.env.local') });
 
-const useProductionServer = process.env.CI_E2E_PRODUCTION_SERVER === 'true';
+const useProductionServer = process.env.CI_E2E_PRODUCTION_SERVER !== 'false';
 const playwrightPort = process.env.PLAYWRIGHT_PORT || '3000';
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${playwrightPort}`;
+const e2eEnvPrefix = 'PLAYWRIGHT_TEST=true';
+const cleanBuildArtifactsCommand = "node -e \"const fs=require('fs');try{fs.rmSync('.next',{recursive:true,force:true,maxRetries:10,retryDelay:200});}catch{}\"";
 const webServerCommand = useProductionServer
-  ? `npm run start -- -p ${playwrightPort}`
-  : `npm run dev -- -p ${playwrightPort}`;
+  ? `${cleanBuildArtifactsCommand} && ${e2eEnvPrefix} npm run build && ${e2eEnvPrefix} npm run start -- -p ${playwrightPort}`
+  : `${cleanBuildArtifactsCommand} && ${e2eEnvPrefix} npm run dev -- -p ${playwrightPort}`;
 
 export default defineConfig({
     testDir: './e2e',
@@ -53,6 +55,6 @@ export default defineConfig({
         command: webServerCommand,
         url: `${baseURL}/login`,
         reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
+        timeout: 600 * 1000,
     },
 });

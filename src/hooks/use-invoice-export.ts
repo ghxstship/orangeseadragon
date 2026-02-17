@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { captureError } from '@/lib/observability';
 
 interface ExportOptions {
   includeTimesheet?: boolean;
@@ -50,7 +51,7 @@ export function useInvoiceExport() {
 
         return { success: true, filename: result.data?.filename };
       } catch (error) {
-        console.error("[Invoice Export] PDF generation failed:", error);
+        captureError(error, 'invoiceExport.pdf');
         return { success: false, error };
       } finally {
         setIsExporting(false);
@@ -88,7 +89,7 @@ export function useInvoiceExport() {
 
         return { success: true, filename };
       } catch (error) {
-        console.error("[Invoice Export] HTML download failed:", error);
+        captureError(error, 'invoiceExport.html');
         return { success: false, error };
       } finally {
         setIsExporting(false);

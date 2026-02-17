@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { captureError } from '@/lib/observability';
 import { CalendarView, type CalendarEvent } from "./calendar-view";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -191,7 +192,7 @@ export function MasterCalendar({
       setCreateDate(null);
       fetchCalendarData();
     } catch (error) {
-      console.error('Failed to create event:', error);
+      captureError(error, 'masterCalendar.createEvent');
     }
   };
 

@@ -205,7 +205,7 @@ export const candidateSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Candidate', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Candidate') } },
+      { key: 'create', label: 'New Candidate', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
 

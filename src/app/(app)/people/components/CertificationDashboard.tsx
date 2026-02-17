@@ -35,6 +35,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { format, differenceInDays, addDays } from 'date-fns';
+import { captureError } from '@/lib/observability';
 
 interface CertificationAlert {
   id: string;
@@ -108,7 +109,7 @@ export function CertificationDashboard() {
         setSummary(data);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      captureError(error, 'certificationDashboard.fetch');
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +124,7 @@ export function CertificationDashboard() {
         prev.map((a) => (a.id === alertId ? { ...a, isAcknowledged: true } : a))
       );
     } catch (error) {
-      console.error('Error acknowledging alert:', error);
+      captureError(error, 'certificationDashboard.acknowledge');
     }
   };
 
@@ -135,7 +136,7 @@ export function CertificationDashboard() {
         body: JSON.stringify({ employeeId, certificationId }),
       });
     } catch (error) {
-      console.error('Error sending reminder:', error);
+      captureError(error, 'certificationDashboard.sendReminder');
     }
   };
 

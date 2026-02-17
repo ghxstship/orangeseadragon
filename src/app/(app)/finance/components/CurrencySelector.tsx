@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { captureError } from '@/lib/observability';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -66,7 +67,7 @@ export function CurrencySelector({
           }
         }
       } catch (error) {
-        console.error('Error fetching currencies:', error);
+        captureError(error, 'currencySelector.fetch');
       } finally {
         setIsLoading(false);
       }

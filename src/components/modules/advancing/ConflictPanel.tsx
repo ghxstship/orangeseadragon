@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import { captureError } from '@/lib/observability';
 
 interface Conflict {
   id: string;
@@ -268,7 +269,7 @@ export function ConflictPanel({
       
       onRefresh();
     } catch (error) {
-      console.error('Error resolving conflict:', error);
+      captureError(error, 'conflict.resolve');
       toast({
         title: 'Error',
         description: 'Failed to resolve conflict. Please try again.',
@@ -303,7 +304,7 @@ export function ConflictPanel({
       
       onRefresh();
     } catch (error) {
-      console.error('Error ignoring conflict:', error);
+      captureError(error, 'conflict.ignore');
       toast({
         title: 'Error',
         description: 'Failed to ignore conflict. Please try again.',

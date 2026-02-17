@@ -19,6 +19,7 @@ import { format, addDays, startOfWeek, endOfWeek, isSameDay, isWithinInterval } 
 import { cn } from '@/lib/utils';
 import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
 import { extractApiErrorMessage, getErrorMessage } from '@/lib/api/error-message';
+import { captureError } from '@/lib/observability';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
@@ -160,7 +161,7 @@ export function CrewScheduler({ eventId, advanceId, className }: CrewSchedulerPr
         setAssignments(assignmentsData.records || []);
       }
     } catch (error) {
-      console.error('Error fetching crew data:', error);
+      captureError(error, 'crewScheduler.fetchData');
     } finally {
       setLoading(false);
     }
@@ -516,7 +517,7 @@ function AssignmentDialog({
       setEndTime('18:00');
       setNotes('');
     } catch (error) {
-      console.error('Error creating assignment:', error);
+      captureError(error, 'crewScheduler.createAssignment');
       toast({
         title: 'Error',
         description: getErrorMessage(error, 'Failed to create assignment.'),

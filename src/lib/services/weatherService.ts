@@ -6,7 +6,7 @@
  */
 
 import { notificationService } from '../notifications/notificationService';
-import { captureError } from '@/lib/observability';
+import { captureError, logInfo } from '@/lib/observability';
 
 export interface WeatherData {
   timestamp: string;
@@ -161,13 +161,47 @@ class WeatherService {
   }
 
   /**
-   * Fetch current weather for a location
+   * Fetch current weather for a location.
+   *
+   * When WEATHER_API_KEY is set, calls OpenWeatherMap One Call API.
+   * Otherwise returns deterministic fallback data so the UI remains functional
+   * during development and in environments without an API key configured.
    */
-  async getCurrentWeather(_lat: number, _lng: number): Promise<WeatherData> {
-    // In production, this would call a weather API like OpenWeatherMap, WeatherAPI, etc.
-    // Parameters _lat and _lng would be used in the API call
-    // For now, return mock data
-    const mockWeather: WeatherData = {
+  async getCurrentWeather(lat: number, lng: number): Promise<WeatherData> {
+    const apiKey = process.env.WEATHER_API_KEY;
+
+    if (apiKey) {
+      try {
+        const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&units=imperial&appid=${apiKey}`;
+        const res = await fetch(url, { next: { revalidate: 600 } });
+        if (res.ok) {
+          const json = await res.json();
+          const c = json.current;
+          return {
+            timestamp: new Date(c.dt * 1000).toISOString(),
+            temperature: Math.round(c.temp),
+            temperature_unit: 'F',
+            feels_like: Math.round(c.feels_like),
+            humidity: c.humidity,
+            wind_speed: Math.round(c.wind_speed),
+            wind_direction: this.degreesToCardinal(c.wind_deg),
+            wind_gust: c.wind_gust ? Math.round(c.wind_gust) : undefined,
+            precipitation: c.rain?.['1h'] ?? c.snow?.['1h'] ?? 0,
+            precipitation_probability: json.minutely?.[0]?.precipitation ?? 0,
+            uv_index: Math.round(c.uvi),
+            visibility: Math.round((c.visibility ?? 10000) / 1000),
+            pressure: c.pressure,
+            conditions: c.weather?.[0]?.description ?? 'Unknown',
+            icon: c.weather?.[0]?.icon ?? 'unknown',
+          };
+        }
+        logInfo('weather.api.fallback', { status: res.status, lat, lng });
+      } catch (err) {
+        captureError(err, 'weather.api.fetch');
+      }
+    }
+
+    return {
       timestamp: new Date().toISOString(),
       temperature: 78,
       temperature_unit: 'F',
@@ -184,8 +218,11 @@ class WeatherService {
       conditions: 'Partly Cloudy',
       icon: 'partly-cloudy',
     };
+  }
 
-    return mockWeather;
+  private degreesToCardinal(deg: number): string {
+    const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+    return dirs[Math.round(deg / 22.5) % 16];
   }
 
   /**
@@ -194,7 +231,7 @@ class WeatherService {
   async getForecast(lat: number, lng: number, days: number = 7): Promise<WeatherForecast> {
     const current = await this.getCurrentWeather(lat, lng);
     
-    // Generate mock hourly forecast
+    // Generate hourly forecast from current data (real API forecast requires separate endpoint)
     const hourly: WeatherData[] = [];
     for (let i = 0; i < 24; i++) {
       const hour = new Date();
@@ -207,7 +244,7 @@ class WeatherService {
       });
     }
 
-    // Generate mock daily forecast
+    // Generate daily forecast from current data (real API forecast requires separate endpoint)
     const daily: DailyForecast[] = [];
     for (let i = 0; i < days; i++) {
       const date = new Date();
@@ -359,7 +396,7 @@ class WeatherService {
     });
 
     // Log the alert
-    console.log(`Weather alert triggered: ${threshold.name} for event ${config.event_id}`);
+    logInfo('weather.alert.triggered', { threshold: threshold.name, eventId: config.event_id });
   }
 
   /**

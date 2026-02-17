@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { captureError } from '@/lib/observability';
 import { Check, ChevronDown, Plus, Star, Users, Trash2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -98,7 +99,7 @@ export function SavedViewSelector({
       setIsShared(false);
       setIsDefault(false);
     } catch (error) {
-      console.error('Failed to save view:', error);
+      captureError(error, 'savedView.save');
     } finally {
       setIsSaving(false);
     }
@@ -114,7 +115,7 @@ export function SavedViewSelector({
       setEditingView(null);
       setNewViewName('');
     } catch (error) {
-      console.error('Failed to rename view:', error);
+      captureError(error, 'savedView.rename');
     } finally {
       setIsSaving(false);
     }

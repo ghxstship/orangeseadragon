@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AuthTemplate } from '@/components/templates/AuthTemplate';
+import { captureError } from '@/lib/observability';
 
 export default function VerifyMfaPage() {
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function VerifyMfaPage() {
 
       router.push('/core/dashboard');
     } catch (err) {
-      console.error('[MFA] Verification failed:', err);
+      captureError(err, 'mfa.verify');
       setCode(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
     } finally {

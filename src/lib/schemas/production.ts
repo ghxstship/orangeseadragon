@@ -294,7 +294,7 @@ export const productionSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Production', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Production') } },
+      { key: 'create', label: 'New Production', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

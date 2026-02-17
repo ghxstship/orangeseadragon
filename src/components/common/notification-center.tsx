@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { captureError } from '@/lib/observability';
 import { formatDistanceToNow } from "date-fns";
 import {
   Bell,
@@ -171,7 +172,7 @@ export function NotificationCenter() {
           }
         }
       } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+        captureError(error, 'notificationCenter.fetch');
       } finally {
         if (!cancelled) {
           setLoading(false);

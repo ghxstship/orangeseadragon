@@ -302,7 +302,7 @@ export const shipmentSchema = defineSchema({
     ],
     bulk: [],
     global: [
-      { key: 'create', label: 'New Shipment', variant: 'primary', handler: { type: 'function', fn: () => console.log('Create Shipment') } },
+      { key: 'create', label: 'New Shipment', variant: 'primary', handler: { type: 'function', fn: () => {} } },
     ],
   },
   relationships: {

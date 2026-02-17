@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Users, DollarSign, Clock, TrendingUp, UserPlus, AlertTriangle } from 'lucide-react';
 import { CurrencyDisplay } from '@/components/common/financial-display';
+import { captureError } from '@/lib/observability';
 
 const getBarTrackStyle = (count: number): React.CSSProperties => ({
   width: `${Math.min(count * 20, 200)}px`,
@@ -37,7 +38,7 @@ export default function HiringForecastPage() {
     fetch('/api/hiring/forecast')
       .then((res) => res.json())
       .then((json) => setData(json.data || null))
-      .catch(() => {})
+      .catch((err: unknown) => captureError(err, 'hiring.fetchForecast'))
       .finally(() => setIsLoading(false));
   }, []);
 
