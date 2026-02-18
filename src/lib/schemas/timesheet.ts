@@ -27,7 +27,15 @@ export const timesheetSchema = defineSchema({
     { field: 'total_amount', format: { type: 'currency' } },
     { field: 'status', format: { type: 'badge', colorMap: { draft: '#6b7280', submitted: '#3b82f6', approved: '#22c55e', rejected: '#ef4444', paid: '#8b5cf6' } } },
   ] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/timesheets/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Timesheet', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: {
+    row: [
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/timesheets/${r.id}` } },
+      { key: 'submit', label: 'Submit', variant: 'primary', handler: { type: 'api', endpoint: '/api/timesheets/{id}/submit', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/timesheets/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'submitted' },
+    ],
+    bulk: [],
+    global: [{ key: 'create', label: 'New Timesheet', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
+  },
   relationships: {
     belongsTo: [
       { entity: 'user', foreignKey: 'user_id', label: 'User' },

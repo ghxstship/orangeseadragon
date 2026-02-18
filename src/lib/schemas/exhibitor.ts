@@ -196,6 +196,7 @@ export const exhibitorSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/exhibitors/${r.id}` } },
+      { key: 'confirm', label: 'Confirm', variant: 'primary', handler: { type: 'api', endpoint: '/api/exhibitors/{id}/confirm', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
     ],
     bulk: [],
     global: [

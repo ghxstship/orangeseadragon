@@ -8,6 +8,9 @@ import { useViewPreference } from '../hooks/useViewPreference';
 import { useColumnPreference } from '../hooks/useColumnPreference';
 import { ListLayout } from '@/lib/layouts';
 import { ViewRenderer } from '@/lib/views/components/ViewRenderer';
+import { dispatchAction } from '../utils/action-dispatch';
+import { useConfirmation } from '@/components/common/confirmation-dialog';
+import { useToast } from '@/components/ui/use-toast';
 import type { ViewType } from '@/lib/data-view-engine/hooks/use-data-view';
 
 interface CrudListProps<T extends EntityRecord = EntityRecord> {
@@ -32,6 +35,8 @@ export function CrudList<T extends EntityRecord>({
   onCellEdit,
 }: CrudListProps<T>) {
   const router = useRouter();
+  const { toast } = useToast();
+  const { confirm, ConfirmDialog } = useConfirmation();
   const defaultPageSize = schema.layouts.list.pageSize ?? 20;
   const searchDebounceMs = schema.search.debounce ?? 250;
   const hasDelegatedChildView = !editableFields?.length;
@@ -102,13 +107,21 @@ export function CrudList<T extends EntityRecord>({
     router.push(`/${schema.identity.slug}/${id}`);
   };
 
-  const handleAction = (actionId: string) => {
-    if (actionId === 'create') {
-      router.push(`/${schema.identity.slug}/new`);
-    }
+  const handleAction = async (actionId: string, payload?: unknown) => {
+    const p = payload as { selectedIds?: string[] } | undefined;
+    await dispatchAction(actionId, {
+      schema: schema as unknown as EntitySchema<EntityRecord>,
+      selectedIds: p?.selectedIds,
+      router,
+      refresh: crud.refetch,
+      toast,
+      confirm,
+    });
   };
 
   return (
+    <>
+    <ConfirmDialog />
     <ListLayout
       schema={schema}
       data={crud.data as T[]}
@@ -145,5 +158,6 @@ export function CrudList<T extends EntityRecord>({
         />
       )}
     </ListLayout>
+    </>
   );
 }

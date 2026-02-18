@@ -219,6 +219,8 @@ export const performanceReviewSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/performance/${r.id}` } },
+      { key: 'submit', label: 'Submit', variant: 'primary', handler: { type: 'api', endpoint: '/api/performance-reviews/{id}/submit', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' || r.status === 'self_review' },
+      { key: 'complete', label: 'Complete', variant: 'primary', handler: { type: 'api', endpoint: '/api/performance-reviews/{id}/complete', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'manager_review' || r.status === 'calibration' },
     ],
     bulk: [],
     global: [

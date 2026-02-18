@@ -241,9 +241,9 @@ export const supportTicketSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/support/${r.id}` } },
-      { key: 'assign', label: 'Assign', handler: { type: 'modal', component: 'AssignTicketModal' } },
-      { key: 'resolve', label: 'Resolve', variant: 'primary', handler: { type: 'api', endpoint: '/api/support-tickets/resolve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status !== 'resolved' && r.status !== 'closed' },
-      { key: 'close', label: 'Close', handler: { type: 'api', endpoint: '/api/support-tickets/close', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'resolved' },
+      { key: 'assign', label: 'Assign', handler: { type: 'api', endpoint: '/api/support-tickets/{id}/assign', method: 'POST' } },
+      { key: 'resolve', label: 'Resolve', variant: 'primary', handler: { type: 'api', endpoint: '/api/support-tickets/{id}/resolve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status !== 'resolved' && r.status !== 'closed' },
+      { key: 'close', label: 'Close', handler: { type: 'api', endpoint: '/api/support-tickets/{id}/close', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'resolved' },
     ],
     bulk: [
       { key: 'bulk_assign', label: 'Assign Selected', handler: { type: 'modal', component: 'BulkAssignModal' } },

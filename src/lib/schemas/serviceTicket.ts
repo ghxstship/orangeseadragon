@@ -210,7 +210,7 @@ export const serviceTicketSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/service/${r.id}` } },
-      { key: 'resolve', label: 'Resolve', variant: 'primary', handler: { type: 'api', endpoint: '/api/service_tickets', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status !== 'resolved' && r.status !== 'closed' },
+      { key: 'resolve', label: 'Resolve', variant: 'primary', handler: { type: 'api', endpoint: '/api/service_tickets/{id}/resolve', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status !== 'resolved' && r.status !== 'closed' },
     ],
     bulk: [],
     global: [

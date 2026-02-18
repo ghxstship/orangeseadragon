@@ -193,7 +193,7 @@ export const journalEntrySchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/journal/${r.id}` } },
-      { key: 'post', label: 'Post', variant: 'primary', handler: { type: 'api', endpoint: '/api/journal-entries/post', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
+      { key: 'post', label: 'Post', variant: 'primary', handler: { type: 'api', endpoint: '/api/journal-entries/{id}/post', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
       { key: 'reverse', label: 'Reverse', variant: 'warning', handler: { type: 'modal', component: 'ReverseEntryModal' }, condition: (r: Record<string, unknown>) => r.status === 'posted' && !r.reversed_by_id },
     ],
     bulk: [],

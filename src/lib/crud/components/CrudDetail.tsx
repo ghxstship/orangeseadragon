@@ -9,8 +9,10 @@ import { TabRenderer } from './TabRenderer';
 import { SidebarRenderer } from './SidebarRenderer';
 import { LoadingState, ErrorState, EmptyState } from '@/components/states/AsyncStates';
 import { useConfirmation } from '@/components/common/confirmation-dialog';
+import { useToast } from '@/components/ui/use-toast';
 import { getErrorMessage } from '@/lib/api/error-message';
 import { captureError } from '@/lib/observability';
+import { dispatchAction } from '../utils/action-dispatch';
 
 interface CrudDetailProps<T extends EntityRecord = EntityRecord> {
   schema: EntitySchema<T>;
@@ -31,6 +33,7 @@ export function CrudDetail<T extends EntityRecord>({
   initialTab
 }: CrudDetailProps<T>) {
   const router = useRouter();
+  const { toast } = useToast();
   const [currentTab, setCurrentTab] = useState(initialTab || schema.layouts.detail.tabs[0]?.key || 'overview');
   const crud = useCrud(schema);
   const { data: record, isLoading: loading, error, refetch: refresh } = crud.useRecord(id);
@@ -69,6 +72,17 @@ export function CrudDetail<T extends EntityRecord>({
     }
   };
 
+  const handleAction = async (actionId: string) => {
+    await dispatchAction(actionId, {
+      schema: schema as unknown as EntitySchema<EntityRecord>,
+      record: record as EntityRecord,
+      router,
+      refresh,
+      toast,
+      confirm,
+    });
+  };
+
   const sidebarConfig = schema.layouts.detail.sidebar;
 
   return (
@@ -83,6 +97,7 @@ export function CrudDetail<T extends EntityRecord>({
         onBack={handleBack}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onAction={handleAction}
         sidebarContent={
           sidebarConfig ? (
             <SidebarRenderer

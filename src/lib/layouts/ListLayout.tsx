@@ -49,7 +49,7 @@ export interface ListLayoutProps<T extends object> {
   
   getRowId: (item: T) => string;
   onRowClick?: (item: T) => void;
-  onAction?: (actionId: string, payload?: unknown) => void;
+  onAction?: (actionId: string, payload?: unknown) => void | Promise<void>;
   onRefresh?: () => void;
   onCellEdit?: (rowId: string, fieldKey: string, value: unknown) => Promise<void> | void;
   editableFields?: string[];

@@ -226,9 +226,10 @@ export const purchaseOrderSchema = defineSchema({
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/procurement/orders/${r.id}` } },
       { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/procurement/orders/${r.id}/edit` }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
-      { key: 'submit', label: 'Submit for Approval', variant: 'primary', handler: { type: 'api', endpoint: '/api/purchase-orders/submit', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
-      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/purchase-orders/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending_approval' },
-      { key: 'send', label: 'Send to Vendor', handler: { type: 'api', endpoint: '/api/purchase-orders/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'approved' },
+      { key: 'submit', label: 'Submit for Approval', variant: 'primary', handler: { type: 'api', endpoint: '/api/purchase-orders/{id}/submit', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/purchase-orders/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending_approval' },
+      { key: 'send', label: 'Send to Vendor', handler: { type: 'api', endpoint: '/api/purchase-orders/{id}/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'approved' },
+      { key: 'receive', label: 'Mark Received', handler: { type: 'api', endpoint: '/api/purchase-orders/{id}/receive', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'sent' || r.status === 'approved' },
     ],
     bulk: [],
     global: [

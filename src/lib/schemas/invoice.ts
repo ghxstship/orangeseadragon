@@ -395,15 +395,18 @@ export const invoiceSchema = defineSchema({
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/invoices/${r.id}` } },
       { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/invoices/${r.id}/edit` } },
-      { key: 'send', label: 'Send', variant: 'primary', handler: { type: 'api', endpoint: '/api/invoices/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
-      { key: 'mark-paid', label: 'Mark Paid', handler: { type: 'api', endpoint: '/api/invoices/mark-paid', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'sent' || r.status === 'overdue' || r.status === 'partially_paid' },
+      { key: 'send', label: 'Send', variant: 'primary', handler: { type: 'api', endpoint: '/api/invoices/{id}/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
+      { key: 'mark-paid', label: 'Mark Paid', handler: { type: 'api', endpoint: '/api/invoices/{id}/mark-paid', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'sent' || r.status === 'overdue' || r.status === 'partially_paid' },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'function', fn: () => {} } },
-      { key: 'download-pdf', label: 'Download PDF', handler: { type: 'api', endpoint: '/api/invoices/pdf', method: 'GET' } },
+      { key: 'download-pdf', label: 'Download PDF', handler: { type: 'api', endpoint: '/api/invoices/{id}/pdf', method: 'GET' } },
+      { key: 'mark-overdue', label: 'Mark Overdue', handler: { type: 'api', endpoint: '/api/invoices/{id}/mark-overdue', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'sent' },
+      { key: 'send-reminder', label: 'Send Reminder', handler: { type: 'api', endpoint: '/api/invoices/{id}/reminders', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'sent' || r.status === 'overdue' },
+      { key: 'receipt', label: 'Receipt', handler: { type: 'api', endpoint: '/api/invoices/{id}/receipt', method: 'GET' }, condition: (r: Record<string, unknown>) => r.status === 'paid' },
+      { key: 'export', label: 'Export', handler: { type: 'api', endpoint: '/api/invoices/{id}/export', method: 'GET' } },
       { key: 'create-credit-note', label: 'Create Credit Note', handler: { type: 'function', fn: () => {} }, condition: (r: Record<string, unknown>) => r.status === 'paid' },
     ],
     bulk: [
       { key: 'send', label: 'Send Selected', handler: { type: 'api', endpoint: '/api/invoices/bulk-send', method: 'POST' } },
-      { key: 'export', label: 'Export', handler: { type: 'function', fn: () => {} } },
     ],
     global: [
       { key: 'create', label: 'New Invoice', variant: 'primary', handler: { type: 'navigate', path: () => '/finance/invoices/new' } },

@@ -262,7 +262,7 @@ export const quoteSchema = defineSchema({
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/quotes/${r.id}` } },
       { key: 'send', label: 'Send to Client', variant: 'primary', handler: { type: 'api', endpoint: '/api/quotes', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
-      { key: 'convert', label: 'Convert to Invoice', variant: 'primary', handler: { type: 'api', endpoint: '/api/quotes/convert', method: 'POST' }, condition: (r: Record<string, unknown>) => ['accepted', 'sent', 'viewed'].includes(String(r.status)) && !r.convertedInvoiceId },
+      { key: 'convert', label: 'Convert to Invoice', variant: 'primary', handler: { type: 'api', endpoint: '/api/quotes/{id}/convert', method: 'POST' }, condition: (r: Record<string, unknown>) => ['accepted', 'sent', 'viewed'].includes(String(r.status)) && !r.convertedInvoiceId },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/quotes', method: 'POST' } },
     ],
     bulk: [],

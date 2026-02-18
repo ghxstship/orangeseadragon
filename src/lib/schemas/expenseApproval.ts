@@ -280,7 +280,7 @@ export const expenseApprovalRequestSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/expense-approvals/${r.id}` } },
-      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/expense-approval-requests/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/expense-approval-requests/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
       { key: 'reject', label: 'Reject', variant: 'destructive', handler: { type: 'modal', component: 'RejectExpenseModal' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
     ],
     bulk: [

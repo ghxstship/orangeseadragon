@@ -199,8 +199,8 @@ export const campaignSchema = defineSchema({
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/campaigns/${r.id}` } },
       { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/campaigns/${r.id}/edit` }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
-      { key: 'send', label: 'Send Now', variant: 'primary', handler: { type: 'api', endpoint: '/api/campaigns/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' || r.status === 'scheduled' },
-      { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/campaigns/duplicate', method: 'POST' } },
+      { key: 'send', label: 'Send Now', variant: 'primary', handler: { type: 'api', endpoint: '/api/campaigns/{id}/send', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'draft' || r.status === 'scheduled' },
+      { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/campaigns/{id}/duplicate', method: 'POST' } },
     ],
     bulk: [],
     global: [

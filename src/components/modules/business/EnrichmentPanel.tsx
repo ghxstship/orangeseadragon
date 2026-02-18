@@ -93,7 +93,7 @@ export function EnrichmentPanel({ entityType, entityId, className }: EnrichmentP
     const { data, isLoading } = useQuery({
         queryKey: ['enrichment', entityType, entityId],
         queryFn: async () => {
-            const res = await fetch(`/api/${entityType}s/${entityId}/enrichment`);
+            const res = await fetch(`/api/enrichment?entity_type=${entityType}&entity_id=${entityId}`);
             if (!res.ok) {
                 if (res.status === 404) return null;
                 throw new Error('Failed to load enrichment data');
@@ -107,8 +107,10 @@ export function EnrichmentPanel({ entityType, entityId, className }: EnrichmentP
     const enrichMutation = useMutation({
         mutationFn: async () => {
             setIsEnriching(true);
-            const res = await fetch(`/api/${entityType}s/${entityId}/enrich`, {
+            const res = await fetch('/api/enrichment', {
                 method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entity_type: entityType, entity_id: entityId }),
             });
             if (!res.ok) throw new Error('Failed to enrich');
             return res.json();

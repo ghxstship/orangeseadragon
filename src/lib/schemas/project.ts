@@ -363,7 +363,9 @@ export const projectSchema = defineSchema({
         key: 'view',
         label: 'View Details',
         handler: { type: 'navigate', path: (record: any) => `/productions/projects/${record.id}` }
-      }
+      },
+      { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/projects/{id}/duplicate', method: 'POST' } },
+      { key: 'update-status', label: 'Update Status', handler: { type: 'api', endpoint: '/api/projects/{id}/status', method: 'PATCH' } },
     ],
     bulk: [],
     global: [

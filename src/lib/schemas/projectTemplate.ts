@@ -210,7 +210,7 @@ export const projectTemplateSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/operations/project-templates/${r.id}` } },
-      { key: 'create-project', label: 'Create Project', variant: 'primary', handler: { type: 'api', endpoint: '/api/project-templates/create-project', method: 'POST' } },
+      { key: 'create-project', label: 'Create Project', variant: 'primary', handler: { type: 'api', endpoint: '/api/project-templates/{id}/create-project', method: 'POST' } },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'function', fn: () => {} } },
     ],
     bulk: [],

@@ -174,7 +174,7 @@ export const leadScoreSchema = defineSchema({
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/lead-scoring/${r.id}` } },
       { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/lead-scoring/${r.id}/edit` } },
-      { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/lead-scores/duplicate', method: 'POST' } },
+      { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/lead-scores/{id}/duplicate', method: 'POST' } },
     ],
     bulk: [],
     global: [

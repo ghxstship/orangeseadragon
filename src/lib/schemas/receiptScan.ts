@@ -175,7 +175,7 @@ export const receiptScanSchema = defineSchema({
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/receipts/${r.id}` } },
       { key: 'createExpense', label: 'Create Expense', variant: 'primary', handler: { type: 'modal', component: 'CreateExpenseFromReceipt' }, condition: (r: Record<string, unknown>) => r.status === 'completed' && !r.expenseId },
-      { key: 'retry', label: 'Retry Scan', handler: { type: 'api', endpoint: '/api/receipt-scans/retry', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'failed' },
+      { key: 'retry', label: 'Retry Scan', handler: { type: 'api', endpoint: '/api/receipt-scans/{id}/retry', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'failed' },
     ],
     bulk: [
       { key: 'createExpenses', label: 'Create Expenses', variant: 'primary', handler: { type: 'api', endpoint: '/api/receipt-scans/bulk-create-expenses', method: 'POST' } },

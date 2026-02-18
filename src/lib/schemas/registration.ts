@@ -182,8 +182,8 @@ export const registrationSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/registration/${r.id}` } },
-      { key: 'check_in', label: 'Check In', variant: 'primary', handler: { type: 'api', endpoint: '/api/registrations', method: 'POST' }, condition: (r: Record<string, unknown>) => !r.checked_in_at },
-      { key: 'cancel', label: 'Cancel', variant: 'destructive', handler: { type: 'api', endpoint: '/api/registrations', method: 'POST' }, condition: (r: Record<string, unknown>) => { const status = r.status as Record<string, unknown> | undefined; return status?.code !== 'cancelled'; } },
+      { key: 'check_in', label: 'Check In', variant: 'primary', handler: { type: 'api', endpoint: '/api/registrations/{id}/check-in', method: 'POST' }, condition: (r: Record<string, unknown>) => !r.checked_in_at },
+      { key: 'cancel', label: 'Cancel', variant: 'destructive', handler: { type: 'api', endpoint: '/api/registrations/{id}/cancel', method: 'POST' }, condition: (r: Record<string, unknown>) => { const status = r.status as Record<string, unknown> | undefined; return status?.code !== 'cancelled'; } },
     ],
     bulk: [
       { key: 'bulk_check_in', label: 'Check In Selected', handler: { type: 'api', endpoint: '/api/registrations/bulk-check-in', method: 'POST' } },

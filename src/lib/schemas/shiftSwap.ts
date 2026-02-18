@@ -168,8 +168,8 @@ export const shiftSwapRequestSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/shift-swaps/${r.id}` } },
-      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/shift-swap-requests/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'target_accepted' },
-      { key: 'reject', label: 'Reject', variant: 'destructive', handler: { type: 'api', endpoint: '/api/shift-swap-requests/reject', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' || r.status === 'target_accepted' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/shift-swap-requests/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'target_accepted' },
+      { key: 'reject', label: 'Reject', variant: 'destructive', handler: { type: 'api', endpoint: '/api/shift-swap-requests/{id}/reject', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' || r.status === 'target_accepted' },
     ],
     bulk: [],
     global: [],
@@ -347,7 +347,7 @@ export const openShiftSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/open-shifts/${r.id}` } },
-      { key: 'claim', label: 'Claim Shift', variant: 'primary', handler: { type: 'api', endpoint: '/api/open-shifts/claim', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'open' },
+      { key: 'claim', label: 'Claim Shift', variant: 'primary', handler: { type: 'api', endpoint: '/api/open-shifts/{id}/claim', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'open' },
     ],
     bulk: [],
     global: [

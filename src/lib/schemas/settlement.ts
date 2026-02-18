@@ -20,7 +20,14 @@ export const settlementSchema = defineSchema({
   filters: { quick: [{ key: 'pending', label: 'Pending', query: { where: { status: 'pending' } } }], advanced: ['status', 'eventId'] },
   layouts: { list: { subpages: [{ key: 'all', label: 'All', query: { where: {} }, count: true }, { key: 'draft', label: 'Draft', query: { where: { status: 'draft' } }, count: true }, { key: 'pending', label: 'Pending', query: { where: { status: 'pending' } }, count: true }, { key: 'approved', label: 'Approved', query: { where: { status: 'approved' } } }, { key: 'finalized', label: 'Finalized', query: { where: { status: 'finalized' } } }], defaultView: 'table', availableViews: ['table'] }, detail: { tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }], overview: { stats: [{ key: 'revenue', label: 'Revenue', value: { type: 'field', field: 'totalRevenue' }, format: 'currency' }, { key: 'expenses', label: 'Expenses', value: { type: 'field', field: 'totalExpenses' }, format: 'currency' }, { key: 'net', label: 'Net', value: { type: 'field', field: 'netAmount' }, format: 'currency' }], blocks: [] } }, form: { sections: [{ key: 'basic', title: 'Settlement Details', fields: ['name', 'eventId', 'totalRevenue', 'totalExpenses', 'status', 'date', 'notes'] }] } },
   views: { table: { columns: ['name', 'eventId', 'totalRevenue', 'totalExpenses', 'netAmount', 'status'] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/settlements/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Settlement', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: {
+    row: [
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/settlements/${r.id}` } },
+      { key: 'generate-invoice', label: 'Generate Invoice', variant: 'primary', handler: { type: 'api', endpoint: '/api/settlements/{id}/generate-invoice', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'approved' || r.status === 'finalized' },
+    ],
+    bulk: [],
+    global: [{ key: 'create', label: 'New Settlement', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
+  },
   relationships: {
     belongsTo: [
       { entity: 'event', foreignKey: 'eventId', label: 'Event' },

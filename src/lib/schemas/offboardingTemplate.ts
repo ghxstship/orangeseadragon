@@ -134,7 +134,7 @@ export const offboardingTemplateSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/offboarding/templates/${r.id}` } },
-      { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/offboarding_templates', method: 'POST' } },
+      { key: 'duplicate', label: 'Duplicate', handler: { type: 'api', endpoint: '/api/offboarding_templates/{id}/duplicate', method: 'POST' } },
     ],
     bulk: [],
     global: [

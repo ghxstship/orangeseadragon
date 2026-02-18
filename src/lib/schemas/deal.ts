@@ -382,7 +382,7 @@ export const dealSchema = defineSchema({
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/deals/${r.id}` } },
       { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/deals/${r.id}/edit` } },
-      { key: 'convert', label: 'Convert to Project', variant: 'primary', handler: { type: 'api', endpoint: '/api/deals/convert', method: 'POST' }, condition: (r: Record<string, unknown>) => r.stage === 'closed_won' && !r.converted_project_id },
+      { key: 'convert', label: 'Convert to Project', variant: 'primary', handler: { type: 'api', endpoint: '/api/deals/{id}/convert', method: 'POST' }, condition: (r: Record<string, unknown>) => r.stage === 'closed_won' && !r.converted_project_id },
       { key: 'place-hold', label: 'Place Hold', handler: { type: 'function', fn: () => {} }, condition: (r: Record<string, unknown>) => r.hold_status === 'no_hold' || !r.hold_status },
       { key: 'release-hold', label: 'Release Hold', variant: 'destructive', handler: { type: 'function', fn: () => {} }, condition: (r: Record<string, unknown>) => r.hold_status === 'first_hold' || r.hold_status === 'second_hold' },
       { key: 'confirm-hold', label: 'Confirm', variant: 'primary', handler: { type: 'function', fn: () => {} }, condition: (r: Record<string, unknown>) => r.hold_status === 'first_hold' },

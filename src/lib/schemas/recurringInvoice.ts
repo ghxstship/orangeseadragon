@@ -214,9 +214,9 @@ export const recurringInvoiceSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/recurring-invoices/${r.id}` } },
-      { key: 'generate', label: 'Generate Now', variant: 'default', handler: { type: 'api', endpoint: '/api/recurring-invoices', method: 'POST' } },
-      { key: 'pause', label: 'Pause', handler: { type: 'api', endpoint: '/api/recurring-invoices', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.isActive === true },
-      { key: 'resume', label: 'Resume', handler: { type: 'api', endpoint: '/api/recurring-invoices', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.isActive === false },
+      { key: 'generate', label: 'Generate Now', variant: 'default', handler: { type: 'api', endpoint: '/api/recurring-invoices/{id}/generate', method: 'POST' } },
+      { key: 'pause', label: 'Pause', handler: { type: 'api', endpoint: '/api/recurring-invoices/{id}/pause', method: 'POST' }, condition: (r: Record<string, unknown>) => r.isActive === true },
+      { key: 'resume', label: 'Resume', handler: { type: 'api', endpoint: '/api/recurring-invoices/{id}/resume', method: 'POST' }, condition: (r: Record<string, unknown>) => r.isActive === false },
     ],
     bulk: [],
     global: [

@@ -29,7 +29,15 @@ export const expenseSchema = defineSchema({
     { field: 'date', format: { type: 'date' } },
     { field: 'status', format: { type: 'badge', colorMap: { pending: '#eab308', approved: '#22c55e', rejected: '#ef4444', reimbursed: '#3b82f6' } } },
   ] } },
-  actions: { row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/expenses/${r.id}` } }], bulk: [], global: [{ key: 'create', label: 'New Expense', variant: 'primary', handler: { type: 'function', fn: () => {} } }] },
+  actions: {
+    row: [
+      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/expenses/${r.id}` } },
+      { key: 'submit', label: 'Submit', variant: 'primary', handler: { type: 'api', endpoint: '/api/expenses/{id}/submit', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/expenses/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'submitted' },
+    ],
+    bulk: [],
+    global: [{ key: 'create', label: 'New Expense', variant: 'primary', handler: { type: 'function', fn: () => {} } }],
+  },
   relationships: {
     belongsTo: [
       { entity: 'project', foreignKey: 'projectId', label: 'Project' },

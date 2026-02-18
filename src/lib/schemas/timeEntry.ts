@@ -179,7 +179,7 @@ export const timeEntrySchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/productions/time/${r.id}` } },
-      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/time_entries', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'submitted' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/time_entries/{id}/approve', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'submitted' },
     ],
     bulk: [
       { key: 'approve', label: 'Approve Selected', handler: { type: 'api', endpoint: '/api/time_entries/bulk-approve', method: 'POST' } },

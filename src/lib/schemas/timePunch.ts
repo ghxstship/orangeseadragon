@@ -165,8 +165,8 @@ export const timePunchSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/time-punches/${r.id}` } },
-      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/time-punches/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' || r.status === 'flagged' },
-      { key: 'reject', label: 'Reject', variant: 'destructive', handler: { type: 'api', endpoint: '/api/time-punches/reject', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' || r.status === 'flagged' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/time-punches/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' || r.status === 'flagged' },
+      { key: 'reject', label: 'Reject', variant: 'destructive', handler: { type: 'api', endpoint: '/api/time-punches/{id}/reject', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending' || r.status === 'flagged' },
     ],
     bulk: [
       { key: 'bulkApprove', label: 'Approve Selected', variant: 'primary', handler: { type: 'api', endpoint: '/api/time-punches/bulk-approve', method: 'POST' } },
@@ -327,7 +327,7 @@ export const timeEntrySchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/people/timekeeping/${r.id}` } },
-      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/time-entries/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'completed' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/time-entries/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'completed' },
     ],
     bulk: [
       { key: 'bulkApprove', label: 'Approve Selected', variant: 'primary', handler: { type: 'api', endpoint: '/api/time-entries/bulk-approve', method: 'POST' } },

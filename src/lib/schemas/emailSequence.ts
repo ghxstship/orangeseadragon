@@ -181,8 +181,8 @@ export const emailSequenceSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/business/sequences/${r.id}` } },
-      { key: 'activate', label: 'Activate', variant: 'primary', handler: { type: 'api', endpoint: '/api/email_sequences', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
-      { key: 'pause', label: 'Pause', handler: { type: 'api', endpoint: '/api/email_sequences', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'active' },
+      { key: 'activate', label: 'Activate', variant: 'primary', handler: { type: 'api', endpoint: '/api/email_sequences/{id}/activate', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'draft' },
+      { key: 'pause', label: 'Pause', handler: { type: 'api', endpoint: '/api/email_sequences/{id}/pause', method: 'PATCH' }, condition: (r: Record<string, unknown>) => r.status === 'active' },
     ],
     bulk: [],
     global: [

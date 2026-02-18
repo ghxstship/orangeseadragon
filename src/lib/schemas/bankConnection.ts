@@ -158,9 +158,9 @@ export const bankConnectionSchema = defineSchema({
   actions: {
     row: [
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/banking/${r.id}` } },
-      { key: 'sync', label: 'Sync Now', variant: 'default', handler: { type: 'api', endpoint: '/api/bank-connections/sync', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'active' },
+      { key: 'sync', label: 'Sync Now', variant: 'default', handler: { type: 'api', endpoint: '/api/bank-connections/{id}/sync', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'active' },
       { key: 'reconnect', label: 'Reconnect', variant: 'warning', handler: { type: 'modal', component: 'BankReconnectModal' }, condition: (r: Record<string, unknown>) => r.status === 'error' || r.status === 'disconnected' },
-      { key: 'disconnect', label: 'Disconnect', variant: 'destructive', handler: { type: 'api', endpoint: '/api/bank-connections', method: 'DELETE' }, confirm: { title: 'Disconnect Bank Account', message: 'Are you sure you want to disconnect this bank account? Transaction history will be preserved.' } },
+      { key: 'disconnect', label: 'Disconnect', variant: 'destructive', handler: { type: 'api', endpoint: '/api/bank-connections/{id}', method: 'DELETE' }, confirm: { title: 'Disconnect Bank Account', message: 'Are you sure you want to disconnect this bank account? Transaction history will be preserved.' } },
     ],
     bulk: [],
     global: [

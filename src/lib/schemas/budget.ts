@@ -484,7 +484,7 @@ export const budgetSchema = defineSchema({
       { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/budgets/${r.id}` } },
       { key: 'edit', label: 'Edit', handler: { type: 'navigate', path: (r: Record<string, unknown>) => `/finance/budgets/${r.id}/edit` } },
       { key: 'duplicate', label: 'Duplicate', handler: { type: 'function', fn: () => {} } },
-      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/budgets/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending_approval' },
+      { key: 'approve', label: 'Approve', variant: 'primary', handler: { type: 'api', endpoint: '/api/budgets/{id}/approve', method: 'POST' }, condition: (r: Record<string, unknown>) => r.status === 'pending_approval' },
     ],
     bulk: [
       { key: 'approve', label: 'Approve Selected', handler: { type: 'api', endpoint: '/api/budgets/bulk-approve', method: 'POST' } },

@@ -263,7 +263,7 @@ export function ForecastDashboard({
             const params = new URLSearchParams({ period_type: periodType });
             if (pipelineId) params.set('pipeline_id', pipelineId);
             
-            const res = await fetch(`/api/forecast?${params}`);
+            const res = await fetch(`/api/analytics/forecast?${params}`);
             if (!res.ok) throw new Error('Failed to load forecast');
             return res.json() as Promise<ForecastData>;
         },

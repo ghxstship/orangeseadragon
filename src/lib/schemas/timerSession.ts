@@ -162,9 +162,9 @@ export const timerSessionSchema = defineSchema({
 
   actions: {
     row: [
-      { key: 'stop', label: 'Stop', variant: 'destructive', handler: { type: 'api', endpoint: '/api/timer-sessions/stop', method: 'POST' }, condition: (r: Record<string, unknown>) => r.is_running === true },
-      { key: 'resume', label: 'Resume', variant: 'primary', handler: { type: 'api', endpoint: '/api/timer-sessions/resume', method: 'POST' }, condition: (r: Record<string, unknown>) => r.is_running === false && !r.time_entry_id },
-      { key: 'convert', label: 'Save as Time Entry', handler: { type: 'api', endpoint: '/api/timer-sessions/convert', method: 'POST' }, condition: (r: Record<string, unknown>) => r.is_running === false && !r.time_entry_id },
+      { key: 'stop', label: 'Stop', variant: 'destructive', handler: { type: 'api', endpoint: '/api/timer-sessions/{id}/stop', method: 'POST' }, condition: (r: Record<string, unknown>) => r.is_running === true },
+      { key: 'resume', label: 'Resume', variant: 'primary', handler: { type: 'api', endpoint: '/api/timer-sessions/{id}/resume', method: 'POST' }, condition: (r: Record<string, unknown>) => r.is_running === false && !r.time_entry_id },
+      { key: 'convert', label: 'Save as Time Entry', handler: { type: 'api', endpoint: '/api/timer-sessions/{id}/convert', method: 'POST' }, condition: (r: Record<string, unknown>) => r.is_running === false && !r.time_entry_id },
       { key: 'discard', label: 'Discard', variant: 'destructive', handler: { type: 'function', fn: () => {} }, condition: (r: Record<string, unknown>) => !r.time_entry_id },
     ],
     bulk: [],

@@ -177,10 +177,10 @@ export function ProposalBuilder({
   const handleExportPdf = useCallback(async () => {
     try {
       const data = getProposalData();
-      const res = await fetch('/api/proposals/export-pdf', {
+      const res = await fetch(`/api/proposals/${dealId}/export`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, dealId }),
+        body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error('Failed to export');
       const blob = await res.blob();

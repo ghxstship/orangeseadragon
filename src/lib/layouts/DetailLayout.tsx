@@ -49,7 +49,7 @@ export interface DetailLayoutProps<T extends object> {
   onEdit?: () => void;
   onDelete?: () => void;
   onShare?: () => void;
-  onAction?: (actionId: string) => void;
+  onAction?: (actionId: string) => void | Promise<void>;
   
   sidebarContent?: React.ReactNode;
   children: React.ReactNode;
