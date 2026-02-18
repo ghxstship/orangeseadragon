@@ -17,7 +17,7 @@ import { RecordHoverPreview } from "@/components/common/record-hover-preview";
 import { InlineEditCell } from "@/components/views/inline-edit-cell";
 import { cn } from "@/lib/utils";
 import { DEFAULT_LOCALE } from "@/lib/config";
-import { useBreakpoint } from "@/hooks/use-breakpoint";
+import { useBreakpoint } from "@/hooks/ui/use-breakpoint";
 import type { ViewType, DataViewState } from "@/lib/data-view-engine/hooks";
 import type {
   TableViewConfig,
@@ -32,7 +32,7 @@ import type {
   GridViewConfig,
   GanttViewConfig,
   ColumnFormat,
-} from "@/lib/schema/types";
+} from "@/lib/schema-engine/types";
 
 type ActionConfig = ActionDefinition;
 

@@ -8,8 +8,8 @@ import { AlertCircle, Clock, Filter, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/common/page-shell";
 import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
-import { useUser } from "@/hooks/use-supabase";
-import { useIncidents } from "@/hooks/use-incidents";
+import { useUser } from "@/hooks/auth/use-supabase";
+import { useIncidents } from "@/hooks/data/people/use-incidents";
 
 interface Incident {
   id: string;

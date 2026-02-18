@@ -1,30 +1,42 @@
 import { createClient } from "@/lib/supabase/server";
 import { unauthorized, forbidden } from "@/lib/api/response";
-import { evaluatePolicy, type DataSensitivity, type PolicyAction } from "@/lib/api/policy";
+import { evaluatePolicy, type PolicyAction } from "@/lib/api/policy";
 import { logWarn } from "@/lib/observability";
+import {
+  normalizeRoleSlug,
+  normalizeProjectRoleSlug,
+  getRoleLevel,
+  isResourceForbidden,
+  resolveEffectivePermissions,
+  type RoleSlug,
+  type PlatformRoleSlug,
+  type ProjectRoleSlug,
+  type Permission,
+  type PermissionOverride,
+} from "@/lib/rbac/roles";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 
 /**
- * ATLVS API Auth Guard — Single Source of Truth
+ * ATLVS API Auth Guard
  *
- * Provides reusable authentication and authorization checks for API routes.
- * Eliminates repeated auth boilerplate across 128+ route files.
+ * All role resolution derives from the canonical SSOT at `@/lib/rbac/roles`.
  *
- * Usage:
- *   const auth = await requireAuth();
- *   if (auth.error) return auth.error;
- *   const { user, supabase } = auth;
+ * Resolution paths:
+ *   1. Platform role: `user_roles` table → canonical slug normalization
+ *   2. Project role:  `project_members` table → project slug normalization
+ *   3. Overrides:     `permission_overrides` table → org + project feature flags
  *
- * With org membership:
- *   const auth = await requireOrgMember(orgId);
- *   if (auth.error) return auth.error;
- *   const { user, supabase, membership } = auth;
+ * Effective permissions = platform base ∪ project base ∪ explicit grants,
+ *   then org overrides applied, then project overrides applied.
  */
 
 // ============================================================================
 // TYPES
 // ============================================================================
+
+export type { RoleSlug, PlatformRoleSlug, ProjectRoleSlug, Permission };
+export type DataSensitivity = 'low' | 'medium' | 'high' | 'critical';
 
 export interface AuthContext {
   user: User;
@@ -42,8 +54,15 @@ export interface OrgMemberContext extends AuthContext {
   membership: {
     id: string;
     organization_id: string;
-    role_id: string | null;
+    role_slug: PlatformRoleSlug;
     role_name: string | null;
+    permissions: string[];
+    effectivePermissions: Set<Permission>;
+    project_role_slug: ProjectRoleSlug | null;
+    project_id: string | null;
+    department_scope: string[] | null;
+    project_scope: string[] | null;
+    venue_scope: string[] | null;
     status: string;
   };
 }
@@ -53,22 +72,6 @@ export interface OrgMemberError {
   supabase?: never;
   membership?: never;
   error: ReturnType<typeof unauthorized> | ReturnType<typeof forbidden>;
-}
-
-const ROLE_PRIORITY: Record<string, number> = {
-  owner: 100,
-  admin: 90,
-  manager: 70,
-  member: 50,
-  contractor: 40,
-  client: 20,
-  client_viewer: 15,
-  vendor: 10,
-};
-
-function normalizeRoleName(value: string | null | undefined): string | null {
-  if (!value) return null;
-  return value.trim().toLowerCase().replace(/\s+/g, "_");
 }
 
 function getMetadataOrganizationId(user: User): string | null {
@@ -111,10 +114,15 @@ export async function requireAuth(): Promise<AuthContext | AuthError> {
  * Verify the request is from an authenticated user who is an active member
  * of the specified organization.
  *
- * If no orgId is provided, resolves the user's primary organization.
+ * Resolution:
+ *   1. Platform role from `user_roles` (highest-level active role)
+ *   2. Project role from `project_members` (if projectId provided)
+ *   3. Permission overrides from `permission_overrides` (org + project)
+ *   4. Effective permissions computed via `resolveEffectivePermissions()`
  */
 export async function requireOrgMember(
-  orgId?: string
+  orgId?: string,
+  projectId?: string | null,
 ): Promise<OrgMemberContext | OrgMemberError> {
   const auth = await requireAuth();
   if (auth.error) return auth;
@@ -123,96 +131,135 @@ export async function requireOrgMember(
   const metadataOrgId = getMetadataOrganizationId(user);
   const resolvedOrgId = orgId ?? metadataOrgId;
 
-  let query = supabase
-    .from("organization_members")
-    .select(
-      `
-      id,
-      organization_id,
-      role_id,
-      status,
-      role:roles(name, slug)
-    `
-    )
-    .eq("user_id", user.id)
-    .eq("status", "active");
-
-  if (resolvedOrgId) {
-    query = query.eq("organization_id", resolvedOrgId);
+  if (!resolvedOrgId) {
+    return { error: forbidden("No organization context available") };
   }
 
-  const { data: member, error: memberError } = await query.maybeSingle();
-
-  if (member) {
-    const role = member.role as { name?: string; slug?: string } | null;
-    const normalizedRoleName =
-      normalizeRoleName(role?.slug) ?? normalizeRoleName(role?.name);
-
-    return {
-      user,
-      supabase,
-      membership: {
-        id: member.id,
-        organization_id: member.organization_id,
-        role_id: member.role_id,
-        role_name: normalizedRoleName,
-        status: member.status,
-      },
-    };
-  }
-
-  let roleQuery = supabase
+  // 1. Resolve platform roles
+  const { data: userRoles, error: roleError } = await supabase
     .from("user_roles")
-    .select("id, organization_id, role_slug, created_at")
+    .select("id, organization_id, role_slug, permissions, created_at")
     .eq("user_id", user.id)
-    .eq("is_active", true);
+    .eq("organization_id", resolvedOrgId)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false });
 
-  if (resolvedOrgId) {
-    roleQuery = roleQuery.eq("organization_id", resolvedOrgId);
+  if (roleError) {
+    logWarn('guard.requireOrgMember.roleLookupFailed', {
+      code: roleError.code,
+      orgId: resolvedOrgId,
+    });
+    return { error: forbidden("Failed to resolve organization membership") };
   }
 
-  const { data: userRoles, error: userRoleError } = await roleQuery.order("created_at", {
-    ascending: false,
+  if (!userRoles || userRoles.length === 0) {
+    return { error: forbidden("Not a member of this organization") };
+  }
+
+  const sortedRoles = [...userRoles].sort((a, b) => {
+    return getRoleLevel(normalizeRoleSlug(b.role_slug)) - getRoleLevel(normalizeRoleSlug(a.role_slug));
   });
 
-  if (userRoles && userRoles.length > 0) {
-    const sortedRoles = [...userRoles].sort((a, b) => {
-      const aPriority = ROLE_PRIORITY[normalizeRoleName(a.role_slug) || ""] ?? 0;
-      const bPriority = ROLE_PRIORITY[normalizeRoleName(b.role_slug) || ""] ?? 0;
-      return bPriority - aPriority;
-    });
-    const primaryRole = sortedRoles[0];
-    if (!primaryRole) return { error: forbidden('No roles found') };
+  const primaryRoleRow = sortedRoles[0]!;
+  const canonicalSlug = normalizeRoleSlug(primaryRoleRow.role_slug);
 
-    return {
-      user,
-      supabase,
-      membership: {
-        id: primaryRole.id,
-        organization_id: primaryRole.organization_id,
-        role_id: null,
-        role_name: normalizeRoleName(primaryRole.role_slug),
-        status: "active",
-      },
-    };
-  }
-
-  if (memberError) {
-    logWarn('guard.requireOrgMember.memberLookupFailed', {
-      code: memberError.code,
+  if (!canonicalSlug) {
+    logWarn('guard.requireOrgMember.unknownRoleSlug', {
+      slug: primaryRoleRow.role_slug,
       orgId: resolvedOrgId,
     });
+    return { error: forbidden(`Unknown role '${primaryRoleRow.role_slug}'`) };
   }
 
-  if (userRoleError) {
-    logWarn('guard.requireOrgMember.roleFallbackFailed', {
-      code: userRoleError.code,
-      orgId: resolvedOrgId,
-    });
+  // Aggregate explicit permissions from all active platform roles
+  const explicitPermissions: string[] = [];
+  for (const row of userRoles) {
+    if (Array.isArray(row.permissions)) {
+      for (const p of row.permissions) {
+        explicitPermissions.push(p);
+      }
+    }
   }
+
+  // 2. Resolve project role (if project context provided)
+  let projectRoleSlug: ProjectRoleSlug | null = null;
+  if (projectId) {
+    const { data: projectMember } = await supabase
+      .from("project_members")
+      .select("project_role_slug")
+      .eq("user_id", user.id)
+      .eq("project_id", projectId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (projectMember?.project_role_slug) {
+      projectRoleSlug = normalizeProjectRoleSlug(projectMember.project_role_slug);
+    }
+  }
+
+  // 3. Resolve permission overrides (org-level + project-level)
+  const overrides: PermissionOverride[] = [];
+  const overrideFilters = [
+    { scope: 'organization' as const, scope_id: resolvedOrgId },
+    ...(projectId ? [{ scope: 'project' as const, scope_id: projectId }] : []),
+  ];
+
+  for (const filter of overrideFilters) {
+    const { data: rows } = await supabase
+      .from("permission_overrides")
+      .select("scope, scope_id, user_id, role_slug, permission, action")
+      .eq("scope", filter.scope)
+      .eq("scope_id", filter.scope_id)
+      .eq("is_active", true)
+      .or(`user_id.eq.${user.id},user_id.is.null`)
+      .or(`role_slug.eq.${canonicalSlug},role_slug.is.null`);
+
+    if (rows) {
+      for (const row of rows) {
+        // Override applies if it targets this user, this role, or is global (both null)
+        const matchesUser = !row.user_id || row.user_id === user.id;
+        const matchesRole = !row.role_slug || row.role_slug === canonicalSlug;
+        if (matchesUser && matchesRole) {
+          overrides.push(row as PermissionOverride);
+        }
+      }
+    }
+  }
+
+  // 4. Compute effective permissions
+  const effectivePermissions = resolveEffectivePermissions(
+    canonicalSlug,
+    projectRoleSlug,
+    explicitPermissions,
+    overrides,
+  );
+
+  // 5. Resolve scoped access from organization_members (if present)
+  const { data: memberRow } = await supabase
+    .from("organization_members")
+    .select("department_scope, project_scope, venue_scope")
+    .eq("user_id", user.id)
+    .eq("organization_id", resolvedOrgId)
+    .eq("status", "active")
+    .maybeSingle();
 
   return {
-    error: forbidden("Not a member of this organization"),
+    user,
+    supabase,
+    membership: {
+      id: primaryRoleRow.id,
+      organization_id: primaryRoleRow.organization_id,
+      role_slug: canonicalSlug,
+      role_name: canonicalSlug,
+      permissions: Array.from(effectivePermissions),
+      effectivePermissions,
+      project_role_slug: projectRoleSlug,
+      project_id: projectId ?? null,
+      department_scope: (memberRow?.department_scope as string[] | null) ?? null,
+      project_scope: (memberRow?.project_scope as string[] | null) ?? null,
+      venue_scope: (memberRow?.venue_scope as string[] | null) ?? null,
+      status: "active",
+    },
   };
 }
 
@@ -224,7 +271,7 @@ export async function requireOrgMember(
  * Verify the request is from an org member with one of the allowed roles.
  */
 export async function requireRole(
-  allowedRoles: string[],
+  allowedRoles: RoleSlug[],
   orgId?: string
 ): Promise<OrgMemberContext | OrgMemberError> {
   const result = await requireOrgMember(orgId);
@@ -232,10 +279,10 @@ export async function requireRole(
 
   const { membership } = result;
 
-  if (!membership.role_name || !allowedRoles.includes(membership.role_name)) {
+  if (!allowedRoles.includes(membership.role_slug)) {
     return {
       error: forbidden(
-        `Role '${membership.role_name}' is not authorized. Required: ${allowedRoles.join(", ")}`
+        `Role '${membership.role_slug}' is not authorized. Required: ${allowedRoles.join(", ")}`
       ),
     };
   }
@@ -244,29 +291,82 @@ export async function requireRole(
 }
 
 // ============================================================================
+// RESOURCE ACCESS GUARD
+// ============================================================================
+
+/**
+ * Check if a user's role permits access to a specific resource (DB table).
+ * Returns null if allowed, or a 403 Response if forbidden.
+ * Derives restrictions from canonical PLATFORM_ROLE_DEFINITIONS.
+ */
+export function enforceResourceAccess(
+  auth: OrgMemberContext,
+  resource: string
+) {
+  if (isResourceForbidden(auth.membership.role_slug, resource)) {
+    return forbidden(`Role '${auth.membership.role_slug}' does not have access to ${resource}`);
+  }
+  return null;
+}
+
+// ============================================================================
 // POLICY GUARD (ABAC/RBAC)
 // ============================================================================
 
 /**
  * Verify the request is from an org member that satisfies centralized policy rules.
- * This guard combines org membership, role constraints, ownership, and sensitivity checks.
+ * Combines org membership, role constraints, effective permissions, ownership,
+ * sensitivity, access_grants, and scoped access.
  */
 export async function requirePolicy(
   action: PolicyAction,
   options?: {
     orgId?: string;
+    projectId?: string | null;
     resourceOwnerId?: string | null;
     resourceOrganizationId?: string | null;
     sensitivity?: DataSensitivity;
+    resource?: string;
+    resourceId?: string;
   }
 ): Promise<OrgMemberContext | OrgMemberError> {
-  const result = await requireOrgMember(options?.orgId);
+  const result = await requireOrgMember(options?.orgId, options?.projectId);
   if (result.error) return result;
+
+  // Resource-level access check
+  if (options?.resource) {
+    const resourceDenied = enforceResourceAccess(result, options.resource);
+    if (resourceDenied) return { error: resourceDenied };
+  }
+
+  // Access grant check for time-bound / NDA-gated resources
+  if (options?.resource && options?.resourceId && result.membership.role_slug !== 'owner' && result.membership.role_slug !== 'admin') {
+    const { data: grant } = await result.supabase
+      .from("access_grants")
+      .select("id, is_active, expires_at, requires_nda, nda_verified")
+      .eq("user_id", result.user.id)
+      .eq("organization_id", result.membership.organization_id)
+      .eq("resource_type", options.resource)
+      .eq("resource_id", options.resourceId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (grant) {
+      if (grant.expires_at && new Date(grant.expires_at) < new Date()) {
+        return { error: forbidden("Access grant has expired") };
+      }
+      if (grant.requires_nda && !grant.nda_verified) {
+        return { error: forbidden("NDA verification required for this resource") };
+      }
+    }
+  }
 
   const decision = evaluatePolicy(action, {
     actorId: result.user.id,
     actorOrganizationId: result.membership.organization_id,
-    roleName: result.membership.role_name,
+    roleSlug: result.membership.role_slug,
+    permissions: result.membership.permissions,
+    effectivePermissions: result.membership.effectivePermissions,
     resourceOwnerId: options?.resourceOwnerId,
     resourceOrganizationId:
       options?.resourceOrganizationId ?? result.membership.organization_id,

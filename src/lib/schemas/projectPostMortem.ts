@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 /**
  * PROJECT POST-MORTEM / AFTER ACTION REVIEW (AAR) SCHEMA (SSOT)

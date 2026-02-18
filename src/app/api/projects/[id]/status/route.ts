@@ -41,7 +41,7 @@ export async function POST(
         // Get current project
         const { data: project, error: fetchError } = await supabase
             .from('projects')
-            .select('*')
+            .select('id, status, organization_id')
             .eq('id', id)
             .single();
 

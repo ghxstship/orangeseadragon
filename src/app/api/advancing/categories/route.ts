@@ -1,33 +1,34 @@
 import { NextRequest } from 'next/server';
 import { requirePolicy } from '@/lib/api/guard';
-import { apiSuccess, apiCreated, badRequest, supabaseError } from '@/lib/api/response';
+import { apiSuccess, supabaseError } from '@/lib/api/response';
 
+/**
+ * GET /api/advancing/categories
+ * Returns platform catalog categories (SSOT). Read-only.
+ * Supports ?division=slug to filter by division.
+ * Supports ?includeItems=true to nest catalog items.
+ */
 export async function GET(request: NextRequest) {
   const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
   const { supabase } = auth;
   const searchParams = request.nextUrl.searchParams;
 
-  const parentCode = searchParams.get('parentCode');
-  const isActive = searchParams.get('isActive');
-  const includeChildren = searchParams.get('includeChildren') === 'true';
+  const divisionSlug = searchParams.get('division');
+  const includeItems = searchParams.get('includeItems') === 'true';
+
+  const selectFields = includeItems
+    ? 'id,slug,name,description,icon,color,sort_order,is_active,division_id,platform_catalog_divisions!inner(id,slug,name),platform_catalog_items(id,slug,name,description,icon,image_url,default_unit_cost,unit_of_measure,is_rentable,is_purchasable,is_service,sort_order,is_active)'
+    : 'id,slug,name,description,icon,color,sort_order,is_active,division_id,platform_catalog_divisions!inner(id,slug,name)';
 
   let query = supabase
-    .from('advance_categories')
-    .select('*')
+    .from('platform_catalog_categories')
+    .select(selectFields)
+    .eq('is_active', true)
     .order('sort_order', { ascending: true });
 
-  if (isActive !== null) {
-    query = query.eq('is_active', isActive === 'true');
-  }
-
-  // Filter by parent code prefix
-  if (parentCode) {
-    if (includeChildren) {
-      query = query.ilike('code', `${parentCode}%`);
-    } else {
-      query = query.eq('code', parentCode);
-    }
+  if (divisionSlug) {
+    query = query.eq('platform_catalog_divisions.slug', divisionSlug);
   }
 
   const { data, error } = await query;
@@ -36,50 +37,5 @@ export async function GET(request: NextRequest) {
     return supabaseError(error);
   }
 
-  // Build hierarchical structure if requested
-  if (includeChildren && data) {
-    const topLevel = data.filter(c => !c.parent_category_id);
-    const buildTree = (categories: typeof data, parentId: string | null): typeof data => {
-      return categories
-        .filter(c => c.parent_category_id === parentId)
-        .map(c => ({
-          ...c,
-          children: buildTree(categories, c.id),
-        }));
-    };
-    
-    return apiSuccess(buildTree(data, null), { flat: data, topLevel });
-  }
-
-  return apiSuccess(data, { total: data?.length || 0 });
-}
-
-export async function POST(request: NextRequest) {
-  const auth = await requirePolicy('entity.read');
-  if (auth.error) return auth.error;
-  const { supabase } = auth;
-
-  try {
-    const body = await request.json();
-
-    const insertData = {
-      ...body,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-
-    const { data, error } = await supabase
-      .from('advance_categories')
-      .insert(insertData)
-      .select()
-      .single();
-
-    if (error) {
-      return supabaseError(error);
-    }
-
-    return apiCreated(data);
-  } catch {
-    return badRequest('Invalid request body');
-  }
+  return apiSuccess(data ?? [], { total: data?.length || 0 });
 }

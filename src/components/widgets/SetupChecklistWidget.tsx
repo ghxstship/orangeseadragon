@@ -23,7 +23,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useSetupChecklist } from '@/hooks/use-setup-checklist';
+import { useSetupChecklist } from '@/hooks/ui/use-setup-checklist';
 
 interface ChecklistItem {
   key: string;

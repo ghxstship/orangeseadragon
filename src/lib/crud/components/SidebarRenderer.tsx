@@ -1,6 +1,6 @@
 'use client';
 
-import { EntitySchema, EntityRecord, SidebarSectionDefinition } from '@/lib/schema/types';
+import { EntitySchema, EntityRecord, SidebarSectionDefinition } from '@/lib/schema-engine/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {

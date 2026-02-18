@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { format, addDays, startOfWeek, endOfWeek, isSameDay, isWithinInterval } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
+import { getStatusSolidClass } from '@/lib/theming/semantic-colors';
 import { extractApiErrorMessage, getErrorMessage } from '@/lib/api/error-message';
 import { captureError } from '@/lib/observability';
 import { Button } from '@/components/ui/button';

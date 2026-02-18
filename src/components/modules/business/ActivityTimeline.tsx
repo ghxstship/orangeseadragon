@@ -26,7 +26,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { SEMANTIC_SOLID_CLASSES } from '@/lib/tokens/semantic-colors';
+import { SEMANTIC_SOLID_CLASSES } from '@/lib/theming/semantic-colors';
 
 // --- Types ---
 interface Activity {

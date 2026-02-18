@@ -15,7 +15,7 @@ export async function POST(
   try {
     const { data: quote, error: fetchErr } = await supabase
       .from('quotes')
-      .select('*')
+      .select('id, client_id, total_amount')
       .eq('id', id)
       .eq('organization_id', membership.organization_id)
       .single();
@@ -26,8 +26,8 @@ export async function POST(
       .from('invoices')
       .insert({
         organization_id: membership.organization_id,
-        company_id: quote.clientId || quote.client_id,
-        total_amount: quote.totalAmount || quote.total_amount,
+        company_id: quote.client_id,
+        total_amount: quote.total_amount,
         status: 'draft',
         source_quote_id: id,
       })

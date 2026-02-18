@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageShell } from '@/components/common/page-shell';
 import { StaggerList } from '@/components/ui/motion';
-import { useCopilotContext } from '@/hooks/use-copilot-context';
+import { useCopilotContext } from '@/hooks/ui/use-copilot-context';
 
 interface DashboardItem {
   id: string;

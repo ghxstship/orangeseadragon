@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Search, UserPlus, Users, Briefcase, MapPin } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 
 interface ConnectionSuggestion {
   id: string;

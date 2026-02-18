@@ -7,13 +7,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useBreakpoint } from "@/hooks/use-breakpoint";
+import { useBreakpoint } from "@/hooks/ui/use-breakpoint";
 import {
   ArrowLeft,
   Save,
   Share2,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  MoreHorizontal,
   FileText,
   MessageSquare,
   History,

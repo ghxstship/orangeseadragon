@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { CrudDetail } from '@/lib/crud/components/CrudDetail';
-import { conversationSchema } from '@/lib/schemas/conversation';
+import { conversationSchema } from '@/lib/schemas/core/conversation';
 
 interface PageProps {
   params: Promise<{ id: string }>;

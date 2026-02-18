@@ -15,7 +15,7 @@ import {
   WorkflowStep,
 } from "./types";
 import { WorkflowEngine, workflowEngine } from "./engine";
-import { allWorkflowTemplates } from "./templates";
+import { loadAllWorkflowTemplates } from "./templates";
 import { WorkflowPersistence, getWorkflowPersistence } from "./persistence";
 import { captureError } from "@/lib/observability";
 
@@ -355,19 +355,22 @@ export class WorkflowService {
 
   // ==================== Template Management ====================
 
-  getTemplates(category?: string): WorkflowTemplate[] {
+  async getTemplates(category?: string): Promise<WorkflowTemplate[]> {
+    const all = await loadAllWorkflowTemplates();
     if (category) {
-      return allWorkflowTemplates.filter((t: WorkflowTemplate) => t.category === category);
+      return all.filter((t: WorkflowTemplate) => t.category === category);
     }
-    return [...allWorkflowTemplates];
+    return [...all];
   }
 
-  getTemplate(id: string): WorkflowTemplate | null {
-    return allWorkflowTemplates.find((t: WorkflowTemplate) => t.id === id) ?? null;
+  async getTemplate(id: string): Promise<WorkflowTemplate | null> {
+    const all = await loadAllWorkflowTemplates();
+    return all.find((t: WorkflowTemplate) => t.id === id) ?? null;
   }
 
-  getTemplateCategories(): string[] {
-    const categories = new Set(allWorkflowTemplates.map((t: WorkflowTemplate) => t.category));
+  async getTemplateCategories(): Promise<string[]> {
+    const all = await loadAllWorkflowTemplates();
+    const categories = new Set(all.map((t: WorkflowTemplate) => t.category));
     return Array.from(categories).sort();
   }
 
@@ -377,7 +380,7 @@ export class WorkflowService {
     organizationId: string,
     createdBy: string
   ): Promise<Workflow | null> {
-    const template = this.getTemplate(templateId);
+    const template = await this.getTemplate(templateId);
     if (!template) return null;
 
     // Validate required variables

@@ -20,7 +20,7 @@ export async function POST(
     try {
         const { data: timer } = await supabase
             .from('timer_sessions')
-            .select('*')
+            .select('id, is_running, last_resumed_at, started_at, accumulated_seconds')
             .eq('id', id)
             .eq('user_id', user.id)
             .single();

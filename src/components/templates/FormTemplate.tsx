@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageLayoutRenderer } from '../ComponentRegistry';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 
 interface FormTemplateProps {
   layoutSlug?: string;

@@ -22,7 +22,7 @@ export async function POST(
         // Get the expense
         const { data: expense, error: fetchError } = await supabase
             .from('expenses')
-            .select('*')
+            .select('id, status, is_reimbursable, receipt_url, organization_id, user_id, amount, description')
             .eq('id', id)
             .single();
 
@@ -59,7 +59,7 @@ export async function POST(
         // Find applicable approval workflow
         const { data: workflow } = await supabase
             .from('approval_workflows')
-            .select('*')
+            .select('id, approval_type, config')
             .eq('organization_id', expense.organization_id)
             .eq('entity_type', 'expense')
             .eq('is_active', true)

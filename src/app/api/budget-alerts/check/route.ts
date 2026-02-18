@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     const { data: rules, error: rulesError } = await supabase
       .from('budget_alert_rules')
-      .select('*')
+      .select('id, organization_id, budget_id, threshold_percent, last_triggered_at, recipients, channel, enabled')
       .eq('enabled', true);
 
     if (rulesError) {

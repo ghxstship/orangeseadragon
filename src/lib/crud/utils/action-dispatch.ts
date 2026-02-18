@@ -1,4 +1,4 @@
-import type { ActionDefinition, EntitySchema, EntityRecord } from '@/lib/schema/types';
+import type { ActionDefinition, EntitySchema, EntityRecord } from '@/lib/schema-engine/types';
 import { captureError } from '@/lib/observability';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- matches useToast/useConfirmation signatures

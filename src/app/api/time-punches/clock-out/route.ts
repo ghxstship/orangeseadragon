@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // Find active time entry
     const { data: entry, error: entryError } = await supabase
       .from('time_entries')
-      .select('*')
+      .select('id, event_id, shift_id, clock_in_time')
       .eq('employee_id', employee.id)
       .is('clock_out_time', null)
       .eq('status', 'active')

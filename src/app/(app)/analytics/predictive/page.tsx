@@ -18,7 +18,7 @@ import {
   Users, Receipt, AlertTriangle, RefreshCw, Sparkles,
   ArrowUpRight, ArrowDownRight, Activity,
 } from "lucide-react";
-import { useCopilotContext } from "@/hooks/use-copilot-context";
+import { useCopilotContext } from "@/hooks/ui/use-copilot-context";
 import { captureError } from '@/lib/observability';
 
 // ── Types ────────────────────────────────────────────────────────────────

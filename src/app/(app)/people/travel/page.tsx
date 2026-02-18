@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { MapView, MapMarker } from '@/components/views/map-view';
 import { PageShell } from '@/components/common/page-shell';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { createClient } from '@/lib/supabase/client';
 import { captureError } from '@/lib/observability';
 

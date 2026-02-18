@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { EntityRecord, EntitySchema } from '@/lib/schema/types';
+import { EntityRecord, EntitySchema } from '@/lib/schema-engine/types';
 import { keepPreviousData, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { throwApiErrorResponse } from '@/lib/api/error-message';
 

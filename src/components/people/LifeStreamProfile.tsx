@@ -5,7 +5,7 @@ import { Timeline, TimelineItem, TimelineDot, TimelineContent, TimelineHeader, T
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, Briefcase, Star } from 'lucide-react';
-import type { EntityRecord } from '@/lib/schema/types';
+import type { EntityRecord } from '@/lib/schema-engine/types';
 
 interface SkillDataPoint {
     subject: string;

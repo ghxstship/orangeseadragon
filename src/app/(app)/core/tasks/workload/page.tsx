@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { WorkloadView, TeamMember, WorkloadViewSkeleton } from "@/components/views/WorkloadView";
-import { useUser } from "@/hooks/use-supabase";
-import { useTasks } from "@/hooks/use-tasks";
+import { useUser } from "@/hooks/auth/use-supabase";
+import { useTasks } from "@/hooks/data/core/use-tasks";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { captureError } from '@/lib/observability';

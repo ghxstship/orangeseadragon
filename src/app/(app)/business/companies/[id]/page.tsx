@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from 'react';
 import { EntityProfileLayout } from '@/components/modules/business/EntityProfileLayout';
 import { useCrud } from '@/lib/crud/hooks/useCrud';
-import { companySchema } from '@/lib/schemas/company';
+import { companySchema } from '@/lib/schemas/crm/company';
 import { TabsContent } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

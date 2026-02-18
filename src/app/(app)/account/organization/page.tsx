@@ -2,7 +2,6 @@
 
 import { SettingsTemplate, SettingsTab } from '@/components/templates/SettingsTemplate';
 import { createClient } from '@/lib/supabase/client';
-import type { Json } from '@/types/database';
 
 const organizationTabs: SettingsTab[] = [
   {
@@ -51,40 +50,15 @@ export default function OrganizationSettingsPage() {
     const industry = typeof data.industry === 'string' ? data.industry.trim() : '';
     const companySize = typeof data.size === 'string' ? data.size.trim() : '';
 
-    const { data: orgData } = await supabase
-      .from('organizations')
-      .select('metadata')
-      .eq('id', orgId)
-      .single();
-
-    const existingMetadata = orgData?.metadata;
-    const nextMetadata: Record<string, Json | undefined> =
-      existingMetadata && typeof existingMetadata === 'object' && !Array.isArray(existingMetadata)
-        ? { ...(existingMetadata as Record<string, Json | undefined>) }
-        : {};
-
-    if (industry) {
-      nextMetadata.industry = industry;
-    } else {
-      delete nextMetadata.industry;
-    }
-
-    if (companySize) {
-      nextMetadata.company_size = companySize;
-    } else {
-      delete nextMetadata.company_size;
-    }
-
-    const updatePayload = {
-      website: website || null,
-      description: description || null,
-      metadata: Object.keys(nextMetadata).length > 0 ? (nextMetadata as Json) : null,
-      ...(name ? { name } : {}),
-    };
-
     await supabase
       .from('organizations')
-      .update(updatePayload)
+      .update({
+        website: website || null,
+        description: description || null,
+        industry: industry || null,
+        company_size: companySize || null,
+        ...(name ? { name } : {}),
+      })
       .eq('id', orgId);
   };
 

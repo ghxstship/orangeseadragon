@@ -32,9 +32,9 @@ import {
 } from '@/components/ui/select';
 import { PageShell } from '@/components/common/page-shell';
 import { FadeIn } from '@/components/ui/motion';
-import { useCopilotContext } from '@/hooks/use-copilot-context';
-import { useFinanceDashboard } from '@/hooks/use-finance-dashboard';
-import { useUser } from '@/hooks/use-supabase';
+import { useCopilotContext } from '@/hooks/ui/use-copilot-context';
+import { useFinanceDashboard } from '@/hooks/data/finance/use-finance-dashboard';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { formatCurrency } from '@/lib/utils';
 
 export default function FinancialDashboardPage() {

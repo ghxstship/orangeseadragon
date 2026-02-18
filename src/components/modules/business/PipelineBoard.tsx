@@ -25,8 +25,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { createPortal } from 'react-dom';
 
 import { useCrud } from '@/lib/crud/hooks/useCrud';
-import type { EntityRecord, EntitySchema } from '@/lib/schema/types';
-import { dealSchema } from '@/lib/schemas/deal';
+import type { EntityRecord, EntitySchema } from '@/lib/schema-engine/types';
+import { dealSchema } from '@/lib/schemas/crm/deal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';

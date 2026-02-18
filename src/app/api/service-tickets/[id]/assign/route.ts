@@ -23,7 +23,7 @@ export async function POST(
     // Get the service ticket
     const { data: ticket, error: fetchError } = await supabase
       .from('service_tickets')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

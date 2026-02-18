@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   try {
-    const auth = await requireRole(['owner', 'admin', 'manager', 'member', 'contractor', 'client', 'vendor']);
+    const auth = await requireRole(['owner', 'admin', 'manager', 'team', 'contractor', 'client', 'vendor']);
     if (auth.error) return auth.error;
     const { user, supabase } = auth;
 

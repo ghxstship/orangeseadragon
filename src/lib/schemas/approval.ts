@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 /**
  * APPROVAL REQUEST ENTITY SCHEMA (SSOT)

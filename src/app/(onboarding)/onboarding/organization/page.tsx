@@ -52,29 +52,24 @@ export default function OnboardingOrganizationPage() {
       if (!user) throw new Error('Not authenticated');
 
       const orgId = user.user_metadata?.organization_id;
+      const orgPayload = {
+        name: formData.name,
+        website: formData.website || null,
+        industry: formData.industry || null,
+        company_size: formData.size || null,
+        logo_url: formData.logoUrl || null,
+      };
+
       if (orgId) {
         await supabase
           .from('organizations')
-          .update({
-            name: formData.name,
-            website: formData.website || null,
-            industry: formData.industry || null,
-            company_size: formData.size || null,
-            logo_url: formData.logoUrl || null,
-          })
+          .update(orgPayload)
           .eq('id', orgId);
       } else {
         const slug = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         const { data: org, error: orgError } = await supabase
           .from('organizations')
-          .insert({
-            name: formData.name,
-            slug,
-            website: formData.website || null,
-            industry: formData.industry || null,
-            company_size: formData.size || null,
-            logo_url: formData.logoUrl || null,
-          })
+          .insert({ ...orgPayload, slug })
           .select('id')
           .single();
 

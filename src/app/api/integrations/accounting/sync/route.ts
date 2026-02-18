@@ -9,7 +9,7 @@ import { captureError } from '@/lib/observability';
  */
 export async function POST(request: NextRequest) {
   try {
-    const auth = await requireRole(['owner', 'admin', 'finance_manager']);
+    const auth = await requireRole(['owner', 'admin', 'controller']);
     if (auth.error) return auth.error;
     const { user, supabase, membership } = auth;
 
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const auth = await requireRole(['owner', 'admin', 'finance_manager']);
+    const auth = await requireRole(['owner', 'admin', 'controller']);
     if (auth.error) return auth.error;
     const { supabase, membership } = auth;
 

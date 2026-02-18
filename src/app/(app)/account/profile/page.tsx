@@ -137,14 +137,20 @@ export default function ProfileSettingsPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    const fullName = [data.firstName, data.lastName].filter(Boolean).join(' ');
+    const firstName = typeof data.firstName === 'string' ? data.firstName.trim() : '';
+    const lastName = typeof data.lastName === 'string' ? data.lastName.trim() : '';
+    const fullName = [firstName, lastName].filter(Boolean).join(' ');
     const avatarUrl = typeof data.avatar === 'string' ? data.avatar.trim() : '';
+    const jobTitle = typeof data.jobTitle === 'string' ? data.jobTitle.trim() : '';
+    const bio = typeof data.bio === 'string' ? data.bio.trim() : '';
+    const phone = typeof data.phone === 'string' ? data.phone.trim() : '';
+
     await supabase.auth.updateUser({
       data: {
         full_name: fullName || undefined,
-        job_title: data.jobTitle || undefined,
-        bio: data.bio || undefined,
-        phone: data.phone || undefined,
+        job_title: jobTitle || undefined,
+        bio: bio || undefined,
+        phone: phone || undefined,
         theme: data.theme || undefined,
         timezone: data.timezone || undefined,
         date_format: data.date_format || undefined,
@@ -154,8 +160,13 @@ export default function ProfileSettingsPage() {
     await supabase
       .from('users')
       .update({
+        full_name: fullName || undefined,
+        first_name: firstName || null,
+        last_name: lastName || null,
+        job_title: jobTitle || null,
+        bio: bio || null,
+        phone: phone || null,
         avatar_url: avatarUrl || null,
-        ...(fullName ? { full_name: fullName } : {}),
       })
       .eq('id', user.id);
   };

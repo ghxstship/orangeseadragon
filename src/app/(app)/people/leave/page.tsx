@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { leaveRequestSchema } from '@/lib/schemas/leaveRequest';
+import { leaveRequestSchema } from '@/lib/schemas/people/leaveRequest';
 import { LeaveCalendar } from '@/components/people/LeaveCalendar';
 import { LeaveRequestForm } from '@/components/people/LeaveRequestForm';
 import { PageShell } from '@/components/common/page-shell';
@@ -12,7 +12,7 @@ import {
   DialogContent,
 } from '@/components/ui/dialog';
 import { createClient } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { useRouter } from 'next/navigation';
 import { captureError } from '@/lib/observability';
 

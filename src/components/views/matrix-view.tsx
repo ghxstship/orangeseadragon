@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useBreakpoint } from "@/hooks/use-breakpoint";
-import type { MatrixViewConfig } from "@/lib/schema/types";
+import { useBreakpoint } from "@/hooks/ui/use-breakpoint";
+import type { MatrixViewConfig } from "@/lib/schema-engine/types";
 
 interface MatrixItem<TData extends Record<string, unknown> = Record<string, unknown>> {
     id: string;

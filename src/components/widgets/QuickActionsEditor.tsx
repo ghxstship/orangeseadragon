@@ -31,7 +31,7 @@ import {
   Activity,
   RotateCcw,
 } from 'lucide-react';
-import { QuickAction, AVAILABLE_ACTIONS } from '@/hooks/use-quick-actions';
+import { QuickAction, AVAILABLE_ACTIONS } from '@/hooks/ui/use-quick-actions';
 import { cn } from '@/lib/utils';
 
 interface QuickActionsEditorProps {

@@ -35,7 +35,7 @@ export async function GET(
     if (attachment?.file_path) {
       // Download from Supabase Storage
       const { data: fileData, error: downloadError } = await supabase.storage
-        .from('attachments')
+        .from('files')
         .download(attachment.file_path);
 
       if (downloadError) {

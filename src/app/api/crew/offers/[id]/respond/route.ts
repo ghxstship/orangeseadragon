@@ -28,7 +28,7 @@ export async function POST(
     // Fetch the offer
     const { data: offer, error: fetchError } = await supabase
       .from('crew_offers')
-      .select('*')
+      .select('id, status, user_id, expires_at, booking_id, organization_id, offered_by')
       .eq('id', id)
       .single();
 

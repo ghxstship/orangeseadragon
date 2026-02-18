@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EntitySchema, EntityRecord } from '@/lib/schema/types';
+import { EntitySchema, EntityRecord } from '@/lib/schema-engine/types';
 import { useCrud } from '../hooks/useCrud';
 import { DetailLayout } from '@/lib/layouts';
 import { TabRenderer } from './TabRenderer';

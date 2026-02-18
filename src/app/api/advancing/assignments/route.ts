@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
         actual_delivery,
         created_at,
         notes,
-        category:advance_categories(id, code, name),
+        platform_catalog_category:platform_catalog_categories(id, slug, name, icon, color),
+        platform_catalog_item:platform_catalog_items(id, slug, name, icon, unit_of_measure, platform_catalog_categories(id, slug, name, color)),
         production_advance:production_advances(id, advance_code, event_id),
         assigned_user:users!advance_items_assigned_to_fkey(id, full_name, avatar_url),
         vendor:companies(id, name)
@@ -67,9 +68,9 @@ export async function GET(request: NextRequest) {
         const assignedUser = Array.isArray(item.assigned_user)
           ? item.assigned_user[0]
           : item.assigned_user;
-        const cat = Array.isArray(item.category)
-          ? item.category[0]
-          : item.category;
+        const cat = Array.isArray(item.platform_catalog_category)
+          ? item.platform_catalog_category[0]
+          : item.platform_catalog_category;
         const vendor = Array.isArray(item.vendor)
           ? item.vendor[0]
           : item.vendor;

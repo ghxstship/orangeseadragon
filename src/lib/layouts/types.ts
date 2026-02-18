@@ -1,7 +1,7 @@
 /**
  * LAYOUT TYPES
  * 
- * Re-exports EntitySchema types as SSOT for entity layouts.
+ * Type definitions for the unified layout system.
  * Defines additional types for non-entity layouts (Dashboard, Wizard, etc.)
  */
 
@@ -26,7 +26,7 @@ export type {
   SidebarConfig,
   SidebarSectionDefinition,
   OverviewConfig,
-} from '@/lib/schema/types';
+} from '@/lib/schema-engine/types';
 
 
 // ============================================================================
@@ -137,9 +137,6 @@ export interface WorkspaceTab {
   icon?: string;
   badge?: { show: boolean; countField?: string };
 }
-
-// Alias for backward compatibility
-export type TabConfig = WorkspaceTab;
 
 export interface WorkspaceLayoutConfig {
   title: string;

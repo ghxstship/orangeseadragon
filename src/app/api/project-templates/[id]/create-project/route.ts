@@ -15,7 +15,7 @@ export async function POST(
   try {
     const { data: template, error: fetchErr } = await supabase
       .from('project_templates')
-      .select('*')
+      .select('id, name, production_type, usage_count')
       .eq('id', id)
       .eq('organization_id', membership.organization_id)
       .single();

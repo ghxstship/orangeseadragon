@@ -8,14 +8,17 @@ import { captureError } from '@/lib/observability';
 export async function POST() {
   const auth = await requirePolicy('entity.read');
   if (auth.error) return auth.error;
-  const { supabase, user } = auth;
+  const { supabase, user, membership } = auth;
 
   try {
+    const now = new Date().toISOString();
+    const orgId = membership?.organization_id ?? null;
+
     // Update user metadata to mark onboarding complete
     const { error: metaError } = await supabase.auth.updateUser({
       data: {
         onboarding_completed: true,
-        onboarding_completed_at: new Date().toISOString(),
+        onboarding_completed_at: now,
       },
     });
 
@@ -23,14 +26,21 @@ export async function POST() {
       return supabaseError({ message: metaError.message, code: metaError.name });
     }
 
-    // Also record in onboarding_progress table if it exists
+    // Update the users table
     await supabase
-      .from('onboarding_progress')
-      .upsert({
-        user_id: user.id,
-        status: 'completed',
-        completed_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
+      .from('users')
+      .update({ onboarding_completed_at: now })
+      .eq('id', user.id);
+
+    // Update user_onboarding_state to mark completed
+    await supabase
+      .from('user_onboarding_state')
+      .update({
+        is_completed: true,
+        completed_at: now,
+      })
+      .eq('user_id', user.id)
+      .eq('organization_id', orgId);
 
     return apiSuccess({ completed: true });
   } catch (err) {

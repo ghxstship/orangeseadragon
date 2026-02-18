@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Save, X, Loader2 } from "lucide-react";
-import type { EntitySchema } from "@/lib/schema/types";
+import type { EntitySchema } from "@/lib/schema-engine/types";
 
 /**
  * FORM LAYOUT

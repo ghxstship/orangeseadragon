@@ -32,8 +32,10 @@ export async function GET(request: NextRequest) {
         estimated_cost,
         actual_cost,
         production_advance_id,
-        catalog_item_id,
-        category:advance_categories(id, code, name),
+        platform_catalog_item_id,
+        platform_catalog_category_id,
+        platform_catalog_category:platform_catalog_categories(id, slug, name, icon, color),
+        platform_catalog_item:platform_catalog_items(id, slug, name, icon, unit_of_measure, platform_catalog_categories(id, slug, name, color)),
         production_advance:production_advances(id, advance_code, event_id, status)
       `, { count: 'exact' })
       .is('deleted_at', null)
@@ -54,17 +56,17 @@ export async function GET(request: NextRequest) {
     const allotments = (items || [])
       .filter((item) => {
         if (!category) return true;
-        const cat = Array.isArray(item.category) ? item.category[0] : item.category;
+        const cat = Array.isArray(item.platform_catalog_category) ? item.platform_catalog_category[0] : item.platform_catalog_category;
         return cat?.name?.toLowerCase() === category.toLowerCase() ||
-               cat?.code?.toLowerCase().startsWith(category.toLowerCase());
+               cat?.slug?.toLowerCase().startsWith(category.toLowerCase());
       })
       .map((item) => {
         const advance = Array.isArray(item.production_advance)
           ? item.production_advance[0]
           : item.production_advance;
-        const cat = Array.isArray(item.category)
-          ? item.category[0]
-          : item.category;
+        const cat = Array.isArray(item.platform_catalog_category)
+          ? item.platform_catalog_category[0]
+          : item.platform_catalog_category;
 
         const qtyAllotted = item.quantity_required || 0;
         const qtyFulfilled = item.quantity_confirmed || 0;

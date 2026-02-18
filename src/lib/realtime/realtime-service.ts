@@ -31,7 +31,7 @@ const ENTITY_TABLE_MAP: Record<EntityType, TableName> = {
   hospitality_request: 'hospitality_requests',
   tech_spec: 'tech_specs',
   advance_item: 'advance_reports',
-  production_advance: 'site_advances',
+  production_advance: 'production_advances',
   crew_member: 'crew_calls',
   crew_assignment: 'crew_assignments',
 };
@@ -316,6 +316,71 @@ export class RealtimeService {
             }
             this.listeners.delete(channelKey);
           }
+        }
+      },
+    };
+  }
+
+  /**
+   * Send a broadcast message to a channel (ephemeral, no DB persistence).
+   * Useful for cursor positions, typing indicators, live reactions, etc.
+   */
+  broadcast(
+    channelName: string,
+    event: string,
+    payload: Record<string, unknown>
+  ): void {
+    let channel = this.channels.get(`broadcast:${channelName}`);
+
+    if (!channel) {
+      channel = this.supabase
+        .channel(`broadcast:${channelName}`, {
+          config: { broadcast: { self: false } },
+        })
+        .subscribe();
+      this.channels.set(`broadcast:${channelName}`, channel);
+    }
+
+    channel.send({
+      type: 'broadcast',
+      event,
+      payload,
+    });
+  }
+
+  /**
+   * Subscribe to broadcast messages on a channel.
+   */
+  onBroadcast(
+    channelName: string,
+    event: string,
+    callback: (payload: Record<string, unknown>) => void
+  ): RealtimeSubscription {
+    const channelKey = `broadcast:${channelName}`;
+
+    let channel = this.channels.get(channelKey);
+    if (!channel) {
+      channel = this.supabase
+        .channel(channelKey, {
+          config: { broadcast: { self: false } },
+        })
+        .on('broadcast', { event }, ({ payload }) => {
+          callback(payload as Record<string, unknown>);
+        })
+        .subscribe();
+      this.channels.set(channelKey, channel);
+    } else {
+      channel.on('broadcast', { event }, ({ payload }) => {
+        callback(payload as Record<string, unknown>);
+      });
+    }
+
+    return {
+      unsubscribe: () => {
+        const ch = this.channels.get(channelKey);
+        if (ch) {
+          ch.unsubscribe();
+          this.channels.delete(channelKey);
         }
       },
     };

@@ -20,7 +20,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
-import { useUser, useSupabase } from "@/hooks/use-supabase";
+import { useUser, useSupabase } from "@/hooks/auth/use-supabase";
 import { useQuery } from "@tanstack/react-query";
 
 interface InvoiceSummary {

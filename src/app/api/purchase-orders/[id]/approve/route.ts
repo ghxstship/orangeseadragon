@@ -21,7 +21,7 @@ export async function POST(
     // Get the purchase order
     const { data: po, error: fetchError } = await supabase
       .from('purchase_orders')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

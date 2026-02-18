@@ -21,7 +21,7 @@ export async function POST(
         // Get the invoice
         const { data: invoice, error: fetchError } = await supabase
             .from('invoices')
-            .select('*')
+            .select('id, status, due_date, organization_id')
             .eq('id', id)
             .single();
 

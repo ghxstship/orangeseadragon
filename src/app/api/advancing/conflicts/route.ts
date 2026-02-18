@@ -157,7 +157,7 @@ async function detectItemConflicts(supabase: any, itemId: string) {
     .select(`
       *,
       production_advance:production_advances(id, event_id, organization_id, advance_code),
-      catalog_item:advancing_catalog_items(id, name)
+      platform_catalog_item:platform_catalog_items(id, slug, name, icon, unit_of_measure)
     `)
     .eq('id', itemId)
     .single();

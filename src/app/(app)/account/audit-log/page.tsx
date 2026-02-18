@@ -19,9 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { SEMANTIC_BADGE_CLASSES } from '@/lib/tokens/semantic-colors';
+import { SEMANTIC_BADGE_CLASSES } from '@/lib/theming/semantic-colors';
 import { createClient } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { PageShell } from '@/components/common/page-shell';
 
 interface AuditEntry {

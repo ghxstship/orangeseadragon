@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { EntitySchema, EntityRecord } from '@/lib/schema/types';
+import { EntitySchema, EntityRecord } from '@/lib/schema-engine/types';
 import { useCrud } from '../hooks/useCrud';
 import { useViewPreference } from '../hooks/useViewPreference';
 import { useColumnPreference } from '../hooks/useColumnPreference';
 import { ListLayout } from '@/lib/layouts';
-import { ViewRenderer } from '@/lib/views/components/ViewRenderer';
+import { ViewRenderer } from './ViewRenderer';
 import { dispatchAction } from '../utils/action-dispatch';
 import { useConfirmation } from '@/components/common/confirmation-dialog';
 import { useToast } from '@/components/ui/use-toast';

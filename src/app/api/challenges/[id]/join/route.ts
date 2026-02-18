@@ -15,7 +15,7 @@ export async function POST(
 
     const { data: challenge, error: fetchError } = await supabase
       .from('challenges')
-      .select('*')
+      .select('id, status, participant_count')
       .eq('id', id)
       .single();
 

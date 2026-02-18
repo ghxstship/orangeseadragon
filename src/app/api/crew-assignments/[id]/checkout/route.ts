@@ -75,7 +75,7 @@ export async function POST(
 
         let { data: timesheet } = await supabase
             .from('timesheets')
-            .select('*')
+            .select('id, total_regular_hours, total_overtime_hours, total_amount')
             .eq('user_id', assignment.user_id)
             .eq('organization_id', assignment.organization_id)
             .gte('period_start', periodStart.toISOString().split('T')[0])

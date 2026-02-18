@@ -27,6 +27,7 @@ begin
 end;
 $$;
 
+alter table audit_logs add column if not exists "timestamp" timestamptz;
 alter table audit_logs add column if not exists request_id text;
 alter table audit_logs add column if not exists correlation_id text;
 alter table audit_logs add column if not exists retention_until timestamptz;

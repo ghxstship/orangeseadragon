@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useMyTasks, useCompleteTask } from "@/hooks/use-my-tasks";
+import { useMyTasks, useCompleteTask } from "@/hooks/data/core/use-my-tasks";
 import { StatCard, StatGrid } from "@/components/common/stat-card";
 import { PageShell } from "@/components/common/page-shell";
 import { ContextualEmptyState, PageErrorState } from "@/components/common/contextual-empty-state";

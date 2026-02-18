@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/common/page-shell';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import { StaggerList, StaggerItem } from '@/components/ui/motion';
-import { useCopilotContext } from '@/hooks/use-copilot-context';
+import { useCopilotContext } from '@/hooks/ui/use-copilot-context';
 import {
   Package,
   CheckCircle,

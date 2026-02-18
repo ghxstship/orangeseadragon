@@ -14,7 +14,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    const auth = await requireRole(['owner', 'admin', 'finance_manager']);
+    const auth = await requireRole(['owner', 'admin', 'controller']);
     if (auth.error) return auth.error;
     const { user, supabase, membership } = auth;
 
@@ -28,7 +28,7 @@ export async function POST(
     // Fetch fiscal period
     const { data: period, error: fetchError } = await supabase
       .from('fiscal_periods')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .eq('organization_id', membership.organization_id)
       .single();

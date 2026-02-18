@@ -17,7 +17,7 @@ export async function POST(
     // Get the payroll run
     const { data: payrollRun, error: fetchError } = await supabase
       .from('payroll_runs')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

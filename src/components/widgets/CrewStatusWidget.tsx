@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
-import { useUser } from '@/hooks/use-supabase';
-import { useShifts } from '@/hooks/use-shifts';
+import { getStatusSolidClass } from '@/lib/theming/semantic-colors';
+import { useUser } from '@/hooks/auth/use-supabase';
+import { useShifts } from '@/hooks/data/people/use-shifts';
 
 interface CrewStatusWidgetProps {
   title?: string;

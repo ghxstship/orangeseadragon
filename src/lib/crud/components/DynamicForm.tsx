@@ -3,10 +3,10 @@
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { EntityRecord, EntitySchema, FormSectionDefinition } from '@/lib/schema/types';
-import { FieldRenderer } from '../../components/fields';
+import { EntityRecord, EntitySchema, FormSectionDefinition } from '@/lib/schema-engine/types';
+import { FieldRenderer } from '@/components/forms/fields';
 import { Button } from '@/components/ui/button';
-import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
+import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema-engine/generateZodSchema';
 import { captureError } from '@/lib/observability';
 
 type FormData = Record<string, unknown>;
@@ -60,7 +60,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
   };
 
   const onFormSubmit = async (data: Record<string, unknown>) => {
-    // Run schema-level validation (backward compat)
+    // Run schema-level validation
     const validationErrors: Record<string, string> = {};
     const recordContext: EntityRecord = { id: String(data.id ?? ''), ...data };
 
@@ -71,7 +71,7 @@ export function DynamicForm({ schema, mode, initialData, onSubmit, autosave }: D
       }
     }
 
-    // Run field-level validation (backward compat)
+    // Run field-level validation
     Object.entries(schema.data.fields).forEach(([fieldKey, fieldDef]) => {
       if (fieldDef.validate) {
         const error = fieldDef.validate(data[fieldKey], {

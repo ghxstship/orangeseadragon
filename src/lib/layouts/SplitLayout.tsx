@@ -22,7 +22,7 @@ import {
   PanelLeft,
 } from "lucide-react";
 import type { SplitLayoutConfig } from "./types";
-import { useBreakpoint } from "@/hooks/use-breakpoint";
+import { useBreakpoint } from "@/hooks/ui/use-breakpoint";
 
 /**
  * SPLIT LAYOUT

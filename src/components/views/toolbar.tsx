@@ -271,7 +271,8 @@ export interface ToolbarProps {
     bulk?: ToolbarAction[];
   };
   import?: {
-    onImport: (file: File) => void;
+    onImport?: (file: File) => void;
+    onClick?: () => void;
     accept?: string;
   };
   export?: {
@@ -514,7 +515,7 @@ export function Toolbar({
               onChange={handleFileSelect}
               className="hidden"
             />
-            <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} className="hidden md:inline-flex">
+            <Button variant="outline" size="sm" onClick={() => importConfig.onClick ? importConfig.onClick() : fileInputRef.current?.click()} className="hidden md:inline-flex">
               <Upload className="mr-2 h-4 w-4" />
               Import
             </Button>
@@ -567,7 +568,7 @@ export function Toolbar({
               </DropdownMenuItem>
             )}
             {importConfig && (
-              <DropdownMenuItem className="md:hidden" onClick={() => fileInputRef.current?.click()}>
+              <DropdownMenuItem className="md:hidden" onClick={() => importConfig.onClick ? importConfig.onClick() : fileInputRef.current?.click()}>
                 <Upload className="h-4 w-4 mr-2" />
                 Import
               </DropdownMenuItem>

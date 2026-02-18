@@ -7,7 +7,7 @@ import {
   EntitySchema,
   OverviewBlockDefinition,
   QuickStatDefinition,
-} from '@/lib/schema/types';
+} from '@/lib/schema-engine/types';
 import { CrudList } from './CrudList';
 import { captureError } from '@/lib/observability';
 import { getSchema } from '@/lib/schemas';

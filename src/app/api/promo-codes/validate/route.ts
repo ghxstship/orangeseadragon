@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     // Find the promo code
     const { data: promoCode, error } = await supabase
       .from('promo_codes')
-      .select('*')
+      .select('id, code, description, is_active, event_id, valid_from, valid_until, max_uses, uses_count, min_order_amount_cents, discount_type, discount_value')
       .eq('code', code.toUpperCase())
       .single();
 

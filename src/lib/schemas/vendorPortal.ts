@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 /**
  * VENDOR PORTAL ACCESS ENTITY SCHEMA (SSOT)

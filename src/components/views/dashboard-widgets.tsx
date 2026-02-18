@@ -4,7 +4,7 @@ import * as React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { SEMANTIC_SOLID_CLASSES } from "@/lib/tokens/semantic-colors";
+import { SEMANTIC_SOLID_CLASSES } from "@/lib/theming/semantic-colors";
 import {
   TrendingUp,
   TrendingDown,

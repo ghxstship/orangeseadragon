@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   COLOR_PICKER_DEFAULT_HEX,
   COLOR_PICKER_PRESET_HEX,
-} from "@/lib/tokens/color-presets";
+} from "@/lib/theming/color-presets";
 import { Button } from "./button";
 import { Input } from "./input";
 import { Label } from "./label";

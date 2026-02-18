@@ -23,30 +23,31 @@ export async function GET(request: NextRequest) {
     .from('advance_items')
     .select(`
       *,
-      category:advance_categories(id, code, name, icon, color),
+      platform_catalog_category:platform_catalog_categories(id, slug, name, icon, color),
+      platform_catalog_item:platform_catalog_items(id, slug, name, description, icon, image_url, default_unit_cost, unit_of_measure, is_rentable, is_service, platform_catalog_categories(id, slug, name, icon, color, platform_catalog_divisions(id, slug, name))),
       vendor:companies(id, name),
       assigned_user:users!advance_items_assigned_to_fkey(id, full_name, avatar_url),
       production_advance:production_advances(id, advance_code, event_id, advance_type, status)
     `, { count: 'exact' });
 
   if (productionAdvanceId) query = query.eq('production_advance_id', productionAdvanceId);
-  if (categoryId) query = query.eq('category_id', categoryId);
+  if (categoryId) query = query.eq('platform_catalog_category_id', categoryId);
   if (vendorId) query = query.eq('vendor_id', vendorId);
   if (status) query = query.eq('status', status);
   if (isCriticalPath === 'true') query = query.eq('is_critical_path', true);
   if (assignedTo) query = query.eq('assigned_to', assignedTo);
   if (search) query = query.ilike('item_name', `%${search}%`);
 
-  // Filter by category code prefix (e.g., 'technical', 'logistics')
+  // Filter by category slug prefix (e.g., 'audio', 'lighting')
   if (categoryCode) {
     const { data: categories } = await supabase
-      .from('advance_categories')
+      .from('platform_catalog_categories')
       .select('id')
-      .ilike('code', `${categoryCode}%`);
+      .ilike('slug', `${categoryCode}%`);
     
     if (categories && categories.length > 0) {
       const categoryIds = categories.map(c => c.id);
-      query = query.in('category_id', categoryIds);
+      query = query.in('platform_catalog_category_id', categoryIds);
     }
   }
 

@@ -15,7 +15,7 @@ export async function POST(
 
     const { data: connection, error: fetchError } = await supabase
       .from('connections')
-      .select('*')
+      .select('id, requestee_id, request_status')
       .eq('id', id)
       .single();
 

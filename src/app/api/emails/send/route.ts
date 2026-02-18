@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     // Get the email account
     const { data: account, error: accountError } = await supabase
       .from('email_accounts')
-      .select('*')
+      .select('id, organization_id, email_address, display_name')
       .eq('id', email_account_id)
       .single();
 

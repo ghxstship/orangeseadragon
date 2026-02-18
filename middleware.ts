@@ -414,17 +414,17 @@ export async function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
 
       if (isAuthPage) {
-        url.pathname = onboardingDone ? "/dashboard" : "/onboarding/welcome";
+        url.pathname = onboardingDone ? "/core/dashboard" : "/onboarding";
         return applySecurityHeaders(NextResponse.redirect(url), security);
       }
 
       if (!onboardingDone && !isOnboardingPage && !isPublicRoute) {
-        url.pathname = "/onboarding/welcome";
+        url.pathname = "/onboarding";
         return applySecurityHeaders(NextResponse.redirect(url), security);
       }
 
       if (onboardingDone && isOnboardingPage) {
-        url.pathname = "/dashboard";
+        url.pathname = "/core/dashboard";
         return applySecurityHeaders(NextResponse.redirect(url), security);
       }
     }

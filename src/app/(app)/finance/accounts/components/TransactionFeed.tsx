@@ -13,7 +13,7 @@ import { Search, Clock, CheckCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { formatCurrency } from '@/lib/utils';
 
 interface Transaction {

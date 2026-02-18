@@ -17,7 +17,7 @@ export async function POST(
     // Get the exhibitor
     const { data: exhibitor, error: fetchError } = await supabase
       .from('exhibitors')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

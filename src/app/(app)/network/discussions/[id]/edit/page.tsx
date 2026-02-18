@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { CrudForm } from '@/lib/crud/components/CrudForm';
-import { discussionSchema } from '@/lib/schemas/discussion';
+import { discussionSchema } from '@/lib/schemas/core/discussion';
 
 export default function EditDiscussionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

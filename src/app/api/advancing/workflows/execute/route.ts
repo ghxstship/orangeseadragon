@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     // Get the workflow
     const { data: workflow, error: workflowError } = await supabase
       .from('workflows')
-      .select('*')
+      .select('id, organization_id, entity_type, steps, is_active, run_once_per_entity')
       .eq('id', workflowId)
       .eq('is_active', true)
       .single();

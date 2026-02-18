@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 export const productionAdvanceSchema = defineSchema({
   identity: {
@@ -257,11 +257,21 @@ export const advanceItemSchema = defineSchema({
         required: true,
         inForm: true,
       },
-      category_id: {
+      platform_catalog_item_id: {
+        type: 'relation',
+        label: 'Catalog Item',
+        inTable: true,
+        inForm: true,
+        inDetail: true,
+        relation: { entity: 'platformCatalogItem', display: 'name', searchable: true },
+      },
+      platform_catalog_category_id: {
         type: 'relation',
         label: 'Category',
         inTable: true,
         inForm: true,
+        inDetail: true,
+        relation: { entity: 'platformCatalogCategory', display: 'name', searchable: true },
       },
       description: {
         type: 'textarea',
@@ -402,7 +412,7 @@ export const advanceItemSchema = defineSchema({
     },
     form: {
       sections: [
-        { key: 'basic', title: 'Item Details', fields: ['item_name', 'production_advance_id', 'category_id', 'description'] },
+        { key: 'basic', title: 'Item Details', fields: ['item_name', 'platform_catalog_item_id', 'production_advance_id', 'platform_catalog_category_id', 'description'] },
         { key: 'vendor', title: 'Vendor & Cost', fields: ['vendor_id', 'quantity_required', 'quantity_confirmed', 'unit_cost'] },
         { key: 'schedule', title: 'Schedule', fields: ['scheduled_delivery', 'location'] },
         { key: 'assignment', title: 'Assignment', fields: ['status', 'assigned_to', 'is_critical_path'] },
@@ -415,7 +425,7 @@ export const advanceItemSchema = defineSchema({
     table: {
       columns: [
         'item_name',
-        { field: 'category_id', format: { type: 'relation', entityType: 'category' } },
+        { field: 'platform_catalog_category_id', format: { type: 'relation', entityType: 'platformCatalogCategory' } },
         { field: 'vendor_id', format: { type: 'relation', entityType: 'company' } },
         { field: 'status', format: { type: 'badge', colorMap: { pending: '#f59e0b', ordered: '#3b82f6', shipped: '#8b5cf6', delivered: '#22c55e', cancelled: '#ef4444' } } },
         { field: 'scheduled_delivery', format: { type: 'date' } },
@@ -438,7 +448,8 @@ export const advanceItemSchema = defineSchema({
   relationships: {
     belongsTo: [
       { entity: 'productionAdvance', foreignKey: 'production_advance_id', label: 'Advance' },
-      { entity: 'advanceCategory', foreignKey: 'category_id', label: 'Category' },
+      { entity: 'platformCatalogCategory', foreignKey: 'platform_catalog_category_id', label: 'Category' },
+      { entity: 'platformCatalogItem', foreignKey: 'platform_catalog_item_id', label: 'Catalog Item' },
       { entity: 'company', foreignKey: 'vendor_id', label: 'Vendor' },
       { entity: 'user', foreignKey: 'assigned_to', label: 'Assigned To' },
     ],
@@ -796,303 +807,8 @@ export const vendorRatingSchema = defineSchema({
   },
 });
 
-export const advanceCategorySchema = defineSchema({
-  identity: {
-    name: 'advanceCategory',
-    namePlural: 'Advance Categories',
-    slug: 'productions/advancing/categories',
-    icon: 'FolderTree',
-    description: 'Categories for advance items',
-  },
-
-  data: {
-    endpoint: '/api/advancing/categories',
-    primaryKey: 'id',
-    fields: {
-      code: {
-        type: 'text',
-        label: 'Code',
-        required: true,
-        inTable: true,
-        inForm: true,
-        sortable: true,
-      },
-      name: {
-        type: 'text',
-        label: 'Name',
-        required: true,
-        inTable: true,
-        inForm: true,
-        searchable: true,
-      },
-      description: {
-        type: 'textarea',
-        label: 'Description',
-        inForm: true,
-        inDetail: true,
-      },
-      parent_category_id: {
-        type: 'relation',
-        relation: { entity: 'category', display: 'name' },
-        label: 'Parent Category',
-        inTable: true,
-        inForm: true,
-      },
-      icon: {
-        type: 'text',
-        label: 'Icon',
-        inForm: true,
-      },
-      color: {
-        type: 'color',
-        label: 'Color',
-        inTable: true,
-        inForm: true,
-      },
-      sort_order: {
-        type: 'number',
-        label: 'Sort Order',
-        inForm: true,
-        default: 0,
-      },
-      is_active: {
-        type: 'checkbox',
-        label: 'Active',
-        inTable: true,
-        inForm: true,
-        default: true,
-      },
-    },
-  },
-
-  display: {
-    title: (record: any) => record.name || 'Untitled',
-    subtitle: (record: any) => record.code || '',
-    badge: (record: any) => {
-      return record.is_active ? { label: 'Active', variant: 'success' } : { label: 'Inactive', variant: 'secondary' };
-    },
-    defaultSort: { field: 'sort_order', direction: 'asc' },
-  },
-
-  search: {
-    enabled: true,
-    fields: ['name', 'code', 'description'],
-    placeholder: 'Search categories...',
-  },
-
-  filters: {
-    quick: [
-      { key: 'active', label: 'Active', query: { where: { is_active: true } } },
-    ],
-    advanced: ['is_active', 'parent_category_id'],
-  },
-
-  layouts: {
-    list: {
-      subpages: [
-        { key: 'all', label: 'All Categories', query: { where: {} }, count: true },
-      ],
-      defaultView: 'table',
-      availableViews: ['table'],
-    },
-    detail: {
-      tabs: [
-        { key: 'overview', label: 'Overview', content: { type: 'overview' } },
-      ],
-      overview: {
-        stats: [],
-        blocks: [
-          { key: 'description', title: 'Description', content: { type: 'fields', fields: ['description'] } },
-        ],
-      },
-    },
-    form: {
-      sections: [
-        { key: 'basic', title: 'Category Details', fields: ['code', 'name', 'description', 'parent_category_id'] },
-        { key: 'display', title: 'Display', fields: ['icon', 'color', 'sort_order', 'is_active'] },
-      ],
-    },
-  },
-
-  views: {
-    table: {
-      columns: [
-        'name', 'code',
-        { field: 'parent_category_id', format: { type: 'relation', entityType: 'category' } },
-        'color',
-        { field: 'is_active', format: { type: 'boolean' } },
-      ],
-    },
-  },
-
-  actions: {
-    row: [
-      { key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/categories/${r.id}` } },
-    ],
-    bulk: [],
-    global: [
-      { key: 'create', label: 'New Category', variant: 'primary', handler: { type: 'function', fn: () => {} } },
-    ],
-  },
-
-  relationships: {
-    belongsTo: [
-      { entity: 'advanceCategory', foreignKey: 'parent_category_id', label: 'Parent Category' },
-    ],
-    hasMany: [
-      { entity: 'advanceItem', foreignKey: 'category_id', label: 'Items', cascade: 'nullify' },
-    ],
-  },
-
-  permissions: {
-    create: true,
-    read: true,
-    update: true,
-    delete: true,
-  },
-});
-
-export const advancingCatalogItemSchema = defineSchema({
-  identity: {
-    name: 'advancingCatalogItem',
-    namePlural: 'Catalog Items',
-    slug: 'productions/advancing/catalog',
-    icon: 'Store',
-    description: 'Standard advance items available for selection',
-  },
-
-  data: {
-    endpoint: '/api/advancing/catalog',
-    primaryKey: 'id',
-    fields: {
-      name: {
-        type: 'text',
-        label: 'Item Name',
-        required: true,
-        inTable: true,
-        inForm: true,
-        searchable: true,
-      },
-      description: {
-        type: 'textarea',
-        label: 'Description',
-        inForm: true,
-        inDetail: true,
-      },
-      category_id: {
-        type: 'relation',
-        label: 'Category',
-        inTable: true,
-        inForm: true,
-        relation: {
-          entity: 'advanceCategory',
-          display: 'name',
-        }
-      },
-      base_unit_cost: {
-        type: 'currency',
-        label: 'Base Cost',
-        inTable: true,
-        inForm: true,
-      },
-      image_url: {
-        type: 'image',
-        label: 'Image',
-        inTable: true,
-        inForm: true,
-      },
-      is_available: {
-        type: 'checkbox',
-        label: 'Available',
-        inTable: true,
-        inForm: true,
-        default: true,
-      },
-      specifications_template: {
-        type: 'json',
-        label: 'Specs Template',
-        inForm: true,
-      },
-    },
-  },
-
-  display: {
-    title: (record: any) => record.name || 'Untitled Item',
-    subtitle: (record: any) => record.base_unit_cost ? `$${record.base_unit_cost}` : '',
-    image: (record: any) => record.image_url,
-    defaultSort: { field: 'name', direction: 'asc' },
-  },
-
-  search: {
-    enabled: true,
-    fields: ['name', 'description'],
-    placeholder: 'Search catalog...',
-  },
-
-  filters: {
-    quick: [
-      { key: 'available', label: 'Available', query: { is_available: true } },
-    ],
-    advanced: ['category_id', 'is_available'],
-  },
-
-  layouts: {
-    list: {
-      subpages: [
-        { key: 'all', label: 'All Items', query: { where: {} }, count: true },
-        { key: 'available', label: 'Available', query: { where: { is_available: true } }, count: true },
-      ],
-      defaultView: 'grid',
-      availableViews: ['grid', 'table', 'list'],
-    },
-    detail: {
-      tabs: [{ key: 'overview', label: 'Overview', content: { type: 'overview' } }],
-      overview: {
-        stats: [],
-        blocks: [{ key: 'details', title: 'Details', content: { type: 'fields', fields: ['description', 'base_unit_cost'] } }],
-      }
-    },
-    form: {
-      sections: [
-        { key: 'basic', title: 'Item Info', fields: ['name', 'category_id', 'description', 'base_unit_cost'] },
-        { key: 'media', title: 'Media & Inventory', fields: ['image_url', 'is_available'] },
-      ]
-    }
-  },
-
-  views: {
-    grid: {
-      titleField: 'name',
-      subtitleField: 'base_unit_cost',
-      imageField: 'image_url',
-      cardFields: ['category_id'],
-    },
-    table: {
-      columns: [
-        'name',
-        { field: 'category_id', format: { type: 'relation', entityType: 'category' } },
-        { field: 'base_unit_cost', format: { type: 'currency' } },
-        { field: 'is_available', format: { type: 'boolean' } },
-      ],
-    }
-  },
-
-  actions: {
-    row: [{ key: 'view', label: 'View', handler: { type: 'navigate', path: (r: any) => `/productions/advancing/catalog/${r.id}` } }],
-    bulk: [],
-    global: [{ key: 'create', label: 'Add to Catalog', variant: 'primary', handler: { type: 'navigate', path: () => '/productions/advancing/catalog/new' } }],
-  },
-
-  relationships: {
-    belongsTo: [
-      { entity: 'advanceCategory', foreignKey: 'category_id', label: 'Category' },
-    ],
-  },
-
-  permissions: {
-    create: true,
-    read: true,
-    update: true,
-    delete: true,
-  },
-});
+// Legacy advanceCategorySchema and advancingCatalogItemSchema have been removed.
+// All category and catalog item references now use the platform catalog SSOT:
+//   - platformCatalogDivisionSchema (src/lib/schemas/catalog/)
+//   - platformCatalogCategorySchema (src/lib/schemas/catalog/)
+//   - platformCatalogItemSchema (src/lib/schemas/catalog/)

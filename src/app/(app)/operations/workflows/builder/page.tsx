@@ -21,7 +21,7 @@ import {
   ArrowLeft, Save, Play, AlertTriangle, Loader2,
   Zap, Calendar, Radio, Webhook,
 } from "lucide-react";
-import { useCopilotContext } from "@/hooks/use-copilot-context";
+import { useCopilotContext } from "@/hooks/ui/use-copilot-context";
 
 const TRIGGER_TYPES = [
   { value: "manual", label: "Manual", icon: Zap },

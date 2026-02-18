@@ -9,12 +9,12 @@ import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/common/page-shell';
 import { StatCard, StatGrid } from '@/components/common/stat-card';
 import { StaggerList } from '@/components/ui/motion';
-import { useCopilotContext } from '@/hooks/use-copilot-context';
-import { useUser } from '@/hooks/use-supabase';
-import { useEvents } from '@/hooks/use-events';
-import { useIncidents } from '@/hooks/use-incidents';
-import { useVenues } from '@/hooks/use-venues';
-import { useWorkOrders } from '@/hooks/use-work-orders';
+import { useCopilotContext } from '@/hooks/ui/use-copilot-context';
+import { useUser } from '@/hooks/auth/use-supabase';
+import { useEvents } from '@/hooks/data/production/use-events';
+import { useIncidents } from '@/hooks/data/people/use-incidents';
+import { useVenues } from '@/hooks/data/production/use-venues';
+import { useWorkOrders } from '@/hooks/data/operations/use-work-orders';
 import { cn } from '@/lib/utils';
 import {
   FileEdit,

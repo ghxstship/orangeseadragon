@@ -11,14 +11,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useEvents } from '@/hooks/use-events';
-import { useProjects } from '@/hooks/use-projects';
-import { useBudgets } from '@/hooks/use-budgets';
-import { useIncidents } from '@/hooks/use-incidents';
-import { useUser } from '@/hooks/use-supabase';
+import { useEvents } from '@/hooks/data/production/use-events';
+import { useProjects } from '@/hooks/data/core/use-projects';
+import { useBudgets } from '@/hooks/data/finance/use-budgets';
+import { useIncidents } from '@/hooks/data/people/use-incidents';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { PageShell } from '@/components/common/page-shell';
 import { FadeIn, StaggerList, StaggerItem } from '@/components/ui/motion';
-import { useCopilotContext } from '@/hooks/use-copilot-context';
+import { useCopilotContext } from '@/hooks/ui/use-copilot-context';
 import { cn, formatCurrency } from '@/lib/utils';
 import { getErrorMessage } from '@/lib/api/error-message';
 import {

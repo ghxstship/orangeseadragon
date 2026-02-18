@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { PageShell } from '@/components/common/page-shell';
 
 interface ActivityEntry {

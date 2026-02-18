@@ -17,7 +17,7 @@ export async function POST(
     // Get the time entry
     const { data: timeEntry, error: fetchError } = await supabase
       .from('time_entries')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

@@ -24,7 +24,7 @@ export async function POST(
         // Get the expense
         const { data: expense, error: fetchError } = await supabase
             .from('expenses')
-            .select('*')
+            .select('id, status, organization_id, user_id, amount')
             .eq('id', id)
             .single();
 
@@ -40,7 +40,7 @@ export async function POST(
         // Update pending approval request
         const { data: approvalRequest } = await supabase
             .from('approval_requests')
-            .select('*')
+            .select('id, current_step')
             .eq('entity_type', 'expense')
             .eq('entity_id', id)
             .eq('status', 'pending')

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { useBreakpoint } from "@/hooks/use-breakpoint";
+import { useBreakpoint } from "@/hooks/ui/use-breakpoint";
 import {
   MapPin,
   Search,

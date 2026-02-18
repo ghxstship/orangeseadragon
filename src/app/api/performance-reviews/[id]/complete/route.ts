@@ -17,7 +17,7 @@ export async function POST(
     // Get the performance review
     const { data: review, error: fetchError } = await supabase
       .from('performance_reviews')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

@@ -14,8 +14,8 @@ import { StatusBadge } from '@/components/common/status-badge';
 import { Search, Filter, MoreHorizontal, Eye, Download } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { useState, useMemo } from 'react';
-import { useInvoices } from '@/hooks/use-invoices';
-import { useUser } from '@/hooks/use-supabase';
+import { useInvoices } from '@/hooks/data/finance/use-invoices';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { formatCurrency } from '@/lib/utils';
 
 export interface InvoiceListItem {

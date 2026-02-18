@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useUser } from '@/hooks/use-supabase';
-import { useEvents } from '@/hooks/use-events';
+import { useUser } from '@/hooks/auth/use-supabase';
+import { useEvents } from '@/hooks/data/production/use-events';
 
 interface ActiveEventsWidgetProps {
   title?: string;

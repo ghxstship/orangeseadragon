@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { CrudDetail } from '@/lib/crud/components/CrudDetail';
-import { challengeSchema } from '@/lib/schemas/challenge';
+import { challengeSchema } from '@/lib/schemas/network/challenge';
 
 export default function ChallengeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

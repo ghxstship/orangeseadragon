@@ -24,7 +24,7 @@ export async function POST(
         // Get the timesheet
         const { data: timesheet, error: fetchError } = await supabase
             .from('timesheets')
-            .select('*')
+            .select('id, status, organization_id, user_id')
             .eq('id', id)
             .single();
 
@@ -39,7 +39,7 @@ export async function POST(
         // Find any pending approval request
         const { data: approvalRequest } = await supabase
             .from('approval_requests')
-            .select('*')
+            .select('id, current_step, total_steps')
             .eq('entity_type', 'timesheet')
             .eq('entity_id', id)
             .eq('status', 'pending')

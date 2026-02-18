@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { timesheetSchema } from '@/lib/schemas/timesheet';
-import { clockEntrySchema } from '@/lib/schemas/clockEntry';
+import { timesheetSchema } from '@/lib/schemas/people/timesheet';
+import { clockEntrySchema } from '@/lib/schemas/people/clockEntry';
 import { TimeClock } from '@/components/people/TimeClock';
 import { PageShell } from '@/components/common/page-shell';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { captureError } from '@/lib/observability';
 
 export default function TimekeepingPage() {

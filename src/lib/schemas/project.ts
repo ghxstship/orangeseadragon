@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /lib/schemas/project.ts
 
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 /**
  * PROJECT ENTITY SCHEMA (SSOT)

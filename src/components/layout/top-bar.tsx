@@ -36,12 +36,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { useUser } from "@/hooks/use-supabase";
-import { useNotifications } from "@/hooks/use-notifications";
-import { useInbox } from "@/hooks/use-inbox";
+import { useUser } from "@/hooks/auth/use-supabase";
+import { useNotifications } from "@/hooks/data/core/use-notifications";
+import { useInbox } from "@/hooks/data/core/use-inbox";
 import { useUIStore } from "@/stores/ui-store";
 import { OrgSwitcher } from "@/components/common/org-switcher";
-import { useSupabase } from "@/hooks/use-supabase";
+import { useSupabase } from "@/hooks/auth/use-supabase";
 
 export function TopBar() {
   const pathname = usePathname();

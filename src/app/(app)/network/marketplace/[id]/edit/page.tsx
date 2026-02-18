@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { CrudForm } from '@/lib/crud/components/CrudForm';
-import { marketplaceSchema } from '@/lib/schemas/marketplace';
+import { marketplaceSchema } from '@/lib/schemas/crm/marketplace';
 
 export default function EditListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

@@ -31,7 +31,6 @@ export type {
   DashboardLayoutConfig,
   SplitLayoutConfig,
   WorkspaceTab,
-  TabConfig,
   WorkspaceLayoutConfig,
   SettingsSectionConfig,
   SettingsLayoutConfig,
@@ -43,7 +42,7 @@ export type {
   ErrorLayoutConfig,
 } from './types';
 
-// Re-export props types
+// Props types
 export type { ListLayoutProps } from './ListLayout';
 export type { DetailLayoutProps } from './DetailLayout';
 export type { FormLayoutProps } from './FormLayout';

@@ -11,7 +11,7 @@ import {
   SheetContent,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useBreakpoint } from "@/hooks/use-breakpoint";
+import { useBreakpoint } from "@/hooks/ui/use-breakpoint";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface ResponsiveMenuProps {

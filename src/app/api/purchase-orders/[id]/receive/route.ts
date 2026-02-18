@@ -28,7 +28,7 @@ export async function POST(
         // Get the PO
         const { data: po, error: fetchError } = await supabase
             .from('purchase_orders')
-            .select('*')
+            .select('id, status, organization_id, po_number')
             .eq('id', id)
             .single();
 

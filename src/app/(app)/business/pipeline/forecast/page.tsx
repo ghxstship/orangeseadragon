@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/select';
 import { PageShell } from '@/components/common/page-shell';
 import { createClient } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 
 interface ForecastKpi {
   label: string;

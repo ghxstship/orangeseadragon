@@ -3,16 +3,19 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ArrowLeft, Loader2, Camera } from "lucide-react";
+import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AvatarUpload } from "@/components/common/avatar-upload";
 import { captureError } from '@/lib/observability';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/auth/use-supabase';
 
 export default function OnboardingProfilePage() {
   const router = useRouter();
+  const { user: authUser } = useUser();
   const [isLoading, setIsLoading] = React.useState(false);
   const [formData, setFormData] = React.useState({
     firstName: "",
@@ -27,7 +30,6 @@ export default function OnboardingProfilePage() {
     setIsLoading(true);
 
     try {
-      const { createClient } = await import('@/lib/supabase/client');
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
@@ -46,6 +48,10 @@ export default function OnboardingProfilePage() {
         .from('users')
         .update({
           full_name: fullName,
+          first_name: formData.firstName || null,
+          last_name: formData.lastName || null,
+          job_title: formData.jobTitle || null,
+          bio: formData.bio || null,
           avatar_url: formData.avatarUrl || null,
         })
         .eq('id', user.id);
@@ -74,20 +80,14 @@ export default function OnboardingProfilePage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Avatar */}
         <div className="flex justify-center">
-          <div className="relative">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={formData.avatarUrl} />
-              <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
-            </Avatar>
-            <Button
-              type="button"
-              variant="default"
-              size="icon"
-              className="absolute bottom-0 right-0 h-8 w-8 rounded-full shadow-lg"
-            >
-              <Camera className="h-4 w-4" />
-            </Button>
-          </div>
+          <AvatarUpload
+            currentUrl={formData.avatarUrl || null}
+            userId={authUser?.id ?? ''}
+            fallbackInitials={initials}
+            size="lg"
+            onUploadComplete={(url) => setFormData({ ...formData, avatarUrl: url })}
+            onRemove={() => setFormData({ ...formData, avatarUrl: '' })}
+          />
         </div>
 
         {/* Name fields */}

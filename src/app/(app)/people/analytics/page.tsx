@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { WorkforceAnalytics } from '@/components/people/WorkforceAnalytics';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 
 export default function AnalyticsPage() {
   const router = useRouter();

@@ -2,8 +2,8 @@
 
 import { useState, type ComponentProps } from 'react';
 import { useCrud } from '@/lib/crud/hooks/useCrud';
-import { peopleSchema } from '@/lib/schemas/people';
-import type { EntityRecord, EntitySchema } from '@/lib/schema/types';
+import { peopleSchema } from '@/lib/schemas/people/people';
+import type { EntityRecord, EntitySchema } from '@/lib/schema-engine/types';
 import { HolographicDirectory } from '@/components/people/HolographicDirectory';
 import { LifeStreamProfile } from '@/components/people/LifeStreamProfile';
 import { PageShell } from '@/components/common/page-shell';

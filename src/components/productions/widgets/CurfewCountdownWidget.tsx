@@ -1,7 +1,7 @@
 'use client';
 
 import type { ComponentProps } from 'react';
-import { CurfewCountdown } from '@/components/production/curfew-countdown';
+import { CurfewCountdown } from '@/components/productions/curfew-countdown';
 
 export type CurfewCountdownWidgetProps = ComponentProps<typeof CurfewCountdown>;
 

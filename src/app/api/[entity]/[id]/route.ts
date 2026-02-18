@@ -4,7 +4,7 @@ import { apiSuccess, apiNoContent, notFound, badRequest, supabaseError, unproces
 import { resolveEntityContext } from '@/lib/api/entity-access';
 import { enforceResourceAccess } from '@/lib/api/role-guard';
 import { captureError, extractRequestContext } from '@/lib/observability';
-import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
+import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema-engine/generateZodSchema';
 import { auditService } from '@/lib/audit/service';
 
 /**
@@ -116,10 +116,10 @@ export async function PATCH(
 
                 // Check role-restricted transitions
                 const transition = allowed[0];
-                if (transition?.roles?.length && membership.role_name) {
-                    if (!transition.roles.includes(membership.role_name)) {
+                if (transition?.roles?.length && membership.role_slug) {
+                    if (!transition.roles.includes(membership.role_slug)) {
                         return badRequest(
-                            `Role '${membership.role_name}' cannot perform transition to '${newStatus}'`,
+                            `Role '${membership.role_slug}' cannot perform transition to '${newStatus}'`,
                             { required_roles: transition.roles }
                         );
                     }

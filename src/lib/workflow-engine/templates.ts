@@ -4,15 +4,21 @@
  */
 
 import type { WorkflowTemplate } from "./types";
-import { salesCrmTemplates } from "./templates-sales-crm";
-import { marketingTemplates } from "./templates-marketing";
-import { financeExtendedTemplates } from "./templates-finance";
-import { procurementTemplates } from "./templates-procurement";
-import { workforceExtendedTemplates } from "./templates-workforce";
-import { projectManagementExtendedTemplates } from "./templates-projects";
-import { productionExtendedTemplates } from "./templates-production";
-import { supportTemplates } from "./templates-support";
-import { complianceTemplates } from "./templates-compliance";
+
+// Lazy-loaded template modules — loaded on first access to avoid 340KB static bundle cost
+const lazyTemplateModules = {
+  salesCrm: () => import("./templates-sales-crm").then(m => m.salesCrmTemplates),
+  marketing: () => import("./templates-marketing").then(m => m.marketingTemplates),
+  financeExtended: () => import("./templates-finance").then(m => m.financeExtendedTemplates),
+  procurement: () => import("./templates-procurement").then(m => m.procurementTemplates),
+  workforceExtended: () => import("./templates-workforce").then(m => m.workforceExtendedTemplates),
+  projectsExtended: () => import("./templates-projects").then(m => m.projectManagementExtendedTemplates),
+  productionExtended: () => import("./templates-production").then(m => m.productionExtendedTemplates),
+  support: () => import("./templates-support").then(m => m.supportTemplates),
+  compliance: () => import("./templates-compliance").then(m => m.complianceTemplates),
+};
+
+const _templateCache: { value: WorkflowTemplate[] | null } = { value: null };
 
 // Project Management Templates
 export const projectManagementTemplates: WorkflowTemplate[] = [
@@ -1372,36 +1378,40 @@ export const experienceTemplates: WorkflowTemplate[] = [
   },
 ];
 
-// Export all templates
-export const allWorkflowTemplates: WorkflowTemplate[] = [
-  // Core domain templates
-  ...projectManagementTemplates,
-  ...liveProductionTemplates,
-  ...workforceTemplates,
-  ...assetTemplates,
-  ...financeTemplates,
-  ...talentTemplates,
-  ...experienceTemplates,
-  // Extended domain templates
-  ...salesCrmTemplates,
-  ...marketingTemplates,
-  ...financeExtendedTemplates,
-  ...procurementTemplates,
-  ...workforceExtendedTemplates,
-  ...projectManagementExtendedTemplates,
-  ...productionExtendedTemplates,
-  ...supportTemplates,
-  ...complianceTemplates,
-];
+// Async loader — merges core (inline) + extended (lazy) templates on first call, then caches
+export async function loadAllWorkflowTemplates(): Promise<WorkflowTemplate[]> {
+  if (_templateCache.value) return _templateCache.value;
 
-export function getTemplatesByCategory(category: string): WorkflowTemplate[] {
-  return allWorkflowTemplates.filter((t) => t.category === category);
+  const extended = await Promise.all(
+    Object.values(lazyTemplateModules).map(fn => fn())
+  );
+
+  _templateCache.value = [
+    // Core domain templates (inline — small)
+    ...projectManagementTemplates,
+    ...liveProductionTemplates,
+    ...workforceTemplates,
+    ...assetTemplates,
+    ...financeTemplates,
+    ...talentTemplates,
+    ...experienceTemplates,
+    // Extended domain templates (lazy-loaded)
+    ...extended.flat(),
+  ];
+  return _templateCache.value;
 }
 
-export function getTemplateById(id: string): WorkflowTemplate | undefined {
-  return allWorkflowTemplates.find((t) => t.id === id);
+export async function getTemplatesByCategory(category: string): Promise<WorkflowTemplate[]> {
+  const all = await loadAllWorkflowTemplates();
+  return all.filter((t) => t.category === category);
 }
 
-export function getTemplateCategories(): string[] {
-  return Array.from(new Set(allWorkflowTemplates.map((t) => t.category)));
+export async function getTemplateById(id: string): Promise<WorkflowTemplate | undefined> {
+  const all = await loadAllWorkflowTemplates();
+  return all.find((t) => t.id === id);
+}
+
+export async function getTemplateCategories(): Promise<string[]> {
+  const all = await loadAllWorkflowTemplates();
+  return Array.from(new Set(all.map((t) => t.category)));
 }

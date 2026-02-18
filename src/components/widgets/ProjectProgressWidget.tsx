@@ -5,9 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUser } from "@/hooks/use-supabase";
-import { useProjects } from "@/hooks/use-projects";
-import { useTasks } from "@/hooks/use-tasks";
+import { useUser } from "@/hooks/auth/use-supabase";
+import { useProjects } from "@/hooks/data/core/use-projects";
+import { useTasks } from "@/hooks/data/core/use-tasks";
 import { FolderKanban, ArrowRight } from "lucide-react";
 import Link from "next/link";
 

@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 export const certificateOfInsuranceSchema = defineSchema({
   identity: {

@@ -3,245 +3,247 @@
 // Schema registry - single source of truth for all entity schemas
 
 // Core schemas
-import { eventSchema } from './event';
+import { eventSchema } from './production/event';
 import { projectSchema } from './project';
-import { peopleSchema } from './people';
-import { taskSchema } from './task';
-import { venueSchema } from './venue';
-import { assetSchema } from './asset';
-import { opportunitySchema } from './opportunity';
-import { discussionSchema } from './discussion';
-import { challengeSchema } from './challenge';
-import { connectionSchema } from './connection';
-import { showcaseSchema } from './showcase';
-import { marketplaceSchema } from './marketplace';
+import { peopleSchema } from './people/people';
+import { taskSchema } from './core/task';
+import { venueSchema } from './production/venue';
+import { assetSchema } from './assets/asset';
+import { opportunitySchema } from './crm/opportunity';
+import { discussionSchema } from './core/discussion';
+import { challengeSchema } from './network/challenge';
+import { connectionSchema } from './crm/connection';
+import { showcaseSchema } from './crm/showcase';
+import { marketplaceSchema } from './crm/marketplace';
 import { calendarSchema } from './calendar';
-import { documentSchema } from './document';
-import { workflowSchema } from './workflow';
-import { taskListSchema } from './taskList';
-import { workflowRunSchema } from './workflowRun';
-import { folderSchema } from './folder';
+import { documentSchema } from './core/document';
+import { workflowSchema } from './workflows/workflow';
+import { taskListSchema } from './core/taskList';
+import { workflowRunSchema } from './workflows/workflowRun';
+import { folderSchema } from './core/folder';
 
 // Core exports
-export { eventSchema } from './event';
+export { eventSchema } from './production/event';
 export { projectSchema } from './project';
-export { peopleSchema } from './people';
-export { taskSchema } from './task';
-export { venueSchema } from './venue';
-export { assetSchema } from './asset';
-export { opportunitySchema } from './opportunity';
-export { discussionSchema } from './discussion';
-export { challengeSchema } from './challenge';
-export { connectionSchema } from './connection';
-export { showcaseSchema } from './showcase';
-export { marketplaceSchema } from './marketplace';
+export { peopleSchema } from './people/people';
+export { taskSchema } from './core/task';
+export { venueSchema } from './production/venue';
+export { assetSchema } from './assets/asset';
+export { opportunitySchema } from './crm/opportunity';
+export { discussionSchema } from './core/discussion';
+export { challengeSchema } from './network/challenge';
+export { connectionSchema } from './crm/connection';
+export { showcaseSchema } from './crm/showcase';
+export { marketplaceSchema } from './crm/marketplace';
 export { calendarSchema } from './calendar';
-export { documentSchema } from './document';
-export { workflowSchema } from './workflow';
-export { taskListSchema } from './taskList';
-export { workflowRunSchema } from './workflowRun';
-export { folderSchema } from './folder';
+export { documentSchema } from './core/document';
+export { workflowSchema } from './workflows/workflow';
+export { taskListSchema } from './core/taskList';
+export { workflowRunSchema } from './workflows/workflowRun';
+export { folderSchema } from './core/folder';
 
 // Network module enhancement exports
-export { messageSchema } from './message';
-export { conversationSchema } from './conversation';
-export { reactionSchema } from './reaction';
-export { discussionReplySchema } from './discussionReply';
-export { activityFeedSchema } from './activityFeed';
-export { userFollowSchema } from './userFollow';
-export { challengeParticipantSchema } from './challengeParticipant';
-export { challengeSubmissionSchema } from './challengeSubmission';
-export { challengeMilestoneSchema } from './challengeMilestone';
-export { userPointsSchema, badgeSchema, userBadgeSchema } from './gamification';
+export { messageSchema } from './core/message';
+export { conversationSchema } from './core/conversation';
+export { reactionSchema } from './core/reaction';
+export { discussionReplySchema } from './core/discussionReply';
+export { activityFeedSchema } from './core/activityFeed';
+export { userFollowSchema } from './core/userFollow';
+export { challengeParticipantSchema } from './network/challengeParticipant';
+export { challengeSubmissionSchema } from './network/challengeSubmission';
+export { challengeMilestoneSchema } from './network/challengeMilestone';
+export { userPointsSchema, badgeSchema, userBadgeSchema } from './network/gamification';
 
 // Projects module exports
 export { sprintSchema } from './sprint';
 export { backlogSchema } from './backlog';
 export { boardSchema } from './board';
 export { roadmapSchema } from './roadmap';
-export { teamSchema } from './team';
+export { teamSchema } from './core/team';
+
+// Platform catalog exports
+export { platformCatalogDivisionSchema, platformCatalogCategorySchema, platformCatalogItemSchema } from './catalog';
 
 // Production module exports
-export { showSchema } from './show';
-export { runsheetSchema } from './runsheet';
-export { runsheetCueSchema } from './runsheetCue';
-export { departmentSchema } from './department';
-export { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema, advancingCatalogItemSchema } from './advancing';
-export { publicProfileSchema } from './publicProfile';
-export { techSpecSchema } from './techSpec';
-export { riderSchema } from './rider';
+export { showSchema } from './production/show';
+export { runsheetSchema } from './production/runsheet';
+export { runsheetCueSchema } from './production/runsheetCue';
+export { departmentSchema } from './core/department';
+export { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema } from './advancing';
+export { publicProfileSchema } from './core/publicProfile';
+export { techSpecSchema } from './production/techSpec';
+export { riderSchema } from './production/rider';
 
 // Operations module exports
-export { floorPlanSchema } from './floorPlan';
-export { zoneSchema } from './zone';
-export { checkpointSchema } from './checkpoint';
+export { floorPlanSchema } from './production/floorPlan';
+export { zoneSchema } from './assets/zone';
+export { checkpointSchema } from './operations/checkpoint';
 export { incidentSchema } from './incident';
-export { radioChannelSchema } from './radioChannel';
-export { crewCheckinSchema } from './crewCheckin';
-export { escalationChainSchema } from './escalationChain';
-export { equipmentTrackingSchema, equipmentScanSchema } from './equipmentTracking';
+export { radioChannelSchema } from './production/radioChannel';
+export { crewCheckinSchema } from './production/crewCheckin';
+export { escalationChainSchema } from './workflows/escalationChain';
+export { equipmentTrackingSchema, equipmentScanSchema } from './assets/equipmentTracking';
 export { vendorPortalAccessSchema, vendorDocumentSchema } from './vendorPortal';
 
 // Workforce module exports
-export { scheduleSchema } from './schedule';
-export { shiftSchema } from './shift';
-export { timesheetSchema } from './timesheet';
-export { credentialSchema } from './credential';
-export { certificationSchema } from './certification';
-export { positionSchema } from './position';
+export { scheduleSchema } from './operations/schedule';
+export { shiftSchema } from './operations/shift';
+export { timesheetSchema } from './people/timesheet';
+export { credentialSchema } from './people/credential';
+export { certificationSchema } from './people/certification';
+export { positionSchema } from './people/position';
 
 // Assets module exports
-export { categorySchema } from './category';
-export { kitSchema } from './kit';
-export { reservationSchema } from './reservation';
-export { maintenanceSchema } from './maintenance';
-export { checkInOutSchema } from './checkInOut';
+export { kitSchema } from './assets/kit';
+export { reservationSchema } from './assets/reservation';
+export { maintenanceSchema } from './assets/maintenance';
+export { checkInOutSchema } from './operations/checkInOut';
 export { vendorSchema } from './vendor';
 
 // Finance module exports
-export { budgetSchema } from './budget';
-export { budgetPhaseSchema } from './budgetPhase';
-export { budgetTemplateSchema } from './budgetTemplate';
-export { paymentMilestoneSchema } from './paymentMilestone';
-export { invoiceSchema } from './invoice';
-export { invoiceLineItemSchema } from './invoiceLineItem';
-export { expenseSchema } from './expense';
-export { paymentSchema } from './payment';
-export { settlementSchema } from './settlement';
+export { budgetSchema } from './finance/budget';
+export { budgetPhaseSchema } from './finance/budgetPhase';
+export { budgetTemplateSchema } from './finance/budgetTemplate';
+export { paymentMilestoneSchema } from './finance/paymentMilestone';
+export { invoiceSchema } from './finance/invoice';
+export { invoiceLineItemSchema } from './finance/invoiceLineItem';
+export { expenseSchema } from './finance/expense';
+export { paymentSchema } from './finance/payment';
+export { settlementSchema } from './finance/settlement';
 export { accountSchema } from './account';
-export { recurringInvoiceSchema } from './recurringInvoice';
-export { quoteSchema } from './quote';
-export { reminderTemplateSchema } from './reminderTemplate';
-export { bankConnectionSchema } from './bankConnection';
-export { receiptScanSchema } from './receiptScan';
+export { recurringInvoiceSchema } from './finance/recurringInvoice';
+export { quoteSchema } from './finance/quote';
+export { reminderTemplateSchema } from './workflows/reminderTemplate';
+export { bankConnectionSchema } from './finance/bankConnection';
+export { receiptScanSchema } from './finance/receiptScan';
 
 // Time & Labor module exports
-export { timerSessionSchema } from './timerSession';
-export { laborRuleSetSchema } from './laborRuleSet';
+export { timerSessionSchema } from './people/timerSession';
+export { laborRuleSetSchema } from './operations/laborRuleSet';
 
 // Operations module exports
-export { resourceBookingSchema } from './resourceBooking';
-export { automationRuleSchema } from './automationRule';
+export { resourceBookingSchema } from './operations/resourceBooking';
+export { automationRuleSchema } from './workflows/automationRule';
 export { projectTemplateSchema } from './projectTemplate';
-export { customFieldDefinitionSchema } from './customFieldDefinition';
+export { customFieldDefinitionSchema } from './core/customFieldDefinition';
 
 // Analytics module exports
 export { reportDefinitionSchema } from './reportDefinition';
-export { dashboardSchema } from './dashboard';
+export { dashboardSchema } from './core/dashboard';
 
 // Phase 3 module exports
-export { crewRateCardSchema } from './crewRateCard';
+export { crewRateCardSchema } from './production/crewRateCard';
 
 // Phase 5 module exports
-export { crewGigRatingSchema } from './crewGigRating';
+export { crewGigRatingSchema } from './production/crewGigRating';
 export { projectPostMortemSchema } from './projectPostMortem';
 export { rfpResponseSchema } from './rfpResponse';
 
 // Phase 6 module exports
-export { mediaAssetSchema } from './mediaAsset';
+export { mediaAssetSchema } from './production/mediaAsset';
 
 // Productive.io gap closure exports
-export { fiscalYearSchema } from './fiscalYear';
+export { fiscalYearSchema } from './finance/fiscalYear';
 
 // Ecosystem module exports
 export { clientPortalAccessSchema } from './clientPortalAccess';
-export { webhookEndpointSchema } from './webhookEndpoint';
+export { webhookEndpointSchema } from './workflows/webhookEndpoint';
 export { oauthConnectionSchema } from './oauthConnection';
 
 // Business module exports
-export { contactSchema } from './contact';
-export { companySchema } from './company';
-export { leadSchema } from './lead';
-export { dealSchema } from './deal';
+export { contactSchema } from './crm/contact';
+export { companySchema } from './crm/company';
+export { leadSchema } from './crm/lead';
+export { dealSchema } from './crm/deal';
 export { proposalSchema } from './proposal';
 export { contractSchema } from './contract';
-export { pipelineSchema } from './pipeline';
-export { leadScoreSchema } from './leadScore';
-export { campaignSchema } from './campaign';
+export { pipelineSchema } from './crm/pipeline';
+export { leadScoreSchema } from './crm/leadScore';
+export { campaignSchema } from './crm/campaign';
 
 // New Phase 1-3 schemas
-export { registrationSchema } from './registration';
-export { ticketTypeSchema } from './ticketType';
-export { talentSchema } from './talent';
-export { partnerSchema } from './partner';
-export { issuedCredentialSchema } from './issuedCredential';
-export { chartOfAccountsSchema } from './chartOfAccounts';
-export { journalEntrySchema } from './journalEntry';
-export { bankAccountSchema } from './bankAccount';
-export { onboardingTemplateSchema } from './onboardingTemplate';
-export { leaveRequestSchema } from './leaveRequest';
-export { purchaseOrderSchema } from './purchaseOrder';
-export { supportTicketSchema } from './supportTicket';
+export { registrationSchema } from './network/registration';
+export { ticketTypeSchema } from './network/ticketType';
+export { talentSchema } from './people/talent';
+export { partnerSchema } from './crm/partner';
+export { issuedCredentialSchema } from './people/issuedCredential';
+export { chartOfAccountsSchema } from './finance/chartOfAccounts';
+export { journalEntrySchema } from './finance/journalEntry';
+export { bankAccountSchema } from './finance/bankAccount';
+export { onboardingTemplateSchema } from './people/onboardingTemplate';
+export { leaveRequestSchema } from './people/leaveRequest';
+export { purchaseOrderSchema } from './operations/purchaseOrder';
+export { supportTicketSchema } from './operations/supportTicket';
 
 // ClickUp SSOT schema exports
-export { productionSchema } from './production';
-export { shipmentSchema } from './shipment';
-export { workOrderSchema } from './workOrder';
-export { permitSchema } from './permit';
-export { inspectionSchema } from './inspection';
-export { punchItemSchema } from './punchItem';
-export { dailySiteReportSchema } from './dailySiteReport';
-export { travelRequestSchema } from './travelRequest';
-export { candidateSchema } from './candidate';
-export { vehicleSchema } from './vehicle';
+export { productionSchema } from './production/production';
+export { shipmentSchema } from './operations/shipment';
+export { workOrderSchema } from './operations/workOrder';
+export { permitSchema } from './operations/permit';
+export { inspectionSchema } from './assets/inspection';
+export { punchItemSchema } from './operations/punchItem';
+export { dailySiteReportSchema } from './production/dailySiteReport';
+export { travelRequestSchema } from './operations/travelRequest';
+export { candidateSchema } from './people/candidate';
+export { vehicleSchema } from './assets/vehicle';
 
 // Additional schema exports
-export { eventSessionSchema } from './eventSession';
-export { offboardingTemplateSchema } from './offboardingTemplate';
-export { emailSequenceSchema } from './emailSequence';
+export { eventSessionSchema } from './production/eventSession';
+export { offboardingTemplateSchema } from './people/offboardingTemplate';
+export { emailSequenceSchema } from './crm/emailSequence';
 export { compliancePolicySchema } from './compliancePolicy';
-export { formTemplateSchema } from './formTemplate';
-export { hospitalityRequestSchema } from './hospitalityRequest';
-export { performanceReviewSchema } from './performanceReview';
-export { trainingCourseSchema } from './trainingCourse';
-export { landingPageSchema } from './landingPage';
-export { subscriberSchema } from './subscriber';
-export { payrollRunSchema } from './payrollRun';
+export { formTemplateSchema } from './core/formTemplate';
+export { hospitalityRequestSchema } from './operations/hospitalityRequest';
+export { performanceReviewSchema } from './people/performanceReview';
+export { trainingCourseSchema } from './people/trainingCourse';
+export { landingPageSchema } from './crm/landingPage';
+export { subscriberSchema } from './crm/subscriber';
+export { payrollRunSchema } from './finance/payrollRun';
 export { projectResourceSchema } from './projectResource';
-export { timeEntrySchema } from './timeEntry';
-export { exhibitorSchema } from './exhibitor';
-export { networkingSessionSchema } from './networkingSession';
-export { serviceTicketSchema } from './serviceTicket';
+export { timeEntrySchema } from './people/timeEntry';
+export { exhibitorSchema } from './crm/exhibitor';
+export { networkingSessionSchema } from './network/networkingSession';
+export { serviceTicketSchema } from './operations/serviceTicket';
 
 // Navigation v6 schema exports
-export { checklistSchema } from './checklist';
-export { notificationSchema } from './notification';
+export { checklistSchema } from './operations/checklist';
+export { notificationSchema } from './core/notification';
 export { approvalSchema } from './approval';
-export { documentTemplateSchema } from './documentTemplate';
-export { workflowTriggerSchema } from './workflowTrigger';
-export { stageSchema } from './stage';
+export { documentTemplateSchema } from './core/documentTemplate';
+export { workflowTriggerSchema } from './workflows/workflowTrigger';
+export { stageSchema } from './crm/stage';
 export { insuranceSchema } from './insurance';
 export { certificateOfInsuranceSchema } from './certificateOfInsurance';
-export { cateringSchema } from './catering';
-export { guestListSchema } from './guestList';
-export { crewCallSchema } from './crewCall';
-export { talentBookingSchema } from './talentBooking';
-export { punchListSchema } from './punchList';
-export { dailyReportSchema } from './dailyReport';
-export { flightSchema } from './flight';
-export { groundTransportSchema } from './groundTransport';
-export { accommodationSchema } from './accommodation';
-export { feedbackSchema } from './feedback';
-export { storageBinSchema } from './storageBin';
-export { assetTransferSchema } from './assetTransfer';
-export { serviceHistorySchema } from './serviceHistory';
-export { priceListSchema } from './priceList';
-export { servicePackageSchema } from './servicePackage';
-export { activitySchema } from './activity';
-export { emailTemplateSchema } from './emailTemplate';
+export { cateringSchema } from './operations/catering';
+export { guestListSchema } from './production/guestList';
+export { crewCallSchema } from './production/crewCall';
+export { talentBookingSchema } from './people/talentBooking';
+export { punchListSchema } from './operations/punchList';
+export { dailyReportSchema } from './production/dailyReport';
+export { flightSchema } from './operations/flight';
+export { groundTransportSchema } from './operations/groundTransport';
+export { accommodationSchema } from './operations/accommodation';
+export { feedbackSchema } from './network/feedback';
+export { storageBinSchema } from './assets/storageBin';
+export { assetTransferSchema } from './assets/assetTransfer';
+export { serviceHistorySchema } from './operations/serviceHistory';
+export { priceListSchema } from './finance/priceList';
+export { servicePackageSchema } from './operations/servicePackage';
+export { activitySchema } from './core/activity';
+export { emailTemplateSchema } from './crm/emailTemplate';
 export { brandAssetSchema } from './brandAsset';
-export { creditNoteSchema } from './creditNote';
+export { creditNoteSchema } from './finance/creditNote';
 
 // Gap analysis remediation schema exports
 export { productSchema } from './product';
-export { budgetLineItemSchema } from './budgetLineItem';
-export { payrollDeductionSchema } from './payrollDeduction';
-export { payrollRateSchema } from './payrollRate';
-export { payStubSchema } from './payStub';
-export { weatherAlertSchema } from './weatherAlert';
+export { budgetLineItemSchema } from './finance/budgetLineItem';
+export { payrollDeductionSchema } from './finance/payrollDeduction';
+export { payrollRateSchema } from './finance/payrollRate';
+export { payStubSchema } from './finance/payStub';
+export { weatherAlertSchema } from './production/weatherAlert';
 
-// Re-export the canonical EntitySchema type from schema/types
-export type { EntitySchema } from '@/lib/schema/types';
+// EntitySchema type from schema-engine
+export type { EntitySchema } from '@/lib/schema-engine/types';
 
 // Schema registry type
 type SchemaRegistry = Record<string, typeof eventSchema>;
@@ -251,165 +253,165 @@ import { sprintSchema } from './sprint';
 import { backlogSchema } from './backlog';
 import { boardSchema } from './board';
 import { roadmapSchema } from './roadmap';
-import { teamSchema } from './team';
-import { showSchema } from './show';
-import { runsheetSchema } from './runsheet';
-import { runsheetCueSchema } from './runsheetCue';
-import { departmentSchema } from './department';
-import { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema, advanceCategorySchema, advancingCatalogItemSchema } from './advancing';
-import { publicProfileSchema } from './publicProfile';
-import { techSpecSchema } from './techSpec';
-import { riderSchema } from './rider';
-import { floorPlanSchema } from './floorPlan';
-import { zoneSchema } from './zone';
-import { checkpointSchema } from './checkpoint';
+import { teamSchema } from './core/team';
+import { platformCatalogDivisionSchema, platformCatalogCategorySchema, platformCatalogItemSchema } from './catalog';
+import { showSchema } from './production/show';
+import { runsheetSchema } from './production/runsheet';
+import { runsheetCueSchema } from './production/runsheetCue';
+import { departmentSchema } from './core/department';
+import { productionAdvanceSchema, advanceItemSchema, advanceItemFulfillmentSchema, vendorRatingSchema } from './advancing';
+import { publicProfileSchema } from './core/publicProfile';
+import { techSpecSchema } from './production/techSpec';
+import { riderSchema } from './production/rider';
+import { floorPlanSchema } from './production/floorPlan';
+import { zoneSchema } from './assets/zone';
+import { checkpointSchema } from './operations/checkpoint';
 import { incidentSchema } from './incident';
-import { radioChannelSchema } from './radioChannel';
-import { scheduleSchema } from './schedule';
-import { shiftSchema } from './shift';
-import { timesheetSchema } from './timesheet';
-import { credentialSchema } from './credential';
-import { certificationSchema } from './certification';
-import { positionSchema } from './position';
-import { categorySchema } from './category';
-import { kitSchema } from './kit';
-import { reservationSchema } from './reservation';
-import { maintenanceSchema } from './maintenance';
-import { checkInOutSchema } from './checkInOut';
+import { radioChannelSchema } from './production/radioChannel';
+import { scheduleSchema } from './operations/schedule';
+import { shiftSchema } from './operations/shift';
+import { timesheetSchema } from './people/timesheet';
+import { credentialSchema } from './people/credential';
+import { certificationSchema } from './people/certification';
+import { positionSchema } from './people/position';
+import { kitSchema } from './assets/kit';
+import { reservationSchema } from './assets/reservation';
+import { maintenanceSchema } from './assets/maintenance';
+import { checkInOutSchema } from './operations/checkInOut';
 import { vendorSchema } from './vendor';
-import { budgetSchema } from './budget';
-import { budgetPhaseSchema } from './budgetPhase';
-import { budgetTemplateSchema } from './budgetTemplate';
-import { paymentMilestoneSchema } from './paymentMilestone';
-import { invoiceSchema } from './invoice';
-import { invoiceLineItemSchema } from './invoiceLineItem';
-import { expenseSchema } from './expense';
-import { paymentSchema } from './payment';
-import { settlementSchema } from './settlement';
+import { budgetSchema } from './finance/budget';
+import { budgetPhaseSchema } from './finance/budgetPhase';
+import { budgetTemplateSchema } from './finance/budgetTemplate';
+import { paymentMilestoneSchema } from './finance/paymentMilestone';
+import { invoiceSchema } from './finance/invoice';
+import { invoiceLineItemSchema } from './finance/invoiceLineItem';
+import { expenseSchema } from './finance/expense';
+import { paymentSchema } from './finance/payment';
+import { settlementSchema } from './finance/settlement';
 import { accountSchema } from './account';
-import { recurringInvoiceSchema } from './recurringInvoice';
-import { quoteSchema } from './quote';
-import { reminderTemplateSchema } from './reminderTemplate';
-import { bankConnectionSchema } from './bankConnection';
-import { receiptScanSchema } from './receiptScan';
-import { timerSessionSchema } from './timerSession';
-import { laborRuleSetSchema } from './laborRuleSet';
-import { resourceBookingSchema } from './resourceBooking';
-import { automationRuleSchema } from './automationRule';
+import { recurringInvoiceSchema } from './finance/recurringInvoice';
+import { quoteSchema } from './finance/quote';
+import { reminderTemplateSchema } from './workflows/reminderTemplate';
+import { bankConnectionSchema } from './finance/bankConnection';
+import { receiptScanSchema } from './finance/receiptScan';
+import { timerSessionSchema } from './people/timerSession';
+import { laborRuleSetSchema } from './operations/laborRuleSet';
+import { resourceBookingSchema } from './operations/resourceBooking';
+import { automationRuleSchema } from './workflows/automationRule';
 import { projectTemplateSchema } from './projectTemplate';
-import { customFieldDefinitionSchema } from './customFieldDefinition';
+import { customFieldDefinitionSchema } from './core/customFieldDefinition';
 import { reportDefinitionSchema } from './reportDefinition';
-import { dashboardSchema } from './dashboard';
-import { contactSchema } from './contact';
-import { companySchema } from './company';
-import { leadSchema } from './lead';
-import { dealSchema } from './deal';
+import { dashboardSchema } from './core/dashboard';
+import { contactSchema } from './crm/contact';
+import { companySchema } from './crm/company';
+import { leadSchema } from './crm/lead';
+import { dealSchema } from './crm/deal';
 import { proposalSchema } from './proposal';
 import { contractSchema } from './contract';
-import { pipelineSchema } from './pipeline';
+import { pipelineSchema } from './crm/pipeline';
 
 // Import new Phase 1-3 schemas
-import { registrationSchema } from './registration';
-import { ticketTypeSchema } from './ticketType';
-import { talentSchema } from './talent';
-import { partnerSchema } from './partner';
-import { issuedCredentialSchema } from './issuedCredential';
-import { chartOfAccountsSchema } from './chartOfAccounts';
-import { journalEntrySchema } from './journalEntry';
-import { bankAccountSchema } from './bankAccount';
-import { onboardingTemplateSchema } from './onboardingTemplate';
-import { leaveRequestSchema } from './leaveRequest';
-import { purchaseOrderSchema } from './purchaseOrder';
-import { supportTicketSchema } from './supportTicket';
-import { leadScoreSchema } from './leadScore';
-import { campaignSchema } from './campaign';
+import { registrationSchema } from './network/registration';
+import { ticketTypeSchema } from './network/ticketType';
+import { talentSchema } from './people/talent';
+import { partnerSchema } from './crm/partner';
+import { issuedCredentialSchema } from './people/issuedCredential';
+import { chartOfAccountsSchema } from './finance/chartOfAccounts';
+import { journalEntrySchema } from './finance/journalEntry';
+import { bankAccountSchema } from './finance/bankAccount';
+import { onboardingTemplateSchema } from './people/onboardingTemplate';
+import { leaveRequestSchema } from './people/leaveRequest';
+import { purchaseOrderSchema } from './operations/purchaseOrder';
+import { supportTicketSchema } from './operations/supportTicket';
+import { leadScoreSchema } from './crm/leadScore';
+import { campaignSchema } from './crm/campaign';
 
 // Import ClickUp SSOT schemas
-import { productionSchema } from './production';
-import { shipmentSchema } from './shipment';
-import { workOrderSchema } from './workOrder';
-import { permitSchema } from './permit';
-import { inspectionSchema } from './inspection';
-import { punchItemSchema } from './punchItem';
-import { dailySiteReportSchema } from './dailySiteReport';
-import { travelRequestSchema } from './travelRequest';
-import { candidateSchema } from './candidate';
-import { vehicleSchema } from './vehicle';
+import { productionSchema } from './production/production';
+import { shipmentSchema } from './operations/shipment';
+import { workOrderSchema } from './operations/workOrder';
+import { permitSchema } from './operations/permit';
+import { inspectionSchema } from './assets/inspection';
+import { punchItemSchema } from './operations/punchItem';
+import { dailySiteReportSchema } from './production/dailySiteReport';
+import { travelRequestSchema } from './operations/travelRequest';
+import { candidateSchema } from './people/candidate';
+import { vehicleSchema } from './assets/vehicle';
 
 // Import additional schemas
-import { eventSessionSchema } from './eventSession';
-import { offboardingTemplateSchema } from './offboardingTemplate';
-import { emailSequenceSchema } from './emailSequence';
+import { eventSessionSchema } from './production/eventSession';
+import { offboardingTemplateSchema } from './people/offboardingTemplate';
+import { emailSequenceSchema } from './crm/emailSequence';
 import { compliancePolicySchema } from './compliancePolicy';
-import { formTemplateSchema } from './formTemplate';
-import { hospitalityRequestSchema } from './hospitalityRequest';
-import { performanceReviewSchema } from './performanceReview';
-import { trainingCourseSchema } from './trainingCourse';
-import { landingPageSchema } from './landingPage';
-import { subscriberSchema } from './subscriber';
-import { payrollRunSchema } from './payrollRun';
+import { formTemplateSchema } from './core/formTemplate';
+import { hospitalityRequestSchema } from './operations/hospitalityRequest';
+import { performanceReviewSchema } from './people/performanceReview';
+import { trainingCourseSchema } from './people/trainingCourse';
+import { landingPageSchema } from './crm/landingPage';
+import { subscriberSchema } from './crm/subscriber';
+import { payrollRunSchema } from './finance/payrollRun';
 import { projectResourceSchema } from './projectResource';
-import { timeEntrySchema } from './timeEntry';
-import { exhibitorSchema } from './exhibitor';
-import { networkingSessionSchema } from './networkingSession';
-import { serviceTicketSchema } from './serviceTicket';
+import { timeEntrySchema } from './people/timeEntry';
+import { exhibitorSchema } from './crm/exhibitor';
+import { networkingSessionSchema } from './network/networkingSession';
+import { serviceTicketSchema } from './operations/serviceTicket';
 
 // Import Navigation v6 schemas
-import { checklistSchema } from './checklist';
-import { notificationSchema } from './notification';
+import { checklistSchema } from './operations/checklist';
+import { notificationSchema } from './core/notification';
 import { approvalSchema } from './approval';
-import { documentTemplateSchema } from './documentTemplate';
-import { workflowTriggerSchema } from './workflowTrigger';
-import { stageSchema } from './stage';
+import { documentTemplateSchema } from './core/documentTemplate';
+import { workflowTriggerSchema } from './workflows/workflowTrigger';
+import { stageSchema } from './crm/stage';
 import { insuranceSchema } from './insurance';
 import { certificateOfInsuranceSchema } from './certificateOfInsurance';
-import { cateringSchema } from './catering';
-import { guestListSchema } from './guestList';
-import { crewCallSchema } from './crewCall';
-import { talentBookingSchema } from './talentBooking';
-import { punchListSchema } from './punchList';
-import { dailyReportSchema } from './dailyReport';
-import { flightSchema } from './flight';
-import { groundTransportSchema } from './groundTransport';
-import { accommodationSchema } from './accommodation';
-import { feedbackSchema } from './feedback';
-import { storageBinSchema } from './storageBin';
-import { assetTransferSchema } from './assetTransfer';
-import { serviceHistorySchema } from './serviceHistory';
-import { priceListSchema } from './priceList';
-import { servicePackageSchema } from './servicePackage';
-import { activitySchema } from './activity';
-import { emailTemplateSchema } from './emailTemplate';
+import { cateringSchema } from './operations/catering';
+import { guestListSchema } from './production/guestList';
+import { crewCallSchema } from './production/crewCall';
+import { talentBookingSchema } from './people/talentBooking';
+import { punchListSchema } from './operations/punchList';
+import { dailyReportSchema } from './production/dailyReport';
+import { flightSchema } from './operations/flight';
+import { groundTransportSchema } from './operations/groundTransport';
+import { accommodationSchema } from './operations/accommodation';
+import { feedbackSchema } from './network/feedback';
+import { storageBinSchema } from './assets/storageBin';
+import { assetTransferSchema } from './assets/assetTransfer';
+import { serviceHistorySchema } from './operations/serviceHistory';
+import { priceListSchema } from './finance/priceList';
+import { servicePackageSchema } from './operations/servicePackage';
+import { activitySchema } from './core/activity';
+import { emailTemplateSchema } from './crm/emailTemplate';
 import { brandAssetSchema } from './brandAsset';
-import { creditNoteSchema } from './creditNote';
+import { creditNoteSchema } from './finance/creditNote';
 
 // Gap analysis remediation schema imports
 import { productSchema } from './product';
-import { budgetLineItemSchema } from './budgetLineItem';
-import { payrollDeductionSchema } from './payrollDeduction';
-import { payrollRateSchema } from './payrollRate';
-import { payStubSchema } from './payStub';
-import { weatherAlertSchema } from './weatherAlert';
+import { budgetLineItemSchema } from './finance/budgetLineItem';
+import { payrollDeductionSchema } from './finance/payrollDeduction';
+import { payrollRateSchema } from './finance/payrollRate';
+import { payStubSchema } from './finance/payStub';
+import { weatherAlertSchema } from './production/weatherAlert';
 
 // Network module enhancement schemas
-import { messageSchema } from './message';
-import { conversationSchema } from './conversation';
-import { reactionSchema } from './reaction';
-import { discussionReplySchema } from './discussionReply';
-import { activityFeedSchema } from './activityFeed';
-import { userFollowSchema } from './userFollow';
-import { challengeParticipantSchema } from './challengeParticipant';
-import { challengeSubmissionSchema } from './challengeSubmission';
-import { challengeMilestoneSchema } from './challengeMilestone';
-import { userPointsSchema, badgeSchema, userBadgeSchema } from './gamification';
-import { crewRateCardSchema } from './crewRateCard';
-import { crewGigRatingSchema } from './crewGigRating';
+import { messageSchema } from './core/message';
+import { conversationSchema } from './core/conversation';
+import { reactionSchema } from './core/reaction';
+import { discussionReplySchema } from './core/discussionReply';
+import { activityFeedSchema } from './core/activityFeed';
+import { userFollowSchema } from './core/userFollow';
+import { challengeParticipantSchema } from './network/challengeParticipant';
+import { challengeSubmissionSchema } from './network/challengeSubmission';
+import { challengeMilestoneSchema } from './network/challengeMilestone';
+import { userPointsSchema, badgeSchema, userBadgeSchema } from './network/gamification';
+import { crewRateCardSchema } from './production/crewRateCard';
+import { crewGigRatingSchema } from './production/crewGigRating';
 import { projectPostMortemSchema } from './projectPostMortem';
 import { rfpResponseSchema } from './rfpResponse';
-import { mediaAssetSchema } from './mediaAsset';
-import { fiscalYearSchema } from './fiscalYear';
+import { mediaAssetSchema } from './production/mediaAsset';
+import { fiscalYearSchema } from './finance/fiscalYear';
 import { clientPortalAccessSchema } from './clientPortalAccess';
-import { webhookEndpointSchema } from './webhookEndpoint';
+import { webhookEndpointSchema } from './workflows/webhookEndpoint';
 import { oauthConnectionSchema } from './oauthConnection';
 
 // Helper functions for schema operations
@@ -483,10 +485,16 @@ export function getSchema(entityName: string) {
     'advance-fulfillment': advanceItemFulfillmentSchema,
     vendorRating: vendorRatingSchema,
     'vendor-ratings': vendorRatingSchema,
-    advanceCategory: advanceCategorySchema,
-    'advance-categories': advanceCategorySchema,
-    advancingCatalogItem: advancingCatalogItemSchema,
-    'advancing-catalog': advancingCatalogItemSchema,
+    advanceCategory: platformCatalogCategorySchema,
+    'advance-categories': platformCatalogCategorySchema,
+    advancingCatalogItem: platformCatalogItemSchema,
+    'advancing-catalog': platformCatalogItemSchema,
+    platformCatalogDivision: platformCatalogDivisionSchema,
+    'platform-catalog-divisions': platformCatalogDivisionSchema,
+    platformCatalogCategory: platformCatalogCategorySchema,
+    'platform-catalog-categories': platformCatalogCategorySchema,
+    platformCatalogItem: platformCatalogItemSchema,
+    'platform-catalog-items': platformCatalogItemSchema,
     publicProfile: publicProfileSchema,
     'public-profiles': publicProfileSchema,
     profiles: publicProfileSchema,
@@ -523,9 +531,9 @@ export function getSchema(entityName: string) {
     position: positionSchema,
     positions: positionSchema,
     // Assets module
-    category: categorySchema,
-    categories: categorySchema,
-    'asset_categories': categorySchema,
+    category: platformCatalogCategorySchema,
+    categories: platformCatalogCategorySchema,
+    'asset_categories': platformCatalogCategorySchema,
     kit: kitSchema,
     kits: kitSchema,
     'asset_kits': kitSchema,

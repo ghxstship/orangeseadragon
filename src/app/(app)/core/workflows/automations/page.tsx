@@ -1,7 +1,7 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { workflowRunSchema } from '@/lib/schemas/workflowRun';
+import { workflowRunSchema } from '@/lib/schemas/workflows/workflowRun';
 
 export default function AutomationsPage() {
   return <CrudList schema={workflowRunSchema} />;

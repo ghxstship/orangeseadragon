@@ -59,7 +59,7 @@ export async function POST(
         // Get the current event
         const { data: event, error: fetchError } = await supabase
             .from('events')
-            .select('*')
+            .select('id, phase, metadata, organization_id, name, start_date, end_date, venue_id, capacity, doors_time, start_time')
             .eq('id', id)
             .single();
 
@@ -80,7 +80,7 @@ export async function POST(
 
         // Validate required fields for target phase
         const requiredFields = PHASE_REQUIREMENTS[targetPhase] || [];
-        const missingFields = requiredFields.filter(field => !event[field]);
+        const missingFields = requiredFields.filter(field => !(event as Record<string, unknown>)[field]);
 
         if (missingFields.length > 0) {
             return badRequest(

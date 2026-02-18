@@ -4,8 +4,8 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { PageShell } from '@/components/common/page-shell';
 import { DocumentManager } from '@/components/people/DocumentManager';
-import { useUser } from '@/hooks/use-supabase';
-import { useDocuments } from '@/hooks/use-documents';
+import { useUser } from '@/hooks/auth/use-supabase';
+import { useDocuments } from '@/hooks/data/core/use-documents';
 import { captureError } from '@/lib/observability';
 
 type DocumentCategory = 'contract' | 'policy' | 'certification' | 'personal' | 'tax' | 'other';

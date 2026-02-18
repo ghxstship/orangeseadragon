@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Fetch the KPI definition to evaluate thresholds
     const { data: kpiDef, error: fetchError } = await supabase
       .from('kpi_definitions')
-      .select('*')
+      .select('id, name, target_value, warning_threshold, critical_threshold, trend_direction')
       .eq('id', kpi_definition_id)
       .single();
 

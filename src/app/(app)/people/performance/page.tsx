@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { performanceReviewSchema } from '@/lib/schemas/performanceReview';
+import { performanceReviewSchema } from '@/lib/schemas/people/performanceReview';
 import { PerformanceReviewDashboard } from '@/components/people/PerformanceReviewDashboard';
 import { createClient } from '@/lib/supabase/client';
-import { useUser } from '@/hooks/use-supabase';
+import { useUser } from '@/hooks/auth/use-supabase';
 import { useRouter } from 'next/navigation';
 import { PageShell } from '@/components/common/page-shell';
 

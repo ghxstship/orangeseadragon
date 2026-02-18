@@ -1,7 +1,7 @@
 import React from 'react';
-import { usePageLayout, usePageLayouts, useDefaultPageLayout } from '@/hooks/use-configuration';
-import { useUser } from '@/hooks/use-supabase';
-import { useOrganization } from '@/hooks/use-organization';
+import { usePageLayout, usePageLayouts, useDefaultPageLayout } from '@/hooks/ui/use-configuration';
+import { useUser } from '@/hooks/auth/use-supabase';
+import { useOrganization } from '@/hooks/auth/use-organization';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ContextualEmptyState, PageErrorState } from '@/components/common/contextual-empty-state';
 import { motion } from "framer-motion";
@@ -59,7 +59,7 @@ export const COMPONENT_REGISTRY: Record<string, React.ComponentType<any>> = {
   'timeline_view': React.lazy(() => import('./views/timeline-view').then(m => ({ default: m.TimelineView }))),
   'matrix_view': React.lazy(() => import('./views/matrix-view').then(m => ({ default: m.MatrixView }))),
   'map_view': React.lazy(() => import('./views/map-view').then(m => ({ default: m.MapView }))),
-  'workload_view': React.lazy(() => import('./views/workload-view').then(m => ({ default: m.WorkloadView }))),
+  'workload_view': React.lazy(() => import('./views/WorkloadView').then(m => ({ default: m.WorkloadView }))),
   'activity_feed': React.lazy(() => import('./views/activity-feed').then(m => ({ default: m.ActivityFeed }))),
   'master_calendar': React.lazy(() => import('./views/MasterCalendar').then(m => ({ default: m.MasterCalendar }))),
   'toolbar': React.lazy(() => import('./views/toolbar').then(m => ({ default: m.Toolbar }))),
@@ -167,7 +167,6 @@ export const COMPONENT_REGISTRY: Record<string, React.ComponentType<any>> = {
   // ── Template Components ─────────────────────────────────────────────
   'auth_template': React.lazy(() => import('./templates/AuthTemplate').then(m => ({ default: m.AuthTemplate }))),
   'dashboard_template': React.lazy(() => import('./templates/DashboardTemplate').then(m => ({ default: m.DashboardTemplate }))),
-  'entity_list_template': React.lazy(() => import('./templates/EntityListTemplate').then(m => ({ default: m.EntityListTemplate }))),
   'form_template': React.lazy(() => import('./templates/FormTemplate').then(m => ({ default: m.FormTemplate }))),
   'reports_template': React.lazy(() => import('./templates/ReportsTemplate').then(m => ({ default: m.ReportsTemplate }))),
   'settings_template': React.lazy(() => import('./templates/SettingsTemplate').then(m => ({ default: m.SettingsTemplate }))),

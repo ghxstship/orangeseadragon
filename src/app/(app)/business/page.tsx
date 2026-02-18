@@ -7,7 +7,7 @@ import { QuickAccessCard } from '@/components/common/quick-access-card';
 import { PageShell } from '@/components/common/page-shell';
 import { StaggerList } from '@/components/ui/motion';
 import { ActivityFeed, ActivityItem } from '@/components/views/activity-feed';
-import { useCopilotContext } from '@/hooks/use-copilot-context';
+import { useCopilotContext } from '@/hooks/ui/use-copilot-context';
 import { Building2, FileCheck, Handshake, Send } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

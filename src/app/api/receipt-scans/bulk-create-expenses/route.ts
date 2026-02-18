@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 
     const { data: scans, error: fetchErr } = await supabase
       .from('receipt_scans')
-      .select('*')
+      .select('id, extracted_vendor, extracted_amount')
       .in('id', ids)
       .eq('organization_id', membership.organization_id)
       .eq('status', 'completed')
@@ -25,8 +25,8 @@ export async function POST(request: NextRequest) {
 
     const expenses = scans.map(scan => ({
       organization_id: membership.organization_id,
-      vendor: scan.extractedVendor || scan.extracted_vendor,
-      amount: scan.extractedAmount || scan.extracted_amount,
+      vendor: scan.extracted_vendor,
+      amount: scan.extracted_amount,
       receipt_scan_id: scan.id,
       status: 'draft',
     }));

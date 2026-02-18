@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUIStore } from "@/stores/ui-store";
-import { useUser } from "@/hooks/use-supabase";
+import { useUser } from "@/hooks/auth/use-supabase";
 import { CheckSquare, Loader2 } from "lucide-react";
 
 export function QuickAddTask() {

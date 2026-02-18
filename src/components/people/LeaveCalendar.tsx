@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import { getLeaveTypeSolidClass, getStatusSolidClass, getStatusTextClass } from '@/lib/tokens/semantic-colors';
+import { getLeaveTypeSolidClass, getStatusSolidClass, getStatusTextClass } from '@/lib/theming/semantic-colors';
 
 type LeaveType = 'annual' | 'sick' | 'parental' | 'bereavement' | 'study' | 'unpaid';
 type LeaveStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';

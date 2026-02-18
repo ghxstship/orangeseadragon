@@ -29,7 +29,7 @@ export async function POST(
         // Get current member record
         const { data: member, error: fetchError } = await supabase
             .from('organization_members')
-            .select('*')
+            .select('id, status, organization_id, user_id')
             .eq('id', id)
             .single();
 

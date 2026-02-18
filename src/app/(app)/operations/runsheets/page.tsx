@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/common/page-shell";
 import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
 import { Play, Clock, Calendar, ChevronRight, CheckCircle2, Maximize2, Plus } from "lucide-react";
-import { useUser } from "@/hooks/use-supabase";
-import { useRunsheets } from "@/hooks/use-runsheets";
+import { useUser } from "@/hooks/auth/use-supabase";
+import { useRunsheets } from "@/hooks/data/production/use-runsheets";
 
 interface RunSheet {
   id: string;

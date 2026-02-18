@@ -2,7 +2,7 @@ import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatStatus } from "@/lib/formatters";
-import { getStatusBadgeClasses, getPriorityBadgeClasses } from "@/lib/tokens/semantic-colors";
+import { getStatusBadgeClasses, getPriorityBadgeClasses } from "@/lib/theming/semantic-colors";
 
 interface StatusBadgeProps {
   status: string;

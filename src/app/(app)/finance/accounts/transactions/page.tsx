@@ -1,7 +1,7 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { journalEntrySchema } from '@/lib/schemas/journalEntry';
+import { journalEntrySchema } from '@/lib/schemas/finance/journalEntry';
 
 export default function TransactionsPage() {
   return <CrudList schema={journalEntrySchema} />;

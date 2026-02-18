@@ -1,17 +1,31 @@
-export type PolicyAction =
-  | "entity.read"
-  | "entity.write"
-  | "entity.delete"
-  | "finance.approve"
-  | "audit.read"
-  | "settings.manage";
+import {
+  isAtLeastRole,
+  type RoleSlug,
+  type Permission,
+} from "@/lib/rbac/roles";
+
+/**
+ * ATLVS Policy Engine
+ *
+ * All role checks derive from the canonical SSOT at `@/lib/rbac/roles`.
+ * Policy evaluation uses effective permissions (platform + project + overrides)
+ * computed by the guard layer via `resolveEffectivePermissions()`.
+ */
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export type PolicyAction = Permission | string;
 
 export type DataSensitivity = "low" | "medium" | "high" | "critical";
 
 export interface PolicyDecisionContext {
   actorId: string;
   actorOrganizationId: string;
-  roleName: string | null;
+  roleSlug: RoleSlug | null;
+  permissions: string[];
+  effectivePermissions: Set<Permission>;
   resourceOwnerId?: string | null;
   resourceOrganizationId?: string | null;
   sensitivity?: DataSensitivity;
@@ -22,122 +36,67 @@ export interface PolicyDecision {
   reason: string;
 }
 
-type PolicyRule = {
-  roles?: string[];
-  allowIf?: (context: PolicyDecisionContext) => boolean;
-  reason: string;
-};
-
-const POLICY_RULES: Record<PolicyAction, PolicyRule[]> = {
-  "entity.read": [
-    {
-      roles: ["owner", "admin", "manager", "member", "staff", "viewer", "contractor", "client", "client_viewer", "vendor"],
-      reason: "Role is permitted to view entities",
-    },
-    {
-      allowIf: (context) => context.actorId === context.resourceOwnerId,
-      reason: "Resource owners can always read their own records",
-    },
-  ],
-  "entity.write": [
-    {
-      roles: ["owner", "admin", "manager", "member", "staff"],
-      reason: "Role is permitted to modify entities",
-    },
-    {
-      allowIf: (context) => context.actorId === context.resourceOwnerId,
-      reason: "Resource owners can edit their own records",
-    },
-  ],
-  "entity.delete": [
-    {
-      roles: ["owner", "admin", "manager"],
-      reason: "Delete operations require elevated privileges",
-    },
-  ],
-  "finance.approve": [
-    {
-      roles: ["owner", "admin", "finance_manager"],
-      reason: "Finance approvals are restricted to privileged finance roles",
-    },
-  ],
-  "audit.read": [
-    {
-      roles: ["owner", "admin", "security_auditor", "compliance_officer"],
-      reason: "Audit access restricted to compliance/security administrators",
-    },
-  ],
-  "settings.manage": [
-    {
-      roles: ["owner", "admin"],
-      reason: "Only tenant admins can manage settings",
-    },
-  ],
-};
-
-function matchesRole(roleName: string | null, allowedRoles: string[] | undefined): boolean {
-  if (!allowedRoles?.length || !roleName) {
-    return false;
-  }
-
-  return allowedRoles.includes(roleName);
-}
+// ============================================================================
+// GUARDS
+// ============================================================================
 
 function isOrgBoundaryValid(context: PolicyDecisionContext): boolean {
-  if (!context.resourceOrganizationId) {
-    return true;
-  }
-
+  if (!context.resourceOrganizationId) return true;
   return context.resourceOrganizationId === context.actorOrganizationId;
 }
 
 function passesSensitivityGuard(context: PolicyDecisionContext): boolean {
-  if (!context.sensitivity) {
-    return true;
-  }
+  if (!context.sensitivity) return true;
 
   if (context.sensitivity === "critical") {
-    return context.roleName === "admin" || context.roleName === "security_auditor";
+    return isAtLeastRole(context.roleSlug, "admin") ||
+      context.roleSlug === "officer";
   }
 
   if (context.sensitivity === "high") {
-    return ["admin", "manager", "security_auditor", "compliance_officer"].includes(
-      context.roleName || ""
-    );
+    return isAtLeastRole(context.roleSlug, "manager") ||
+      context.roleSlug === "officer";
   }
 
   return true;
 }
 
-export function evaluatePolicy(action: PolicyAction, context: PolicyDecisionContext): PolicyDecision {
+// ============================================================================
+// POLICY EVALUATION
+// ============================================================================
+
+export function evaluatePolicy(
+  action: PolicyAction,
+  context: PolicyDecisionContext
+): PolicyDecision {
+  // Cross-org boundary check
   if (!isOrgBoundaryValid(context)) {
-    return {
-      allow: false,
-      reason: "Cross-organization access is not permitted",
-    };
+    return { allow: false, reason: "Cross-organization access is not permitted" };
   }
 
+  // Sensitivity guard
   if (!passesSensitivityGuard(context)) {
-    return {
-      allow: false,
-      reason: "Action blocked due to data sensitivity constraints",
-    };
+    return { allow: false, reason: "Action blocked due to data sensitivity constraints" };
   }
 
-  const rules = POLICY_RULES[action] || [];
-
-  for (const rule of rules) {
-    if (matchesRole(context.roleName, rule.roles)) {
-      return { allow: true, reason: rule.reason };
-    }
-
-    if (rule.allowIf?.(context)) {
-      return { allow: true, reason: rule.reason };
-    }
+  // Resource owner self-access for read/write
+  if (
+    context.resourceOwnerId &&
+    context.actorId === context.resourceOwnerId &&
+    (action === "entity.read" || action === "entity.write")
+  ) {
+    return { allow: true, reason: "Resource owners can access their own records" };
   }
 
-  return {
-    allow: false,
-    reason: `Policy denied for action ${action}`,
-  };
+  // Check effective permissions (platform + project + overrides)
+  if (context.effectivePermissions.has(action as Permission)) {
+    return { allow: true, reason: `Effective permission grants '${action}'` };
+  }
+
+  // Fallback: check raw permissions array (for non-canonical permission strings)
+  if (context.permissions.includes(action)) {
+    return { allow: true, reason: `Explicit permission grant for '${action}'` };
+  }
+
+  return { allow: false, reason: `Policy denied for action '${action}'` };
 }

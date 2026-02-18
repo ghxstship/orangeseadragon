@@ -15,7 +15,7 @@ export async function POST(
   try {
     const { data: template, error: fetchErr } = await supabase
       .from('recurring_invoices')
-      .select('*')
+      .select('id, client_id, company_id, amount, total_amount')
       .eq('id', id)
       .eq('organization_id', membership.organization_id)
       .single();

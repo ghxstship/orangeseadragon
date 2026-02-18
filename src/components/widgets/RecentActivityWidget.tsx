@@ -5,10 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ContextualEmptyState } from '@/components/common/contextual-empty-state';
-import { useUser } from '@/hooks/use-supabase';
-import { useTasks } from '@/hooks/use-tasks';
+import { useUser } from '@/hooks/auth/use-supabase';
+import { useTasks } from '@/hooks/data/core/use-tasks';
 import { formatDistanceToNow } from 'date-fns';
-import { getStatusSolidClass } from '@/lib/tokens/semantic-colors';
+import { getStatusSolidClass } from '@/lib/theming/semantic-colors';
 import { getErrorMessage } from '@/lib/api/error-message';
 
 interface RecentActivityWidgetProps {

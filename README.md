@@ -1,234 +1,122 @@
-# ATLVS - Unified Operations Platform
+# ATLVS — Unified Operations Platform
 
-A comprehensive enterprise operations management platform for live events, production companies, and creative agencies. Built with Next.js 15, Supabase, and modern UI components.
-
-## Features
-
-### 9 Management Domains
-- **Project Management** - Tasks, milestones, dependencies, and team collaboration
-- **Events & Live Production** - Runsheets, cue sheets, show calls, and production notes
-- **Asset Management** - Equipment tracking, maintenance, reservations, and inventory
-- **Workforce Management** - Crew calls, scheduling, timesheets, and certifications
-- **Finance Management** - Budgets, invoices, expenses, and contracts
-- **CRM & Business** - Companies, contacts, deals, and proposals
-- **Venue Management** - Venue database, availability, and site surveys
-- **Content & Marketing** - Media library, campaigns, and social posts
-- **Talent Management** - Artist profiles, bookings, riders, and payments
-
-### Enterprise Features
-
-#### 12 View Components
-| View | Description |
-|------|-------------|
-| DataTable | Full-featured data table with sorting, filtering, pagination |
-| KanbanBoard | Drag-drop board with WIP limits and swimlanes |
-| CalendarView | Multi-view calendar (day/week/month/agenda) |
-| TimelineView | Horizontal timeline with zoom levels |
-| GanttView | Project Gantt chart with dependencies and critical path |
-| ListView | Grouped list with inline editing |
-| WorkloadView | Resource capacity visualization |
-| MapView | Interactive map with markers and clustering |
-| ActivityFeed | Chronological activity stream |
-| DashboardWidgets | Metric, progress, list, donut, sparkline widgets |
-| FormBuilder | Dynamic form builder with 16 field types |
-| Toolbar | Global actions (search, filter, sort, export, etc.) |
-
-#### Workflow Engine
-- 22+ pre-built workflow templates across 7 categories
-- Visual workflow builder with conditional logic
-- Automated triggers (time-based, event-based, webhook)
-- Step types: approval, notification, data update, integration, delay
-
-#### Integration Connectors (90+)
-- **ERP**: NetSuite, SAP, Dynamics 365, Sage Intacct, Oracle Fusion
-- **CRM**: Salesforce, HubSpot, Pipedrive, Zoho CRM
-- **HRIS**: Workday, BambooHR, ADP, Gusto, Rippling
-- **FinOps**: Stripe, Ramp, Brex, Bill.com, Expensify
-- **Communication**: Slack, Teams, Zoom, Twilio, SendGrid
-- **Calendar**: Google Calendar, Outlook, Calendly
-- **Storage**: Google Drive, Dropbox, OneDrive, Box, S3
-- **Ticketing**: Eventbrite, Ticketmaster, Universe
-- **Identity**: Okta, Auth0, Azure AD, OneLogin
-
-#### White-Label Theming
-- Customizable brand colors, typography, and logos
-- Light/dark mode support
-- Component style customization (border radius, button styles)
-- CSS variable-based theming
-- Theme presets and live preview
-
-#### Notification Service
-- Multi-channel: Email, Push, SMS, In-App, Slack, Webhook
-- 15+ notification templates
-- User preferences and quiet hours
-- Digest notifications
-- Rate limiting and retry logic
-
-#### Audit Logging
-- Comprehensive audit trail for compliance
-- 40+ action types tracked
-- Sensitive field redaction
-- 7-year retention for compliance (GDPR, HIPAA, SOC2)
-- Real-time alerts for high-severity events
-- Export to JSON/CSV
+Enterprise operations management for live events, production companies, and creative agencies.
 
 ## Tech Stack
 
-- **Frontend**: Next.js 15.5.x, React 19.2.x, TypeScript 5.9.x
-- **Styling**: Tailwind CSS 3.4.x, shadcn/ui, Radix UI primitives
-- **State Management**: Zustand, React Query (TanStack Query)
-- **Backend**: Supabase (PostgreSQL, Auth, Storage, Edge Functions)
-- **Icons**: Lucide React
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 15, React 19, TypeScript 5 |
+| Styling | Tailwind CSS 3.4, shadcn/ui, Radix UI |
+| State | Zustand, TanStack Query |
+| Backend | Supabase (PostgreSQL, Auth, Storage, RLS) |
+| Payments | Stripe |
+| Email | Resend |
+| Charts | Recharts 3 |
+| Icons | Lucide React |
+| Testing | Vitest, Playwright |
+
+## Modules
+
+| Module | Route Group | Description |
+|--------|------------|-------------|
+| Core | `/core` | Dashboard, tasks, inbox, calendar, documents, workflows |
+| Productions | `/productions` | Events, projects, advancing, compliance, build/strike |
+| Operations | `/operations` | Venues, comms, incidents, crew check-in, resource bookings |
+| People | `/people` | Rosters, scheduling, timekeeping, leave, training, travel |
+| Assets | `/assets` | Inventory, maintenance, logistics, locations, catalog |
+| Finance | `/finance` | Invoices, budgets, expenses, payroll, accounts, reports |
+| Business | `/business` | Pipeline, companies, contacts, campaigns, products, brand |
+| Analytics | `/analytics` | Dashboards, reports, scenarios, predictive, utilization |
+| Network | `/network` | Feed, profiles, discussions, marketplace, showcase |
+| Account | `/account` | Settings, profile, privacy, audit log, integrations |
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18.x or higher
-- npm, yarn, or pnpm
-- Supabase account (for backend services)
+
+- Node.js 18+
+- Supabase project (or local via `supabase start`)
 
 ### Installation
 
-1. Clone the repository
-2. Install dependencies:
 ```bash
 npm install
-```
-
-3. Copy the environment file and configure:
-```bash
 cp .env.local.example .env.local
-```
-
-4. Add your Supabase credentials to `.env.local`:
-```
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-```
-
-5. Run the development server:
-```bash
+# Add Supabase URL + keys to .env.local
 npm run dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Project Structure
 
 ```
 src/
-├── app/                    # Next.js App Router pages
-│   ├── (app)/             # Authenticated app routes (42+ pages)
-│   │   ├── dashboard/     # Dashboard page
-│   │   ├── tasks/         # Task management
-│   │   ├── projects/      # Project management
-│   │   ├── calendar/      # Calendar view
-│   │   ├── assets/        # Asset management
-│   │   ├── people/        # Team management
-│   │   ├── events/        # Event management
-│   │   ├── venues/        # Venue management
-│   │   ├── talent/        # Talent management
-│   │   ├── documents/     # Document management
-│   │   ├── workflows/     # Workflow automation
-│   │   ├── finance/       # Finance management
-│   │   ├── crm/           # CRM module
-│   │   ├── reports/       # Reports & analytics
-│   │   ├── settings/      # Settings & branding
-│   │   └── account/       # Account management
-│   ├── (auth)/            # Authentication routes
-│   ├── globals.css        # Global styles
-│   └── layout.tsx         # Root layout
+├── app/
+│   ├── (app)/              # Authenticated routes (334+ pages across 10 modules)
+│   ├── (auth)/             # Login, register, forgot-password, reset-password
+│   ├── (onboarding)/       # Onboarding wizard
+│   ├── api/                # 299 API route handlers
+│   ├── p/                  # Public profile pages
+│   └── client-portal/      # Client portal access
 ├── components/
-│   ├── layout/            # Layout components
-│   ├── providers/         # Context providers
-│   ├── ui/                # UI components (shadcn/ui)
-│   └── views/             # Reusable view components
-│       ├── data-table.tsx
-│       ├── kanban-board.tsx
-│       ├── calendar-view.tsx
-│       ├── timeline-view.tsx
-│       ├── gantt-view.tsx
-│       ├── list-view.tsx
-│       ├── workload-view.tsx
-│       ├── map-view.tsx
-│       ├── activity-feed.tsx
-│       ├── dashboard-widgets.tsx
-│       ├── form-builder.tsx
-│       └── toolbar.tsx
+│   ├── ui/                 # 57 shadcn/ui primitives
+│   ├── views/              # 17 view components (DataTable, Kanban, Calendar, Gantt, etc.)
+│   ├── layout/             # App shell, sidebar, top bar
+│   ├── forms/              # Dynamic form fields (20 field types)
+│   ├── common/             # Shared components (command palette, notifications, etc.)
+│   ├── templates/          # Page layout templates
+│   └── [module]/           # Module-specific components
 ├── lib/
-│   ├── api/               # API utilities
-│   ├── audit/             # Audit logging service
-│   │   ├── types.ts
-│   │   ├── service.ts
-│   │   └── index.ts
-│   ├── integrations/      # Integration connectors
-│   │   ├── types.ts
-│   │   ├── connectors.ts  # 90+ connectors
-│   │   ├── service.ts
-│   │   └── index.ts
-│   ├── notifications/     # Notification service
-│   │   ├── types.ts
-│   │   ├── service.ts
-│   │   ├── templates.ts
-│   │   └── index.ts
-│   ├── seed/              # Demo data generation
-│   ├── supabase/          # Supabase client setup
-│   ├── theming/           # White-label theming
-│   │   ├── theme-config.ts
-│   │   ├── theme-provider.tsx
-│   │   ├── white-label.ts
-│   │   └── index.ts
-│   ├── workflow-engine/   # Workflow automation
-│   │   ├── types.ts
-│   │   ├── engine.ts
-│   │   ├── templates.ts   # 22+ templates
-│   │   ├── service.ts
-│   │   └── index.ts
-│   ├── config.ts          # App configuration
-│   ├── enums.ts           # Type enums
-│   ├── formatters.ts      # Data formatters
-│   ├── helpers.ts         # Helper functions
-│   ├── utils.ts           # Utility functions
-│   └── validations.ts     # Validation schemas
+│   ├── schemas/            # 193 entity schema definitions (SSOT)
+│   ├── crud/               # CrudList + CrudDetail pipeline
+│   ├── layouts/            # ListLayout, DetailLayout, SplitLayout, etc.
+│   ├── api/                # Guard, policy, RBAC enforcement
+│   ├── rbac/               # Role taxonomy (16 roles, 18 permissions)
+│   ├── workflow-engine/    # Workflow automation (22+ templates)
+│   ├── i18n/               # Translations (en, es, fr, de, pt, ar, ja, ko, zh)
+│   ├── integrations/       # 90+ connector definitions
+│   ├── notifications/      # Multi-channel notification service
+│   ├── theming/            # White-label token system
+│   └── supabase/           # Client setup (browser, server, service)
+├── hooks/                  # 70 React hooks
+├── stores/                 # Zustand stores (UI, auth, consent)
+├── config/                 # IA registry, navigation
+└── types/                  # Database types, global types
 supabase/
-├── config.toml            # Supabase configuration
-└── migrations/            # Database migrations (11 files)
+├── config.toml
+└── migrations/             # 120+ database migrations (490+ tables)
+e2e/                        # Playwright E2E tests (216+ specs)
+scripts/                    # Audit scripts (UI compliance, component refs, wire audit)
+docs/                       # Architecture docs, API spec, deployment guide
 ```
 
-## Database Schema
+## Scripts
 
-The platform includes 100+ database tables organized across domains:
-- Core tables (organizations, users, roles, departments)
-- Project & task management
-- Events & live production
-- Asset & inventory management
-- Workforce & scheduling
-- Finance & accounting
-- CRM & sales
-- Venues & site management
-- Content & marketing
-- Talent & booking
-- Ticketing & guest management
-- Workflows & automation
-- Documents & collaboration
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start dev server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript check |
+| `npm test` | Vitest unit tests |
+| `npm run test:e2e` | Playwright E2E |
+| `npm run verify:ci` | Full CI gate (lint + audits + typecheck + tests + build) |
+| `npm run audit:ui:strict` | UI compliance audit (zero-tolerance) |
+| `npm run audit:components:strict` | Component reference audit |
+| `npm run audit:wire` | Full DB→Schema→API→UI wire audit |
+| `npm run gen:types` | Regenerate Supabase types |
 
-## Development
+## Database
 
-### Running Migrations
+490+ tables across all domains. Migrations managed via Supabase CLI:
+
 ```bash
-npx supabase db push
-```
-
-### Generating Types
-```bash
+npx supabase db push          # Apply migrations
 npx supabase gen types typescript --local > src/types/database.ts
-```
-
-### Building for Production
-```bash
-npm run build
 ```
 
 ## License
 
-Proprietary - All rights reserved.
+Proprietary — All rights reserved.

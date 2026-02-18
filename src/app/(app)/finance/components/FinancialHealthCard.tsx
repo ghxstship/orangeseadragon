@@ -3,8 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowUpRight, ArrowDownRight, Activity, DollarSign, Wallet } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUser } from '@/hooks/use-supabase';
-import { useFinanceDashboard } from '@/hooks/use-finance-dashboard';
+import { useUser } from '@/hooks/auth/use-supabase';
+import { useFinanceDashboard } from '@/hooks/data/finance/use-finance-dashboard';
 import { formatCurrency } from '@/lib/utils';
 
 interface MetricProps {

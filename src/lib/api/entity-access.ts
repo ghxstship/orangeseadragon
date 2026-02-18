@@ -1,5 +1,5 @@
 import { getSchema } from "@/lib/schemas";
-import type { EntitySchema } from "@/lib/schema/types";
+import type { EntitySchema } from "@/lib/schema-engine/types";
 
 const API_PREFIX = "/api/";
 

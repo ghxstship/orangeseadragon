@@ -1,4 +1,5 @@
 export * from "./data-table";
+export * from "./data-view";
 export * from "./kanban-board";
 export * from "./calendar-view";
 export * from "./toolbar";
@@ -8,5 +9,7 @@ export * from "./gantt-view";
 export * from "./activity-feed";
 export * from "./dashboard-widgets";
 export * from "./form-builder";
+export * from "./inline-edit-cell";
 export * from "./map-view";
-export * from "./workload-view";
+export * from "./matrix-view";
+export * from "./WorkloadView";

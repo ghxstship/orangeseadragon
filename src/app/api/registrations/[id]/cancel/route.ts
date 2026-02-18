@@ -23,7 +23,7 @@ export async function POST(
     // Get the registration
     const { data: registration, error: fetchError } = await supabase
       .from('event_registrations')
-      .select('*')
+      .select('id, cancelled_at, status_id')
       .eq('id', id)
       .single();
 

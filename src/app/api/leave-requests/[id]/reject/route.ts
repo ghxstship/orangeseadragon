@@ -28,7 +28,7 @@ export async function POST(
     // Get the leave request
     const { data: leaveRequest, error: fetchError } = await supabase
       .from('leave_requests')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

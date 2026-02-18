@@ -8,8 +8,8 @@ import { Calendar, MapPin, ArrowRight, Settings, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/common/page-shell";
 import { ContextualEmptyState } from "@/components/common/contextual-empty-state";
-import { useUser } from "@/hooks/use-supabase";
-import { useEvents } from "@/hooks/use-events";
+import { useUser } from "@/hooks/auth/use-supabase";
+import { useEvents } from "@/hooks/data/production/use-events";
 
 interface Show {
   id: string;

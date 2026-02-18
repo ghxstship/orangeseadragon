@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageShell } from '@/components/common/page-shell';
 import { StaggerList, StaggerItem } from '@/components/ui/motion';
-import { useCopilotContext } from '@/hooks/use-copilot-context';
+import { useCopilotContext } from '@/hooks/ui/use-copilot-context';
 import { CashFlowChart } from './components/CashFlowChart';
 import { FinancialHealthCard } from './components/FinancialHealthCard';
 import { ActionCenter } from './components/ActionCenter';

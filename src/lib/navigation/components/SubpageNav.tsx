@@ -1,9 +1,9 @@
 'use client';
 
-import { EntitySchema } from '@/lib/schema/types';
+import { EntitySchema } from '@/lib/schema-engine/types';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { useSupabase } from '@/hooks/use-supabase';
+import { useSupabase } from '@/hooks/auth/use-supabase';
 import { Button } from '@/components/ui/button';
 
 interface SubpageDefinition {

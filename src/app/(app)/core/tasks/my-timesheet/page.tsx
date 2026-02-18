@@ -40,9 +40,9 @@ import {
   FileText,
   RefreshCw,
 } from "lucide-react";
-import { useMyTimeEntries, useUpsertTimeEntry, useSubmitWeekTimeEntries } from "@/hooks/use-my-time-entries";
-import { useUser } from "@/hooks/use-supabase";
-import { useProjects } from "@/hooks/use-projects";
+import { useMyTimeEntries, useUpsertTimeEntry, useSubmitWeekTimeEntries } from "@/hooks/data/operations/use-my-time-entries";
+import { useUser } from "@/hooks/auth/use-supabase";
+import { useProjects } from "@/hooks/data/core/use-projects";
 import { captureError } from '@/lib/observability';
 
 interface GridRow {

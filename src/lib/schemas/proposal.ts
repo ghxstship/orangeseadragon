@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 export const proposalSchema = defineSchema({
   identity: { name: 'proposal', namePlural: 'Proposals', slug: 'modules/business/proposals', icon: 'FileSignature', description: 'Business proposals and quotes' },

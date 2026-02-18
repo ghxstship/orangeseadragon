@@ -20,11 +20,12 @@ export async function GET(request: NextRequest) {
         *,
         item:advance_items(
           *,
-          category:advance_categories(id, code, name, icon, color),
+          platform_catalog_category:platform_catalog_categories(id, slug, name, icon, color),
+          platform_catalog_item:platform_catalog_items(id, slug, name, description, icon, image_url, default_unit_cost, unit_of_measure, is_rentable, is_service, platform_catalog_categories(id, slug, name, icon, color, platform_catalog_divisions(id, slug, name))),
           vendor:companies(id, name),
           production_advance:production_advances(id, advance_code, event_id, status)
         ),
-        catalog_item:advancing_catalog_items(id, name, description, image_url)
+        platform_catalog_item:platform_catalog_items(id, slug, name, description, image_url)
       `)
       .eq('tag_value', tagValue)
       .eq('is_active', true)
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
       .select(`
         *,
         item:advance_items(*),
-        catalog_item:advancing_catalog_items(id, name, description, image_url)
+        platform_catalog_item:platform_catalog_items(id, slug, name, description, image_url)
       `)
       .eq('id', tagId)
       .single();

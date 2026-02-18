@@ -1,30 +1,76 @@
 'use client';
 
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useOnboardingProgress, UseOnboardingProgressReturn } from '@/hooks/use-onboarding-progress';
 import { captureError } from '@/lib/observability';
 
-const ONBOARDING_STEPS = [
-  { path: '/onboarding', key: 'welcome' },
-  { path: '/onboarding/profile', key: 'profile' },
-  { path: '/onboarding/organization', key: 'organization' },
-  { path: '/onboarding/team', key: 'team' },
-  { path: '/onboarding/preferences', key: 'preferences' },
-  { path: '/onboarding/integrations', key: 'integrations' },
-  { path: '/onboarding/tour', key: 'tour' },
-  { path: '/onboarding/complete', key: 'complete' },
+// Fallback steps used when the server hasn't responded yet or for account
+// types that don't have DB-seeded steps. The server-backed steps override
+// these once loaded.
+const DEFAULT_STEPS: OnboardingStepDef[] = [
+  { path: '/onboarding', key: 'welcome', label: 'Welcome', isRequired: true, isSkippable: false },
+  { path: '/onboarding/profile', key: 'profile', label: 'Profile', isRequired: true, isSkippable: false },
+  { path: '/onboarding/organization', key: 'organization', label: 'Organization', isRequired: true, isSkippable: false },
+  { path: '/onboarding/team', key: 'team', label: 'Team', isRequired: false, isSkippable: true },
+  { path: '/onboarding/preferences', key: 'preferences', label: 'Preferences', isRequired: false, isSkippable: true },
+  { path: '/onboarding/integrations', key: 'integrations', label: 'Integrations', isRequired: false, isSkippable: true },
+  { path: '/onboarding/tour', key: 'tour', label: 'Tour', isRequired: false, isSkippable: true },
+  { path: '/onboarding/complete', key: 'complete', label: 'Complete', isRequired: true, isSkippable: false },
 ];
 
-interface OnboardingContextValue extends UseOnboardingProgressReturn {
-  steps: typeof ONBOARDING_STEPS;
+// Map step slugs from DB to URL paths
+const STEP_PATH_MAP: Record<string, string> = {
+  welcome: '/onboarding',
+  profile: '/onboarding/profile',
+  organization_profile: '/onboarding/organization',
+  organization: '/onboarding/organization',
+  company_profile: '/onboarding/organization',
+  billing_setup: '/onboarding/preferences',
+  team_invite: '/onboarding/team',
+  team: '/onboarding/team',
+  permissions_overview: '/onboarding/preferences',
+  workspace_setup: '/onboarding/preferences',
+  project_overview: '/onboarding/tour',
+  team_assignment: '/onboarding/team',
+  budget_overview: '/onboarding/tour',
+  approval_workflows: '/onboarding/preferences',
+  skills_certifications: '/onboarding/profile',
+  availability: '/onboarding/preferences',
+  portfolio: '/onboarding/profile',
+  rider_setup: '/onboarding/preferences',
+  services_catalog: '/onboarding/profile',
+  rate_cards: '/onboarding/preferences',
+  documents: '/onboarding/preferences',
+  project_access: '/onboarding/tour',
+  communication_preferences: '/onboarding/preferences',
+  training: '/onboarding/tour',
+  integrations: '/onboarding/integrations',
+  preferences: '/onboarding/preferences',
+  tour: '/onboarding/tour',
+  complete: '/onboarding/complete',
+};
+
+export interface OnboardingStepDef {
+  path: string;
+  key: string;
+  label: string;
+  isRequired: boolean;
+  isSkippable: boolean;
+  status?: 'pending' | 'in_progress' | 'completed' | 'skipped';
+}
+
+export interface OnboardingContextValue {
+  steps: OnboardingStepDef[];
   currentStepIndex: number;
   totalSteps: number;
   progressPercent: number;
+  isLoading: boolean;
+  accountType: string | null;
   nextStep: () => void;
   prevStep: () => void;
   skipStep: () => void;
   completeOnboarding: () => void;
+  isStepCompleted: (key: string) => boolean;
 }
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null);
@@ -44,65 +90,162 @@ interface OnboardingProviderProps {
 export function OnboardingProvider({ children }: OnboardingProviderProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const progressHook = useOnboardingProgress();
+  const [steps, setSteps] = useState<OnboardingStepDef[]>(DEFAULT_STEPS);
+  const [accountType, setAccountType] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
 
-  const currentStepIndex = ONBOARDING_STEPS.findIndex((s) => s.path === pathname);
-  const currentStepKey = ONBOARDING_STEPS[currentStepIndex]?.key || 'welcome';
-  const totalSteps = ONBOARDING_STEPS.length;
-  const progressPercent = Math.round(((currentStepIndex + 1) / totalSteps) * 100);
-
+  // Fetch server-backed onboarding state on mount
   useEffect(() => {
-    if (progressHook.isLoaded && currentStepKey !== progressHook.currentStep) {
-      progressHook.goToStep(currentStepKey);
-    }
-  }, [pathname, progressHook.isLoaded, currentStepKey, progressHook]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/onboarding/state');
+        if (!res.ok || cancelled) return;
+        const json = await res.json();
+        const data = json.data ?? json;
 
-  const syncStepToServer = (stepSlug: string, action: 'complete' | 'skip') => {
+        if (data.initialized && data.steps?.length > 0) {
+          setAccountType(data.accountType ?? null);
+
+          // Deduplicate steps by path — some account-type steps map to the same page
+          const seen = new Set<string>();
+          const serverSteps: OnboardingStepDef[] = [];
+
+          // Always start with welcome
+          serverSteps.push({
+            path: '/onboarding',
+            key: 'welcome',
+            label: 'Welcome',
+            isRequired: true,
+            isSkippable: false,
+            status: data.steps.find((s: { slug: string }) => s.slug === 'welcome')?.status ?? 'pending',
+          });
+          seen.add('/onboarding');
+
+          for (const step of data.steps as Array<{
+            slug: string;
+            name: string;
+            isRequired?: boolean;
+            is_required?: boolean;
+            isSkippable?: boolean;
+            is_skippable?: boolean;
+            status?: string;
+          }>) {
+            if (step.slug === 'welcome') continue;
+            const path = STEP_PATH_MAP[step.slug] ?? `/onboarding/${step.slug}`;
+            if (seen.has(path)) continue;
+            seen.add(path);
+
+            serverSteps.push({
+              path,
+              key: step.slug,
+              label: step.name,
+              isRequired: step.isRequired ?? step.is_required ?? true,
+              isSkippable: step.isSkippable ?? step.is_skippable ?? false,
+              status: (step.status as OnboardingStepDef['status']) ?? 'pending',
+            });
+          }
+
+          // Always end with complete
+          if (!seen.has('/onboarding/complete')) {
+            serverSteps.push({
+              path: '/onboarding/complete',
+              key: 'complete',
+              label: 'Complete',
+              isRequired: true,
+              isSkippable: false,
+            });
+          }
+
+          if (!cancelled) {
+            setSteps(serverSteps);
+            const done = new Set<string>();
+            for (const s of serverSteps) {
+              if (s.status === 'completed' || s.status === 'skipped') done.add(s.key);
+            }
+            setCompletedSteps(done);
+          }
+        }
+      } catch (err) {
+        captureError(err, 'onboardingProvider.fetchState');
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const currentStepIndex = steps.findIndex((s) => s.path === pathname);
+  const totalSteps = steps.length;
+  const progressPercent = totalSteps > 0
+    ? Math.round(((Math.max(0, currentStepIndex) + 1) / totalSteps) * 100)
+    : 0;
+
+  const syncStepToServer = useCallback((stepSlug: string, action: 'complete' | 'skip') => {
     fetch('/api/onboarding/step', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ stepSlug, action }),
     }).catch((err: unknown) => captureError(err, 'onboardingProvider.syncStep'));
-  };
+  }, []);
 
-  const nextStep = () => {
-    const nextIndex = currentStepIndex + 1;
-    if (nextIndex < ONBOARDING_STEPS.length) {
-      progressHook.completeStep(currentStepKey);
-      syncStepToServer(currentStepKey, 'complete');
-      router.push(ONBOARDING_STEPS[nextIndex]!.path);
+  const nextStep = useCallback(() => {
+    const idx = steps.findIndex((s) => s.path === pathname);
+    const currentKey = steps[idx]?.key;
+    const nextIndex = idx + 1;
+    if (nextIndex < steps.length && currentKey) {
+      setCompletedSteps((prev) => new Set(prev).add(currentKey));
+      syncStepToServer(currentKey, 'complete');
+      router.push(steps[nextIndex]!.path);
     }
-  };
+  }, [steps, pathname, syncStepToServer, router]);
 
-  const prevStep = () => {
-    const prevIndex = currentStepIndex - 1;
+  const prevStep = useCallback(() => {
+    const idx = steps.findIndex((s) => s.path === pathname);
+    const prevIndex = idx - 1;
     if (prevIndex >= 0) {
-      router.push(ONBOARDING_STEPS[prevIndex]!.path);
+      router.push(steps[prevIndex]!.path);
     }
-  };
+  }, [steps, pathname, router]);
 
-  const skipStep = () => {
-    syncStepToServer(currentStepKey, 'skip');
-    nextStep();
-  };
+  const skipStep = useCallback(() => {
+    const idx = steps.findIndex((s) => s.path === pathname);
+    const currentKey = steps[idx]?.key;
+    if (currentKey) {
+      syncStepToServer(currentKey, 'skip');
+      setCompletedSteps((prev) => new Set(prev).add(currentKey));
+    }
+    const nextIndex = idx + 1;
+    if (nextIndex < steps.length) {
+      router.push(steps[nextIndex]!.path);
+    }
+  }, [steps, pathname, syncStepToServer, router]);
 
-  const completeOnboarding = () => {
-    progressHook.completeStep(currentStepKey);
-    syncStepToServer(currentStepKey, 'complete');
-    progressHook.goToStep('complete');
+  const completeOnboarding = useCallback(() => {
+    const idx = steps.findIndex((s) => s.path === pathname);
+    const currentKey = steps[idx]?.key;
+    if (currentKey) {
+      syncStepToServer(currentKey, 'complete');
+      setCompletedSteps((prev) => new Set(prev).add(currentKey));
+    }
     router.push('/onboarding/complete');
-  };
+  }, [steps, pathname, syncStepToServer, router]);
+
+  const isStepCompleted = useCallback((key: string) => completedSteps.has(key), [completedSteps]);
 
   const value: OnboardingContextValue = {
-    ...progressHook,
-    steps: ONBOARDING_STEPS,
-    currentStepIndex,
+    steps,
+    currentStepIndex: Math.max(0, currentStepIndex),
     totalSteps,
     progressPercent,
+    isLoading,
+    accountType,
     nextStep,
     prevStep,
     skipStep,
     completeOnboarding,
+    isStepCompleted,
   };
 
   return (

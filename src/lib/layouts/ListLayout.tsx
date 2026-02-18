@@ -14,9 +14,11 @@ import { ContextualEmptyState, PageErrorState } from "@/components/common/contex
 import { RecordContextMenu } from "@/components/common/record-context-menu";
 import { useDataView, useFilteredData } from "@/lib/data-view-engine/hooks/use-data-view";
 import type { ViewType } from "@/lib/data-view-engine/hooks/use-data-view";
-import type { EntitySchema } from "@/lib/schema/types";
+import type { EntitySchema } from "@/lib/schema-engine/types";
 import { useColumnPreference } from "@/lib/crud/hooks/useColumnPreference";
 import { Plus, RefreshCw } from "lucide-react";
+import { CsvImportModal } from '@/components/csv';
+import { useCsvExport } from '@/lib/csv/hooks/useCsvExport';
 import { DEFAULT_LOCALE } from "@/lib/config";
 import { getErrorMessage } from "@/lib/api/error-message";
 import { useTranslation } from "@/lib/i18n";
@@ -193,6 +195,25 @@ export function ListLayout<T extends object>({
     [error, t]
   );
 
+  // Derive entity slug for CSV API routes from schema endpoint
+  const csvEntitySlug = React.useMemo(() => {
+    const endpoint = schema.data.endpoint;
+    const parts = endpoint.replace(/^\/api\//, '').split('/');
+    return parts[0] ?? '';
+  }, [schema.data.endpoint]);
+
+  const csvExportEnabled = schema.export?.enabled !== false;
+  const csvImportEnabled = schema.import?.enabled !== false;
+
+  // CSV export hook
+  const { exportCsv } = useCsvExport({
+    entity: csvEntitySlug,
+    displayName: schema.identity.namePlural,
+  });
+
+  // CSV import modal state
+  const [csvImportOpen, setCsvImportOpen] = React.useState(false);
+
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
@@ -281,6 +302,14 @@ export function ListLayout<T extends object>({
             current: state.viewType,
             available: listConfig.availableViews as ViewType[],
             onChange: handleViewChange,
+          } : undefined}
+          export={csvExportEnabled && csvEntitySlug ? {
+            formats: ['csv'],
+            onExport: () => exportCsv(),
+          } : undefined}
+          import={csvImportEnabled && csvEntitySlug ? {
+            onClick: () => setCsvImportOpen(true),
+            accept: '.csv',
           } : undefined}
           refresh={onRefresh ? { onRefresh, loading } : undefined}
           selectedCount={state.selectedIds.length}
@@ -388,6 +417,16 @@ export function ListLayout<T extends object>({
             </div>
           </div>
         </footer>
+      )}
+      {/* CSV Import Modal */}
+      {csvImportEnabled && csvEntitySlug && (
+        <CsvImportModal
+          open={csvImportOpen}
+          onOpenChange={setCsvImportOpen}
+          entity={csvEntitySlug}
+          displayName={schema.identity.namePlural}
+          onComplete={onRefresh}
+        />
       )}
     </div>
   );

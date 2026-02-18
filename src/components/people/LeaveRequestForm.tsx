@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { getLeaveTypeTextClass } from '@/lib/tokens/semantic-colors';
+import { getLeaveTypeTextClass } from '@/lib/theming/semantic-colors';
 
 type LeaveType = 'annual' | 'sick' | 'parental' | 'bereavement' | 'study' | 'unpaid';
 

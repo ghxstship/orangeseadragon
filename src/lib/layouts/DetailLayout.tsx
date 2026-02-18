@@ -24,7 +24,7 @@ import {
   PanelRightClose,
   PanelRight,
 } from "lucide-react";
-import type { EntitySchema } from "@/lib/schema/types";
+import type { EntitySchema } from "@/lib/schema-engine/types";
 
 function getDetailSidebarWidthStyle(width: string | number | undefined): React.CSSProperties {
   return { width: width || 'var(--sidebar-width-lg, 320px)' };

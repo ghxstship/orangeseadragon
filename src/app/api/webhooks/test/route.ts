@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // Fetch the webhook endpoint
     const { data: endpoint, error: fetchError } = await supabase
       .from('webhook_endpoints')
-      .select('*')
+      .select('id, url, custom_headers, secret, failure_count')
       .eq('id', webhook_endpoint_id)
       .single();
 

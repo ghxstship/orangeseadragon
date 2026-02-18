@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 export const contractSchema = defineSchema({
   identity: { name: 'contract', namePlural: 'Contracts', slug: 'modules/business/contracts', icon: 'FileCheck', description: 'Business contracts and agreements' },

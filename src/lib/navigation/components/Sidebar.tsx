@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { informationArchitecture, SidebarGroupDefinition, PageDefinition } from '../ia-structure';
 import { cn } from '@/lib/utils';
-import { usePermissions } from '@/hooks/use-permissions';
-import { useBadgeCounts } from '@/hooks/use-badge-counts';
+import { usePermissions } from '@/hooks/auth/use-permissions';
+import { useBadgeCounts } from '@/hooks/ui/use-badge-counts';
 import { Button } from '@/components/ui/button';
 
 /**

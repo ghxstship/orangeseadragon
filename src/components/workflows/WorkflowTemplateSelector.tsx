@@ -5,7 +5,7 @@
  * UI component for browsing and selecting workflow templates
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Filter, ChevronRight, Zap, Mail, Users, DollarSign, Briefcase, Calendar, Headphones, Shield } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,11 +13,19 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { WorkflowTemplate } from "@/lib/workflow-engine/types";
-import { allWorkflowTemplates } from "@/lib/workflow-engine/templates";
+import { loadAllWorkflowTemplates } from "@/lib/workflow-engine/templates";
 
 interface WorkflowTemplateSelectorProps {
   onSelect: (template: WorkflowTemplate) => void;
   selectedTemplateId?: string;
+}
+
+function useWorkflowTemplates() {
+  const [templates, setTemplates] = useState<WorkflowTemplate[]>([]);
+  useEffect(() => {
+    loadAllWorkflowTemplates().then(setTemplates);
+  }, []);
+  return templates;
 }
 
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -61,14 +69,15 @@ const categoryLabels: Record<string, string> = {
 export function WorkflowTemplateSelector({ onSelect, selectedTemplateId }: WorkflowTemplateSelectorProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const allTemplates = useWorkflowTemplates();
 
   const categories = useMemo(() => {
-    const cats = new Set(allWorkflowTemplates.map((t) => t.category));
+    const cats = new Set(allTemplates.map((t) => t.category));
     return Array.from(cats).sort();
-  }, []);
+  }, [allTemplates]);
 
   const filteredTemplates = useMemo(() => {
-    let templates = allWorkflowTemplates;
+    let templates = allTemplates;
 
     if (selectedCategory !== "all") {
       templates = templates.filter((t) => t.category === selectedCategory);
@@ -85,7 +94,7 @@ export function WorkflowTemplateSelector({ onSelect, selectedTemplateId }: Workf
     }
 
     return templates;
-  }, [selectedCategory, searchQuery]);
+  }, [selectedCategory, searchQuery, allTemplates]);
 
   const templatesByCategory = useMemo(() => {
     const grouped: Record<string, WorkflowTemplate[]> = {};
@@ -115,7 +124,7 @@ export function WorkflowTemplateSelector({ onSelect, selectedTemplateId }: Workf
         <Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
           <TabsList className="flex flex-wrap h-auto gap-1">
             <TabsTrigger value="all" className="text-xs">
-              All ({allWorkflowTemplates.length})
+              All ({allTemplates.length})
             </TabsTrigger>
             {categories.map((category) => (
               <TabsTrigger key={category} value={category} className="text-xs gap-1">
@@ -193,7 +202,7 @@ export function WorkflowTemplateSelector({ onSelect, selectedTemplateId }: Workf
       {/* Footer */}
       <div className="p-4 border-t bg-muted/50">
         <p className="text-xs text-muted-foreground text-center">
-          {filteredTemplates.length} of {allWorkflowTemplates.length} templates
+          {filteredTemplates.length} of {allTemplates.length} templates
         </p>
       </div>
     </div>

@@ -54,11 +54,9 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   MoreHorizontal,
 } from "lucide-react";
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
@@ -137,9 +135,7 @@ export function DataTable<TData, TValue>({
   onSelectionChange,
   loading = false,
   emptyMessage = "No results found.",
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   rowActions,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getRowId,
   density = "comfortable",
   resizable = true,

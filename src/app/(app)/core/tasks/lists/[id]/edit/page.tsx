@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { CrudForm } from '@/lib/crud/components/CrudForm';
-import { taskListSchema } from '@/lib/schemas/taskList';
+import { taskListSchema } from '@/lib/schemas/core/taskList';
 
 export default function EditTaskListPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

@@ -1,8 +1,8 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { categorySchema } from '@/lib/schemas/category';
+import { platformCatalogCategorySchema } from '@/lib/schemas/catalog';
 
 export default function CategoriesPage() {
-  return <CrudList schema={categorySchema} />;
+  return <CrudList schema={platformCatalogCategorySchema} />;
 }

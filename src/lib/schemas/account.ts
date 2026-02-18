@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 export const accountSchema = defineSchema({
   identity: { name: 'account', namePlural: 'Accounts', slug: 'modules/finance/accounts', icon: 'Landmark', description: 'Financial accounts and ledgers' },

@@ -341,7 +341,7 @@ export const sidebarNavigation: NavSection[] = [
 
   // ═══════════════════════════════════════════════════════════════════════════
   // ASSETS - Equipment & Logistics (5 pages)
-  // Schema: catalog_items, asset_categories, assets, inventory_items, locations,
+  // Schema: platform_catalog_divisions/categories/items (SSOT), assets, inventory_items, locations,
   //         warehouses, staging_areas, storage_bins, shipments, vehicles,
   //         advances, asset_deployments, asset_reservations, asset_check_actions,
   //         asset_transfers, asset_maintenance, repair_orders

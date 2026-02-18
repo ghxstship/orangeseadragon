@@ -17,7 +17,7 @@ export async function POST(
     // Get the email sequence
     const { data: sequence, error: fetchError } = await supabase
       .from('email_sequences')
-      .select('*')
+      .select('id, status')
       .eq('id', id)
       .single();
 

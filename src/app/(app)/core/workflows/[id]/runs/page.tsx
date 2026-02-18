@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { workflowRunSchema } from '@/lib/schemas/workflowRun';
+import { workflowRunSchema } from '@/lib/schemas/workflows/workflowRun';
 
 export default function WorkflowRunsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);

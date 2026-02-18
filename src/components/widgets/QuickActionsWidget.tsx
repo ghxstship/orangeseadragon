@@ -20,7 +20,7 @@ import {
   LayoutDashboard,
   Activity,
 } from 'lucide-react';
-import { useQuickActions } from '@/hooks/use-quick-actions';
+import { useQuickActions } from '@/hooks/ui/use-quick-actions';
 import { QuickActionsEditor } from './QuickActionsEditor';
 import Link from 'next/link';
 

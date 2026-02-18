@@ -57,6 +57,9 @@ export interface WorkspaceLayoutProps {
   currentTab?: string;
   onTabChange?: (tab: string) => void;
   
+  /** Dynamic badge counts keyed by tab key. Only rendered when the tab's badge.show is true. */
+  tabBadgeCounts?: Record<string, number>;
+  
   collaborators?: WorkspaceCollaborator[];
   isFavorite?: boolean;
   onFavoriteToggle?: () => void;
@@ -75,6 +78,7 @@ export function WorkspaceLayout({
   loading = false,
   currentTab,
   onTabChange,
+  tabBadgeCounts = {},
   collaborators = [],
   isFavorite = false,
   onFavoriteToggle,
@@ -263,7 +267,7 @@ export function WorkspaceLayout({
                       <span>{tab.label}</span>
                       {tab.badge?.show && (
                         <Badge variant="secondary" className="h-5 px-1.5 text-xs">
-                          0
+                          {tabBadgeCounts[tab.key] ?? 0}
                         </Badge>
                       )}
                     </div>
@@ -297,7 +301,7 @@ export function WorkspaceLayout({
                     {tab.icon && <span>{tab.icon}</span>}
                     <span className="flex-1 text-left">{tab.label}</span>
                     {tab.badge?.show && (
-                      <Badge variant="secondary" className="h-5 px-1.5 text-xs">0</Badge>
+                      <Badge variant="secondary" className="h-5 px-1.5 text-xs">{tabBadgeCounts[tab.key] ?? 0}</Badge>
                     )}
                   </Button>
                 ))}

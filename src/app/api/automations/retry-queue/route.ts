@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     // Fetch the run
     const { data: run, error: fetchError } = await supabase
       .from('automation_run_log')
-      .select('*')
+      .select('id, status, attempt_number, max_attempts')
       .eq('id', run_id)
       .eq('organization_id', membership.organization_id)
       .single();

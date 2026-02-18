@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "gen:types": "npx supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types/database.ts",
     "audit:ui": "node scripts/ui-compliance-audit.mjs",
     "audit:ui:strict": "node scripts/ui-compliance-audit.mjs --strict",
     "audit:components": "node scripts/component-reference-audit.mjs",
@@ -18,8 +19,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "test:expense-approval:regression": "vitest --run src/lib/expense-approvals/action-payload.test.ts src/app/api/expense-approval-requests/routes.test.ts src/app/api/advancing/workflows/execute/route.test.ts",
-    "verify:expense-approval": "npm run lint -- --file src/app/api/expense-approval-requests/route.ts --file src/app/api/expense-approval-requests/approve/route.ts --file src/app/api/expense-approval-requests/reject/route.ts --file src/app/api/expense-approval-requests/return/route.ts --file src/app/api/expense-approval-requests/bulk-approve/route.ts --file src/app/api/advancing/workflows/execute/route.ts --file src/lib/expense-approvals/action-payload.ts --file src/lib/expense-approvals/action-payload.test.ts --file src/app/api/expense-approval-requests/routes.test.ts --file src/app/api/advancing/workflows/execute/route.test.ts && npm run typecheck && npm run test:expense-approval:regression"
+    "audit:wire": "node scripts/wire-audit-full.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",

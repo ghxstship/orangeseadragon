@@ -25,12 +25,11 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
           
           <div className="space-y-6">
             <blockquote className="text-xl font-medium leading-relaxed">
-              &ldquo;The platform that transformed how we manage productions. 
-              Everything in one place, finally.&rdquo;
+              &ldquo;One tool. Infinite capabilities. Zero regrets.&rdquo;
             </blockquote>
             <div>
-              <p className="font-semibold">Sarah Chen</p>
-              <p className="text-primary-foreground/70">Production Director, LiveNation</p>
+              <p className="font-semibold">Captain Nemo</p>
+              <p className="text-primary-foreground/70">Commander, The Nautilus</p>
             </div>
           </div>
           

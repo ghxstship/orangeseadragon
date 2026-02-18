@@ -1,7 +1,7 @@
 'use client';
 
 import { CrudList } from '@/lib/crud/components/CrudList';
-import { campaignSchema } from '@/lib/schemas/campaign';
+import { campaignSchema } from '@/lib/schemas/crm/campaign';
 
 export default function EmailCampaignsPage() {
   return <CrudList schema={campaignSchema} filter={{ campaign_type: 'email_blast' }} />;

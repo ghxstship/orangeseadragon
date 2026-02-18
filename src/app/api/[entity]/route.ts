@@ -4,7 +4,7 @@ import { apiPaginated, apiCreated, badRequest, notFound, supabaseError, unproces
 import { resolveEntityContext } from '@/lib/api/entity-access';
 import { enforceResourceAccess } from '@/lib/api/role-guard';
 import { captureError, extractRequestContext } from '@/lib/observability';
-import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema/generateZodSchema';
+import { generateZodSchema, extractFormFieldKeys } from '@/lib/schema-engine/generateZodSchema';
 import { auditService } from '@/lib/audit/service';
 
 const DEFAULT_PAGE = 1;

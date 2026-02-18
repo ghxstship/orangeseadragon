@@ -1,4 +1,4 @@
-import { defineSchema } from '../schema/defineSchema';
+import { defineSchema } from '../schema-engine/defineSchema';
 
 export const vendorSchema = defineSchema({
   identity: { name: 'vendor', namePlural: 'Vendor Contacts', slug: 'modules/assets/vendors', icon: 'Building', description: 'Vendor contact relationships' },

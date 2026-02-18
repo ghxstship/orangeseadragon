@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { useLookupTables } from '@/hooks/use-configuration';
+import { useLookupTables } from '@/hooks/ui/use-configuration';
 
 interface AccountTypeSelectorProps {
   user?: { user_metadata?: Record<string, unknown> } | null;

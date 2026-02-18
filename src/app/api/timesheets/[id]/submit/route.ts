@@ -22,7 +22,7 @@ export async function POST(
         // Get the timesheet
         const { data: timesheet, error: fetchError } = await supabase
             .from('timesheets')
-            .select('*')
+            .select('id, status, organization_id, user_id')
             .eq('id', id)
             .single();
 
@@ -64,7 +64,7 @@ export async function POST(
         // Find applicable approval workflow for timesheets
         const { data: workflow } = await supabase
             .from('approval_workflows')
-            .select('*')
+            .select('id, approval_type, config')
             .eq('organization_id', timesheet.organization_id)
             .eq('entity_type', 'timesheet')
             .eq('is_active', true)

@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Check, ChevronDown, Plus } from "lucide-react";
-import { useSupabase, useUser } from "@/hooks/use-supabase";
+import { useSupabase, useUser } from "@/hooks/auth/use-supabase";
 import { useQuery } from "@tanstack/react-query";
 
 interface Organization {
