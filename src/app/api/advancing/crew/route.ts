@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   }
   
   if (search) {
-    query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);
+    query = query.or(`legacy_full_name.ilike.%${search}%,legacy_email.ilike.%${search}%`);
   }
   
   if (skills) {
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
   }
   
   query = query
-    .order('full_name', { ascending: true })
+    .order('legacy_full_name', { ascending: true })
     .range((page - 1) * pageSize, page * pageSize - 1);
   
   const { data, error, count } = await query;
@@ -95,9 +95,9 @@ export async function POST(request: NextRequest) {
       .insert({
         organization_id: userOrg.organization_id,
         user_id: userId,
-        full_name: fullName,
-        email,
-        phone,
+        legacy_full_name: fullName,
+        legacy_email: email,
+        legacy_phone: phone,
         skills: skills || [],
         certifications: certifications || [],
         hourly_rate: hourlyRate,

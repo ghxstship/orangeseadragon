@@ -7472,6 +7472,7 @@ export type Database = {
       }
       candidates: {
         Row: {
+          contact_id: string | null
           cover_letter_url: string | null
           created_at: string | null
           created_by: string | null
@@ -7493,6 +7494,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          contact_id?: string | null
           cover_letter_url?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -7514,6 +7516,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          contact_id?: string | null
           cover_letter_url?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -7535,6 +7538,27 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "candidates_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts_active"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts_needing_enrichment"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "candidates_created_by_fkey"
             columns: ["created_by"]
@@ -10400,12 +10424,9 @@ export type Database = {
       }
       companies: {
         Row: {
-          address: string | null
           address_id: string | null
           annual_revenue: number | null
-          city: string | null
           company_type: Database["public"]["Enums"]["company_type"] | null
-          country: string | null
           created_at: string | null
           created_by: string | null
           custom_fields: Json | null
@@ -10423,14 +10444,17 @@ export type Database = {
           id: string
           industry: string | null
           is_active: boolean | null
+          legacy_address: string | null
+          legacy_city: string | null
+          legacy_country: string | null
+          legacy_postal_code: string | null
+          legacy_state: string | null
           legal_name: string | null
           logo_url: string | null
           name: string
           organization_id: string
           phone: string | null
-          postal_code: string | null
           social_profiles: Json | null
-          state: string | null
           stripe_customer_id: string | null
           tags: string[] | null
           tax_id: string | null
@@ -10439,12 +10463,9 @@ export type Database = {
           website: string | null
         }
         Insert: {
-          address?: string | null
           address_id?: string | null
           annual_revenue?: number | null
-          city?: string | null
           company_type?: Database["public"]["Enums"]["company_type"] | null
-          country?: string | null
           created_at?: string | null
           created_by?: string | null
           custom_fields?: Json | null
@@ -10462,14 +10483,17 @@ export type Database = {
           id?: string
           industry?: string | null
           is_active?: boolean | null
+          legacy_address?: string | null
+          legacy_city?: string | null
+          legacy_country?: string | null
+          legacy_postal_code?: string | null
+          legacy_state?: string | null
           legal_name?: string | null
           logo_url?: string | null
           name: string
           organization_id: string
           phone?: string | null
-          postal_code?: string | null
           social_profiles?: Json | null
-          state?: string | null
           stripe_customer_id?: string | null
           tags?: string[] | null
           tax_id?: string | null
@@ -10478,12 +10502,9 @@ export type Database = {
           website?: string | null
         }
         Update: {
-          address?: string | null
           address_id?: string | null
           annual_revenue?: number | null
-          city?: string | null
           company_type?: Database["public"]["Enums"]["company_type"] | null
-          country?: string | null
           created_at?: string | null
           created_by?: string | null
           custom_fields?: Json | null
@@ -10501,14 +10522,17 @@ export type Database = {
           id?: string
           industry?: string | null
           is_active?: boolean | null
+          legacy_address?: string | null
+          legacy_city?: string | null
+          legacy_country?: string | null
+          legacy_postal_code?: string | null
+          legacy_state?: string | null
           legal_name?: string | null
           logo_url?: string | null
           name?: string
           organization_id?: string
           phone?: string | null
-          postal_code?: string | null
           social_profiles?: Json | null
-          state?: string | null
           stripe_customer_id?: string | null
           tags?: string[] | null
           tax_id?: string | null
@@ -10954,6 +10978,7 @@ export type Database = {
           tags: string[] | null
           twitter_handle: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           address?: string | null
@@ -10990,6 +11015,7 @@ export type Database = {
           tags?: string[] | null
           twitter_handle?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           address?: string | null
@@ -11026,6 +11052,7 @@ export type Database = {
           tags?: string[] | null
           twitter_handle?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -12694,76 +12721,76 @@ export type Database = {
       }
       crew_members: {
         Row: {
-          avatar_url: string | null
           certifications: Json | null
           created_at: string | null
           currency: string | null
           day_rate: number | null
           default_availability: Json | null
-          email: string | null
           equipment_trained: Json | null
-          full_name: string
           hourly_rate: number | null
           id: string
+          legacy_avatar_url: string | null
+          legacy_email: string | null
+          legacy_full_name: string
+          legacy_phone: string | null
           notes: string | null
           organization_id: string
           overtime_multiplier: number | null
-          phone: string | null
           rating: number | null
           skills: Json | null
           status: string | null
           total_events: number | null
           total_hours: number | null
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
-          avatar_url?: string | null
           certifications?: Json | null
           created_at?: string | null
           currency?: string | null
           day_rate?: number | null
           default_availability?: Json | null
-          email?: string | null
           equipment_trained?: Json | null
-          full_name: string
           hourly_rate?: number | null
           id?: string
+          legacy_avatar_url?: string | null
+          legacy_email?: string | null
+          legacy_full_name: string
+          legacy_phone?: string | null
           notes?: string | null
           organization_id: string
           overtime_multiplier?: number | null
-          phone?: string | null
           rating?: number | null
           skills?: Json | null
           status?: string | null
           total_events?: number | null
           total_hours?: number | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
-          avatar_url?: string | null
           certifications?: Json | null
           created_at?: string | null
           currency?: string | null
           day_rate?: number | null
           default_availability?: Json | null
-          email?: string | null
           equipment_trained?: Json | null
-          full_name?: string
           hourly_rate?: number | null
           id?: string
+          legacy_avatar_url?: string | null
+          legacy_email?: string | null
+          legacy_full_name?: string
+          legacy_phone?: string | null
           notes?: string | null
           organization_id?: string
           overtime_multiplier?: number | null
-          phone?: string | null
           rating?: number | null
           skills?: Json | null
           status?: string | null
           total_events?: number | null
           total_hours?: number | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -17428,7 +17455,7 @@ export type Database = {
             foreignKeyName: "employee_deductions_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
-            referencedRelation: "staff_members"
+            referencedRelation: "legacy_staff_members"
             referencedColumns: ["id"]
           },
         ]
@@ -17449,9 +17476,11 @@ export type Database = {
           employee_number: string | null
           employment_status: string | null
           employment_type: string | null
+          employment_type_id: string | null
           hire_date: string | null
           hourly_rate: number | null
           id: string
+          is_active: boolean | null
           manager_id: string | null
           max_travel_days_per_month: number | null
           medical_notes: string | null
@@ -17467,6 +17496,7 @@ export type Database = {
           organization_id: string
           pay_frequency: string | null
           position_id: string | null
+          position_type_id: string | null
           preferred_name: string | null
           preferred_pronouns: string | null
           preferred_regions: string[] | null
@@ -17501,9 +17531,11 @@ export type Database = {
           employee_number?: string | null
           employment_status?: string | null
           employment_type?: string | null
+          employment_type_id?: string | null
           hire_date?: string | null
           hourly_rate?: number | null
           id?: string
+          is_active?: boolean | null
           manager_id?: string | null
           max_travel_days_per_month?: number | null
           medical_notes?: string | null
@@ -17519,6 +17551,7 @@ export type Database = {
           organization_id: string
           pay_frequency?: string | null
           position_id?: string | null
+          position_type_id?: string | null
           preferred_name?: string | null
           preferred_pronouns?: string | null
           preferred_regions?: string[] | null
@@ -17553,9 +17586,11 @@ export type Database = {
           employee_number?: string | null
           employment_status?: string | null
           employment_type?: string | null
+          employment_type_id?: string | null
           hire_date?: string | null
           hourly_rate?: number | null
           id?: string
+          is_active?: boolean | null
           manager_id?: string | null
           max_travel_days_per_month?: number | null
           medical_notes?: string | null
@@ -17571,6 +17606,7 @@ export type Database = {
           organization_id?: string
           pay_frequency?: string | null
           position_id?: string | null
+          position_type_id?: string | null
           preferred_name?: string | null
           preferred_pronouns?: string | null
           preferred_regions?: string[] | null
@@ -17606,6 +17642,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "employee_profiles_employment_type_id_fkey"
+            columns: ["employment_type_id"]
+            isOneToOne: false
+            referencedRelation: "employment_types"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "employee_profiles_manager_id_fkey"
             columns: ["manager_id"]
             isOneToOne: false
@@ -17638,6 +17681,13 @@ export type Database = {
             columns: ["position_id"]
             isOneToOne: false
             referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employee_profiles_position_type_id_fkey"
+            columns: ["position_type_id"]
+            isOneToOne: false
+            referencedRelation: "position_types"
             referencedColumns: ["id"]
           },
           {
@@ -18950,7 +19000,7 @@ export type Database = {
             foreignKeyName: "event_venues_venue_id_fkey"
             columns: ["venue_id"]
             isOneToOne: false
-            referencedRelation: "venues"
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -26721,13 +26771,6 @@ export type Database = {
             referencedRelation: "leave_types"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "leave_balances_staff_member_id_fkey"
-            columns: ["staff_member_id"]
-            isOneToOne: false
-            referencedRelation: "staff_members"
-            referencedColumns: ["id"]
-          },
         ]
       }
       leave_requests: {
@@ -26793,7 +26836,7 @@ export type Database = {
             foreignKeyName: "leave_requests_approver_id_fkey"
             columns: ["approver_id"]
             isOneToOne: false
-            referencedRelation: "staff_members"
+            referencedRelation: "legacy_staff_members"
             referencedColumns: ["id"]
           },
           {
@@ -26815,13 +26858,6 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "leave_requests_staff_member_id_fkey"
-            columns: ["staff_member_id"]
-            isOneToOne: false
-            referencedRelation: "staff_members"
             referencedColumns: ["id"]
           },
         ]
@@ -26881,6 +26917,119 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legacy_staff_members: {
+        Row: {
+          created_at: string | null
+          department_id: string | null
+          employee_number: string | null
+          employment_status: string | null
+          employment_type_id: string | null
+          hire_date: string | null
+          hourly_rate: number | null
+          id: string
+          is_active: boolean | null
+          manager_id: string | null
+          organization_id: string
+          pay_frequency: string | null
+          position_id: string | null
+          position_type_id: string | null
+          salary: number | null
+          termination_date: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          department_id?: string | null
+          employee_number?: string | null
+          employment_status?: string | null
+          employment_type_id?: string | null
+          hire_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          manager_id?: string | null
+          organization_id: string
+          pay_frequency?: string | null
+          position_id?: string | null
+          position_type_id?: string | null
+          salary?: number | null
+          termination_date?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          department_id?: string | null
+          employee_number?: string | null
+          employment_status?: string | null
+          employment_type_id?: string | null
+          hire_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          manager_id?: string | null
+          organization_id?: string
+          pay_frequency?: string | null
+          position_id?: string | null
+          position_type_id?: string | null
+          salary?: number | null
+          termination_date?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_members_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_members_employment_type_id_fkey"
+            columns: ["employment_type_id"]
+            isOneToOne: false
+            referencedRelation: "employment_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_members_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "legacy_staff_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_members_position_id_fkey"
+            columns: ["position_id"]
+            isOneToOne: false
+            referencedRelation: "positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_members_position_type_id_fkey"
+            columns: ["position_type_id"]
+            isOneToOne: false
+            referencedRelation: "position_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -27277,76 +27426,181 @@ export type Database = {
       }
       locations: {
         Row: {
-          address: string | null
+          access_level: string | null
           address_id: string | null
-          city: string | null
+          amenities: string[] | null
+          capacity: number | null
+          capacity_banquet: number | null
+          capacity_seated: number | null
+          capacity_standing: number | null
+          capacity_theater: number | null
+          code: string | null
+          color: string | null
           contact_email: string | null
           contact_name: string | null
           contact_phone: string | null
-          country: string | null
+          coordinates: Json | null
+          cover_image_url: string | null
           created_at: string | null
+          created_by: string | null
+          currency: string | null
+          daily_rate: number | null
           description: string | null
+          dimensions: Json | null
+          email: string | null
+          floor: string | null
+          floor_plan_id: string | null
+          floor_plan_url: string | null
+          gallery_urls: Json | null
+          hourly_rate: number | null
+          house_rules: string | null
+          icon: string | null
           id: string
           is_active: boolean | null
-          latitude: number | null
+          is_partner: boolean | null
+          legacy_address: string | null
+          legacy_city: string | null
+          legacy_country: string | null
+          legacy_latitude: number | null
+          legacy_longitude: number | null
+          legacy_postal_code: string | null
+          legacy_state: string | null
+          load_in_info: string | null
           location_type: Database["public"]["Enums"]["location_type"]
-          longitude: number | null
+          logo_url: string | null
           metadata: Json | null
           name: string
+          notes: string | null
           organization_id: string
           parent_id: string | null
-          postal_code: string | null
+          parking_info: string | null
+          phone: string | null
           slug: string
-          state: string | null
+          space_type: string | null
+          technical_specs: Json | null
+          timezone: string | null
           updated_at: string | null
+          venue_type: string | null
+          website: string | null
+          zone_type: string | null
         }
         Insert: {
-          address?: string | null
+          access_level?: string | null
           address_id?: string | null
-          city?: string | null
+          amenities?: string[] | null
+          capacity?: number | null
+          capacity_banquet?: number | null
+          capacity_seated?: number | null
+          capacity_standing?: number | null
+          capacity_theater?: number | null
+          code?: string | null
+          color?: string | null
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
-          country?: string | null
+          coordinates?: Json | null
+          cover_image_url?: string | null
           created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          daily_rate?: number | null
           description?: string | null
+          dimensions?: Json | null
+          email?: string | null
+          floor?: string | null
+          floor_plan_id?: string | null
+          floor_plan_url?: string | null
+          gallery_urls?: Json | null
+          hourly_rate?: number | null
+          house_rules?: string | null
+          icon?: string | null
           id?: string
           is_active?: boolean | null
-          latitude?: number | null
+          is_partner?: boolean | null
+          legacy_address?: string | null
+          legacy_city?: string | null
+          legacy_country?: string | null
+          legacy_latitude?: number | null
+          legacy_longitude?: number | null
+          legacy_postal_code?: string | null
+          legacy_state?: string | null
+          load_in_info?: string | null
           location_type: Database["public"]["Enums"]["location_type"]
-          longitude?: number | null
+          logo_url?: string | null
           metadata?: Json | null
           name: string
+          notes?: string | null
           organization_id: string
           parent_id?: string | null
-          postal_code?: string | null
+          parking_info?: string | null
+          phone?: string | null
           slug: string
-          state?: string | null
+          space_type?: string | null
+          technical_specs?: Json | null
+          timezone?: string | null
           updated_at?: string | null
+          venue_type?: string | null
+          website?: string | null
+          zone_type?: string | null
         }
         Update: {
-          address?: string | null
+          access_level?: string | null
           address_id?: string | null
-          city?: string | null
+          amenities?: string[] | null
+          capacity?: number | null
+          capacity_banquet?: number | null
+          capacity_seated?: number | null
+          capacity_standing?: number | null
+          capacity_theater?: number | null
+          code?: string | null
+          color?: string | null
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
-          country?: string | null
+          coordinates?: Json | null
+          cover_image_url?: string | null
           created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          daily_rate?: number | null
           description?: string | null
+          dimensions?: Json | null
+          email?: string | null
+          floor?: string | null
+          floor_plan_id?: string | null
+          floor_plan_url?: string | null
+          gallery_urls?: Json | null
+          hourly_rate?: number | null
+          house_rules?: string | null
+          icon?: string | null
           id?: string
           is_active?: boolean | null
-          latitude?: number | null
+          is_partner?: boolean | null
+          legacy_address?: string | null
+          legacy_city?: string | null
+          legacy_country?: string | null
+          legacy_latitude?: number | null
+          legacy_longitude?: number | null
+          legacy_postal_code?: string | null
+          legacy_state?: string | null
+          load_in_info?: string | null
           location_type?: Database["public"]["Enums"]["location_type"]
-          longitude?: number | null
+          logo_url?: string | null
           metadata?: Json | null
           name?: string
+          notes?: string | null
           organization_id?: string
           parent_id?: string | null
-          postal_code?: string | null
+          parking_info?: string | null
+          phone?: string | null
           slug?: string
-          state?: string | null
+          space_type?: string | null
+          technical_specs?: Json | null
+          timezone?: string | null
           updated_at?: string | null
+          venue_type?: string | null
+          website?: string | null
+          zone_type?: string | null
         }
         Relationships: [
           {
@@ -30211,7 +30465,7 @@ export type Database = {
             foreignKeyName: "onboarding_instances_staff_member_id_fkey"
             columns: ["staff_member_id"]
             isOneToOne: false
-            referencedRelation: "staff_members"
+            referencedRelation: "legacy_staff_members"
             referencedColumns: ["id"]
           },
           {
@@ -31049,13 +31303,11 @@ export type Database = {
       }
       organizations: {
         Row: {
-          address: string | null
+          address_id: string | null
           advancing_catalog_enabled: boolean | null
           advancing_theme_config: Json | null
           base_currency: string | null
-          city: string | null
           company_size: string | null
-          country: string | null
           created_at: string | null
           currency: string | null
           deleted_at: string | null
@@ -31063,16 +31315,19 @@ export type Database = {
           email: string | null
           id: string
           industry: string | null
+          legacy_address: string | null
+          legacy_city: string | null
+          legacy_country: string | null
+          legacy_postal_code: string | null
+          legacy_state: string | null
           legal_name: string | null
           locale: string | null
           logo_url: string | null
           metadata: Json | null
           name: string
           phone: string | null
-          postal_code: string | null
           settings: Json | null
           slug: string
-          state: string | null
           subscription_status:
             | Database["public"]["Enums"]["subscription_status"]
             | null
@@ -31086,13 +31341,11 @@ export type Database = {
           website: string | null
         }
         Insert: {
-          address?: string | null
+          address_id?: string | null
           advancing_catalog_enabled?: boolean | null
           advancing_theme_config?: Json | null
           base_currency?: string | null
-          city?: string | null
           company_size?: string | null
-          country?: string | null
           created_at?: string | null
           currency?: string | null
           deleted_at?: string | null
@@ -31100,16 +31353,19 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
+          legacy_address?: string | null
+          legacy_city?: string | null
+          legacy_country?: string | null
+          legacy_postal_code?: string | null
+          legacy_state?: string | null
           legal_name?: string | null
           locale?: string | null
           logo_url?: string | null
           metadata?: Json | null
           name: string
           phone?: string | null
-          postal_code?: string | null
           settings?: Json | null
           slug: string
-          state?: string | null
           subscription_status?:
             | Database["public"]["Enums"]["subscription_status"]
             | null
@@ -31123,13 +31379,11 @@ export type Database = {
           website?: string | null
         }
         Update: {
-          address?: string | null
+          address_id?: string | null
           advancing_catalog_enabled?: boolean | null
           advancing_theme_config?: Json | null
           base_currency?: string | null
-          city?: string | null
           company_size?: string | null
-          country?: string | null
           created_at?: string | null
           currency?: string | null
           deleted_at?: string | null
@@ -31137,16 +31391,19 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
+          legacy_address?: string | null
+          legacy_city?: string | null
+          legacy_country?: string | null
+          legacy_postal_code?: string | null
+          legacy_state?: string | null
           legal_name?: string | null
           locale?: string | null
           logo_url?: string | null
           metadata?: Json | null
           name?: string
           phone?: string | null
-          postal_code?: string | null
           settings?: Json | null
           slug?: string
-          state?: string | null
           subscription_status?:
             | Database["public"]["Enums"]["subscription_status"]
             | null
@@ -31159,7 +31416,22 @@ export type Database = {
           updated_at?: string | null
           website?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "organizations_address_id_fkey"
+            columns: ["address_id"]
+            isOneToOne: false
+            referencedRelation: "addresses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_address_id_fkey"
+            columns: ["address_id"]
+            isOneToOne: false
+            referencedRelation: "formatted_addresses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       overtime_rules: {
         Row: {
@@ -31816,7 +32088,7 @@ export type Database = {
             foreignKeyName: "pay_stubs_employee_id_fkey"
             columns: ["employee_id"]
             isOneToOne: false
-            referencedRelation: "staff_members"
+            referencedRelation: "legacy_staff_members"
             referencedColumns: ["id"]
           },
           {
@@ -32334,7 +32606,7 @@ export type Database = {
             foreignKeyName: "payroll_items_staff_member_id_fkey"
             columns: ["staff_member_id"]
             isOneToOne: false
-            referencedRelation: "staff_members"
+            referencedRelation: "legacy_staff_members"
             referencedColumns: ["id"]
           },
         ]
@@ -46181,119 +46453,6 @@ export type Database = {
           },
         ]
       }
-      staff_members: {
-        Row: {
-          created_at: string | null
-          department_id: string | null
-          employee_number: string | null
-          employment_status: string | null
-          employment_type_id: string | null
-          hire_date: string | null
-          hourly_rate: number | null
-          id: string
-          is_active: boolean | null
-          manager_id: string | null
-          organization_id: string
-          pay_frequency: string | null
-          position_id: string | null
-          position_type_id: string | null
-          salary: number | null
-          termination_date: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          department_id?: string | null
-          employee_number?: string | null
-          employment_status?: string | null
-          employment_type_id?: string | null
-          hire_date?: string | null
-          hourly_rate?: number | null
-          id?: string
-          is_active?: boolean | null
-          manager_id?: string | null
-          organization_id: string
-          pay_frequency?: string | null
-          position_id?: string | null
-          position_type_id?: string | null
-          salary?: number | null
-          termination_date?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          department_id?: string | null
-          employee_number?: string | null
-          employment_status?: string | null
-          employment_type_id?: string | null
-          hire_date?: string | null
-          hourly_rate?: number | null
-          id?: string
-          is_active?: boolean | null
-          manager_id?: string | null
-          organization_id?: string
-          pay_frequency?: string | null
-          position_id?: string | null
-          position_type_id?: string | null
-          salary?: number | null
-          termination_date?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "staff_members_department_id_fkey"
-            columns: ["department_id"]
-            isOneToOne: false
-            referencedRelation: "departments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_members_employment_type_id_fkey"
-            columns: ["employment_type_id"]
-            isOneToOne: false
-            referencedRelation: "employment_types"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_members_manager_id_fkey"
-            columns: ["manager_id"]
-            isOneToOne: false
-            referencedRelation: "staff_members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_members_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_members_position_id_fkey"
-            columns: ["position_id"]
-            isOneToOne: false
-            referencedRelation: "positions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_members_position_type_id_fkey"
-            columns: ["position_type_id"]
-            isOneToOne: false
-            referencedRelation: "position_types"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_members_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       stages: {
         Row: {
           capacity: number | null
@@ -48763,6 +48922,7 @@ export type Database = {
           color: string | null
           created_at: string | null
           created_by: string | null
+          department_id: string | null
           description: string | null
           id: string
           lead_id: string | null
@@ -48776,6 +48936,7 @@ export type Database = {
           color?: string | null
           created_at?: string | null
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           id?: string
           lead_id?: string | null
@@ -48789,6 +48950,7 @@ export type Database = {
           color?: string | null
           created_at?: string | null
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           id?: string
           lead_id?: string | null
@@ -48804,6 +48966,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "departments"
             referencedColumns: ["id"]
           },
           {
@@ -53501,7 +53670,7 @@ export type Database = {
             foreignKeyName: "venue_availability_venue_id_fkey"
             columns: ["venue_id"]
             isOneToOne: false
-            referencedRelation: "venues"
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -53592,7 +53761,7 @@ export type Database = {
             foreignKeyName: "venue_crew_requirements_venue_id_fkey"
             columns: ["venue_id"]
             isOneToOne: false
-            referencedRelation: "venues"
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -53649,7 +53818,7 @@ export type Database = {
             foreignKeyName: "venue_geofences_venue_id_fkey"
             columns: ["venue_id"]
             isOneToOne: false
-            referencedRelation: "venues"
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -53806,7 +53975,7 @@ export type Database = {
             foreignKeyName: "venue_holds_venue_id_fkey"
             columns: ["venue_id"]
             isOneToOne: false
-            referencedRelation: "venues"
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -53878,15 +54047,7 @@ export type Database = {
           updated_at?: string | null
           venue_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "venue_spaces_venue_id_fkey"
-            columns: ["venue_id"]
-            isOneToOne: false
-            referencedRelation: "venues"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       venue_specs: {
         Row: {
@@ -53968,7 +54129,7 @@ export type Database = {
             foreignKeyName: "venue_specs_venue_id_fkey"
             columns: ["venue_id"]
             isOneToOne: false
-            referencedRelation: "venues"
+            referencedRelation: "locations"
             referencedColumns: ["id"]
           },
         ]
@@ -54057,13 +54218,6 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "venue_zones_venue_id_fkey"
-            columns: ["venue_id"]
-            isOneToOne: false
-            referencedRelation: "venues"
             referencedColumns: ["id"]
           },
         ]
@@ -61902,6 +62056,15 @@ export type Database = {
         | "office"
         | "external"
         | "virtual"
+        | "room"
+        | "zone"
+        | "stage"
+        | "loading_dock"
+        | "green_room"
+        | "backstage"
+        | "front_of_house"
+        | "parking"
+        | "site"
       maintenance_status:
         | "scheduled"
         | "in_progress"
@@ -62909,6 +63072,15 @@ export const Constants = {
         "office",
         "external",
         "virtual",
+        "room",
+        "zone",
+        "stage",
+        "loading_dock",
+        "green_room",
+        "backstage",
+        "front_of_house",
+        "parking",
+        "site",
       ],
       maintenance_status: [
         "scheduled",

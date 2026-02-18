@@ -55,7 +55,7 @@ export default function PerformancePage() {
       // Fetch user names for employees
       const empIds = Array.from(new Set((data ?? []).map(d => d.employee_id)));
       const { data: staffRows } = empIds.length > 0
-        ? await supabase.from('staff_members').select('id, user_id, department_id').in('id', empIds)
+        ? await supabase.from('employee_profiles').select('id, user_id, department_id').in('id', empIds)
         : { data: [] };
       const userIds = (staffRows ?? []).map(s => s.user_id).filter(Boolean);
       const { data: users } = userIds.length > 0

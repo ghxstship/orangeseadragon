@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     .from('crew_assignments')
     .select(`
       *,
-      crew_member:crew_members(id, full_name, skills, avatar_url, hourly_rate, day_rate),
+      crew_member:crew_members(id, skills, hourly_rate, day_rate, user:users(full_name, email, avatar_url)),
       event:events(id, name, start_date, end_date, venue_id),
       advance:production_advances(id, advance_code, advance_type)
     `, { count: 'exact' });
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
       })
       .select(`
         *,
-        crew_member:crew_members(id, full_name, email),
+        crew_member:crew_members(id, user:users(full_name, email)),
         event:events(id, name)
       `)
       .single();

@@ -30,7 +30,7 @@ export async function GET() {
         event_id,
         shift_id,
         status,
-        event:events(name, venue:venues(name)),
+        event:events(name, venue:locations(name)),
         clock_in_punch:time_punches!clock_in_punch_id(is_within_geofence)
       `)
       .eq('employee_id', employee.id)

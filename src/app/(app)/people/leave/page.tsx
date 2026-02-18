@@ -76,7 +76,7 @@ export default function LeavePage() {
 
       const staffIds = Array.from(new Set((data ?? []).map(d => d.staff_member_id)));
       const { data: staffRows } = staffIds.length > 0
-        ? await supabase.from('staff_members').select('id, user_id').in('id', staffIds)
+        ? await supabase.from('employee_profiles').select('id, user_id').in('id', staffIds)
         : { data: [] };
       const userIds = (staffRows ?? []).map(s => s.user_id).filter(Boolean);
       const { data: users } = userIds.length > 0

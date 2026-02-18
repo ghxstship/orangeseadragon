@@ -27,7 +27,7 @@ export async function GET(
         *,
         line_items:invoice_line_items(*),
         contact:contacts(id, first_name, last_name, email, phone),
-        company:companies(id, name, email, phone, address)
+        company:companies(id, name, email, phone, legacy_address)
       `)
       .eq('id', id)
       .single();
@@ -39,7 +39,7 @@ export async function GET(
     // Fetch org details
     const { data: org } = await supabase
       .from('organizations')
-      .select('name, logo_url, address, phone, email, website')
+      .select('name, logo_url, legacy_address, phone, email, website')
       .eq('id', invoice.organization_id)
       .single();
 
@@ -56,7 +56,7 @@ export async function GET(
     const totalTax = lineItems.reduce((sum, item) => sum + (item.tax_amount || 0), 0);
     const total = subtotal + totalTax;
 
-    const company = invoice.company as { name?: string; email?: string; address?: string } | null;
+    const company = invoice.company as { name?: string; email?: string; legacy_address?: string } | null;
     const contact = invoice.contact as { first_name?: string; last_name?: string; email?: string } | null;
 
     // Optionally fetch timesheet data
@@ -121,7 +121,7 @@ export async function GET(
   <div class="header">
     <div>
       <div class="company-name">${org?.name || 'ATLVS'}</div>
-      <div class="company-details">${org?.address || ''}<br/>${org?.phone || ''} | ${org?.email || ''}</div>
+      <div class="company-details">${org?.legacy_address || ''}<br/>${org?.phone || ''} | ${org?.email || ''}</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:12px;color:#6b7280">INVOICE</div>
@@ -140,7 +140,7 @@ export async function GET(
     <div style="font-size:13px;color:#6b7280">
       ${contact ? `${contact.first_name} ${contact.last_name}` : ''}<br/>
       ${contact?.email || company?.email || ''}<br/>
-      ${company?.address || ''}
+      ${company?.legacy_address || ''}
     </div>
   </div>
 

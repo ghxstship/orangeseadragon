@@ -41,9 +41,9 @@ export async function POST(
       return badRequest(`Leave request is already ${leaveRequest.status}`);
     }
 
-    // Get approver's staff member record
+    // Get approver's employee profile record
     const { data: approver } = await supabase
-      .from('staff_members')
+      .from('employee_profiles')
       .select('id')
       .eq('user_id', user.id)
       .single();

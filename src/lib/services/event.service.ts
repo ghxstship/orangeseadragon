@@ -26,8 +26,8 @@ export interface Event {
 export interface Venue {
   id: string;
   name: string;
-  address: string;
-  city: string;
+  legacy_address: string;
+  legacy_city: string;
   capacity: number;
 }
 
@@ -102,7 +102,7 @@ export class EventService {
 
     let query = this.supabase
       .from("events")
-      .select("*, venue:venues(*)", { count: "exact" });
+      .select("*, venue:locations(*)", { count: "exact" });
 
     // Apply filters
     if (filters?.status) {
@@ -150,7 +150,7 @@ export class EventService {
   async getEvent(id: string): Promise<Event | null> {
     const { data, error } = await this.supabase
       .from("events")
-      .select("*, venue:venues(*)")
+      .select("*, venue:locations(*)")
       .eq("id", id)
       .single();
 
@@ -177,7 +177,7 @@ export class EventService {
         budget: eventData.budget,
         created_by: userId,
       })
-      .select("*, venue:venues(*)")
+      .select("*, venue:locations(*)")
       .single();
 
     if (error) {
@@ -206,7 +206,7 @@ export class EventService {
       .from("events")
       .update(updateData)
       .eq("id", id)
-      .select("*, venue:venues(*)")
+      .select("*, venue:locations(*)")
       .single();
 
     if (error) {
@@ -255,7 +255,7 @@ export class EventService {
   async getUpcomingEvents(limit: number = 10): Promise<Event[]> {
     const { data, error } = await this.supabase
       .from("events")
-      .select("*, venue:venues(*)")
+      .select("*, venue:locations(*)")
       .gte("start_date", new Date().toISOString())
       .in("status", ["confirmed", "draft"])
       .order("start_date", { ascending: true })
@@ -271,7 +271,7 @@ export class EventService {
   async getEventsByDateRange(startDate: Date, endDate: Date): Promise<Event[]> {
     const { data, error } = await this.supabase
       .from("events")
-      .select("*, venue:venues(*)")
+      .select("*, venue:locations(*)")
       .gte("start_date", startDate.toISOString())
       .lte("end_date", endDate.toISOString())
       .order("start_date", { ascending: true });
@@ -356,8 +356,8 @@ export class EventService {
     return {
       id: data.id as string,
       name: data.name as string,
-      address: data.address as string,
-      city: data.city as string,
+      legacy_address: data.legacy_address as string,
+      legacy_city: data.legacy_city as string,
       capacity: data.capacity as number,
     };
   }

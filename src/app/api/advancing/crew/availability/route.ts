@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     .from('crew_availability')
     .select(`
       *,
-      crew_member:crew_members(id, full_name, skills, avatar_url),
+      crew_member:crew_members(id, skills, user:users(full_name, avatar_url)),
       event:events(id, name)
     `)
     .gte('date', startDate)

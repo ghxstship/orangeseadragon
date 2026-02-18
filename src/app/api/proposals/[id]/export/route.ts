@@ -31,7 +31,7 @@ export async function GET(
         *,
         deal:deals(
           id, name, value, currency,
-          company:companies(id, name, email, phone, address),
+          company:companies(id, name, email, phone, legacy_address),
           contact:contacts(id, first_name, last_name, email, phone, title)
         ),
         line_items:proposal_items(*)
@@ -47,7 +47,7 @@ export async function GET(
     // Fetch organization branding
     const { data: org } = await supabase
       .from('organizations')
-      .select('name, logo_url, address, phone, email, website')
+      .select('name, logo_url, legacy_address, phone, email, website')
       .eq('id', proposal.organization_id)
       .single();
 
@@ -71,7 +71,7 @@ export async function GET(
 
     const deal = proposal.deal as {
       name?: string;
-      company?: { name?: string; email?: string; phone?: string; address?: string };
+      company?: { name?: string; email?: string; phone?: string; legacy_address?: string };
       contact?: { first_name?: string; last_name?: string; email?: string; title?: string };
     } | null;
 
@@ -110,7 +110,7 @@ export async function GET(
   <div class="header">
     <div>
       <div class="company-name">${org?.name || 'ATLVS'}</div>
-      <div class="company-details">${org?.address || ''}<br/>${org?.phone || ''} | ${org?.email || ''}</div>
+      <div class="company-details">${org?.legacy_address || ''}<br/>${org?.phone || ''} | ${org?.email || ''}</div>
     </div>
     <div style="text-align:right">
       <div style="font-size:12px;color:#6b7280">PROPOSAL</div>

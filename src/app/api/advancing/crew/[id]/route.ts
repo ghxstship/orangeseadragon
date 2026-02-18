@@ -46,7 +46,7 @@ export async function PATCH(
     };
     
     const allowedFields = [
-      'full_name', 'email', 'phone', 'avatar_url', 'skills', 
+      'legacy_full_name', 'legacy_email', 'legacy_phone', 'legacy_avatar_url', 'skills', 
       'certifications', 'equipment_trained', 'hourly_rate', 'day_rate',
       'overtime_multiplier', 'currency', 'default_availability', 
       'rating', 'status', 'notes'

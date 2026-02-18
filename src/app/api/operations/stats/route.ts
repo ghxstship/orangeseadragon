@@ -30,9 +30,10 @@ export async function GET() {
         .eq('organization_id', orgId)
         .in('status', ['open', 'in_progress']),
       supabase
-        .from('venues')
+        .from('locations')
         .select('id', { count: 'exact', head: true })
         .eq('organization_id', orgId)
+        .eq('location_type', 'venue')
         .eq('is_active', true),
     ]);
 

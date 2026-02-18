@@ -109,7 +109,7 @@ export function WorkforceAnalytics({
 
     const fetchData = async () => {
       const { data: staff } = await supabase
-        .from('staff_members')
+        .from('employee_profiles')
         .select('id, hire_date, termination_date, is_active, department_id, salary')
         .eq('organization_id', organizationId);
 

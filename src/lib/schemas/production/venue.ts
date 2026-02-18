@@ -13,7 +13,7 @@ export const venueSchema = defineSchema({
   },
 
   data: {
-    endpoint: '/api/venues',
+    endpoint: '/api/locations',
     primaryKey: 'id',
     fields: {
       name: {
@@ -47,25 +47,25 @@ export const venueSchema = defineSchema({
         inForm: true,
         sortable: true,
       },
-      address: {
+      legacy_address: {
         type: 'text',
         label: 'Address',
         inTable: true,
         inForm: true,
         inDetail: true,
       },
-      city: {
+      legacy_city: {
         type: 'text',
         label: 'City',
         inTable: true,
         inForm: true,
       },
-      state: {
+      legacy_state: {
         type: 'text',
         label: 'State/Province',
         inForm: true,
       },
-      country: {
+      legacy_country: {
         type: 'text',
         label: 'Country',
         inForm: true,
@@ -94,6 +94,10 @@ export const venueSchema = defineSchema({
         inForm: true,
         inDetail: true,
       },
+      location_type: {
+        type: 'text',
+        label: 'Location Type',
+      },
       is_active: {
         type: 'switch',
         label: 'Active',
@@ -105,13 +109,13 @@ export const venueSchema = defineSchema({
 
   display: {
     title: (record) => record.name || 'Untitled Venue',
-    subtitle: (record) => record.city || record.venue_type || '',
+    subtitle: (record) => record.legacy_city || record.venue_type || '',
     defaultSort: { field: 'name', direction: 'asc' },
   },
 
   search: {
     enabled: true,
-    fields: ['name', 'address', 'city'],
+    fields: ['name', 'legacy_address', 'legacy_city'],
     placeholder: 'Search venues...',
   },
 
@@ -119,16 +123,16 @@ export const venueSchema = defineSchema({
     quick: [
       { key: 'active', label: 'Active', query: { where: { is_active: true } } },
     ],
-    advanced: ['venue_type', 'city', 'is_active'],
+    advanced: ['venue_type', 'legacy_city', 'is_active'],
   },
 
   layouts: {
     list: {
       subpages: [
-        { key: 'all', label: 'All Venues', query: { where: {} } },
-        { key: 'active', label: 'Active', query: { where: { is_active: true } } },
-        { key: 'indoor', label: 'Indoor', query: { where: { venue_type: 'indoor' } } },
-        { key: 'outdoor', label: 'Outdoor', query: { where: { venue_type: 'outdoor' } } },
+        { key: 'all', label: 'All Venues', query: { where: { location_type: 'venue' } } },
+        { key: 'active', label: 'Active', query: { where: { location_type: 'venue', is_active: true } } },
+        { key: 'indoor', label: 'Indoor', query: { where: { location_type: 'venue', venue_type: 'indoor' } } },
+        { key: 'outdoor', label: 'Outdoor', query: { where: { location_type: 'venue', venue_type: 'outdoor' } } },
       ],
       defaultView: 'table',
       availableViews: ['table', 'grid', 'map', 'list'],
@@ -144,7 +148,7 @@ export const venueSchema = defineSchema({
         ],
         blocks: [
           { key: 'contact', title: 'Contact Information', content: { type: 'fields', fields: ['contact_name', 'contact_email', 'contact_phone'] } },
-          { key: 'location', title: 'Location', content: { type: 'fields', fields: ['address', 'city', 'state', 'country'] } },
+          { key: 'location', title: 'Location', content: { type: 'fields', fields: ['legacy_address', 'legacy_city', 'legacy_state', 'legacy_country'] } },
         ]
       }
     },
@@ -158,7 +162,7 @@ export const venueSchema = defineSchema({
         {
           key: 'location',
           title: 'Location',
-          fields: ['address', 'city', 'state', 'country'],
+          fields: ['legacy_address', 'legacy_city', 'legacy_state', 'legacy_country'],
         },
         {
           key: 'contact',
@@ -176,7 +180,7 @@ export const venueSchema = defineSchema({
 
   views: {
     table: {
-      columns: ['name', 'venue_type', 'capacity', 'city', 'is_active'],
+      columns: ['name', 'venue_type', 'capacity', 'legacy_city', 'is_active'],
     },
   },
 

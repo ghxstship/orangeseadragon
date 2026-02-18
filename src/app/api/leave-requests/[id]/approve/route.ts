@@ -21,7 +21,7 @@ export async function POST(
     // Get the leave request
     const { data: leaveRequest, error: fetchError } = await supabase
       .from('leave_requests')
-      .select('*, staff_member:staff_members(*)')
+      .select('*, staff_member:employee_profiles(*)')
       .eq('id', id)
       .single();
 
@@ -34,9 +34,9 @@ export async function POST(
       return badRequest(`Leave request is already ${leaveRequest.status}`);
     }
 
-    // Get approver's staff member record
+    // Get approver's employee profile record
     const { data: approver } = await supabase
-      .from('staff_members')
+      .from('employee_profiles')
       .select('id')
       .eq('user_id', user.id)
       .single();

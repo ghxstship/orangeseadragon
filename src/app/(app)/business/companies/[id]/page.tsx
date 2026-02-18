@@ -90,7 +90,7 @@ export default function CompanyDetailPage({ params }: { params: Promise<{ id: st
                 email: company.email,
                 phone: company.phone,
                 website: company.website,
-                location: company.address
+                location: company.legacy_address
             }}
             backPath="/modules/business/companies"
             sidebarContent={

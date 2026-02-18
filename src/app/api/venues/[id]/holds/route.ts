@@ -29,9 +29,9 @@ export async function POST(
       return badRequest('start_date and end_date are required');
     }
 
-    // Verify venue exists
+    // Verify venue exists (venues are now locations with location_type='venue')
     const { data: venue, error: venueError } = await supabase
-      .from('venues')
+      .from('locations')
       .select('id, name, organization_id')
       .eq('id', id)
       .single();
@@ -188,7 +188,7 @@ export async function PATCH(
 
     const { data: hold, error: fetchError } = await supabase
       .from('venue_holds')
-      .select('*, venues(organization_id)')
+      .select('*, location:locations(organization_id)')
       .eq('id', hold_id)
       .eq('venue_id', id)
       .single();
@@ -211,7 +211,7 @@ export async function PATCH(
       return supabaseError(updateError);
     }
 
-    const orgId = (hold.venues as Record<string, unknown>)?.organization_id as string;
+    const orgId = (hold.location as Record<string, unknown>)?.organization_id as string;
 
     // Audit log
     await supabase.from('audit_logs').insert({

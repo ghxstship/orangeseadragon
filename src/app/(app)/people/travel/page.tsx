@@ -21,19 +21,20 @@ export default function TravelPage() {
       try {
         const supabase = createClient();
         const { data: venues } = await supabase
-          .from('venues')
-          .select('id, name, city, latitude, longitude')
+          .from('locations')
+          .select('id, name, legacy_city, address:addresses(city, latitude, longitude), legacy_latitude, legacy_longitude')
           .eq('organization_id', orgId)
-          .not('latitude', 'is', null)
-          .not('longitude', 'is', null)
+          .eq('location_type', 'venue')
           .limit(50);
 
-        const mapped: MapMarker[] = (venues ?? []).map((v) => ({
+        const mapped: MapMarker[] = (venues ?? [])
+          .filter((v) => (v.address?.latitude ?? v.legacy_latitude) != null)
+          .map((v) => ({
           id: v.id,
-          latitude: Number(v.latitude),
-          longitude: Number(v.longitude),
+          latitude: Number(v.address?.latitude ?? v.legacy_latitude),
+          longitude: Number(v.address?.longitude ?? v.legacy_longitude),
           title: v.name ?? 'Unnamed Venue',
-          description: v.city ?? '',
+          description: v.address?.city ?? v.legacy_city ?? '',
           type: 'event' as const,
           color: 'hsl(var(--marker-event))',
         }));

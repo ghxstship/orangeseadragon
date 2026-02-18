@@ -41,7 +41,7 @@ export function SmartRostering() {
         const fetchData = async () => {
             // Fetch staff members as resources
             const { data: staff } = await supabase
-                .from('staff_members')
+                .from('employee_profiles')
                 .select('id, user_id')
                 .eq('is_active', true)
                 .limit(20);

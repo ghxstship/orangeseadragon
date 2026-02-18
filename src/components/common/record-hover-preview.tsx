@@ -145,7 +145,7 @@ function getSubtitle(record: Record<string, unknown>, entityType: string): strin
     case 'project': return String(record.client || record.company_name || '');
     case 'person': return String(record.job_title || record.department || '');
     case 'company': return String(record.industry || record.company_type || '');
-    case 'venue': return String(record.city || record.address || '');
+    case 'venue': return String(record.legacy_city || record.legacy_address || '');
     case 'event': return String(record.venue_name || '');
     case 'budget': return String(record.project_name || '');
     case 'invoice': return String(record.company_name || '');

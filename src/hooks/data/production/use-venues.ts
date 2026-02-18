@@ -4,9 +4,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSupabase } from "../../auth/use-supabase";
 import type { Database } from "@/types/database";
 
-type Venue = Database["public"]["Tables"]["venues"]["Row"];
-type VenueInsert = Database["public"]["Tables"]["venues"]["Insert"];
-type VenueUpdate = Database["public"]["Tables"]["venues"]["Update"];
+type Location = Database["public"]["Tables"]["locations"]["Row"];
+type LocationInsert = Database["public"]["Tables"]["locations"]["Insert"];
+type LocationUpdate = Database["public"]["Tables"]["locations"]["Update"];
 
 export function useVenues(organizationId: string | null) {
   const supabase = useSupabase();
@@ -17,28 +17,29 @@ export function useVenues(organizationId: string | null) {
       if (!organizationId) return [];
 
       const { data, error } = await supabase
-        .from("venues")
-        .select(`*`)
+        .from("locations")
+        .select(`*, address:addresses(street_line_1, city, state_province, country, postal_code)`)
         .eq("organization_id", organizationId)
+        .eq("location_type", "venue")
         .eq("is_active", true)
         .order("name", { ascending: true });
 
       if (error) throw error;
 
-      return data.map((venue) => ({
-        id: venue.id,
-        name: venue.name,
-        venue_type: venue.venue_type,
-        capacity: venue.capacity,
-        city: venue.city,
-        state: venue.state,
-        country: venue.country,
-        address: venue.address,
-        is_partner: venue.is_partner,
-        website: venue.website,
-        phone: venue.phone,
-        email: venue.email,
-        created_at: venue.created_at,
+      return data.map((loc) => ({
+        id: loc.id,
+        name: loc.name,
+        venue_type: loc.venue_type,
+        capacity: loc.capacity,
+        city: loc.address?.city ?? loc.legacy_city,
+        state: loc.address?.state_province ?? loc.legacy_state,
+        country: loc.address?.country ?? loc.legacy_country,
+        address: loc.address?.street_line_1 ?? loc.legacy_address,
+        is_partner: loc.is_partner,
+        website: loc.website,
+        phone: loc.phone,
+        email: loc.email,
+        created_at: loc.created_at,
       }));
     },
     enabled: !!organizationId,
@@ -54,8 +55,8 @@ export function useVenue(venueId: string | null) {
       if (!venueId) return null;
 
       const { data, error } = await supabase
-        .from("venues")
-        .select(`*`)
+        .from("locations")
+        .select(`*, address:addresses(street_line_1, city, state_province, country, postal_code, latitude, longitude)`)
         .eq("id", venueId)
         .single();
 
@@ -71,15 +72,15 @@ export function useCreateVenue() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (venue: VenueInsert) => {
+    mutationFn: async (venue: LocationInsert) => {
       const { data, error } = await supabase
-        .from("venues")
-        .insert(venue)
+        .from("locations")
+        .insert({ ...venue, location_type: "venue" })
         .select()
         .single();
 
       if (error) throw error;
-      return data as Venue;
+      return data as Location;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["venues", data.organization_id] });
@@ -92,16 +93,16 @@ export function useUpdateVenue() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: VenueUpdate & { id: string }) => {
+    mutationFn: async ({ id, ...updates }: LocationUpdate & { id: string }) => {
       const { data, error } = await supabase
-        .from("venues")
+        .from("locations")
         .update(updates)
         .eq("id", id)
         .select()
         .single();
 
       if (error) throw error;
-      return data as Venue;
+      return data as Location;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["venues", data.organization_id] });

@@ -97,8 +97,7 @@ export async function POST(request: NextRequest) {
       .select(`
         id,
         clock_in_time,
-        event:events(name),
-        venue:venues(name)
+        event:events(name, venue:locations(name))
       `)
       .single();
 
@@ -110,8 +109,8 @@ export async function POST(request: NextRequest) {
     return apiCreated({
       id: entry.id,
       clockInTime: entry.clock_in_time,
-      eventName: (entry.event as { name?: string })?.name,
-      venueName: (entry.venue as { name?: string })?.name,
+      eventName: (entry.event as { name?: string; venue?: { name?: string } })?.name,
+      venueName: (entry.event as { name?: string; venue?: { name?: string } })?.venue?.name,
       isWithinGeofence,
       punchId: punch.id,
     });

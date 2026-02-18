@@ -11,7 +11,7 @@ export const companySchema = defineSchema({
       website: { type: 'url', label: 'Website', inTable: true, inForm: true },
       phone: { type: 'phone', label: 'Phone', inTable: true, inForm: true },
       email: { type: 'email', label: 'Email', inTable: true, inForm: true },
-      address: { type: 'textarea', label: 'Address', inForm: true, inDetail: true },
+      legacy_address: { type: 'textarea', label: 'Address', inForm: true, inDetail: true },
       contactCount: { type: 'number', label: 'Contacts', inTable: true },
       notes: { type: 'textarea', label: 'Notes', inForm: true, inDetail: true },
     },
@@ -48,7 +48,7 @@ export const companySchema = defineSchema({
           { key: 'revenue', label: 'Total Revenue', value: { type: 'relation-sum', entity: 'invoice', foreignKey: 'company_id', field: 'total_amount' }, format: 'currency' },
         ],
         blocks: [
-          { key: 'details', title: 'Company Details', content: { type: 'fields', fields: ['address', 'website', 'phone', 'email'] } },
+          { key: 'details', title: 'Company Details', content: { type: 'fields', fields: ['legacy_address', 'website', 'phone', 'email'] } },
           { key: 'notes', title: 'Notes', content: { type: 'fields', fields: ['notes'] } },
         ],
       },
@@ -64,7 +64,7 @@ export const companySchema = defineSchema({
     },
     form: {
       sections: [
-        { key: 'basic', title: 'Company Details', fields: ['name', 'company_type', 'industry', 'website', 'phone', 'email', 'address', 'notes'] },
+        { key: 'basic', title: 'Company Details', fields: ['name', 'company_type', 'industry', 'website', 'phone', 'email', 'legacy_address', 'notes'] },
       ],
     },
   },
