@@ -34,7 +34,7 @@ export function HolographicDirectory({ people, onSelectPerson }: HolographicDire
                     className={cn(
                         "group relative cursor-pointer overflow-hidden rounded-2xl border border-border",
                         "bg-card/70 backdrop-blur-xl", // Liquid Glass effect
-                        "hover:border-border hover:bg-card/90 hover:shadow-[0_20px_40px_-12px_hsl(var(--foreground)/0.5)] transition-all duration-300"
+                        "hover:border-border hover:bg-card/90 hover:shadow-card-dramatic transition-all duration-300"
                     )}
                 >
                     {/* Status Indicator Glow */}

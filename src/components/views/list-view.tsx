@@ -190,7 +190,7 @@ export function ListView<T extends ListItem>({
                   className={cn(
                     "flex items-center gap-4 p-5 transition-all duration-300 border-b border-border last:border-b-0 hover:bg-background/40",
                     onItemClick && "cursor-pointer",
-                    isSelected && "bg-primary/10 shadow-[inner_0_0_20px_hsl(var(--primary)/0.05)]"
+                    isSelected && "bg-primary/10 shadow-inner-highlight"
                   )}
                   onClick={() => onItemClick?.(item)}
                 >

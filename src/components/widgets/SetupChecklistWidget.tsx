@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MOTION_PRESET, TRANSITION } from '@/lib/tokens/motion';
 import {
   Card,
   CardContent,
@@ -226,10 +227,10 @@ export function SetupChecklistWidget({
               <motion.li
                 key={item.key}
                 layout
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.2 }}
+                initial={MOTION_PRESET.listItem.initial}
+                animate={MOTION_PRESET.listItem.animate}
+                exit={MOTION_PRESET.listItem.exit}
+                transition={TRANSITION.normal}
               >
                 <Link
                   href={item.href}

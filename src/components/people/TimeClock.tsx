@@ -134,9 +134,9 @@ export function TimeClock({
 
   const statusConfig = {
     idle: { color: 'bg-muted-foreground', label: 'Not Clocked In', glow: '' },
-    clocked_in: { color: 'bg-semantic-success', label: 'Working', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-success)/0.5)]' },
-    on_break: { color: 'bg-semantic-warning', label: 'On Break', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-warning)/0.5)]' },
-    clocked_out: { color: 'bg-semantic-info', label: 'Clocked Out', glow: 'shadow-[0_0_30px_-5px_hsl(var(--semantic-info)/0.5)]' },
+    clocked_in: { color: 'bg-semantic-success', label: 'Working', glow: 'shadow-status-success-glow' },
+    on_break: { color: 'bg-semantic-warning', label: 'On Break', glow: 'shadow-status-warning-glow' },
+    clocked_out: { color: 'bg-semantic-info', label: 'Clocked Out', glow: 'shadow-status-info-glow' },
   };
 
   return (

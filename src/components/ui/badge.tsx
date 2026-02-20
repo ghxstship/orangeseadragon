@@ -8,11 +8,11 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80 shadow-[0_4px_10px_-2px_hsl(var(--primary)/0.3)]",
+          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80 shadow-primary-badge",
         secondary:
           "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 shadow-[0_4px_10px_-2px_hsl(var(--destructive)/0.3)]",
+          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80 shadow-destructive-badge",
         outline: "text-foreground border-border hover:bg-accent hover:text-accent-foreground",
         success:
           "border-transparent bg-semantic-success/15 text-semantic-success hover:bg-semantic-success/25",
@@ -21,9 +21,9 @@ const badgeVariants = cva(
         glass:
           "glass border-white/20 text-foreground shadow-sm hover:shadow-md backdrop-blur-md",
         spatial:
-          "bg-background/80 border-border/50 text-foreground shadow-[0_2px_8px_-2px_hsl(var(--foreground)/0.1)] backdrop-blur-sm",
+          "bg-background/80 border-border/50 text-foreground shadow-spatial-badge backdrop-blur-sm",
         aurora:
-          "bg-gradient-to-r from-semantic-indigo via-semantic-purple to-semantic-accent text-white border-none shadow-[0_4px_14px_0_hsl(var(--semantic-purple)/0.4)] animate-aurora bg-[length:200%_200%]",
+          "bg-gradient-to-r from-semantic-indigo via-semantic-purple to-semantic-accent text-white border-none shadow-aurora-badge animate-aurora bg-[length:200%_200%]",
       },
     },
     defaultVariants: {

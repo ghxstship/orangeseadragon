@@ -4,6 +4,7 @@ import { LucideIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useMediaQuery } from "@/hooks/ui/use-media-query";
+import { MOTION_PRESET, HOVER, TRANSITION } from "@/lib/tokens/motion";
 
 interface StatCardProps {
   title: string;
@@ -31,10 +32,10 @@ export function StatCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      {...(canHover ? { whileHover: { y: -5, scale: 1.02 } } : {})}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      initial={MOTION_PRESET.fadeUp.initial}
+      animate={MOTION_PRESET.fadeUp.animate}
+      {...(canHover ? { whileHover: HOVER.stat } : {})}
+      transition={TRANSITION.fadeIn}
       className="h-full"
     >
       <Card className={cn("border-border overflow-hidden shadow-xl h-full relative group transition-all duration-500", className)}>
@@ -60,8 +61,8 @@ export function StatCard({
                   className={cn(
                     "flex items-center gap-1 px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-lg",
                     trend.isPositive
-                      ? "bg-semantic-success/10 text-semantic-success border border-semantic-success/20 shadow-[0_0_8px_hsl(var(--semantic-success)/0.1)]"
-                      : "bg-destructive/10 text-destructive border border-destructive/20 shadow-[0_0_8px_hsl(var(--destructive)/0.1)]"
+                      ? "bg-semantic-success/10 text-semantic-success border border-semantic-success/20 shadow-success-glow"
+                      : "bg-destructive/10 text-destructive border border-destructive/20 shadow-destructive-glow"
                   )}
                 >
                   {trend.isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}

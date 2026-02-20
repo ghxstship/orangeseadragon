@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
+import { TRANSITION } from "@/lib/tokens/motion";
 
 const getChartLegendDotStyle = (color: string): React.CSSProperties => ({
   backgroundColor: color,
@@ -64,7 +65,7 @@ export function MetricWidget({
           <CardTitle className="text-[10px] font-black uppercase tracking-widest opacity-60">
             {title}
           </CardTitle>
-          {icon && <div className="text-primary/60 shadow-[0_0_10px_hsl(var(--primary)/0.3)]">{icon}</div>}
+          {icon && <div className="text-primary/60 shadow-icon-glow">{icon}</div>}
         </CardHeader>
         <CardContent className="pt-4">
           <div className="text-3xl font-black tracking-tight">{value}</div>
@@ -74,8 +75,8 @@ export function MetricWidget({
                 <span
                   className={cn(
                     "flex items-center text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border",
-                    trend.direction === "up" && "text-semantic-success border-semantic-success/20 bg-semantic-success/10 shadow-[0_0_8px_hsl(var(--semantic-success)/0.2)]",
-                    trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_hsl(var(--destructive)/0.2)]",
+                    trend.direction === "up" && "text-semantic-success border-semantic-success/20 bg-semantic-success/10 shadow-success-glow-strong",
+                    trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-destructive-glow-strong",
                     trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                   )}
                 >
@@ -154,8 +155,8 @@ export function ProgressWidget({
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${percentage}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              className={cn("absolute top-0 bottom-0 rounded-full shadow-[0_0_10px_hsl(var(--primary)/0.3)]", getStatusColor())}
+              transition={TRANSITION.progress}
+              className={cn("absolute top-0 bottom-0 rounded-full shadow-progress-glow", getStatusColor())}
             />
           </div>
           <div className="flex justify-between mt-3 text-[9px] font-black uppercase tracking-widest opacity-40">
@@ -355,7 +356,7 @@ export function DonutWidget({
       <CardContent className="pt-6">
         <div className="flex items-center gap-8">
           <div className="relative w-40 h-40 flex-shrink-0">
-            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90 filter drop-shadow-[0_0_8px_hsl(var(--foreground)/0.3)]">
+            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90 filter drop-shadow-lg">
               {segments.map((segment, i) => (
                 <motion.path
                   key={i}
@@ -392,7 +393,7 @@ export function DonutWidget({
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_hsl(var(--foreground)/0.2)]"
+                    className="w-2.5 h-2.5 rounded-full shadow-legend-dot"
                     style={getChartLegendDotStyle(d.color || (defaultColors[i % defaultColors.length] ?? "hsl(var(--muted-foreground))"))}
                   />
                   <span className="text-[10px] font-bold uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity">{d.label}</span>
@@ -454,8 +455,8 @@ export function SparklineWidget({
               <span
                 className={cn(
                   "flex items-center text-[10px] font-black uppercase tracking-wider mt-3 px-2 py-0.5 rounded-full border w-fit",
-                  trend.direction === "up" && "text-semantic-success border-semantic-success/20 bg-semantic-success/10 shadow-[0_0_8px_hsl(var(--semantic-success)/0.1)]",
-                  trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-[0_0_8px_hsl(var(--destructive)/0.1)]",
+                  trend.direction === "up" && "text-semantic-success border-semantic-success/20 bg-semantic-success/10 shadow-success-glow",
+                  trend.direction === "down" && "text-destructive border-destructive/20 bg-destructive/10 shadow-destructive-glow",
                   trend.direction === "neutral" && "text-muted-foreground border-border bg-muted"
                 )}
               >
@@ -484,7 +485,7 @@ export function SparklineWidget({
                 strokeWidth="4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="drop-shadow-[0_0_5px_hsl(var(--primary)/0.5)]"
+                className="drop-shadow-md"
               />
               <motion.path
                 initial={{ opacity: 0 }}

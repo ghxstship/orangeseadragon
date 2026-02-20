@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { motion, useReducedMotion } from "framer-motion";
+import { HOVER, TAP, SPRING } from "@/lib/tokens/motion";
 
 /* ─────────────────────────────────────────────────────────────
    BENTO GRID
@@ -132,9 +133,9 @@ export function BentoItem({
         colSpanStyles[colSpan],
         rowSpanStyles[rowSpan]
       )}
-      whileHover={{ y: -3, scale: 1.005 }}
-      whileTap={{ scale: 0.995 }}
-      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      whileHover={HOVER.bento}
+      whileTap={TAP.subtle}
+      transition={SPRING.snappy}
     >
       {content}
     </motion.div>

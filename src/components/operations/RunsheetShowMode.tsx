@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TRANSITION } from '@/lib/tokens/motion';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -236,9 +237,9 @@ export function RunsheetShowMode({
               <Card className={cn(
                 "h-full p-8 border-2 transition-all duration-300",
                 isRunning 
-                  ? "border-semantic-success bg-semantic-success/10 shadow-[0_0_30px_hsl(var(--semantic-success)/0.3)]"
+                  ? "border-semantic-success bg-semantic-success/10 shadow-success-ambient"
                   : "border-border bg-muted",
-                isOvertime && "border-destructive bg-destructive/10 shadow-[0_0_30px_hsl(var(--destructive)/0.3)]"
+                isOvertime && "border-destructive bg-destructive/10 shadow-destructive-ambient"
               )}>
                 <div className="flex flex-col h-full">
                   {/* Cue Header */}
@@ -295,7 +296,7 @@ export function RunsheetShowMode({
                             )}
                             initial={{ width: 0 }}
                             animate={{ width: `${Math.min(progressPercent, 100)}%` }}
-                            transition={{ duration: 0.5 }}
+                            transition={TRANSITION.progress}
                           />
                         </div>
                       )}
@@ -364,7 +365,7 @@ export function RunsheetShowMode({
             className={cn(
               "px-16 py-6 text-2xl font-bold transition-all",
               isRunning
-                ? "bg-semantic-success hover:bg-semantic-success/90 shadow-[0_0_20px_hsl(var(--semantic-success)/0.5)]"
+                ? "bg-semantic-success hover:bg-semantic-success/90 shadow-success-button"
                 : "bg-semantic-success/90 hover:bg-semantic-success"
             )}
           >

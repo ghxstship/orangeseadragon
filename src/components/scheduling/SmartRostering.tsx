@@ -176,7 +176,7 @@ export function SmartRostering() {
                                                     className={cn(
                                                         "absolute top-2 bottom-2 rounded-md border text-xs flex items-center px-2 cursor-pointer hover:brightness-110 shadow-lg",
                                                         shift.conflict
-                                                            ? "bg-destructive/20 border-destructive/50 text-destructive/80 shadow-[0_0_15px_-3px_hsl(var(--destructive)/0.4)]"
+                                                            ? "bg-destructive/20 border-destructive/50 text-destructive/80 shadow-conflict-glow"
                                                             : "bg-semantic-indigo/30 border-semantic-indigo/40 text-semantic-indigo"
                                                     )}
                                                     style={getShiftPositionStyle(startOffsetPercent, widthPercent)}

@@ -277,7 +277,7 @@ export function ActivityFeed({
       <CardHeader className="pb-4 border-b border-border bg-background/5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base sm:text-xl font-black tracking-tight uppercase opacity-80 flex items-center gap-3">
-            <Clock className="h-5 w-5 text-primary shadow-[0_0_10px_hsl(var(--primary)/0.5)]" />
+            <Clock className="h-5 w-5 text-primary shadow-icon-glow-strong" />
             {title}
           </CardTitle>
           {showFilters && (

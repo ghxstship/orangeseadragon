@@ -433,7 +433,7 @@ export function TimelineView({
                     <div className="flex items-center gap-3">
                       {group.color && (
                         <div
-                          className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]"
+                          className="w-2.5 h-2.5 rounded-full shadow-dot-glow"
                           style={getGroupDotStyle(group.color)}
                         />
                       )}
@@ -458,7 +458,7 @@ export function TimelineView({
                     key={index}
                     className={cn(
                       "w-[var(--timeline-cell-width)] flex-shrink-0 border-r border-border flex flex-col items-center justify-center gap-0.5",
-                      showToday && isSameDay(unit, new Date()) && "bg-primary/10 shadow-[inner_0_0_20px_hsl(var(--primary)/0.1)]"
+                      showToday && isSameDay(unit, new Date()) && "bg-primary/10 shadow-inner-highlight-strong"
                     )}
                   >
                     <span className="text-[10px] font-black uppercase tracking-[0.1em] opacity-30">{format(unit, "EEE")}</span>
@@ -487,7 +487,7 @@ export function TimelineView({
                 {/* Today line */}
                 {showToday && todayPosition !== null && (
                   <div
-                    className="absolute top-0 bottom-0 left-[var(--timeline-today-position)] w-[2px] bg-primary z-40 shadow-[0_0_15px_hsl(var(--primary)/0.8)]"
+                    className="absolute top-0 bottom-0 left-[var(--timeline-today-position)] w-[2px] bg-primary z-navigation shadow-today-line"
                   />
                 )}
 

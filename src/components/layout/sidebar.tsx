@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, PanelLeftClose, PanelLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { TRANSITION } from "@/lib/tokens/motion";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -153,7 +154,7 @@ function SidebarSection({ section, collapsed, pathname, onNavigate }: SidebarSec
         {section.title}
         <motion.div
           animate={{ rotate: expanded ? 0 : -90 }}
-          transition={{ duration: 0.2 }}
+          transition={TRANSITION.normal}
         >
           <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
         </motion.div>
@@ -198,7 +199,7 @@ function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
           className={cn(
             "h-auto w-full justify-start items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
             isActive
-              ? "bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
+              ? "bg-primary/10 text-primary shadow-nav-active"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
         >
@@ -250,14 +251,14 @@ function SidebarItem({ item, pathname, onNavigate }: SidebarItemProps) {
       className={cn(
         "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-all duration-300 group",
         isActive
-          ? "bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
+          ? "bg-primary/10 text-primary shadow-nav-active"
           : "text-muted-foreground hover:bg-muted hover:text-foreground"
       )}
     >
       <Icon className={cn("h-4 w-4 shrink-0 transition-transform group-hover:scale-110", isActive && "text-primary")} />
       <span className="truncate tracking-tight">{item.title}</span>
       {item.badge && (
-        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-lg bg-primary/20 border border-primary/30 px-1.5 text-[9px] font-black text-primary shadow-[0_0_10px_hsl(var(--primary)/0.3)]">
+        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-lg bg-primary/20 border border-primary/30 px-1.5 text-[9px] font-black text-primary shadow-nav-badge">
           {item.badge}
         </span>
       )}

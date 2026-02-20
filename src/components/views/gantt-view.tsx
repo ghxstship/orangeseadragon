@@ -609,7 +609,7 @@ export function GanttView<T extends GanttTask>({
               {/* Today line */}
               {isWithinInterval(new Date(), { start: viewStart, end: viewEnd }) && (
                 <div
-                  className="absolute top-0 bottom-0 w-[2px] bg-primary z-20 shadow-[0_0_15px_hsl(var(--primary)/0.8)]"
+                  className="absolute top-0 bottom-0 w-[2px] bg-primary z-raised shadow-today-line"
                   style={getTodayLineStyle((differenceInDays(new Date(), viewStart) / totalDays) * 100)}
                 />
               )}
@@ -655,7 +655,7 @@ export function GanttView<T extends GanttTask>({
                               {!task.isMilestone && (
                                 <div
                                   className={cn(
-                                    "absolute inset-0 rounded-full opacity-40 shadow-[inset_0_1px_1px_hsl(var(--background)/0.3)]",
+                                    "absolute inset-0 rounded-full opacity-40 shadow-bar-inset",
                                     getStatusColor(task.status)
                                   )}
                                 />
@@ -664,7 +664,7 @@ export function GanttView<T extends GanttTask>({
                                 <motion.div
                                   initial={{ width: 0 }}
                                   animate={{ width: `${task.progress}%` }}
-                                  className="absolute inset-y-0 left-0 bg-white/30 rounded-full shadow-[0_0_10px_hsl(var(--background)/0.2)]"
+                                  className="absolute inset-y-0 left-0 bg-white/30 rounded-full shadow-bar-glow"
                                 />
                               )}
                               {!task.isMilestone && onTaskUpdate && (

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { MOTION_PRESET, TRANSITION } from "@/lib/tokens/motion";
 
 export function PageTransition({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -9,10 +10,10 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
     return (
         <motion.div
             key={pathname}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            initial={MOTION_PRESET.fadeUp.initial}
+            animate={MOTION_PRESET.fadeUp.animate}
+            exit={MOTION_PRESET.fadeUp.exit}
+            transition={TRANSITION.page}
             className="w-full h-full"
         >
             {children}

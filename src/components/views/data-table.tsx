@@ -573,7 +573,7 @@ export function DataTable<TData, TValue>({
                             className={cn(
                               "px-4 transition-all duration-200",
                               density === "compact" ? "py-1.5" : "py-4",
-                              cell.column.id === "select" && "sticky left-0 z-20 bg-card/90 backdrop-blur-sm shadow-[1px_0_0_0_hsl(var(--foreground)/0.05)]"
+                              cell.column.id === "select" && "sticky left-0 z-20 bg-card/90 backdrop-blur-sm shadow-sticky-column"
                             )}
                             style={getColumnWidthStyle(cell.column.getSize())}
                           >

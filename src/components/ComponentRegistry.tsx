@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ContextualEmptyState, PageErrorState } from '@/components/common/contextual-empty-state';
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { MOTION_PRESET, TRANSITION } from "@/lib/tokens/motion";
 import { getErrorMessage } from '@/lib/api/error-message';
 
 // ============================================================================
@@ -221,10 +222,10 @@ export function ComponentRenderer({
   return (
     <React.Suspense fallback={<Skeleton className={className} />}>
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={MOTION_PRESET.fadeUp.initial}
+        animate={MOTION_PRESET.fadeUp.animate}
         exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+        transition={TRANSITION.fadeIn}
         className="h-full w-full"
       >
         <Component

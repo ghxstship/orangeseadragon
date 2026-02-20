@@ -169,13 +169,13 @@ export function MatrixView<TData extends Record<string, unknown>>({ items, confi
 function getQuadrantColor(color?: string) {
     switch (color) {
         case 'red':
-            return { border: 'border-destructive/10', bg: 'bg-destructive/[0.02] shadow-[inner_0_0_50px_hsl(var(--destructive)/0.03)]' };
+            return { border: 'border-destructive/10', bg: 'bg-destructive/[0.02] shadow-inner-destructive' };
         case 'blue':
             return { border: 'border-semantic-info/10', bg: 'bg-semantic-info/[0.02]' };
         case 'yellow':
             return { border: 'border-semantic-warning/10', bg: 'bg-semantic-warning/[0.02]' };
         case 'gray':
-            return { border: 'border-border', bg: 'bg-white/[0.01] shadow-[inner_0_0_50px_hsl(var(--background)/0.01)]' };
+            return { border: 'border-border', bg: 'bg-white/[0.01] shadow-inner-subtle' };
         default:
             return { border: 'border-border', bg: 'bg-white/[0.01]' };
     }

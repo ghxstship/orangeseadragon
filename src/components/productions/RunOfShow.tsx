@@ -75,7 +75,7 @@ export function RunOfShow({ items }: RunOfShowProps) {
                             {/* Timeline Node */}
                             <div className="relative z-10 flex flex-col items-center mr-4 pt-1">
                                 {isActive ? (
-                                    <div className="w-4 h-4 rounded-full bg-semantic-success shadow-[0_0_15px_hsl(var(--semantic-success)/0.6)] animate-pulse border-2 border-background" />
+                                    <div className="w-4 h-4 rounded-full bg-semantic-success shadow-success-node animate-pulse border-2 border-background" />
                                 ) : isCompleted ? (
                                     <div className="w-3 h-3 rounded-full bg-muted border-2 border-muted-foreground/60" />
                                 ) : (

@@ -332,7 +332,7 @@ function formatValue(value: unknown, format?: ColumnFormat, fieldName?: string):
             <div
               className={cn(
                 "h-full transition-all duration-500",
-                pct > 80 ? "bg-semantic-success shadow-[0_0_8px_hsl(var(--semantic-success)/0.4)]" :
+                pct > 80 ? "bg-semantic-success shadow-success-glow-medium" :
                   pct > 40 ? "bg-semantic-warning" : "bg-destructive"
               )}
               style={getPercentageWidthStyle(pct)}

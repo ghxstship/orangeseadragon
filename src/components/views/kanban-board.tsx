@@ -263,7 +263,7 @@ export function KanbanBoard<T extends { id: string }>({
                 <div className="flex items-center gap-3">
                   {column.color && (
                     <div
-                      className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_currentColor]"
+                      className="w-2.5 h-2.5 rounded-full shadow-dot-glow"
                       style={getKanbanColumnDotStyle(column.color)}
                     />
                   )}
@@ -362,7 +362,7 @@ export function KanbanCard({
 }: KanbanCardProps) {
   return (
     <Card className={cn(
-      "cursor-pointer overflow-hidden border-border glass-morphism hover:border-primary/30 hover:shadow-[0_8px_32px_-12px_hsl(var(--foreground)/0.5)] transition-all group",
+      "cursor-pointer overflow-hidden border-border glass-morphism hover:border-primary/30 hover:shadow-card-hover transition-all group",
       className
     )}>
       <CardContent className="p-4">

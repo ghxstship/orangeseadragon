@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { TRANSITION, SPRING, MOTION_PRESET } from "@/lib/tokens/motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -275,11 +276,11 @@ export function CopilotDrawer() {
       {copilotOpen && (
         <>
           <motion.div
-            initial={shouldReduce ? { opacity: 1 } : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[90] bg-black/20 backdrop-blur-sm"
+            initial={shouldReduce ? { opacity: 1 } : MOTION_PRESET.fade.initial}
+            animate={MOTION_PRESET.fade.animate}
+            exit={MOTION_PRESET.fade.exit}
+            transition={TRANSITION.overlay}
+            className="fixed inset-0 z-copilot bg-black/20 backdrop-blur-sm"
             onClick={() => setCopilotOpen(false)}
           />
 
@@ -287,8 +288,8 @@ export function CopilotDrawer() {
             initial={shouldReduce ? { x: 0 } : { x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed right-0 top-0 bottom-0 z-[91] w-full max-w-md border-l border-border bg-card/95 backdrop-blur-2xl shadow-2xl flex flex-col"
+            transition={SPRING.snappy}
+            className="fixed right-0 top-0 bottom-0 z-copilot w-full max-w-md border-l border-border bg-card/95 backdrop-blur-2xl shadow-2xl flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
@@ -544,7 +545,7 @@ export function CopilotTrigger({ className }: { className?: string }) {
       )}
       whileHover={shouldReduce ? undefined : { scale: 1.1 }}
       whileTap={shouldReduce ? undefined : { scale: 0.9 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      transition={SPRING.bouncy}
       aria-label={copilotOpen ? "Close AI Copilot" : "Open AI Copilot"}
     >
       <AnimatePresence mode="wait">
@@ -554,7 +555,7 @@ export function CopilotTrigger({ className }: { className?: string }) {
             initial={{ rotate: -90, opacity: 0 }}
             animate={{ rotate: 0, opacity: 1 }}
             exit={{ rotate: 90, opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={TRANSITION.quick}
           >
             <ChevronDown className="h-5 w-5" />
           </motion.div>
@@ -564,7 +565,7 @@ export function CopilotTrigger({ className }: { className?: string }) {
             initial={{ rotate: 90, opacity: 0 }}
             animate={{ rotate: 0, opacity: 1 }}
             exit={{ rotate: -90, opacity: 0 }}
-            transition={{ duration: 0.15 }}
+            transition={TRANSITION.quick}
           >
             <Sparkles className="h-5 w-5" />
           </motion.div>

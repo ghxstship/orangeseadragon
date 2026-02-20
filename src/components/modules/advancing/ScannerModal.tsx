@@ -16,6 +16,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { TRANSITION } from '@/lib/tokens/motion';
 import { cn } from '@/lib/utils';
 import { captureError } from '@/lib/observability';
 import { extractApiErrorMessage } from '@/lib/api/error-message';
@@ -348,7 +349,7 @@ export function ScannerModal({
                           <motion.div
                             className="absolute left-0 right-0 h-0.5 bg-primary"
                             animate={{ top: ['0%', '100%', '0%'] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                            transition={TRANSITION.scanner}
                           />
                         )}
                       </div>

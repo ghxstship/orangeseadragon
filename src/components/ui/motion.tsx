@@ -9,30 +9,29 @@ import {
   useReducedMotion,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
+import {
+  SPRING,
+  DURATION,
+  EASE,
+  TRANSITION,
+  MOTION_PRESET,
+  STAGGER_DELAY,
+  staggerContainerVariants,
+  staggerItemVariants,
+} from "@/lib/tokens/motion";
 
 /* ─────────────────────────────────────────────────────────────
    MOTION PRIMITIVES
    Reusable animated wrappers that respect prefers-reduced-motion.
    All animations are spring-based for a premium, physical feel.
+   Durations, easings, and springs are sourced from @/lib/tokens/motion.
    ───────────────────────────────────────────────────────────── */
 
-const springTransition: Transition = {
-  type: "spring",
-  stiffness: 260,
-  damping: 20,
-};
+const springTransition: Transition = SPRING.default;
 
-const gentleSpring: Transition = {
-  type: "spring",
-  stiffness: 120,
-  damping: 14,
-};
+const gentleSpring: Transition = SPRING.gentle;
 
-const snappySpring: Transition = {
-  type: "spring",
-  stiffness: 400,
-  damping: 30,
-};
+const snappySpring: Transition = SPRING.snappy;
 
 /* ── Fade In ─────────────────────────────────────────────── */
 
@@ -49,7 +48,7 @@ export function FadeIn({
   children,
   className,
   delay = 0,
-  duration = 0.4,
+  duration = DURATION.slow,
   direction = "up",
   distance = 20,
 }: FadeInProps) {
@@ -71,7 +70,7 @@ export function FadeIn({
     <motion.div
       initial={{ opacity: 0, ...directionMap[direction] }}
       animate={{ opacity: 1, x: 0, y: 0 }}
-      transition={{ duration, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+      transition={{ duration, delay, ease: EASE.decelerate }}
       className={className}
     >
       {children}
@@ -88,31 +87,14 @@ interface StaggerProps {
   initialDelay?: number;
 }
 
-const staggerContainer: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0,
-    },
-  },
-};
+const staggerContainer: Variants = staggerContainerVariants();
 
-const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 16, scale: 0.96 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: gentleSpring,
-  },
-};
+const staggerItem: Variants = staggerItemVariants;
 
 export function StaggerList({
   children,
   className,
-  staggerDelay = 0.06,
+  staggerDelay = STAGGER_DELAY.normal,
   initialDelay = 0,
 }: StaggerProps) {
   const shouldReduce = useReducedMotion();
@@ -123,16 +105,7 @@ export function StaggerList({
 
   return (
     <motion.div
-      variants={{
-        hidden: { opacity: 0 },
-        visible: {
-          opacity: 1,
-          transition: {
-            staggerChildren: staggerDelay,
-            delayChildren: initialDelay,
-          },
-        },
-      }}
+      variants={staggerContainerVariants(staggerDelay, initialDelay)}
       initial="hidden"
       animate="visible"
       className={className}
@@ -196,7 +169,7 @@ export function AnimatedListItem({
       variants={staggerItem}
       layout={!!layoutId}
       layoutId={layoutId}
-      exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.2 } }}
+      exit={MOTION_PRESET.scaleExit.exit}
       className={className}
     >
       {children}
@@ -255,10 +228,10 @@ export function PageTransition({ children, className }: PageTransitionProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={MOTION_PRESET.page.initial}
+      animate={MOTION_PRESET.page.animate}
+      exit={MOTION_PRESET.page.exit}
+      transition={TRANSITION.page}
       className={className}
     >
       {children}
@@ -282,7 +255,7 @@ export function AnimatedCounter({
   className,
   prefix = "",
   suffix = "",
-  duration = 1,
+  duration = DURATION.counter,
   formatFn,
 }: AnimatedCounterProps) {
   const shouldReduce = useReducedMotion();
@@ -367,7 +340,7 @@ export function ShimmerBlock({ className }: { className?: string }) {
         className
       )}
       animate={{ backgroundPosition: ["200% 0", "-200% 0"] }}
-      transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+      transition={TRANSITION.shimmer}
     />
   );
 }

@@ -128,6 +128,83 @@
     --semantic-cyan: 187 86% 47%;
     --semantic-orange: 25 95% 53%;
     --semantic-indigo: 239 84% 67%;
+
+    /* ── Motion Duration Tokens (ms for CSS, seconds in TS) ── */
+    --motion-duration-instant: 0ms;
+    --motion-duration-fast: 150ms;
+    --motion-duration-normal: 200ms;
+    --motion-duration-moderate: 300ms;
+    --motion-duration-slow: 400ms;
+    --motion-duration-slower: 500ms;
+    --motion-duration-deliberate: 700ms;
+
+    /* ── Motion Easing Tokens ── */
+    --motion-ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+    --motion-ease-in: cubic-bezier(0.4, 0.0, 1, 1);
+    --motion-ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+    --motion-ease-decelerate: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --motion-ease-overshoot: cubic-bezier(0.23, 1, 0.32, 1);
+    --motion-ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* ── Z-Index Scale ── */
+    --z-behind: -1;
+    --z-base: 0;
+    --z-raised: 10;
+    --z-sticky: 20;
+    --z-dropdown: 30;
+    --z-navigation: 40;
+    --z-overlay: 50;
+    --z-modal: 60;
+    --z-toast: 70;
+    --z-copilot: 90;
+    --z-max: 100;
+
+    /* ── Named Shadow Tokens ── */
+    --shadow-glow: 0 0 30px -5px hsl(var(--primary) / 0.15);
+    --shadow-success-glow: 0 0 8px hsl(var(--semantic-success) / 0.1);
+    --shadow-success-glow-strong: 0 0 8px hsl(var(--semantic-success) / 0.2);
+    --shadow-destructive-glow: 0 0 8px hsl(var(--destructive) / 0.1);
+    --shadow-destructive-glow-strong: 0 0 8px hsl(var(--destructive) / 0.2);
+    --shadow-progress-glow: 0 0 10px hsl(var(--primary) / 0.3);
+    --shadow-primary-button: 0 4px 14px 0 hsl(var(--primary) / 0.39);
+    --shadow-primary-button-hover: 0 6px 20px hsl(var(--primary) / 0.23);
+    --shadow-primary-badge: 0 4px 10px -2px hsl(var(--primary) / 0.3);
+    --shadow-destructive-badge: 0 4px 10px -2px hsl(var(--destructive) / 0.3);
+    --shadow-glass-button: 0 4px 14px 0 hsl(var(--foreground) / 0.1);
+    --shadow-spatial-button: 0 2px 10px -1px hsl(var(--foreground) / 0.1);
+    --shadow-spatial-button-hover: 0 4px 20px -2px hsl(var(--foreground) / 0.1);
+    --shadow-spatial-badge: 0 2px 8px -2px hsl(var(--foreground) / 0.1);
+    --shadow-input-inset: inset 0 2px 4px hsl(var(--foreground) / 0.05);
+    --shadow-input-focus: 0 0 20px hsl(var(--primary) / 0.1);
+    --shadow-tab-active: 0 0 20px hsl(var(--primary) / 0.3);
+    --shadow-aurora-badge: 0 4px 14px 0 hsl(var(--semantic-purple) / 0.4);
+    --shadow-today-line: 0 0 15px hsl(var(--primary) / 0.8);
+    --shadow-icon-glow: 0 0 10px hsl(var(--primary) / 0.3);
+    --shadow-bar-inset: inset 0 1px 1px hsl(var(--background) / 0.3);
+    --shadow-bar-glow: 0 0 10px hsl(var(--background) / 0.2);
+    --shadow-dot-glow: 0 0 8px currentColor;
+    --shadow-inner-highlight: inset 0 0 20px hsl(var(--primary) / 0.05);
+    --shadow-inner-highlight-strong: inset 0 0 20px hsl(var(--primary) / 0.1);
+    --shadow-sticky-column: 1px 0 0 0 hsl(var(--foreground) / 0.05);
+    --shadow-card-hover: 0 8px 32px -12px hsl(var(--foreground) / 0.5);
+    --shadow-card-dramatic: 0 20px 40px -12px hsl(var(--foreground) / 0.5);
+    --shadow-clock-glow: 0 0 15px hsl(var(--foreground) / 0.5);
+    --shadow-status-success-glow: 0 0 30px -5px hsl(var(--semantic-success) / 0.5);
+    --shadow-status-warning-glow: 0 0 30px -5px hsl(var(--semantic-warning) / 0.5);
+    --shadow-status-info-glow: 0 0 30px -5px hsl(var(--semantic-info) / 0.5);
+    --shadow-icon-glow-strong: 0 0 10px hsl(var(--primary) / 0.5);
+    --shadow-legend-dot: 0 0 8px hsl(var(--foreground) / 0.2);
+    --shadow-conflict-glow: 0 0 15px -3px hsl(var(--destructive) / 0.4);
+    --shadow-field-selected: 0 0 20px hsl(var(--primary) / 0.05);
+    --shadow-success-glow-medium: 0 0 8px hsl(var(--semantic-success) / 0.4);
+    --shadow-inner-destructive: inset 0 0 50px hsl(var(--destructive) / 0.03);
+    --shadow-inner-subtle: inset 0 0 50px hsl(var(--background) / 0.01);
+    --shadow-nav-active: 0 0 15px hsl(var(--primary) / 0.1);
+    --shadow-nav-badge: 0 0 10px hsl(var(--primary) / 0.3);
+    --shadow-success-ambient: 0 0 30px hsl(var(--semantic-success) / 0.3);
+    --shadow-destructive-ambient: 0 0 30px hsl(var(--destructive) / 0.3);
+    --shadow-success-button: 0 0 20px hsl(var(--semantic-success) / 0.5);
+    --shadow-success-node: 0 0 15px hsl(var(--semantic-success) / 0.6);
   }
 
   .dark {

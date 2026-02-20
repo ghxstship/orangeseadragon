@@ -3,6 +3,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { motion, useReducedMotion } from "framer-motion";
+import { HOVER, TAP } from "@/lib/tokens/motion";
 
 /* ─────────────────────────────────────────────────────────────
    GLASS CARD
@@ -64,7 +65,7 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       variantStyles[variant],
       paddingStyles[padding],
       hover && "hover:border-border/80 hover:shadow-md",
-      glow && "hover:shadow-[0_0_30px_-5px_hsl(var(--primary)/0.15)]",
+      glow && "hover:shadow-glow",
       className
     );
 
@@ -73,12 +74,8 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
         <motion.div
           ref={ref}
           className={sharedClassName}
-          whileHover={
-            hover
-              ? { y: -2, scale: 1.005, transition: { type: "spring", stiffness: 400, damping: 30 } }
-              : undefined
-          }
-          whileTap={hover ? { scale: 0.995 } : undefined}
+          whileHover={hover ? HOVER.lift : undefined}
+          whileTap={hover ? TAP.subtle : undefined}
         >
           {children}
         </motion.div>
